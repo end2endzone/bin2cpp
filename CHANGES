@@ -1,1 +1,15 @@
-TODO: define the history of version and changes to show the evolution and frequency of updates or releases
+Changes for 1.3.29:
+
+* First public release.
+* Code originally release at http://www.end2endzone.com/bin2cpp-the-easiest-way-to-embed-small-files-into-a-c-executable/
+* New feature: Easily converts small files as C++ source code for embedding into a C++ executable.
+* New feature: Content extraction supported by a unique function call for each embedded file.
+* New feature: Supports multiple embedded files at once.
+* New feature: Makes it harder for resource hacker to modify or steal the embedded files.
+* New feature: No third party libraries required for retrieving the data of the embedded files.
+
+Changes for 1.3.40:
+
+* Improvement: Changed the alignment of output code.
+* Improvement: Modified installer script for clarity.
+* Bug/warning fixes.
