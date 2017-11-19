@@ -52,7 +52,6 @@ namespace bin2cpp
   Description:
     Returns the application version number.
   */
-  double getVersionNumber();
   const char * getVersionString();
 
   /*

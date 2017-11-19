@@ -1,13 +1,9 @@
-// cppEmbeder.cpp : Defines the entry point for the console application.
+// main.cpp : Defines the entry point for the console application.
 //
 
 #include "targetver.h"
 
 #include "bin2cpp.h"
-
-#ifdef _DEBUG
-#include "dump_sample.h"
-#endif
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -37,14 +33,6 @@ void printUsage()
   printf("    override (optional):   Tells bin2cpp to over write the destination files.\n");
   printf("\n");
 }
-
-#ifdef _DEBUG
-void foo()
-{
-  bin2cpp::EmbededFile & appIcon = bin2cpp::getEmbededApplicationIcon();
-  appIcon.getNumSegments();
-}
-#endif
 
 bool isNumeric(const char * iValue)
 {

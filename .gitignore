@@ -1,0 +1,9 @@
+/msvc/*.sdf
+/msvc/*.suo
+/msvc/*.user
+/msvc/ipch
+/msvc/generated_files
+/msvc/Win32
+/msvc/*.opensdf
+/msvc/bin2cppTest.x86.release.xml
+/msvc/bin2cppTest.x86.debug.xml

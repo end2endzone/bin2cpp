@@ -4,10 +4,10 @@
 #include <string>
 #include <stdlib.h>
 #include "MD5.h"
+#include "..\version_info.h"
 
 namespace bin2cpp
 {
-
   std::string gHexSymbols[256];
   std::string gSmallestSymbols[256];
   std::string gOctSymbols[256];
@@ -536,17 +536,9 @@ namespace bin2cpp
     return "Unknown";
   }
 
-  double getVersionNumber()
-  {
-    return 1.4;
-  }
-
   const char * getVersionString()
   {
-    static const int BUFFER_SIZE = 5;
-    static char buffer[BUFFER_SIZE];
-    sprintf(buffer, "%2.1f", getVersionNumber() );
-    return buffer;
+    return BINCPP_VERSION;
   }
 
   std::string getFileHexDigest(const char * iFilePath)

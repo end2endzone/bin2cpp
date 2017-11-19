@@ -1,0 +1,4 @@
+#ifndef BINCPP_VERSION_H
+#define BINCPP_VERSION_H
+#define BINCPP_VERSION "1.4"
+#endif //BINCPP_VERSION_H

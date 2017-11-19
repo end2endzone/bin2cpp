@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Tests">
+      <UniqueIdentifier>{d379bd5a-9031-4577-b38c-80a64df4777e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{f99bba1f-d2bd-4ac6-b611-b244e989a18f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Test Results">
+      <UniqueIdentifier>{bf9ff30a-20a1-4805-9886-915c7734ea0f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\test\gtesthelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\TestExtraction.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testBinaryFile\EmbeddedBinaryFile.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testTextFile\EmbeddedTextFile.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="prebuild.bat">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="bin2cppTest.x86.debug.xml">
+      <Filter>Test Results</Filter>
+    </None>
+    <None Include="bin2cppTest.x86.release.xml">
+      <Filter>Test Results</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\test\gtesthelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\TestExtraction.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testBinaryFile\EmbeddedBinaryFile.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testTextFile\EmbeddedTextFile.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
