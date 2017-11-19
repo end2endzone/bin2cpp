@@ -120,6 +120,11 @@
     <ClInclude Include="generated_files\testBinaryFile\EmbeddedBinaryFile.h" />
     <ClInclude Include="generated_files\testTextFile\EmbeddedTextFile.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="bin2cpp.vcxproj">
+      <Project>{c831c897-220b-4a21-8bdb-fc1b9e9ba2da}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
