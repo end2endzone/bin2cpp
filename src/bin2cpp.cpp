@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <string>
 #include <stdlib.h>
-#include "MD5.h"
+#include "md5.h"
+#include "md5Ex.h"
 #include "..\version_info.h"
 
 namespace bin2cpp
@@ -424,17 +425,18 @@ namespace bin2cpp
     fprintf(cpp, "      oLength = getSegmentSize();\n");
 
     //Compute MD5 while generating cpp code
-    MD5 md5;
+    MD5_CTX context;
+    MD5Init(&context);
 
     //create buffer for each chunks from input buffer
-    char * buffer = new char[iChunkSize];
+    unsigned char * buffer = new unsigned char[iChunkSize];
     while(!feof(input))
     {
       //read a chunk of the file
       size_t readSize = fread(buffer, 1, iChunkSize, input);
 
       //send to MD5 for analysist
-      md5.update(buffer, readSize);
+      MD5Update(&context, buffer, readSize);
 
       bool isLastChunk = !(readSize == iChunkSize);
 
@@ -442,7 +444,7 @@ namespace bin2cpp
         fprintf(cpp, "      oLength = %d;\n", lastSegmentSize);
 
       //output mode 1
-      fprintf(cpp, "      buffer = \"%s\"; if (iIndex == index) return buffer; index++;\n", toCppString((unsigned char *)buffer, readSize).c_str(), readSize);
+      fprintf(cpp, "      buffer = \"%s\"; if (iIndex == index) return buffer; index++;\n", toCppString(buffer, readSize).c_str(), readSize);
 
       //output mode 2. DOES NOT COMPILE!
       //fprintf(cpp, "  { const unsigned char buffer[] = {%s}; fwrite(buffer, 1, %d, f); }\n", arrayToCppArray((unsigned char *)buffer, readSize).c_str(), readSize);
@@ -461,13 +463,16 @@ namespace bin2cpp
     delete[] buffer;
     buffer = NULL;
 
-    md5.finalize();
+    //compute final digest
+    MD5DIGEST digest;
+    MD5Final(digest.bytes, &context);
+    std::string md5String = toString(digest);
 
     //write cpp file footer
     fprintf(cpp, "      oLength = 0;\n");
     fprintf(cpp, "      return NULL;\n");
     fprintf(cpp, "    }\n");
-    fprintf(cpp, "    virtual const char * getMd5() { return \"%s\"; }\n", md5.hexdigest().c_str() );
+    fprintf(cpp, "    virtual const char * getMd5() { return \"%s\"; }\n", md5String.c_str() );
     fprintf(cpp, "    virtual char * newBuffer()\n");
     fprintf(cpp, "    {\n");
     fprintf(cpp, "      size_t size = getSize();\n");
@@ -547,7 +552,9 @@ namespace bin2cpp
     if (!f)
       return std::string();
 
-    MD5 md5;
+    //Compute MD5 while generating cpp code
+    MD5_CTX context;
+    MD5Init(&context);
 
     //create buffer for each chunks from input buffer
     static const size_t BUFFER_SIZE = 1024;
@@ -558,13 +565,17 @@ namespace bin2cpp
       size_t readSize = fread(buffer, 1, BUFFER_SIZE, f);
 
       //send to MD5 for analysist
-      md5.update(buffer, readSize);
+      MD5Update(&context, buffer, readSize);
     }
-    md5.finalize();
+
+    //compute final digest
+    MD5DIGEST digest;
+    MD5Final(digest.bytes, &context);
+    std::string md5String = toString(digest);
 
     fclose(f);
 
-    return md5.hexdigest();
+    return md5String;
   }
 
   std::string getGeneratedFileHexDigest(const char * iFilePath)
