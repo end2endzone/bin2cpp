@@ -106,8 +106,11 @@
     <ClCompile Include="..\test\gtesthelper.cpp" />
     <ClCompile Include="..\test\main.cpp" />
     <ClCompile Include="..\test\TestExtraction.cpp" />
-    <ClCompile Include="generated_files\testBinaryFile\EmbeddedBinaryFile.cpp" />
-    <ClCompile Include="generated_files\testTextFile\EmbeddedTextFile.cpp" />
+    <ClCompile Include="generated_files\testHtml100000\_testHtml100000.cpp" />
+    <ClCompile Include="generated_files\testPredictable100000\_testPredictable100000.cpp" />
+    <ClCompile Include="generated_files\testRandom100000\_testRandom100000.cpp" />
+    <ClCompile Include="generated_files\testSequential10MB\_testSequential10MB.cpp" />
+    <ClCompile Include="generated_files\testText100000\_testText100000.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin2cppTest.x86.debug.xml" />
@@ -117,12 +120,18 @@
   <ItemGroup>
     <ClInclude Include="..\test\gtesthelper.h" />
     <ClInclude Include="..\test\TestExtraction.h" />
-    <ClInclude Include="generated_files\testBinaryFile\EmbeddedBinaryFile.h" />
-    <ClInclude Include="generated_files\testTextFile\EmbeddedTextFile.h" />
+    <ClInclude Include="generated_files\testHtml100000\_testHtml100000.h" />
+    <ClInclude Include="generated_files\testPredictable100000\_testPredictable100000.h" />
+    <ClInclude Include="generated_files\testRandom100000\_testRandom100000.h" />
+    <ClInclude Include="generated_files\testSequential10MB\_testSequential10MB.h" />
+    <ClInclude Include="generated_files\testText100000\_testText100000.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="bin2cpp.vcxproj">
       <Project>{c831c897-220b-4a21-8bdb-fc1b9e9ba2da}</Project>
+    </ProjectReference>
+    <ProjectReference Include="testfilegenerator.vcxproj">
+      <Project>{f78fce3c-6b97-4bfb-9f8f-e46e36431cfd}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

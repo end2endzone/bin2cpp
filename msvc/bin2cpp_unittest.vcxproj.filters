@@ -33,22 +33,31 @@
     <ClCompile Include="..\test\TestExtraction.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="generated_files\testBinaryFile\EmbeddedBinaryFile.cpp">
+    <ClCompile Include="generated_files\testRandom100000\_testRandom100000.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="generated_files\testTextFile\EmbeddedTextFile.cpp">
+    <ClCompile Include="generated_files\testHtml100000\_testHtml100000.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testPredictable100000\_testPredictable100000.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testSequential10MB\_testSequential10MB.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testText100000\_testText100000.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="prebuild.bat">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="bin2cppTest.x86.debug.xml">
       <Filter>Test Results</Filter>
     </None>
     <None Include="bin2cppTest.x86.release.xml">
       <Filter>Test Results</Filter>
+    </None>
+    <None Include="prebuild.bat">
+      <Filter>Generated Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -58,10 +67,19 @@
     <ClInclude Include="..\test\TestExtraction.h">
       <Filter>Tests</Filter>
     </ClInclude>
-    <ClInclude Include="generated_files\testBinaryFile\EmbeddedBinaryFile.h">
+    <ClInclude Include="generated_files\testRandom100000\_testRandom100000.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="generated_files\testTextFile\EmbeddedTextFile.h">
+    <ClInclude Include="generated_files\testHtml100000\_testHtml100000.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testPredictable100000\_testPredictable100000.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testSequential10MB\_testSequential10MB.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testText100000\_testText100000.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
