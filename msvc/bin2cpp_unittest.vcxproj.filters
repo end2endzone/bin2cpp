@@ -56,9 +56,7 @@
     <None Include="bin2cppTest.x86.release.xml">
       <Filter>Test Results</Filter>
     </None>
-    <None Include="prebuild.bat">
-      <Filter>Generated Files</Filter>
-    </None>
+    <None Include="prebuild.bat" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\test\gtesthelper.h">
