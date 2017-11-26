@@ -110,6 +110,7 @@
     <ClCompile Include="generated_files\testPredictable100000\_testPredictable100000.cpp" />
     <ClCompile Include="generated_files\testRandom100000\_testRandom100000.cpp" />
     <ClCompile Include="generated_files\testSequential10MB\_testSequential10MB.cpp" />
+    <ClCompile Include="generated_files\testSmall10\_testSmall10.cpp" />
     <ClCompile Include="generated_files\testText100000\_testText100000.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +125,7 @@
     <ClInclude Include="generated_files\testPredictable100000\_testPredictable100000.h" />
     <ClInclude Include="generated_files\testRandom100000\_testRandom100000.h" />
     <ClInclude Include="generated_files\testSequential10MB\_testSequential10MB.h" />
+    <ClInclude Include="generated_files\testSmall10\_testSmall10.h" />
     <ClInclude Include="generated_files\testText100000\_testText100000.h" />
   </ItemGroup>
   <ItemGroup>

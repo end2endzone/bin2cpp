@@ -6,6 +6,7 @@
 #include "generated_files\testRandom100000\_testRandom100000.h"
 #include "generated_files\testSequential10MB\_testSequential10MB.h"
 #include "generated_files\testText100000\_testText100000.h"
+#include "generated_files\testSmall10\_testSmall10.h"
 
 gTestHelper & hlp = gTestHelper::getInstance();
 
@@ -15,6 +16,21 @@ void TestExtraction::SetUp()
 
 void TestExtraction::TearDown()
 {
+}
+
+TEST_F(TestExtraction, testSmall10)
+{
+  static const char * expectedFilePath =  "generated_files\\testSmall10\\testSmall10.bin";
+  static const char * outputFilePath =    "generated_files\\testSmall10\\testSmall10.output";
+
+  bin2cpp::File & file = bin2cpp::getTestSmall10File();
+  bool extractSuccess = file.save(outputFilePath);
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath, outputFilePath, reason);
+  ASSERT_TRUE(equal) << reason.c_str();
 }
 
 TEST_F(TestExtraction, testHtml100000)
