@@ -11,6 +11,12 @@ mkdir %OUTDIR% 1>NUL 2>NUL
 %TESTFILEGENERATOR_EXE% --file=%OUTDIR%\%TEST_NAME%.bin --size=10 --fill=text
 %BIN2CPP_EXE% %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
 
+set TEST_NAME=testPredictable1000
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+%TESTFILEGENERATOR_EXE% --file=%OUTDIR%\%TEST_NAME%.bin --size=10 --fill=text
+%BIN2CPP_EXE% %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
+
 set TEST_NAME=testRandom100000
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL

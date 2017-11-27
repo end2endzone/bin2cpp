@@ -23,7 +23,7 @@ TEST_F(TestExtraction, testSmall10)
   static const char * expectedFilePath =  "generated_files\\testSmall10\\testSmall10.bin";
   static const char * outputFilePath =    "generated_files\\testSmall10\\testSmall10.output";
 
-  bin2cpp::File & file = bin2cpp::getTestSmall10File();
+  const bin2cpp::File & file = bin2cpp::getTestSmall10File();
   bool extractSuccess = file.save(outputFilePath);
   ASSERT_TRUE(extractSuccess);
 
@@ -38,7 +38,7 @@ TEST_F(TestExtraction, testHtml100000)
   static const char * expectedFilePath =  "generated_files\\testHtml100000\\testHtml100000.bin";
   static const char * outputFilePath =    "generated_files\\testHtml100000\\testHtml100000.output";
 
-  bin2cpp::File & file = bin2cpp::getTestHtml100000File();
+  const bin2cpp::File & file = bin2cpp::getTestHtml100000File();
   bool extractSuccess = file.save(outputFilePath);
   ASSERT_TRUE(extractSuccess);
 
@@ -53,7 +53,7 @@ TEST_F(TestExtraction, testPredictable100000)
   static const char * expectedFilePath =  "generated_files\\testPredictable100000\\testPredictable100000.bin";
   static const char * outputFilePath =    "generated_files\\testPredictable100000\\testPredictable100000.output";
 
-  bin2cpp::File & file = bin2cpp::getTestPredictable100000File();
+  const bin2cpp::File & file = bin2cpp::getTestPredictable100000File();
   bool extractSuccess = file.save(outputFilePath);
   ASSERT_TRUE(extractSuccess);
 
@@ -68,7 +68,7 @@ TEST_F(TestExtraction, testRandom100000)
   static const char * expectedFilePath =  "generated_files\\testRandom100000\\testRandom100000.bin";
   static const char * outputFilePath =    "generated_files\\testRandom100000\\testRandom100000.output";
 
-  bin2cpp::File & file = bin2cpp::getTestRandom100000File();
+  const bin2cpp::File & file = bin2cpp::getTestRandom100000File();
   bool extractSuccess = file.save(outputFilePath);
   ASSERT_TRUE(extractSuccess);
 
@@ -83,7 +83,7 @@ TEST_F(TestExtraction, testSequential10MB)
   static const char * expectedFilePath =  "generated_files\\testSequential10MB\\testSequential10MB.bin";
   static const char * outputFilePath =    "generated_files\\testSequential10MB\\testSequential10MB.output";
 
-  bin2cpp::File & file = bin2cpp::getTestSequential10MBFile();
+  const bin2cpp::File & file = bin2cpp::getTestSequential10MBFile();
   bool extractSuccess = file.save(outputFilePath);
   ASSERT_TRUE(extractSuccess);
 
@@ -98,7 +98,7 @@ TEST_F(TestExtraction, testText100000)
   static const char * expectedFilePath =  "generated_files\\testText100000\\testText100000.bin";
   static const char * outputFilePath =    "generated_files\\testText100000\\testText100000.output";
 
-  bin2cpp::File & file = bin2cpp::getTestText100000File();
+  const bin2cpp::File & file = bin2cpp::getTestText100000File();
   bool extractSuccess = file.save(outputFilePath);
   ASSERT_TRUE(extractSuccess);
 
