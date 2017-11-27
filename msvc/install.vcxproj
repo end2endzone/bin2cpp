@@ -49,8 +49,13 @@ call %(FullPath)
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Running %(Filename)%(Extension)...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)%(Filename)%(Extension);%(Outputs)</Outputs>
     </CustomBuild>
+    <None Include="..\AUTHORS" />
+    <None Include="..\CHANGES" />
+    <None Include="..\INSTALL" />
+    <None Include="..\LICENSE" />
     <None Include="..\nsis\main.nsi" />
     <None Include="..\nsis\Win32.nsh" />
+    <None Include="..\README.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{740FABDE-F4E8-493F-A91C-898105887D22}</ProjectGuid>

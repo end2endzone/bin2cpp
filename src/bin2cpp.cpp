@@ -176,15 +176,28 @@ namespace bin2cpp
     //http://en.cppreference.com/w/cpp/language/escape
 
     //Build smallest symbol optimizations (printable characters)
-    gSmallestSymbols[0] = "\\0";
-    gSmallestSymbols[9] = "\\t";
     for(unsigned int i=32; i<=126; i++)
     {
       buffer[0] = i;
       buffer[1] = '\0';
       gSmallestSymbols[i] = (char*)buffer;
     }
+
+    //Control characters:
+    //https://stackoverflow.com/questions/10220401/rules-for-c-string-literals-escape-character
+    gSmallestSymbols[0x00] = "\\0";
+    gSmallestSymbols[0x07] = "\\a";   //allert (bell)
+    gSmallestSymbols[0x08] = "\\b";   //backspace
+    gSmallestSymbols[0x09] = "\\t";   //horizonal tab
+    gSmallestSymbols[0x0A] = "\\n";   //newline (or line feed)
+    gSmallestSymbols[0x0B] = "\\v";   //vertical tab
+    gSmallestSymbols[0x0C] = "\\f";   //form feed
+    gSmallestSymbols[0x0D] = "\\r";   //carriage return
+    //gSmallestSymbols[0x1B] = "\\e";   //escape.  VS2010: warning C4129: 'e' : unrecognized character escape sequence
+
     gSmallestSymbols['\"'] = "\\\"";
+    gSmallestSymbols['\''] = "\\\'";
+    gSmallestSymbols['\?'] = "\\\?";
     gSmallestSymbols['\\'] = "\\\\";
   }
 

@@ -12,6 +12,11 @@
     <None Include="..\nsis\Win32.nsh">
       <Filter>Installer Files</Filter>
     </None>
+    <None Include="..\AUTHORS" />
+    <None Include="..\CHANGES" />
+    <None Include="..\INSTALL" />
+    <None Include="..\LICENSE" />
+    <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\nsis\build_portable.bat">
