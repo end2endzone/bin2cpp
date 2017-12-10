@@ -4,6 +4,7 @@
 #include <iostream> //for std::hex
 #include <cstdlib>  //for random
 #include <ctime>    //for random
+#include <gtest/gtest.h>
 
 bool initRandomProvider();
 static bool foo = initRandomProvider();
@@ -29,15 +30,15 @@ bool substringEquals(const char * iValue, const char * iSearchValue, size_t iInd
   return false; //not found
 }
 
-void splitString(gTestHelper::StringVector & oList, const char * iValue, const char * iSplitPattern)
+void gTestHelper::splitString(gTestHelper::StringVector & oList, const char * iText, const char * iSplitPattern)
 {
   oList.clear();
   std::string accumulator;
-  std::string value = iValue;
+  std::string text = iText;
   std::string pattern = iSplitPattern;
-  for(size_t i=0; i<value.size(); i++)
+  for(size_t i=0; i<text.size(); i++)
   {
-    if (substringEquals(iValue, iSplitPattern, i, pattern.size()))
+    if (substringEquals(iText, iSplitPattern, i, pattern.size()))
     {
       //found a split pattern
 
@@ -52,7 +53,7 @@ void splitString(gTestHelper::StringVector & oList, const char * iValue, const c
     }
     else
     {
-      char tmp[] = { iValue[i], '\0' };
+      char tmp[] = { iText[i], '\0' };
       accumulator.append(tmp);
     }
   }
@@ -569,16 +570,10 @@ bool gTestHelper::getTextFileContent(const char* iFilename, gTestHelper::StringV
 	{
     while( fgets(buffer, BUFFER_SIZE, f) != NULL )
     {
-      std::string line = buffer;
-      
       //remove last CRLF at the end of the string
-      if (line.size() > 1)
-      {
-        char & last = line[line.size()-1];
-        if (last == '\n')
-          last = '\0';
-      }
+      removeCRLF(buffer);
 
+      std::string line = buffer;
       oLines.push_back(line);
     }
 		fclose(f);
@@ -708,4 +703,67 @@ bool gTestHelper::isReleaseCode()
 #else
   return false;
 #endif
+}
+
+std::string gTestHelper::getTestSuiteName()
+{
+  std::string name = ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
+  return name;
+}
+
+std::string gTestHelper::getTestCaseName()
+{
+  std::string name = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  return name;
+}
+
+std::string gTestHelper::getTestQualifiedName()
+{
+  const char * testSuiteName = ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
+  const char * testCaseName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+
+  std::string name;
+  name.append(testSuiteName);
+  name.append(".");
+  name.append(testCaseName);
+
+  return name;
+}
+
+void gTestHelper::removeCRLF(char * iBuffer)
+{
+  int index = 0;
+  while(iBuffer[index] != '\0')
+  {
+    if (iBuffer[index] == 10 && iBuffer[index+1] == 13)
+      iBuffer[index] = '\0';
+    if (iBuffer[index] == 10 && iBuffer[index+1] == '\0')
+      iBuffer[index] = '\0';
+
+    index++;
+  }
+}
+
+gTestHelper::StringVector gTestHelper::splitString(const std::string & iText, char iSplitCharacter)
+{
+  gTestHelper::StringVector values;
+  std::string accumulator;
+  for(size_t i=0; i<iText.size(); i++)
+  {
+    char c = iText[i];
+    if (c == iSplitCharacter)
+    {
+      values.push_back(accumulator);
+      accumulator = "";
+    }
+    else
+    {
+      accumulator += c;
+    }
+  }
+  if (!accumulator.empty())
+  {
+    values.push_back(accumulator);
+  }
+  return values;
 }

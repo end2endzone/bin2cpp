@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GTESTHELPER_H
+#define GTESTHELPER_H
 
 #include <string>
 #include <vector>
@@ -233,5 +234,47 @@ public:
   bool isProcessorX86();
   bool isProcessorX64();
   bool isDebugCode();
-  bool isReleaseCode(); 
+  bool isReleaseCode();
+
+  //
+  // Description
+  //  Returns the name of the current Test Suite name. ie "TestFooClass"
+  //
+  std::string getTestSuiteName();
+
+  //
+  // Description
+  //  Returns the name of the current Test Case name. ie "testConstructor"
+  //
+  std::string getTestCaseName();
+
+  //
+  // Description
+  //  Returns the fully qualified name of the current test case name. ie "TestFooClass.testConstructor"
+  //
+  std::string getTestQualifiedName();
+
+  //
+  // Description
+  //  Removes occurance of unix/windows LF, CR or CRLF into the given string.
+  // Arguments:
+  //  iBuffer: The given buffer to modify.
+  //
+  void removeCRLF(char * iBuffer);
+
+  //
+  // Description
+  //  Splits an input string into multiple string based on the given splitting character.
+  // Arguments:
+  //  iText:            The input text to split.
+  //  iSplitCharacter:  The splitting character.
+  //  iSplitPattern:    The splitting pattern.
+  // Returns
+  //  Returns a list of string.
+  //
+  gTestHelper::StringVector splitString(const std::string & iText, char iSplitCharacter);
+  void splitString(gTestHelper::StringVector & oList, const char * iText, const char * iSplitPattern);
+
 };
+
+#endif //GTESTHELPER_H

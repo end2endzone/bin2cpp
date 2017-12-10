@@ -2,13 +2,36 @@
 #include "gtesthelper.h"
 
 #include "generated_files\testHtml100000\_testHtml100000.h"
-#include "generated_files\testPredictable100000\_testPredictable100000.h"
-#include "generated_files\testRandom100000\_testRandom100000.h"
+#include "generated_files\testRandom1\_testRandom1.h"
+#include "generated_files\testRandom2\_testRandom2.h"
 #include "generated_files\testSequential10MB\_testSequential10MB.h"
+#include "generated_files\testText10\_testText10.h"
+#include "generated_files\testText1000\_testText1000.h"
 #include "generated_files\testText100000\_testText100000.h"
-#include "generated_files\testSmall10\_testSmall10.h"
 
 gTestHelper & hlp = gTestHelper::getInstance();
+
+std::string getExpectedFilePath()
+{
+  std::string file;
+  file.append("generated_files\\");
+  file.append(hlp.getTestCaseName());
+  file.append("\\");
+  file.append(hlp.getTestCaseName());
+  file.append(".bin");
+  return file;
+}
+
+std::string getActualFilePath()
+{
+  std::string file;
+  file.append("generated_files\\");
+  file.append(hlp.getTestCaseName());
+  file.append("\\");
+  file.append(hlp.getTestCaseName());
+  file.append(".output");
+  return file;
+}
 
 void TestExtraction::SetUp()
 {
@@ -18,92 +41,107 @@ void TestExtraction::TearDown()
 {
 }
 
-TEST_F(TestExtraction, testSmall10)
+TEST_F(TestExtraction, testText10)
 {
-  static const char * expectedFilePath =  "generated_files\\testSmall10\\testSmall10.bin";
-  static const char * outputFilePath =    "generated_files\\testSmall10\\testSmall10.output";
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
 
-  const bin2cpp::File & file = bin2cpp::getTestSmall10File();
-  bool extractSuccess = file.save(outputFilePath);
+  const bin2cpp::File & file = bin2cpp::getTestText10File();
+  bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
   //assert content is the same
   std::string reason;
-  bool equal = hlp.isFileEquals(expectedFilePath, outputFilePath, reason);
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
-TEST_F(TestExtraction, testHtml100000)
+TEST_F(TestExtraction, testText1000)
 {
-  static const char * expectedFilePath =  "generated_files\\testHtml100000\\testHtml100000.bin";
-  static const char * outputFilePath =    "generated_files\\testHtml100000\\testHtml100000.output";
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
 
-  const bin2cpp::File & file = bin2cpp::getTestHtml100000File();
-  bool extractSuccess = file.save(outputFilePath);
+  const bin2cpp::File & file = bin2cpp::getTestText1000File();
+  bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
   //assert content is the same
   std::string reason;
-  bool equal = hlp.isFileEquals(expectedFilePath, outputFilePath, reason);
-  ASSERT_TRUE(equal) << reason.c_str();
-}
-
-TEST_F(TestExtraction, testPredictable100000)
-{
-  static const char * expectedFilePath =  "generated_files\\testPredictable100000\\testPredictable100000.bin";
-  static const char * outputFilePath =    "generated_files\\testPredictable100000\\testPredictable100000.output";
-
-  const bin2cpp::File & file = bin2cpp::getTestPredictable100000File();
-  bool extractSuccess = file.save(outputFilePath);
-  ASSERT_TRUE(extractSuccess);
-
-  //assert content is the same
-  std::string reason;
-  bool equal = hlp.isFileEquals(expectedFilePath, outputFilePath, reason);
-  ASSERT_TRUE(equal) << reason.c_str();
-}
-
-TEST_F(TestExtraction, testRandom100000)
-{
-  static const char * expectedFilePath =  "generated_files\\testRandom100000\\testRandom100000.bin";
-  static const char * outputFilePath =    "generated_files\\testRandom100000\\testRandom100000.output";
-
-  const bin2cpp::File & file = bin2cpp::getTestRandom100000File();
-  bool extractSuccess = file.save(outputFilePath);
-  ASSERT_TRUE(extractSuccess);
-
-  //assert content is the same
-  std::string reason;
-  bool equal = hlp.isFileEquals(expectedFilePath, outputFilePath, reason);
-  ASSERT_TRUE(equal) << reason.c_str();
-}
-
-TEST_F(TestExtraction, testSequential10MB)
-{
-  static const char * expectedFilePath =  "generated_files\\testSequential10MB\\testSequential10MB.bin";
-  static const char * outputFilePath =    "generated_files\\testSequential10MB\\testSequential10MB.output";
-
-  const bin2cpp::File & file = bin2cpp::getTestSequential10MBFile();
-  bool extractSuccess = file.save(outputFilePath);
-  ASSERT_TRUE(extractSuccess);
-
-  //assert content is the same
-  std::string reason;
-  bool equal = hlp.isFileEquals(expectedFilePath, outputFilePath, reason);
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
 TEST_F(TestExtraction, testText100000)
 {
-  static const char * expectedFilePath =  "generated_files\\testText100000\\testText100000.bin";
-  static const char * outputFilePath =    "generated_files\\testText100000\\testText100000.output";
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
 
   const bin2cpp::File & file = bin2cpp::getTestText100000File();
-  bool extractSuccess = file.save(outputFilePath);
+  bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
   //assert content is the same
   std::string reason;
-  bool equal = hlp.isFileEquals(expectedFilePath, outputFilePath, reason);
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testHtml100000)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp::File & file = bin2cpp::getTestHtml100000File();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testRandom1)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp::File & file = bin2cpp::getTestRandom1File();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testRandom2)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp::File & file = bin2cpp::getTestRandom2File();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testSequential10MB)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp::File & file = bin2cpp::getTestSequential10MBFile();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }

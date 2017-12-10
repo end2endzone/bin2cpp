@@ -107,12 +107,12 @@
     <ClCompile Include="..\test\main.cpp" />
     <ClCompile Include="..\test\TestExtraction.cpp" />
     <ClCompile Include="generated_files\testHtml100000\_testHtml100000.cpp" />
-    <ClCompile Include="generated_files\testPredictable100000\_testPredictable100000.cpp" />
-    <ClCompile Include="generated_files\testPredictable1000\_testPredictable1000.cpp" />
-    <ClCompile Include="generated_files\testRandom100000\_testRandom100000.cpp" />
+    <ClCompile Include="generated_files\testRandom1\_testRandom1.cpp" />
+    <ClCompile Include="generated_files\testRandom2\_testRandom2.cpp" />
     <ClCompile Include="generated_files\testSequential10MB\_testSequential10MB.cpp" />
-    <ClCompile Include="generated_files\testSmall10\_testSmall10.cpp" />
     <ClCompile Include="generated_files\testText100000\_testText100000.cpp" />
+    <ClCompile Include="generated_files\testText1000\_testText1000.cpp" />
+    <ClCompile Include="generated_files\testText10\_testText10.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin2cppTest.x86.debug.xml" />
@@ -132,12 +132,12 @@
     <ClInclude Include="..\test\gtesthelper.h" />
     <ClInclude Include="..\test\TestExtraction.h" />
     <ClInclude Include="generated_files\testHtml100000\_testHtml100000.h" />
-    <ClInclude Include="generated_files\testPredictable100000\_testPredictable100000.h" />
-    <ClInclude Include="generated_files\testPredictable1000\_testPredictable1000.h" />
-    <ClInclude Include="generated_files\testRandom100000\_testRandom100000.h" />
+    <ClInclude Include="generated_files\testRandom1\_testRandom1.h" />
+    <ClInclude Include="generated_files\testRandom2\_testRandom2.h" />
     <ClInclude Include="generated_files\testSequential10MB\_testSequential10MB.h" />
-    <ClInclude Include="generated_files\testSmall10\_testSmall10.h" />
     <ClInclude Include="generated_files\testText100000\_testText100000.h" />
+    <ClInclude Include="generated_files\testText1000\_testText1000.h" />
+    <ClInclude Include="generated_files\testText10\_testText10.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="bin2cpp.vcxproj">

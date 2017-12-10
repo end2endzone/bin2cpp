@@ -1,39 +1,39 @@
 @echo off
 
-set TEST_NAME=testSmall10
+set TEST_NAME=testText10
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=10 --fill=text
 bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
 
-set TEST_NAME=testPredictable1000
+set TEST_NAME=testText1000
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
-testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=10 --fill=text
-bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
-
-set TEST_NAME=testRandom100000
-set OUTDIR=.\generated_files\%TEST_NAME%
-mkdir %OUTDIR% 1>NUL 2>NUL
-testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=random
-bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
-
-set TEST_NAME=testPredictable100000
-set OUTDIR=.\generated_files\%TEST_NAME%
-mkdir %OUTDIR% 1>NUL 2>NUL
-testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=predictable
-bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
-
-set TEST_NAME=testHtml100000
-set OUTDIR=.\generated_files\%TEST_NAME%
-mkdir %OUTDIR% 1>NUL 2>NUL
-testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=html
+testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=text
 bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
 
 set TEST_NAME=testText100000
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=text
+bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
+
+set TEST_NAME=testRandom1
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=random --seed=1
+bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
+
+set TEST_NAME=testRandom2
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=random --seed=2
+bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
+
+set TEST_NAME=testHtml100000
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=html
 bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
 
 set TEST_NAME=testSequential10MB
