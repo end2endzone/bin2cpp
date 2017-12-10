@@ -173,8 +173,8 @@ deploy:
   auth_token:
     secure: BgyLisMc154qWpkyBdh8OD+D9HMM+YnBkh7H4MEUShKO3aCU+Fn/XVGJ07fTsRmH
   artifact: /(.*\.zip|.*\.exe)/
-  draft: true
-  prerelease: true
+  draft: false
+  prerelease: false
   force_update: true
 
 #---------------------------------#
