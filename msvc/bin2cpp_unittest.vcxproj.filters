@@ -93,4 +93,7 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="generate_test_files.bat" />
+  </ItemGroup>
 </Project>
