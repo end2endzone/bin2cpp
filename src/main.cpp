@@ -18,7 +18,7 @@
 void printHeader()
 {
   printf("bin2cpp v%s\n", bin2cpp::getVersionString() );
-  printf("Copyright (C) 2013-2014 end2endzone.com. All rights reserved.\n");
+  printf("Copyright (C) 2013-2017 end2endzone.com. All rights reserved.\n");
 }
 
 void printUsage()
