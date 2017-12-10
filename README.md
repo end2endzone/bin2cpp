@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/q9k0ebb971o475qi/branch/master?svg=true)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master)
+
 # bin2cpp
 
 bin2cpp is a command line tool for embedding small files (like images, icons or raw data files) into a C++ executable.
