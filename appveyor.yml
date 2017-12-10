@@ -21,6 +21,10 @@ version: 1.3.{build}
 # Build worker image (VM template)
 image: Visual Studio 2015
 
+# scripts that are called at very beginning, before repo cloning
+init:
+  - git config --global core.autocrlf true
+
 # fetch repository as zip archive
 shallow_clone: true                 # default is "false"
 
