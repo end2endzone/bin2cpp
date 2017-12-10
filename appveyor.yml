@@ -45,59 +45,11 @@ environment:
   GTEST_RELEASE_LIBRARIES: gtest.lib
   GTEST_INCLUDE: c:\projects\third_party\googletest\include
   GTEST_LIBRARY_DIR: c:\projects\third_party\googletest\msvc2010
+  PRODUCT_VERSION: 1.4
 
 # scripts that run after cloning repository
 install:
-- cmd: >-
-    @echo off
-
-    REM ======================================================================
-
-    REM Cloning google test repository
-
-    REM =======================================================================
-
-    git clone https://github.com/google/googletest.git c:\projects\third_party\googletest
-
-    cd /d c:\projects\third_party\googletest
-
-    git checkout release-1.6.0
-
-    REM =======================================================================
-
-    REM Generating google test Visual Studio 2010 solution
-
-    REM =======================================================================
-
-    mkdir msvc2010
-
-    cd msvc2010
-
-    cmake -G "Visual Studio 10 2010" -Dgtest_force_shared_crt=ON -DCMAKE_CXX_FLAGS_DEBUG=/MDd -DCMAKE_CXX_FLAGS_RELEASE=/MD "c:\projects\third_party\googletest"
-
-    cd..
-
-    REM =======================================================================
-
-    REM Displaying Environnment Variables
-
-    REM =======================================================================
-
-    set
-
-    REM =======================================================================
-
-    REM Building google test library
-
-    REM =======================================================================
-
-    msbuild "msvc2010\gtest.sln" /m /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
-
-    REM =======================================================================
-
-    REM Done
-
-    REM =======================================================================
+- cmd: call c:\projects\bin2cpp\ci\appveyor\install.bat
 
 #---------------------------------#
 #       build configuration       #
@@ -124,34 +76,7 @@ build:
 
 # to run your custom scripts instead of automatic tests
 test_script:
-- cmd: >-
-    REM ======================================================================
-
-    REM Running unit tests
-
-    REM =======================================================================
-
-    cd /d c:\projects\bin2cpp\msvc
-
-    set path=%PATH%;c:\projects\bin2cpp\msvc\Win32\Release
-
-    bin2cpp_unittest.exe --gtest_filter=-TestExtraction.testRandom100000
-
-    REM ======================================================================
-
-    REM Uploading test results to AppVeyor
-
-    REM =======================================================================
-
-    set TEST_RESULT_URL=https://ci.appveyor.com/api/testresults/junit/%APPVEYOR_JOB_ID%
-
-    set TEST_RESULT_FILE=%CD%\bin2cppTest.x86.release.xml
-
-    echo TEST_RESULT_URL=%TEST_RESULT_URL%
-
-    echo TEST_RESULT_FILE=%TEST_RESULT_FILE%
-
-    powershell "(New-Object 'System.Net.WebClient').UploadFile($($env:TEST_RESULT_URL), $($env:TEST_RESULT_FILE))"
+- cmd: call c:\projects\bin2cpp\ci\appveyor\test_script.bat
 
 #---------------------------------#
 #      artifacts configuration    #
@@ -175,8 +100,10 @@ deploy:
 
   # Deploy to GitHub Releases
 - provider: GitHub
-  tag: v$(APPVEYOR_BUILD_VERSION)-win32
-  release: bin2cpp-v$(APPVEYOR_BUILD_VERSION)-win32
+  #tag: v$(APPVEYOR_BUILD_VERSION)-win32
+  tag: v$(PRODUCT_VERSION)-win32
+  #release: bin2cpp-v$(APPVEYOR_BUILD_VERSION)-win32
+  release: bin2cpp-v$(PRODUCT_VERSION)-win32
   description: Latest successful AppVeyor CI builds of branch '$(APPVEYOR_REPO_BRANCH)'
   auth_token:
     secure: BgyLisMc154qWpkyBdh8OD+D9HMM+YnBkh7H4MEUShKO3aCU+Fn/XVGJ07fTsRmH
