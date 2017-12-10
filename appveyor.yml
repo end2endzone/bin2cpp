@@ -1,0 +1,156 @@
+# Notes:
+#   - Minimal appveyor.yml file is an empty file. All sections are optional.
+#   - Indent each level of configuration with 2 spaces. Do not use tabs!
+#   - All section names are case-sensitive.
+#   - Section names should be unique on each level.
+
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+# version format
+version: 1.3.{build}
+
+# you can use {branch} name in version format too
+# version: 1.0.{build}-{branch}
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Build worker image (VM template)
+image: Visual Studio 2015
+
+# fetch repository as zip archive
+shallow_clone: true                 # default is "false"
+
+# clone directory
+clone_folder: c:\projects\bin2cpp
+
+# environment variables
+environment:
+  GTEST_DEBUG_LIBRARIES: gtest.lib
+  GTEST_RELEASE_LIBRARIES: gtest.lib
+  GTEST_INCLUDE: c:\projects\third_party\googletest\include
+  GTEST_LIBRARY_DIR: c:\projects\third_party\googletest\msvc2010
+
+# scripts that run after cloning repository
+install:
+- cmd: >-
+    @echo off
+    REM ======================================================================
+    REM Cloning google test repository
+    REM =======================================================================
+    git clone https://github.com/google/googletest.git c:\projects\third_party\googletest
+    cd /d c:\projects\third_party\googletest
+    git checkout release-1.6.0
+
+    REM =======================================================================
+    REM Generating google test Visual Studio 2010 solution
+    REM =======================================================================
+    mkdir msvc2010
+    cd msvc2010
+    cmake -G "Visual Studio 10 2010" -Dgtest_force_shared_crt=ON -DCMAKE_CXX_FLAGS_DEBUG=/MDd -DCMAKE_CXX_FLAGS_RELEASE=/MD "c:\projects\third_party\googletest"
+    cd..
+
+    REM =======================================================================
+    REM Displaying Environnment Variables
+    REM =======================================================================
+    set
+
+    REM =======================================================================
+    REM Building google test library
+    REM =======================================================================
+    msbuild "msvc2010\gtest.sln" /m /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+
+    REM =======================================================================
+    REM Done
+    REM =======================================================================
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+# build platform, i.e. x86, x64, Any CPU. This setting is optional.
+#platform: x86
+
+# build Configuration, i.e. Debug, Release, etc.
+configuration: Release
+
+# to add several configurations to build matrix:
+#configuration:
+#  - Debug
+#  - Release
+
+build:
+  project: msvc\bin2cpp.sln
+  verbosity: minimal
+  
+#---------------------------------#
+#       tests configuration       #
+#---------------------------------#
+
+# to run your custom scripts instead of automatic tests
+test_script:
+- cmd: >-
+    REM ======================================================================
+    REM Running unit tests
+    REM =======================================================================
+    cd /d c:\projects\bin2cpp\msvc
+    set path=%PATH%;c:\projects\bin2cpp\msvc\Win32\Release
+    bin2cpp_unittest.exe --gtest_filter=-TestExtraction.testRandom100000
+
+    REM ======================================================================
+    REM Uploading test results to AppVeyor
+    REM =======================================================================
+    set TEST_RESULT_URL=https://ci.appveyor.com/api/testresults/junit/%APPVEYOR_JOB_ID%
+    set TEST_RESULT_FILE=%CD%\bin2cppTest.x86.release.xml
+    echo TEST_RESULT_URL=%TEST_RESULT_URL%
+    echo TEST_RESULT_FILE=%TEST_RESULT_FILE%
+    powershell "(New-Object 'System.Net.WebClient').UploadFile($($env:TEST_RESULT_URL), $($env:TEST_RESULT_FILE))"
+
+#---------------------------------#
+#      artifacts configuration    #
+#---------------------------------#
+
+artifacts:
+- path: msvc\bin2cppTest.x86.release.xml
+  name: bin2cppTest.x86.release.xml
+- path: nsis\bin\*.zip
+  name: bin2cpp win32 portable
+- path: nsis\bin\*.exe
+  name: bin2cpp win32 setup
+  
+#---------------------------------#
+#     deployment configuration    #
+#---------------------------------#
+
+#     # providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
+#     # provider names are case-sensitive!
+#     deploy:
+#     
+#       # Deploy to GitHub Releases
+#     - provider: GitHub
+#       tag: v$(APPVEYOR_BUILD_VERSION)-win32
+#       release: bin2cpp-v$(APPVEYOR_BUILD_VERSION)-win32
+#       description: Latest successful AppVeyor CI builds of branch '$(APPVEYOR_REPO_BRANCH)'
+#       auth_token:
+#         secure: BgyLisMc154qWpkyBdh8OD+D9HMM+YnBkh7H4MEUShKO3aCU+Fn/XVGJ07fTsRmH
+#       artifact: /(.*\.zip|.*\.exe)/
+#       draft: true
+#       prerelease: true
+#       force_update: true
+
+#---------------------------------#
+#         notifications           #
+#---------------------------------#
+
+notifications:
+- provider: Email
+  to:
+  - end2endzone@gmail.com
+  subject: 'Build {{status}}'                  # optional
+  message: "{{message}}, {{commitId}}, ..."    # optional
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: true
