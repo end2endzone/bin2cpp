@@ -161,21 +161,21 @@ artifacts:
 #     deployment configuration    #
 #---------------------------------#
 
-#     # providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
-#     # provider names are case-sensitive!
-#     deploy:
-#     
-#       # Deploy to GitHub Releases
-#     - provider: GitHub
-#       tag: v$(APPVEYOR_BUILD_VERSION)-win32
-#       release: bin2cpp-v$(APPVEYOR_BUILD_VERSION)-win32
-#       description: Latest successful AppVeyor CI builds of branch '$(APPVEYOR_REPO_BRANCH)'
-#       auth_token:
-#         secure: BgyLisMc154qWpkyBdh8OD+D9HMM+YnBkh7H4MEUShKO3aCU+Fn/XVGJ07fTsRmH
-#       artifact: /(.*\.zip|.*\.exe)/
-#       draft: true
-#       prerelease: true
-#       force_update: true
+# providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
+# provider names are case-sensitive!
+deploy:
+
+  # Deploy to GitHub Releases
+- provider: GitHub
+  tag: v$(APPVEYOR_BUILD_VERSION)-win32
+  release: bin2cpp-v$(APPVEYOR_BUILD_VERSION)-win32
+  description: Latest successful AppVeyor CI builds of branch '$(APPVEYOR_REPO_BRANCH)'
+  auth_token:
+    secure: BgyLisMc154qWpkyBdh8OD+D9HMM+YnBkh7H4MEUShKO3aCU+Fn/XVGJ07fTsRmH
+  artifact: /(.*\.zip|.*\.exe)/
+  draft: true
+  prerelease: true
+  force_update: true
 
 #---------------------------------#
 #         notifications           #
