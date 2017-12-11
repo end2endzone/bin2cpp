@@ -15,10 +15,25 @@
 #include <windows.h>
 #endif
 
+int getCopyrightYear()
+{
+  static const int DEFAULT_YEAR = 2016;
+  std::string compilationDate = __DATE__;
+  size_t space1Pos = compilationDate.find(" ", 0);
+  if (space1Pos == std::string::npos)
+    return DEFAULT_YEAR;
+  size_t space2Pos = compilationDate.find(" ", space1Pos+1);
+  if (space2Pos == std::string::npos)
+    return DEFAULT_YEAR;
+  const char * yearStr = &compilationDate[space2Pos+1];
+  int year = atoi(yearStr);
+  return year;
+}
+
 void printHeader()
 {
   printf("bin2cpp v%s\n", bin2cpp::getVersionString() );
-  printf("Copyright (C) 2013-2017 end2endzone.com. All rights reserved.\n");
+  printf("Copyright (C) 2013-%d end2endzone.com. All rights reserved.\n", getCopyrightYear());
 }
 
 void printUsage()
