@@ -1,4 +1,5 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/q9k0ebb971o475qi/branch/master?svg=true)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master)
+[![Tests status](http://teststatusbadge.azurewebsites.net/api/status/end2endzone/bin2cpp)](https://ci.appveyor.com/project/end2endzone/bin2cpp)
 
 # bin2cpp
 
