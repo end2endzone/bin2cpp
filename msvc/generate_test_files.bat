@@ -30,6 +30,12 @@ mkdir %OUTDIR% 1>NUL 2>NUL
 testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=random --seed=2
 bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
 
+set TEST_NAME=testRandom3
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=random --seed=3
+bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
+
 set TEST_NAME=testHtml100000
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL

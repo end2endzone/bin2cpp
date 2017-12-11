@@ -54,6 +54,9 @@
     <ClCompile Include="generated_files\testText100000\_testText100000.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="generated_files\testRandom3\_testRandom3.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin2cppTest.x86.debug.xml">
@@ -90,6 +93,9 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="generated_files\testText100000\_testText100000.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testRandom3\_testRandom3.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
