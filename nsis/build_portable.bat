@@ -15,6 +15,7 @@ set outfile=".\bin\bin2cpp v%PRODUCT_VERSION% %PRODUCT_PLATFORM% portable.zip"
 set infiles=
 set infiles=%infiles% "..\msvc\%PRODUCT_PLATFORM%\Release\bin2cpp.exe"
 set infiles=%infiles% "..\msvc\%PRODUCT_PLATFORM%\Release\bin2cpp_unittest.exe"
+set infiles=%infiles% "..\msvc\%PRODUCT_PLATFORM%\Release\generate_test_files.bat"
 set infiles=%infiles% "..\msvc\%PRODUCT_PLATFORM%\Release\testfilegenerator.exe"
 set infiles=%infiles% "..\AUTHORS"
 set infiles=%infiles% "..\CHANGES"

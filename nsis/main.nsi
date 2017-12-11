@@ -79,6 +79,7 @@ Section #"Full install" SEC01
   SetOverwrite on
   File "..\msvc\${PRODUCT_PLATFORM}\Release\${PRODUCT_MAIN_EXE_NAME}"
   File "..\msvc\${PRODUCT_PLATFORM}\Release\bin2cpp_unittest.exe"
+  File "..\msvc\${PRODUCT_PLATFORM}\Release\generate_test_files.bat"
   File "..\msvc\${PRODUCT_PLATFORM}\Release\testfilegenerator.exe"
   File "..\AUTHORS"
   File "..\CHANGES"
@@ -135,6 +136,7 @@ Section Uninstall
   
   Delete "$INSTDIR\${PRODUCT_MAIN_EXE_NAME}"
   Delete "$INSTDIR\bin2cpp_unittest.exe"
+  Delete "$INSTDIR\generate_test_files.bat"
   Delete "$INSTDIR\testfilegenerator.exe"
   Delete "$INSTDIR\AUTHORS"
   Delete "$INSTDIR\CHANGES"
