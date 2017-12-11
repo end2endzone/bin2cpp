@@ -448,13 +448,16 @@ namespace bin2cpp
       //read a chunk of the file
       size_t readSize = fread(buffer, 1, iChunkSize, input);
 
-      //send to MD5 for analysist
-      MD5Update(&context, buffer, readSize);
-
       bool isLastChunk = !(readSize == iChunkSize);
 
-      if (isLastChunk)
+      if (isLastChunk || readSize == 0)
         fprintf(cpp, "      oLength = %d;\n", lastSegmentSize);
+
+      if (readSize == 0)
+        continue; //nothing to output if nothing was read
+
+      //send to MD5 for analysist
+      MD5Update(&context, buffer, readSize);
 
       //output mode 1
       fprintf(cpp, "      buffer = \"%s\"; if (iIndex == index) return buffer; index++;\n", toCppString(buffer, readSize).c_str(), readSize);

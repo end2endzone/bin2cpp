@@ -9,6 +9,7 @@
 #include "generated_files\testText10\_testText10.h"
 #include "generated_files\testText1000\_testText1000.h"
 #include "generated_files\testText100000\_testText100000.h"
+#include "generated_files\testIssue13\_testIssue13.h"
 
 gTestHelper & hlp = gTestHelper::getInstance();
 
@@ -153,6 +154,21 @@ TEST_F(TestExtraction, testSequential10MB)
   static const std::string outputFilePath   = getActualFilePath();
 
   const bin2cpp::File & file = bin2cpp::getTestSequential10MBFile();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testIssue13)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp::File & file = bin2cpp::getTestIssue13File();
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 

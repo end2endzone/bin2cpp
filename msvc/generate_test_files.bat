@@ -60,4 +60,12 @@ REM   mkdir %OUTDIR% 1>NUL 2>NUL
 REM   testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=31457280 --fill=sequential
 REM   bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 450 -override
 
+set TEST_NAME=testIssue13
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+echo testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=random --seed=1
+testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=random --seed=1
+echo bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 100 -override
+bin2cpp.exe %OUTDIR%\%TEST_NAME%.bin %OUTDIR% _%TEST_NAME%.h %TEST_NAME% 100 -override
+
 dir >NUL
