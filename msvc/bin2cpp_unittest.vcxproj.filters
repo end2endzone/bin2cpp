@@ -60,6 +60,27 @@
     <ClCompile Include="generated_files\testIssue13\_testIssue13.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="generated_files\testRandom4\_testRandom4.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testRandom5\_testRandom5.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testRandom6\_testRandom6.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testRandom7\_testRandom7.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testRandom8\_testRandom8.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testIssue12\_testIssue12.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testIssue12Mini\_testIssue12Mini.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin2cppTest.x86.debug.xml">
@@ -102,6 +123,27 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="generated_files\testIssue13\_testIssue13.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testRandom4\_testRandom4.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testRandom5\_testRandom5.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testRandom6\_testRandom6.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testRandom7\_testRandom7.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testRandom8\_testRandom8.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testIssue12\_testIssue12.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testIssue12Mini\_testIssue12Mini.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
