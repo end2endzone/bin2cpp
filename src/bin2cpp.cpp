@@ -414,7 +414,7 @@ namespace bin2cpp
     fprintf(cpp, " * Copyright (C) 2013-%d end2endzone.com. All rights reserved.\n", ::getCopyrightYear());
     fprintf(cpp, " * Do not modify this file.\n");
     fprintf(cpp, " */\n");
-    fprintf(cpp, "#include \"%s\"\n", headerPath.c_str() );
+    fprintf(cpp, "#include \"%s\"\n", iHeaderFilename );
     fprintf(cpp, "#include <stdio.h> //for FILE\n");
     fprintf(cpp, "#include <string> //for memcpy\n");
     fprintf(cpp, "namespace bin2cpp\n");
