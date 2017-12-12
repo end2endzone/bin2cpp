@@ -267,7 +267,7 @@ namespace bin2cpp
     }
 
     //a NULL character cannot be followed by a single character if it is between 0 and 9
-    for(size_t i=1; i<iSize-1; i++)
+    for(size_t i=0; i<iSize-1; i++)
     {
       unsigned char c0 = iBuffer[i];
       unsigned char c1 = iBuffer[i+1];
