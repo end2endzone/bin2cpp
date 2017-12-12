@@ -69,6 +69,7 @@ void usage()
   printf("  --file: Path of the generated file\n");
   printf("  --size: Size of generated file in bytes. Defaults to 1024\n");
   printf("  --seed: Define a seed value to initialze the random number generator. Defaults to local time\n");
+  printf("  --skip: Define the number of random number to skip before dumping to the file. Defaults to 0\n");
   printf("  --fill: Name of the filling strategy. Must be one of the following:\n");
   printf("          sequential  : Insert values from 0x00 to 0xFF into the file. Default option.\n");
   printf("          random      : Insert random data into the file\n");
@@ -82,7 +83,8 @@ enum RETURN_CODE
   MISSING_FILE,
   INVALID_FILE_SIZE,
   INVALID_FILL_PARAMETER,
-  INVALID_SEED
+  INVALID_SEED,
+  INVALID_SKIP
 };
 
 int main(int argc, char **argv)
@@ -93,6 +95,7 @@ int main(int argc, char **argv)
   std::string file;
   int size = 1024; //in bytes
   unsigned int seed = time(NULL);
+  unsigned int skip = 0;
   std::string fill = "sequential";
 
   if (!parseArgument("file", file, argc, argv))
@@ -117,10 +120,21 @@ int main(int argc, char **argv)
   if (parseArgument("seed", tmpSeed, argc, argv))
   {
     seed = tmpSeed;
-    if (seed <= 0)
+    if (seed < 0)
     {
       printf("Error: Invalid seed value!\n");
       return INVALID_SEED;
+    }
+  }
+
+  int tmpSkip = 0;
+  if (parseArgument("skip", tmpSkip, argc, argv))
+  {
+    skip = tmpSkip;
+    if (skip < 0)
+    {
+      printf("Error: Invalid skip value!\n");
+      return INVALID_SKIP;
     }
   }
 
@@ -161,7 +175,15 @@ int main(int argc, char **argv)
   //fill file according to fill strategy
   if (fill == "random")
   {
+    //init random number generator
     srand( seed );
+
+    //skip n bytes
+    for(unsigned int i=0; i<skip; i++)
+    {
+      int dummy = rand();
+    }
+
     //write content
     for(int i=0; i<size; i++)
     {
