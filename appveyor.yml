@@ -105,7 +105,7 @@ deploy:
   tag: v$(PRODUCT_VERSION)-win32
   #release: bin2cpp-v$(APPVEYOR_BUILD_VERSION)-win32
   release: bin2cpp-v$(PRODUCT_VERSION)-win32
-  description: Latest successful AppVeyor CI builds of branch '$(APPVEYOR_REPO_BRANCH)'
+  description: Latest successful AppVeyor CI builds of branch '$(APPVEYOR_REPO_BRANCH)', commit $(APPVEYOR_REPO_COMMIT)
   auth_token:
     secure: BgyLisMc154qWpkyBdh8OD+D9HMM+YnBkh7H4MEUShKO3aCU+Fn/XVGJ07fTsRmH
   artifact: /(.*\.zip|.*\.exe)/
