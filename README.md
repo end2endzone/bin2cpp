@@ -62,7 +62,7 @@ Hello World!
 
 ### Command:
 ```batchfile
-bin2cpp.exe html5skeleton.html .\outdir resourcehtml5skeleton.h HtmlSample 250 -override
+bin2cpp.exe html5skeleton.html .\outdir resourcehtml5skeleton.h HtmlSample 50 -override
 ```
 
 ### Console output
@@ -70,7 +70,7 @@ bin2cpp.exe html5skeleton.html .\outdir resourcehtml5skeleton.h HtmlSample 250 -
 ```batchfile
 bin2cpp v1.4
 Copyright (C) 2013-2017 end2endzone.com. All rights reserved.
-Embedding "html5skeleton.html" into "resourcehtml5skeleton.h" using chunks of 250 bytes overriding existing files...
+Embedding "html5skeleton.html" into "resourcehtml5skeleton.h" using chunks of 50 bytes overriding existing files...
 Done.
 ```
 
