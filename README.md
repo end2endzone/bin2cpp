@@ -29,7 +29,7 @@ It is designed to be easy to use by developers and to provide easy call function
 
 The generated functions that reads and extracts the embedded content does not rely on external libraries so you don't need to setup your projects to use any third party library to start using bin2cpp. All your embedded data can be accessed right away.
 
-# Usage
+# Command Line Usage
 
 **Usage:** bin2cpp [input file] [output folder] [header filename] [function identifier] [chunk size] [-override].
 
@@ -46,6 +46,7 @@ The generated functions that reads and extracts the embedded content does not 
 # Example
 
 ### Input File:
+html5skeleton.html
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -182,6 +183,124 @@ namespace bin2cpp
 }; //bin2cpp
 ```
 
+### Code sample
+```cpp
+#include <stdio.h>
+#include <string>
+#include "base64.h"
+#include "resourcehtml5skeleton.h" //a single include file is all you need
+
+int main(int argc, char* argv[])
+{
+  //get a reference to the embedded file
+  const bin2cpp::File & resource = bin2cpp::getHtmlSampleFile();
+
+  //print information about the file.
+  printf("Embedded file '%s' is %d bytes long.\n", resource.getFilename(), resource.getSize());
+  printf("The MD5 of the file is %s.\n", resource.getMd5());
+
+  //Saving content back to a file.
+  printf("Saving embedded file to 'html5skeleton_copy.html'...\n");
+  bool saved = resource.save("html5skeleton_copy.html");
+  if (saved)
+    printf("saved\n");
+  else
+    printf("failed\n");
+
+  //encoding content as base64
+  char * buffer = resource.newBuffer(); //returns a new buffer with a copy of the file. Ownership is transfered to the local function
+  size_t bufferSize = resource.getSize();
+  std::string encodedFile = toBase64(buffer, bufferSize); //binary to base64 encoder
+  delete buffer; //delete allocatd buffer from newBuffer()
+  buffer = NULL;
+
+  //do something with the base64 encoded file
+  //...
+
+  return 0;
+}
+```
+
+# Installing
+
+This section explains how to compile and build the software and how to get a development environment running.
+
+## Compatible with
+
+bin2cpp is only available for the Windows platform and has been tested with the following version of Windows:
+
+*   Windows XP
+*   Windows Vista
+*   Windows 7
+
+## Prerequisites
+
+The following software must be installed on the system for compiling source code:
+
+* Visual Studio 2010 (or newer) (There are plans to migrate the software to other platform. See [issue #9](https://github.com/end2endzone/bin2cpp/issues/9))
+* [Google Test v1.6.0](https://github.com/google/googletest/tree/release-1.6.0) (untested with other versions)
+* [CMake](http://www.cmake.org/) for compilation of Google Test library. (Tested with CMake 3.9.6)
+* [bin2cpp source code](https://github.com/end2endzone/bin2cpp)
+
+## Build steps
+
+### Google Test
+
+1) Download googletest source code to your computer using one of the following:
+   1) Download googletest as a [zip file](https://github.com/google/googletest/archive/release-1.6.0.zip) and extract to a temporary directory (for example c:\projects\third_party\googletest).
+   2) Clone the git repository using the following commands:
+      * git clone https://github.com/google/googletest.git c:\projects\third_party\googletest
+      * cd /d c:\projects\third_party\googletest
+      * git checkout release-1.6.0
+
+2) Generate googletest Visual Studio 2010 solution using cmake. Enter the following commands:
+   * cd c:\projects\third_party\googletest
+   * mkdir msvc2010
+   * cd msvc2010
+   * cmake -G "Visual Studio 10 2010" -Dgtest_force_shared_crt=ON -DCMAKE_CXX_FLAGS_DEBUG=/MDd -DCMAKE_CXX_FLAGS_RELEASE=/MD "c:\projects\third_party\googletest"
+
+3) Open the generated Visual Studio 2010 solution file located in 
+   ***c:\projects\third_party\googletest\msvc2010\gtest.sln***
+
+### Define environment variables
+Note: this step need to be executed once.
+
+bin2cpp needs to know where the libraries of googletest are located (debug & release).
+Define the following environement variables:
+
+| Name                     | Value                                        |
+|--------------------------|----------------------------------------------|
+|  GTEST_DEBUG_LIBRARIES   | gtest.lib                                    |
+|  GTEST_RELEASE_LIBRARIES | gtest.lib                                    |
+|  GTEST_INCLUDE           | c:\projects\third_party\googletest\include   |
+|  GTEST_LIBRARY_DIR       | c:\projects\third_party\googletest\msvc2010  |
+ 
+### bin2cpp
+
+1) Download the [bin2cpp source code](https://github.com/end2endzone/bin2cpp/tags) and extract the content to a temporary directory (for example c:\projects\bin2cpp).
+
+2) Open the Visual Studio 2010 solution file located in 
+   ***c:\projects\bin2cpp\msvc\bin2cpp.sln***
+
+## Testing
+bin2cpp comes with unit tests which tests for multiple combinations to make sure that input files are always encoded without errors.
+
+Test are build using the Google Test v1.6.0 framework. For more information on how googletest is working, see the [google test documentation primer](https://github.com/google/googletest/blob/release-1.8.0/googletest/docs/V1_6_Primer.md).  
+
+Test are automatically build when building the solution. Please see the '*build step*' section for details on how to build the software.
+
+Test can be executed from the following two locations:
+
+1) From the Visual Studio IDE:
+   1) Select the project '*bin2cpp_unittest*' as StartUp project.
+   2) Hit CTRL+F5 (Start Without Debugging)
+2) From the output binaries folder:
+   1) Open a file navigator and browse to the output folder(for example c:\projects\bin2cpp\msvc\Win32\Release)
+   2) Run the '*generate_test_files.bat*' batch script. The script will generate all required input files.
+   3) Run the '*bin2cpp_unittest.exe*'
+
+See also the latest test results at the beginning of the document.
+
 # Screenshots
 
 bin2cpp v1.3 Sample[![bin2cpp v1.3 Sample](http://www.end2endzone.com/wp-content/uploads/2015/01/bin2cpp-v1.3-done.png)](http://www.end2endzone.com/wp-content/uploads/2015/01/bin2cpp-v1.3-done.png)
@@ -196,27 +315,17 @@ bin2cpp is only available for the Windows platform and has been tested with the 
 *   Windows XP
 *   Windows Vista
 *   Windows 7
+  
+# Versioning
+
+We use [Semantic Versioning 2.0.0](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/end2endzone/bin2cpp/tags).
+
+# Authors
+
+* **Antoine Beauchamp** - *Initial work* - [end2endzone](https://github.com/end2endzone)
+
+See also the list of [contributors](https://github.com/end2endzone/bin2cpp/blob/master/AUTHORS) who participated in this project.
 
 # License
 
-MIT License
-
-Copyright (c) 2017 end2endzone
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
