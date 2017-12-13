@@ -15,13 +15,13 @@ bin2cpp is only available for the Windows platform and has been tested with the 
 The following software must be installed on the system for compiling source code:
 
 * Visual Studio 2010 (or newer) (There are plans to migrate the software to other platform. See [issue #9](https://github.com/end2endzone/bin2cpp/issues/9))
-* [Google Test v1.6.0](https://github.com/google/googletest/tree/release-1.6.0) (untested with other versions)
-* [CMake](http://www.cmake.org/) for compilation of Google Test library. (Tested with CMake 3.9.6)
-* [bin2cpp source code](https://github.com/end2endzone/bin2cpp)
+* [Google C++ Testing Framework v1.6.0](https://github.com/google/googletest/tree/release-1.6.0) (untested with other versions)
+* [CMake](http://www.cmake.org/) for compilation of Google C++ Testing Framework. (Tested with CMake 3.9.6)
+* [bin2cpp source code](https://github.com/end2endzone/bin2cpp/tags)
 
 ## Build steps
 
-### Google Test
+### Google C++ testing framework
 
 1) Download googletest source code to your computer using one of the following:
    1) Download googletest as a [zip file](https://github.com/google/googletest/archive/release-1.6.0.zip) and extract to a temporary directory (for example c:\projects\third_party\googletest).
@@ -38,6 +38,8 @@ The following software must be installed on the system for compiling source code
 
 3) Open the generated Visual Studio 2010 solution file located in 
    ***c:\projects\third_party\googletest\msvc2010\gtest.sln***
+
+4) Build the solution.
 
 ### Define environment variables
 Note: this step need to be executed once.
@@ -58,3 +60,5 @@ Define the following environement variables:
 
 2) Open the Visual Studio 2010 solution file located in 
    ***c:\projects\bin2cpp\msvc\bin2cpp.sln***
+
+3) Build the solution.
