@@ -1,8 +1,13 @@
 Changes for 1.4:
 
 * New feature: Now encoding binary using c++ control characters. Reduces the size of the output.
-* Fixed issue: Optimize carriage return text #7
-* Fixed issue: Make File class const in header generated files. #3
+* Fixed issue  #7: Optimize carriage return text
+* Fixed issue  #4: Remove absolute path from include statement in cpp generated code
+* Fixed issue  #3: Make File class const in header generated files.
+* Fixed issue #10: Move test file generation script to output dir
+* Fixed issue #12: Fix failling test: TestExtraction.testRandom3()
+* Fixed issue #31: bin2cpp crashes when encoding a generated file with size=1000 fill=random seed=1
+* Fixed issue  #1: Update README file
 
 Changes for 1.3.40:
 
