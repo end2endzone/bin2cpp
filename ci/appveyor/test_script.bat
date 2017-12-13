@@ -3,7 +3,7 @@ echo Running unit tests
 echo =======================================================================
 cd /d c:\projects\bin2cpp\msvc
 set path=%PATH%;c:\projects\bin2cpp\msvc\Win32\Release
-bin2cpp_unittest.exe --gtest_filter=-TestExtraction.testRandom100000
+bin2cpp_unittest.exe
 
 echo ======================================================================
 echo Uploading test results to AppVeyor
