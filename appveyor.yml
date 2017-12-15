@@ -46,7 +46,7 @@ environment:
 
 # scripts that run after cloning repository
 install:
-- cmd: call c:\projects\bin2cpp\ci\windowslocal\googletest_install.bat
+- cmd: call c:\projects\bin2cpp\ci\appveyor\googletest_install.bat
 - cmd: call c:\projects\bin2cpp\ci\appveyor\googletest_build.bat
 - cmd: call c:\projects\bin2cpp\ci\appveyor\list_env_var.bat
 
