@@ -3,7 +3,6 @@ echo Building googletest solution: %REPOSITORY_ROOT%\third_party\googletest\msvc
 echo =======================================================================
 cd /d %REPOSITORY_ROOT%\third_party\googletest\msvc2010
 msbuild "gtest.sln" /m /verbosity:minimal
-
-echo =======================================================================
-echo Building googletest solution (done)
-echo =======================================================================
+echo done.
+echo.
+echo.

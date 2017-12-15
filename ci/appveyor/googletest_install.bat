@@ -20,7 +20,7 @@ echo done.
 echo.
 
 echo ======================================================================
-echo Cloning google test repository
+echo Cloning googletest repository
 echo =======================================================================
 git clone https://github.com/google/googletest.git %REPOSITORY_ROOT%\third_party\googletest
 cd /d %REPOSITORY_ROOT%\third_party\googletest
@@ -29,7 +29,7 @@ echo done.
 echo.
 
 echo =======================================================================
-echo Generating google test Visual Studio 2010 solution
+echo Generating googletest Visual Studio 2010 solution
 echo =======================================================================
 cd /d %REPOSITORY_ROOT%\third_party\googletest
 
