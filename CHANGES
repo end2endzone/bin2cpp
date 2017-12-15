@@ -1,3 +1,8 @@
+Changes for 2.0:
+
+* New feature: TODO
+* New feature: TODO
+
 Changes for 1.4:
 
 * New feature: Now encoding binary using c++ control characters. Reduces the size of the output.
