@@ -42,15 +42,13 @@ clone_folder: c:\projects\bin2cpp
 
 # environment variables
 environment:
-  GTEST_DEBUG_LIBRARIES: gtest.lib
-  GTEST_RELEASE_LIBRARIES: gtest.lib
-  GTEST_INCLUDE: c:\projects\third_party\googletest\include
-  GTEST_LIBRARY_DIR: c:\projects\third_party\googletest\msvc2010
   PRODUCT_VERSION: 1.4
 
 # scripts that run after cloning repository
 install:
-- cmd: call c:\projects\bin2cpp\ci\appveyor\install.bat
+- cmd: call c:\projects\bin2cpp\ci\windowslocal\googletest_install.bat
+- cmd: call c:\projects\bin2cpp\ci\appveyor\googletest_build.bat
+- cmd: call c:\projects\bin2cpp\ci\appveyor\list_env_var.bat
 
 #---------------------------------#
 #       build configuration       #
