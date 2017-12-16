@@ -32,7 +32,7 @@ void printUsage()
   printf("    output:               Output path to create generated source code. ie: .\\generated_files\n");
   printf("    headerfile:           File name of the C++ Header file. ie: SplashScreen.h\n");
   printf("    identifier:           Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n");
-  printf("    chunksize (optional): Size of each string segments. Defaults to 200.\n");
+  printf("    chunksize (optional): Size in bytes of each string segments (bytes per row). Defaults to 200.\n");
   printf("    override (optional):  Tells bin2cpp to over write the destination files.\n");
   printf("\n");
 }
