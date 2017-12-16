@@ -9,31 +9,18 @@
 #include <stdio.h>
 #include <sstream>
 
+#include "common.h"
+
 //#define ENABLE_BREAKPOINT_DEBUGGING
 
 #ifdef ENABLE_BREAKPOINT_DEBUGGING
 #include <windows.h>
 #endif
 
-int getCopyrightYear()
-{
-  static const int DEFAULT_YEAR = 2016;
-  std::string compilationDate = __DATE__;
-  size_t space1Pos = compilationDate.find(" ", 0);
-  if (space1Pos == std::string::npos)
-    return DEFAULT_YEAR;
-  size_t space2Pos = compilationDate.find(" ", space1Pos+1);
-  if (space2Pos == std::string::npos)
-    return DEFAULT_YEAR;
-  const char * yearStr = &compilationDate[space2Pos+1];
-  int year = atoi(yearStr);
-  return year;
-}
-
 void printHeader()
 {
   printf("bin2cpp v%s\n", bin2cpp::getVersionString() );
-  printf("Copyright (C) 2013-%d end2endzone.com. All rights reserved.\n", getCopyrightYear());
+  printf("Copyright (C) 2013-%d end2endzone.com. All rights reserved.\n", bin2cpp::getCopyrightYear());
 }
 
 void printUsage()
@@ -47,19 +34,6 @@ void printUsage()
   printf("    chunk size (optional): Size of each string segments. Defaults to 200]\n");
   printf("    override (optional):   Tells bin2cpp to over write the destination files.\n");
   printf("\n");
-}
-
-bool isNumeric(const char * iValue)
-{
-  int intValue = atoi(iValue);
-  
-  //try to convert the int value back to string and check for equality.
-  static const int BUFFER_SIZE = 1024;
-  char buffer[BUFFER_SIZE];
-  itoa(intValue, buffer, 10);
-  if (std::string(buffer) == iValue)
-    return true;
-  return false;
 }
 
 int main(int argc, char* argv[])
@@ -103,7 +77,7 @@ int main(int argc, char* argv[])
   for(int i=(1+numMandatory); i<argc; i++)
   {
     const char * value = argv[i];
-    if (isNumeric(value))
+    if (bin2cpp::isNumeric(value))
     {
       //assume it is chunk size
       chunkSize = atoi(argv[i]);
