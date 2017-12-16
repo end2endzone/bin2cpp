@@ -39,4 +39,22 @@ namespace bin2cpp
     return false;
   }
 
+  bool parseArgument(const std::string & name, size_t & value, int argc, char **argv)
+  {
+    std::string tmp;
+    bool found = parseArgument(name, tmp, argc, argv);
+    if (found)
+    {
+      if (1 == sscanf(tmp.c_str(), "%zu", &value))
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+    return false;
+  }
+
 }; //bin2cpp
