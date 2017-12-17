@@ -2,6 +2,7 @@ Changes for 2.0:
 
 * New feature: TODO
 * New feature: TODO
+* Fixed issue  #2: Update command line parameters syntax with the --name=value syntax
 
 Changes for 1.4:
 

@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string>
 #include <time.h>       /* time */
+#include "argumentparser.h"
 #include "..\version_info.h"
 
 const char * getVersionString()
@@ -26,41 +27,6 @@ bool generateSequentialBinaryFile(size_t size, const char * iFilename)
   }
   fclose(f);
   return true;
-}
-
-bool parseArgument(const std::string & name, std::string & value, int argc, char **argv)
-{
-  value = "";
-
-  //build pattern from argument name
-  std::string pattern;
-  pattern.append("--");
-  pattern.append(name);
-  pattern.append("=");
-
-  for(int i=0; i<argc; i++)
-  {
-    std::string arg = argv[i];
-    if (arg.length() > pattern.length() && arg.substr(0,pattern.length()) == pattern)
-    {
-      value = arg.substr(pattern.length(), arg.length()-pattern.length());
-      return true;
-    }
-  }
-
-  return false;
-}
-
-bool parseArgument(const std::string & name, int & value, int argc, char **argv)
-{
-  std::string tmp;
-  bool found = parseArgument(name, tmp, argc, argv);
-  if (found)
-  {
-    value = atoi(tmp.c_str());
-    return true;
-  }
-  return false;
 }
 
 void usage()
@@ -94,11 +60,11 @@ int main(int argc, char **argv)
   //parse arguments
   std::string file;
   int size = 1024; //in bytes
-  unsigned int seed = time(NULL);
+  unsigned int seed = (unsigned int)time(NULL); //warning C4244: 'initializing' : conversion from 'time_t' to 'unsigned int', possible loss of data
   unsigned int skip = 0;
   std::string fill = "sequential";
 
-  if (!parseArgument("file", file, argc, argv))
+  if (!bin2cpp::parseArgument("file", file, argc, argv))
   {
     printf("Error: Missing 'file' argument!\n");
     usage();
@@ -106,7 +72,7 @@ int main(int argc, char **argv)
   }
 
   int tmpSize = 0;
-  if (parseArgument("size", tmpSize, argc, argv))
+  if (bin2cpp::parseArgument("size", tmpSize, argc, argv))
   {
     size = tmpSize;
     if (size <= 0)
@@ -117,7 +83,7 @@ int main(int argc, char **argv)
   }
 
   int tmpSeed = 0;
-  if (parseArgument("seed", tmpSeed, argc, argv))
+  if (bin2cpp::parseArgument("seed", tmpSeed, argc, argv))
   {
     seed = tmpSeed;
     if (seed < 0)
@@ -128,7 +94,7 @@ int main(int argc, char **argv)
   }
 
   int tmpSkip = 0;
-  if (parseArgument("skip", tmpSkip, argc, argv))
+  if (bin2cpp::parseArgument("skip", tmpSkip, argc, argv))
   {
     skip = tmpSkip;
     if (skip < 0)
@@ -139,7 +105,7 @@ int main(int argc, char **argv)
   }
 
   std::string tmpFill;
-  if (parseArgument("fill", tmpFill, argc, argv))
+  if (bin2cpp::parseArgument("fill", tmpFill, argc, argv))
   {
     if (tmpFill == "sequential" ||
         tmpFill == "random" ||

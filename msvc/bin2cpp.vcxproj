@@ -99,6 +99,11 @@
     <ClInclude Include="..\src\md5Ex.h" />
     <ClInclude Include="..\src\targetver.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="common.vcxproj">
+      <Project>{0a65f8bd-6bb4-4a78-a871-25b99b43021a}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

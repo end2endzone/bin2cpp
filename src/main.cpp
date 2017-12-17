@@ -9,57 +9,32 @@
 #include <stdio.h>
 #include <sstream>
 
+#include "common.h"
+#include "argumentparser.h"
+
 //#define ENABLE_BREAKPOINT_DEBUGGING
 
 #ifdef ENABLE_BREAKPOINT_DEBUGGING
 #include <windows.h>
 #endif
 
-int getCopyrightYear()
-{
-  static const int DEFAULT_YEAR = 2016;
-  std::string compilationDate = __DATE__;
-  size_t space1Pos = compilationDate.find(" ", 0);
-  if (space1Pos == std::string::npos)
-    return DEFAULT_YEAR;
-  size_t space2Pos = compilationDate.find(" ", space1Pos+1);
-  if (space2Pos == std::string::npos)
-    return DEFAULT_YEAR;
-  const char * yearStr = &compilationDate[space2Pos+1];
-  int year = atoi(yearStr);
-  return year;
-}
-
 void printHeader()
 {
   printf("bin2cpp v%s\n", bin2cpp::getVersionString() );
-  printf("Copyright (C) 2013-%d end2endzone.com. All rights reserved.\n", getCopyrightYear());
+  printf("Copyright (C) 2013-%d end2endzone.com. All rights reserved.\n", bin2cpp::getCopyrightYear());
 }
 
 void printUsage()
 {
   printf("Usage:\n");
-  printf("  bin2cpp [inputfile] [output folder] [header filename] [function identifier] [chunk size] [-override]. \n");
-  printf("    inputfile:             Path to the target file to embed in a C++ source code. \n");
-  printf("    output folder:         Output path to create generated source code. ie: .\\generated_files\\\n");
-  printf("    header filename:       File name of the C++ Header file. ie: SplashScreen.h\n");
-  printf("    function identifier:   Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n");
-  printf("    chunk size (optional): Size of each string segments. Defaults to 200]\n");
-  printf("    override (optional):   Tells bin2cpp to over write the destination files.\n");
+  printf("  bin2cpp --file=/path/to/file --output=/path/to/output/folder --headerfile=name.h --identifier=value --chunksize=value --override. \n");
+  printf("    file:                 Path to the target file to embed in a C++ source code.\n");
+  printf("    output:               Output path to create generated source code. ie: .\\generated_files\n");
+  printf("    headerfile:           File name of the C++ Header file. ie: SplashScreen.h\n");
+  printf("    identifier:           Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n");
+  printf("    chunksize (optional): Size in bytes of each string segments (bytes per row). Defaults to 200.\n");
+  printf("    override (optional):  Tells bin2cpp to over write the destination files.\n");
   printf("\n");
-}
-
-bool isNumeric(const char * iValue)
-{
-  int intValue = atoi(iValue);
-  
-  //try to convert the int value back to string and check for equality.
-  static const int BUFFER_SIZE = 1024;
-  char buffer[BUFFER_SIZE];
-  itoa(intValue, buffer, 10);
-  if (std::string(buffer) == iValue)
-    return true;
-  return false;
 }
 
 int main(int argc, char* argv[])
@@ -70,48 +45,59 @@ int main(int argc, char* argv[])
 
   printHeader();
 
-  const int numMandatory = 4;
-  const int numOptional = 2;
-
-  if ( argc < (1+numMandatory) )
-  {
-    printUsage();
-    bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
-    printf("Error: %s. Please specify all %d mandatory arguments.\n", getErrorCodeDescription(error), (numMandatory) );
-    return error;
-  }
-  if ( argc > (1+numMandatory+numOptional) )
-  {
-    printUsage();
-    bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
-    printf("Error: %s. Too many arguments (max %d).\n", getErrorCodeDescription(error), (numMandatory+numOptional) );
-    return error;
-  }
-
   //mandatory arguments
-  const char * inputFilename = argv[1];
-  const char * outputFolder = argv[2];
-  const char * headerFilename = argv[3];
-  const char * functionIdentifier = argv[4];
+  std::string inputFilename;
+  std::string outputFolder;
+  std::string headerFilename;
+  std::string functionIdentifier;
+
+  if (!bin2cpp::parseArgument("file", inputFilename, argc, argv))
+  {
+    bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
+    printf("Error (%s). Missing 'file' argument!\n", getErrorCodeDescription(error));
+    printUsage();
+    return error;
+  }
+
+  if (!bin2cpp::parseArgument("output", outputFolder, argc, argv))
+  {
+    bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
+    printf("Error (%s). Missing 'output' argument!\n", getErrorCodeDescription(error));
+    printUsage();
+    return error;
+  }
+
+  if (!bin2cpp::parseArgument("headerfile", headerFilename, argc, argv))
+  {
+    bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
+    printf("Error (%s). Missing 'headerfile' argument!\n", getErrorCodeDescription(error));
+    printUsage();
+    return error;
+  }
+
+  if (!bin2cpp::parseArgument("identifier", functionIdentifier, argc, argv))
+  {
+    bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
+    printf("Error (%s). Missing 'identifier' argument!\n", getErrorCodeDescription(error));
+    printUsage();
+    return error;
+  }
 
   //optional arguments
   static const size_t DEFAULT_CHUNK_SIZE = 200;
   size_t chunkSize = DEFAULT_CHUNK_SIZE;
   bool overrideExisting = false;
 
-  //parse optional arguments
-  for(int i=(1+numMandatory); i<argc; i++)
+  size_t tmpChunkSize = 0;
+  if (bin2cpp::parseArgument("chunksize", tmpChunkSize, argc, argv))
   {
-    const char * value = argv[i];
-    if (isNumeric(value))
-    {
-      //assume it is chunk size
-      chunkSize = atoi(argv[i]);
-    }
-    if (std::string(value) == "-override")
-    {
-      overrideExisting = true;
-    }
+    chunkSize = tmpChunkSize;
+  }
+
+  std::string tmpOverride;
+  if (bin2cpp::parseArgument("override", tmpOverride, argc, argv))
+  {
+    overrideExisting = true;
   }
 
   // printing info
@@ -127,10 +113,10 @@ int main(int argc, char* argv[])
   std::string overrideInfo = "";
   if (overrideExisting)
     overrideInfo = " overriding existing files";
-  printf("Embedding \"%s\" into \"%s\"%s%s...\n", inputFilename, headerFilename, chunkInfo.c_str(), overrideInfo.c_str());
+  printf("Embedding \"%s\" into \"%s\"%s%s...\n", inputFilename.c_str(), headerFilename.c_str(), chunkInfo.c_str(), overrideInfo.c_str());
 
   //execute
-  bin2cpp::ErrorCodes result = bin2cpp::createCppEmbeddedFile(inputFilename, outputFolder, headerFilename, functionIdentifier, chunkSize, overrideExisting);
+  bin2cpp::ErrorCodes result = bin2cpp::createCppEmbeddedFile(inputFilename.c_str(), outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), chunkSize, overrideExisting);
   if (result == bin2cpp::ErrorCodes::Success)
   {
     printf("Done.\n");
