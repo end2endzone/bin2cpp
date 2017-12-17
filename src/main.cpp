@@ -28,9 +28,9 @@ void printUsage()
 {
   printf("Usage:\n");
   printf("  bin2cpp --file=/path/to/file --output=/path/to/output/folder --headerfile=name.h --identifier=value --chunksize=value --override. \n");
-  printf("    file:                 Path to the target file to embed in a C++ source code.\n");
-  printf("    output:               Output path to create generated source code. ie: .\\generated_files\n");
-  printf("    headerfile:           File name of the C++ Header file. ie: SplashScreen.h\n");
+  printf("    file:                 Path of the input file used for embedding as a C++ source code.\n");
+  printf("    output:               Output folder where to create generated code. ie: .\\generated_files\n");
+  printf("    headerfile:           File name of the generated C++ Header file. ie: SplashScreen.h\n");
   printf("    identifier:           Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n");
   printf("    chunksize (optional): Size in bytes of each string segments (bytes per row). Defaults to 200.\n");
   printf("    override (optional):  Tells bin2cpp to over write the destination files.\n");

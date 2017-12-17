@@ -31,16 +31,16 @@ The generated functions that reads and extracts the embedded content does not re
 
 # Command Line Usage
 
-**Usage:** bin2cpp [input file] [output folder] [header filename] [function identifier] [chunk size] [-override].
+**Usage:** bin2cpp --file=/path/to/file --output=/path/to/output/folder --headerfile=name.h --identifier=value --chunksize=value --override.
 
 | Argument            | Description                                                                                    |
 |---------------------|------------------------------------------------------------------------------------------------|
-| input file          | Path to the target file to embed in a C++ source code.                                         |
-| output folder       | Output path to create generated source code. ie: .\generated_files\                            |
-| header filename     | File name of the C++ Header file. ie: SplashScreen.h                                           |
-| function identifier | Identifier of the function name that is used to get an instance of the file. ie: SplashScreen  |
-| chunk size          | Size of each string segments. Defaults to 200]                                                 |
-| override            | Tells bin2cpp to over write the destination files.                                             |
+| --file              | Path of the input file used for embedding as a C++ source code.                                |
+| --output            | Output folder where to create generated code. ie: .\\generated_file                            |
+| --headerfile        | File name of the generated C++ Header file. ie: SplashScreen.h                                 |
+| --identifier        | Identifier of the function name that is used to get an instance of the file. ie: SplashScreen  |
+| --chunksize         | Size in bytes of each string segments (bytes per row). Defaults to 200.                        |
+| --override          | Tells bin2cpp to over write the destination files.                                             |
 
 
 # Example
