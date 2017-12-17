@@ -51,7 +51,7 @@ call %(FullPath)
     </CustomBuild>
     <None Include="..\AUTHORS" />
     <None Include="..\CHANGES" />
-    <None Include="..\INSTALL" />
+    <None Include="..\INSTALL.md" />
     <None Include="..\LICENSE" />
     <None Include="..\nsis\main.nsi" />
     <None Include="..\nsis\Win32.nsh" />

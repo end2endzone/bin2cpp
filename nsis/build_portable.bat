@@ -5,7 +5,7 @@ REM  Generate ZIP package
 REM **************************************
 
 cd /d %~dp0
-set PRODUCT_PLATFORM=Win32
+set PRODUCT_PLATFORM=win32
 
 
 call ..\version_info.bat
