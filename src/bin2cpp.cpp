@@ -255,8 +255,8 @@ namespace bin2cpp
     fprintf(header, "#include <stddef.h>\n");
     fprintf(header, "namespace bin2cpp\n");
     fprintf(header, "{\n");
-    fprintf(header, "  #ifndef BIN2CPP_EMBEDEDFILE_CLASS\n");
-    fprintf(header, "  #define BIN2CPP_EMBEDEDFILE_CLASS\n");
+    fprintf(header, "  #ifndef BIN2CPP_EMBEDDEDFILE_CLASS\n");
+    fprintf(header, "  #define BIN2CPP_EMBEDDEDFILE_CLASS\n");
     fprintf(header, "  class File\n");
     fprintf(header, "  {\n");
     fprintf(header, "  public:\n");
