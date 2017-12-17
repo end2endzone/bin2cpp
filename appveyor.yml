@@ -107,7 +107,7 @@ deploy:
   auth_token:
     secure: BgyLisMc154qWpkyBdh8OD+D9HMM+YnBkh7H4MEUShKO3aCU+Fn/XVGJ07fTsRmH
   artifact: /(.*\.zip|.*\.exe)/
-  draft: true
+  draft: false     #make the binaries seen by public
   prerelease: true
   force_update: true
 
