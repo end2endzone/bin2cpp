@@ -19,6 +19,11 @@ The following software must be installed on the system for compiling source code
 * [CMake](http://www.cmake.org/) for compilation of Google C++ Testing Framework. (Tested with CMake 3.9.6)
 * [bin2cpp source code](https://github.com/end2endzone/bin2cpp/tags)
 
+The following software must be installed on the system for building the deploy packages:
+
+* [7-Zip](http://www.7-zip.org/) for building the win32 portable package. Tested with version 9.20.
+* [NSIS (Nullsoft Scriptable Install System)](http://nsis.sourceforge.net/) for building Windows Self-Extracting Setup Installer (setup.exe). Tested with version 3.0a1.
+
 ## Build steps
 
 ### Google C++ testing framework
@@ -62,3 +67,26 @@ Define the following environement variables:
    ***c:\projects\bin2cpp\msvc\bin2cpp.sln***
 
 3) Build the solution.
+
+### Deploy packages
+
+The application support two types of deploy package:
+
+* Portable (*.zip)
+* Self-Extracting Setup Installer (setup.exe).
+
+The installer packages are automatically build from the Visual Studio 2010 solution. See the '*install*' project.
+
+To manually build the installer packages execute the following steps:
+
+1) Open the Visual Studio 2010 solution file located in 
+   ***c:\projects\bin2cpp\msvc\bin2cpp.sln***
+
+2) Build the solution in '*Release*' configuration.
+
+3) Nagivate to the '*nsis*' folder.
+
+4) Run '*build_portable.bat*' to build the portable installer or
+   run '*build_setup.bat*' to build the setup installer.
+
+5) The packages will be generated in the '*nsis/bin*' folder.
