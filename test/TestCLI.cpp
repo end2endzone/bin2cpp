@@ -78,7 +78,7 @@ TEST_F(TestCLI, testVersion)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-  ASSERT_EQ(0, returnCode);
+  ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //load output file
   gTestHelper::StringVector lines;
@@ -106,7 +106,7 @@ TEST_F(TestCLI, testHelp)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-  ASSERT_EQ(0, returnCode);
+  ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //load output file
   gTestHelper::StringVector lines;
@@ -133,7 +133,7 @@ TEST_F(TestCLI, testNoArguments)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-  ASSERT_NE(0, returnCode);
+  ASSERT_NE(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //load output file
   gTestHelper::StringVector lines;
@@ -147,6 +147,85 @@ TEST_F(TestCLI, testNoArguments)
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Usage:");
 }
 
+TEST_F(TestCLI, testMinimum)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(hlp.getTestCaseName().c_str());
+
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+  //load output file
+  gTestHelper::StringVector lines;
+  bool loaded = hlp.getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+
+  //assert Copyright header is found
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
+  
+  //assert Usage: is NOT found
+  ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
+
+  //assert generated code
+  ASSERT_TRUE(hlp.fileExists(headerFilePath.c_str()));
+}
+
 TEST_F(TestCLI, testNoHeader)
 {
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(hlp.getTestCaseName().c_str());
+  cmdline.append(" --noheader");
+
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+  //load output file
+  gTestHelper::StringVector lines;
+  bool loaded = hlp.getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+
+  //assert Copyright header is NOT found
+  ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Copyright (C)");
+  
+  //assert Usage: is NOT found
+  ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
+
+  //assert generated code
+  ASSERT_TRUE(hlp.fileExists(headerFilePath.c_str()));
 }

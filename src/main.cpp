@@ -21,20 +21,32 @@
 void printHeader()
 {
   printf("bin2cpp v%s\n", bin2cpp::getVersionString() );
+  printf("Convert binary files into C++ source code.\n");
   printf("Copyright (C) 2013-%d end2endzone.com. All rights reserved.\n", bin2cpp::getCopyrightYear());
+  printf("bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp \n");
 }
 
 void printUsage()
 {
-  printf("Usage:\n");
-  printf("  bin2cpp --file=/path/to/file --output=/path/to/output/folder --headerfile=name.h --identifier=value --chunksize=value --override. \n");
-  printf("    file:                 Path of the input file used for embedding as a C++ source code.\n");
-  printf("    output:               Output folder where to create generated code. ie: .\\generated_files\n");
-  printf("    headerfile:           File name of the generated C++ Header file. ie: SplashScreen.h\n");
-  printf("    identifier:           Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n");
-  printf("    chunksize (optional): Size in bytes of each string segments (bytes per row). Defaults to 200.\n");
-  printf("    override (optional):  Tells bin2cpp to over write the destination files.\n");
-  printf("\n");
+  //usage string in docopt format. See http://docopt.org/
+  static const char usage[] = 
+    "Usage:\n"
+    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--chunksize=<value>] [--override] [--noheader]\n"
+    "  bin2cpp -h | --help\n"
+    "  bin2cpp --version\n"
+    "\n"
+    "Options:\n"
+    "  --help               Show this screen."
+    "  --version            Show version."
+    "  --file=<path>        Path of the input file used for embedding as a C++ source code.\n"
+    "  --output=<path>      Output folder where to create generated code. ie: .\\generated_files\n"
+    "  --headerfile=<name>  File name of the generated C++ Header file. ie: SplashScreen.h\n"
+    "  --identifier=<name>  Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
+    "  --chunksize=<value>  Size in bytes of each string segments (bytes per row). [default: 200].\n"
+    "  --override           Tells bin2cpp to over write the destination files.\n"
+    "  --noheader           Does not print bin2cpp program header.\n"
+    "\n";
+  printf("%s", usage);
 }
 
 int main(int argc, char* argv[])
@@ -43,7 +55,32 @@ int main(int argc, char* argv[])
   MessageBox(NULL, "", "", MB_OK);
   #endif
 
-  printHeader();
+  //look for help
+  std::string dummy;
+  if (bin2cpp::parseArgument("help", dummy, argc, argv))
+  {
+    printHeader();
+    printUsage();
+    return bin2cpp::ErrorCodes::Success;
+  }
+
+  //look for noheader
+  bool noheader = false;
+  if (bin2cpp::parseArgument("noheader", dummy, argc, argv))
+  {
+    noheader = true;
+  }
+
+  //look for version
+  if (bin2cpp::parseArgument("version", dummy, argc, argv))
+  {
+    if (!noheader)
+      printHeader();
+    return bin2cpp::ErrorCodes::Success;
+  }
+
+  if (!noheader)
+    printHeader();
 
   //mandatory arguments
   std::string inputFilename;
@@ -94,8 +131,7 @@ int main(int argc, char* argv[])
     chunkSize = tmpChunkSize;
   }
 
-  std::string tmpOverride;
-  if (bin2cpp::parseArgument("override", tmpOverride, argc, argv))
+  if (bin2cpp::parseArgument("override", dummy, argc, argv))
   {
     overrideExisting = true;
   }

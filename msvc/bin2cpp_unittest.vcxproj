@@ -103,8 +103,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\test\application.cpp" />
     <ClCompile Include="..\test\gtesthelper.cpp" />
     <ClCompile Include="..\test\main.cpp" />
+    <ClCompile Include="..\test\TestCLI.cpp" />
     <ClCompile Include="..\test\TestExtraction.cpp" />
     <ClCompile Include="generated_files\testHtml100000\_testHtml100000.cpp" />
     <ClCompile Include="generated_files\testIssue12Mini\_testIssue12Mini.cpp" />
@@ -138,7 +140,9 @@
     <None Include="prebuild.bat" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\test\application.h" />
     <ClInclude Include="..\test\gtesthelper.h" />
+    <ClInclude Include="..\test\TestCLI.h" />
     <ClInclude Include="..\test\TestExtraction.h" />
     <ClInclude Include="generated_files\testHtml100000\_testHtml100000.h" />
     <ClInclude Include="generated_files\testIssue12Mini\_testIssue12Mini.h" />

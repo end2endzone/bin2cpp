@@ -8,9 +8,15 @@
 #include <gtest/gtest.h>
 
 #include "gtesthelper.h"
+#include "application.h"
 
 int main(int argc, char **argv)
 {
+  //register command line arguments with the application
+  Application & app = Application::getInstance();
+  app.init(argc, argv);
+
+  //define default values for xml output report
   gTestHelper & hlp = gTestHelper::getInstance();
   if (hlp.isProcessorX86())
   {

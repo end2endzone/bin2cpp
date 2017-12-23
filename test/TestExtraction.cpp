@@ -18,29 +18,33 @@
 #include "generated_files\testIssue12Mini\_testIssue12Mini.h"
 #include "generated_files\testIssue13\_testIssue13.h"
 
-gTestHelper & hlp = gTestHelper::getInstance();
-
-std::string getExpectedFilePath()
+namespace TestExtractionUtils
 {
-  std::string file;
-  file.append("generated_files\\");
-  file.append(hlp.getTestCaseName());
-  file.append("\\");
-  file.append(hlp.getTestCaseName());
-  file.append(".bin");
-  return file;
-}
+  gTestHelper & hlp = gTestHelper::getInstance();
 
-std::string getActualFilePath()
-{
-  std::string file;
-  file.append("generated_files\\");
-  file.append(hlp.getTestCaseName());
-  file.append("\\");
-  file.append(hlp.getTestCaseName());
-  file.append(".output");
-  return file;
+  std::string getExpectedFilePath()
+  {
+    std::string file;
+    file.append("generated_files\\");
+    file.append(hlp.getTestCaseName());
+    file.append("\\");
+    file.append(hlp.getTestCaseName());
+    file.append(".bin");
+    return file;
+  }
+
+  std::string getActualFilePath()
+  {
+    std::string file;
+    file.append("generated_files\\");
+    file.append(hlp.getTestCaseName());
+    file.append("\\");
+    file.append(hlp.getTestCaseName());
+    file.append(".output");
+    return file;
+  }
 }
+using namespace TestExtractionUtils;
 
 void TestExtraction::SetUp()
 {

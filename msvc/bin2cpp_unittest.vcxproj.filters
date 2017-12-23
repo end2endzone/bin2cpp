@@ -81,6 +81,12 @@
     <ClCompile Include="generated_files\testIssue12Mini\_testIssue12Mini.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\test\TestCLI.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\application.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin2cppTest.x86.debug.xml">
@@ -145,6 +151,12 @@
     </ClInclude>
     <ClInclude Include="generated_files\testIssue12Mini\_testIssue12Mini.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\TestCLI.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\application.h">
+      <Filter>Tests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

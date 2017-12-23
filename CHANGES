@@ -2,6 +2,7 @@ Changes for 2.0:
 
 * New feature (issue #2): Update command line parameters syntax with the --name=value syntax
 * Fixed issue #19: Add NSIS as a prerequisite in README and INSTALL
+* Fixed issue #17: Implement a --help and --h
 
 Changes for 1.4:
 
