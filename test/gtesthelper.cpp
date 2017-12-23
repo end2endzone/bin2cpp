@@ -552,6 +552,7 @@ bool gTestHelper::findInFile(const char* iFilename, const char* iValue, int & oL
     {
       oLine = (int)i;
       oCharacter = (int)position;
+      return true;
     }
   }
 
