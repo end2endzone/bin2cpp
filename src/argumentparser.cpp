@@ -8,18 +8,31 @@ namespace bin2cpp
   {
     value = "";
 
-    //build pattern from argument name
+    //look for --name=value pattern
     std::string pattern;
     pattern.append("--");
     pattern.append(name);
     pattern.append("=");
-
     for(int i=0; i<argc; i++)
     {
       std::string arg = argv[i];
       if (arg.length() > pattern.length() && arg.substr(0,pattern.length()) == pattern)
       {
         value = arg.substr(pattern.length(), arg.length()-pattern.length());
+        return true;
+      }
+    }
+
+    //look for exactly --name pattern
+    pattern = "";
+    pattern.append("--");
+    pattern.append(name);
+    for(int i=0; i<argc; i++)
+    {
+      std::string arg = argv[i];
+      if (arg == pattern)
+      {
+        value = "";
         return true;
       }
     }
