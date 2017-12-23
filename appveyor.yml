@@ -1,18 +1,11 @@
-# Notes:
-#   - Minimal appveyor.yml file is an empty file. All sections are optional.
-#   - Indent each level of configuration with 2 spaces. Do not use tabs!
-#   - All section names are case-sensitive.
-#   - Section names should be unique on each level.
-
 #---------------------------------#
 #      general configuration      #
 #---------------------------------#
 
 # version format
+# version must contains build number to make sure that all commits are processed by appveyor.
+# If build number is not part of the version than appveyor build fails with the following message: "Build version x.y.z already exists."
 version: 2.0.0.{build}
-
-# you can use {branch} name in version format too
-# version: 1.0.{build}-{branch}
 
 # branches to build
 branches:
@@ -40,17 +33,14 @@ shallow_clone: true                 # default is "false"
 # clone directory
 clone_folder: c:\projects\bin2cpp
 
-# environment variables
-environment:
-  PRODUCT_VERSION: 2.0
-
 # scripts that run after cloning repository
 install:
+- ps: .\ci\appveyor\build_version_split.ps1
+- ps: .\ci\appveyor\override_build_version.ps1
 #- cmd: call c:\projects\bin2cpp\ci\appveyor\version_info_update.bat
 - cmd: call c:\projects\bin2cpp\ci\appveyor\googletest_install.bat
 - cmd: call c:\projects\bin2cpp\ci\appveyor\googletest_build.bat
 - cmd: call c:\projects\bin2cpp\ci\appveyor\list_env_var.bat
-
 #---------------------------------#
 #       build configuration       #
 #---------------------------------#
@@ -69,7 +59,7 @@ configuration: Release
 build:
   project: msvc\bin2cpp.sln
   verbosity: minimal
-  
+
 #---------------------------------#
 #       tests configuration       #
 #---------------------------------#
@@ -94,34 +84,28 @@ artifacts:
 #     deployment configuration    #
 #---------------------------------#
 
-# providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
-# provider names are case-sensitive!
 deploy:
-
-  # Deploy to GitHub Releases
 - provider: GitHub
-  #tag: v$(APPVEYOR_BUILD_VERSION)-win32
-  tag: v$(PRODUCT_VERSION)-win32
-  #release: bin2cpp-v$(APPVEYOR_BUILD_VERSION)-win32
-  release: bin2cpp-v$(PRODUCT_VERSION)-win32
+  tag: $(GITHUB_TAG_NAME)
+  release: $(GITHUB_RELEASE_NAME)
   description: Latest successful AppVeyor CI builds of branch '$(APPVEYOR_REPO_BRANCH)', commit $(APPVEYOR_REPO_COMMIT)
   auth_token:
     secure: BgyLisMc154qWpkyBdh8OD+D9HMM+YnBkh7H4MEUShKO3aCU+Fn/XVGJ07fTsRmH
   artifact: /(.*\.zip|.*\.exe)/
-  draft: false     #make the binaries seen by public
-  prerelease: true
+  draft: false           #true means release is private (visible to contributors only), false is public (visible to everyone)
+  prerelease: true       #true for prerelease, false to identify this release as the 'latest release'
   force_update: true
 
 #---------------------------------#
 #         notifications           #
 #---------------------------------#
 
-notifications:
-- provider: Email
-  to:
-  - end2endzone@gmail.com
-  subject: 'Build {{status}}'                  # optional
-  message: "{{message}}, {{commitId}}, ..."    # optional
-  on_build_success: true
-  on_build_failure: true
-  on_build_status_changed: true
+#notifications:
+#- provider: Email
+#  to:
+#  - end2endzone@gmail.com
+#  subject: 'Build {{status}}'                  # optional
+#  message: "{{message}}, {{commitId}}, ..."    # optional
+#  on_build_success: true
+#  on_build_failure: true
+#  on_build_status_changed: true

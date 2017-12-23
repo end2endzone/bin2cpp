@@ -11,7 +11,7 @@ echo done.
 echo.
 
 
-REM version_info.bat
+REM **************** version_info.bat ****************
 set OUTPUTFILE=%REPOSITORY_ROOT%\version_info.bat
 echo Updating %OUTPUTFILE%...
 echo set PRODUCT_VERSION=%APPVEYOR_BUILD_VERSION% >%OUTPUTFILE%
@@ -19,7 +19,7 @@ set OUTPUTFILE=
 echo done.
 echo.
 
-REM version_info.h
+REM **************** version_info.h ****************
 set OUTPUTFILE=%REPOSITORY_ROOT%\version_info.h
 echo Updating %OUTPUTFILE%...
 echo #ifndef BINCPP_VERSION_H  >%OUTPUTFILE%
@@ -30,7 +30,7 @@ set OUTPUTFILE=
 echo done.
 echo.
 
-REM version_info.nsh
+REM **************** version_info.nsh ****************
 set OUTPUTFILE=%REPOSITORY_ROOT%\version_info.nsh
 echo Updating %OUTPUTFILE%...
 echo !define PRODUCT_VERSION "%APPVEYOR_BUILD_VERSION%" >%OUTPUTFILE%
