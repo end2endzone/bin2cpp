@@ -1,3 +1,9 @@
+# Notes:
+#   - Minimal appveyor.yml file is an empty file. All sections are optional.
+#   - Indent each level of configuration with 2 spaces. Do not use tabs!
+#   - All section names are case-sensitive.
+#   - Section names should be unique on each level.
+
 #---------------------------------#
 #      general configuration      #
 #---------------------------------#
@@ -36,7 +42,7 @@ clone_folder: c:\projects\bin2cpp
 # scripts that run after cloning repository
 install:
 - ps: .\ci\appveyor\build_version_split.ps1
-- ps: .\ci\appveyor\override_build_version.ps1
+- ps: .\ci\appveyor\prepare_github_deploy.ps1
 #- cmd: call c:\projects\bin2cpp\ci\appveyor\version_info_update.bat
 - cmd: call c:\projects\bin2cpp\ci\appveyor\googletest_install.bat
 - cmd: call c:\projects\bin2cpp\ci\appveyor\googletest_build.bat
@@ -59,7 +65,7 @@ configuration: Release
 build:
   project: msvc\bin2cpp.sln
   verbosity: minimal
-
+  
 #---------------------------------#
 #       tests configuration       #
 #---------------------------------#
@@ -85,6 +91,8 @@ artifacts:
 #---------------------------------#
 
 deploy:
+
+#prepare deplying to github. See prepare_github_deploy.ps1 for more details.
 - provider: GitHub
   tag: $(GITHUB_TAG_NAME)
   release: $(GITHUB_RELEASE_NAME)
