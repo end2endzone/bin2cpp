@@ -19,3 +19,4 @@
 /msvc/TestCLI.testNoArguments.actual.txt
 /msvc/TestCLI.testMinimum.actual.txt
 /msvc/TestCLI.testNoHeader.actual.txt
+/msvc/TestCLI.testQuiet.actual.txt

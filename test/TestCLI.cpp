@@ -44,6 +44,16 @@ void replaceAll(std::string& str, const std::string& from, const std::string& to
   }
 }
 
+bool deleteFile(const char * iPath)
+{
+  if (hlp.fileExists(iPath))
+  {
+    bool deleted = remove(iPath) == 0;
+    return deleted;
+  }
+  return true; //file does not exists. Success.
+}
+
 std::string getBin2cppPath()
 {
   Application & app = Application::getInstance();
@@ -85,10 +95,8 @@ TEST_F(TestCLI, testVersion)
   bool loaded = hlp.getTextFileContent(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
 
-  //assert Copyright header is found
+  //assert standard output log
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
-  
-  //assert Usage: is NOT found
   ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
 }
 
@@ -113,10 +121,8 @@ TEST_F(TestCLI, testHelp)
   bool loaded = hlp.getTextFileContent(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
 
-  //assert Copyright header is found
+  //assert standard output log
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
-
-  //assert Usage: is found
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Usage:");
 }
 
@@ -140,10 +146,8 @@ TEST_F(TestCLI, testNoArguments)
   bool loaded = hlp.getTextFileContent(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
 
-  //assert Copyright header is found
+  //assert standard output log
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
-
-  //assert Usage: is found
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Usage:");
 }
 
@@ -154,6 +158,7 @@ TEST_F(TestCLI, testMinimum)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string cppFilePath = headerFilePath; replaceAll(cppFilePath, ".h", ".cpp");
 
   //build command line
   std::string cmdline;
@@ -169,6 +174,10 @@ TEST_F(TestCLI, testMinimum)
   cmdline.append(" >");
   cmdline.append(outputFilePath.c_str());
 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
   //run the command
   int returnCode = system(cmdline.c_str());
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -178,11 +187,55 @@ TEST_F(TestCLI, testMinimum)
   bool loaded = hlp.getTextFileContent(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
 
-  //assert Copyright header is found
+  //assert standard output log
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
-  
-  //assert Usage: is NOT found
   ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
+
+  //assert generated code
+  ASSERT_TRUE(hlp.fileExists(headerFilePath.c_str()));
+}
+
+TEST_F(TestCLI, testQuiet)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string cppFilePath = headerFilePath; replaceAll(cppFilePath, ".h", ".cpp");
+
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(hlp.getTestCaseName().c_str());
+  cmdline.append(" --quiet");
+
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+  //load output file
+  gTestHelper::StringVector lines;
+  bool loaded = hlp.getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Copyright (C)");
+  ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
+  ASSERT_EQ(0, hlp.getFileSize(outputFilePath.c_str()));
 
   //assert generated code
   ASSERT_TRUE(hlp.fileExists(headerFilePath.c_str()));
@@ -195,6 +248,7 @@ TEST_F(TestCLI, testNoHeader)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string cppFilePath = headerFilePath; replaceAll(cppFilePath, ".h", ".cpp");
 
   //build command line
   std::string cmdline;
@@ -211,6 +265,10 @@ TEST_F(TestCLI, testNoHeader)
   cmdline.append(" >");
   cmdline.append(outputFilePath.c_str());
 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
   //run the command
   int returnCode = system(cmdline.c_str());
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -220,10 +278,8 @@ TEST_F(TestCLI, testNoHeader)
   bool loaded = hlp.getTextFileContent(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
 
-  //assert Copyright header is NOT found
+  //assert standard output log
   ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Copyright (C)");
-  
-  //assert Usage: is NOT found
   ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
 
   //assert generated code

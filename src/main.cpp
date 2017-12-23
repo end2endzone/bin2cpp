@@ -31,20 +31,21 @@ void printUsage()
   //usage string in docopt format. See http://docopt.org/
   static const char usage[] = 
     "Usage:\n"
-    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--chunksize=<value>] [--override] [--noheader]\n"
+    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--chunksize=<value>] [--override] [--noheader] [--quiet]\n"
     "  bin2cpp -h | --help\n"
     "  bin2cpp --version\n"
     "\n"
     "Options:\n"
-    "  --help               Show this screen."
-    "  --version            Show version."
+    "  --help               Display this help message."
+    "  --version            Display this application version."
     "  --file=<path>        Path of the input file used for embedding as a C++ source code.\n"
     "  --output=<path>      Output folder where to create generated code. ie: .\\generated_files\n"
     "  --headerfile=<name>  File name of the generated C++ Header file. ie: SplashScreen.h\n"
     "  --identifier=<name>  Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
     "  --chunksize=<value>  Size in bytes of each string segments (bytes per row). [default: 200].\n"
     "  --override           Tells bin2cpp to over write the destination files.\n"
-    "  --noheader           Does not print bin2cpp program header.\n"
+    "  --noheader           Do not print program header to standard output.\n"
+    "  --quiet              Do not log any message to standard output.\n"
     "\n";
   printf("%s", usage);
 }
@@ -71,6 +72,17 @@ int main(int argc, char* argv[])
     noheader = true;
   }
 
+  //look for quiet
+  bool quiet = false;
+  if (bin2cpp::parseArgument("quiet", dummy, argc, argv))
+  {
+    quiet = true;
+  }
+
+  //force noheader if quiet
+  if (quiet)
+    noheader = true;
+
   //look for version
   if (bin2cpp::parseArgument("version", dummy, argc, argv))
   {
@@ -79,7 +91,7 @@ int main(int argc, char* argv[])
     return bin2cpp::ErrorCodes::Success;
   }
 
-  if (!noheader)
+  if (!noheader && !quiet)
     printHeader();
 
   //mandatory arguments
@@ -149,18 +161,27 @@ int main(int argc, char* argv[])
   std::string overrideInfo = "";
   if (overrideExisting)
     overrideInfo = " overriding existing files";
-  printf("Embedding \"%s\" into \"%s\"%s%s...\n", inputFilename.c_str(), headerFilename.c_str(), chunkInfo.c_str(), overrideInfo.c_str());
+  if (!quiet)
+  {
+    printf("Embedding \"%s\" into \"%s\"%s%s...\n", inputFilename.c_str(), headerFilename.c_str(), chunkInfo.c_str(), overrideInfo.c_str());
+  }
 
   //execute
   bin2cpp::ErrorCodes result = bin2cpp::createCppEmbeddedFile(inputFilename.c_str(), outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), chunkSize, overrideExisting);
   if (result == bin2cpp::ErrorCodes::Success)
   {
-    printf("Done.\n");
+    if (!quiet)
+    {
+      printf("Done.\n");
+    }
 	  return 0;
   }
   else if (result == bin2cpp::ErrorCodes::OutputFilesSkipped)
   {
-    printf("%s.\n", getErrorCodeDescription(result));
+    if (!quiet)
+    {
+      printf("%s.\n", getErrorCodeDescription(result));
+    }
 	  return 0;
   }
   
