@@ -43,7 +43,7 @@ void printUsage()
     "  --headerfile=<name>  File name of the generated C++ Header file. ie: SplashScreen.h\n"
     "  --identifier=<name>  Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
     "  --chunksize=<value>  Size in bytes of each string segments (bytes per row). [default: 200].\n"
-    "  --override           Tells bin2cpp to over write the destination files.\n"
+    "  --override           Tells bin2cpp to overwrite the destination files.\n"
     "  --noheader           Do not print program header to standard output.\n"
     "  --quiet              Do not log any message to standard output.\n"
     "\n";

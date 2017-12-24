@@ -43,7 +43,7 @@ clone_folder: c:\projects\bin2cpp
 install:
 - ps: .\ci\appveyor\build_version_split.ps1
 - ps: .\ci\appveyor\prepare_github_deploy.ps1
-#- cmd: call c:\projects\bin2cpp\ci\appveyor\version_info_update.bat
+- cmd: call c:\projects\bin2cpp\ci\appveyor\version_info_update.bat
 - cmd: call c:\projects\bin2cpp\ci\appveyor\googletest_install.bat
 - cmd: call c:\projects\bin2cpp\ci\appveyor\googletest_build.bat
 - cmd: call c:\projects\bin2cpp\ci\appveyor\list_env_var.bat
