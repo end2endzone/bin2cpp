@@ -90,13 +90,9 @@
   <ItemGroup>
     <ClCompile Include="..\src\bin2cpp.cpp" />
     <ClCompile Include="..\src\main.cpp" />
-    <ClCompile Include="..\src\md5.cpp" />
-    <ClCompile Include="..\src\md5Ex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\bin2cpp.h" />
-    <ClInclude Include="..\src\md5.h" />
-    <ClInclude Include="..\src\md5Ex.h" />
     <ClInclude Include="..\src\targetver.h" />
   </ItemGroup>
   <ItemGroup>

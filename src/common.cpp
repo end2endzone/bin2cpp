@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "..\version_info.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -98,6 +99,11 @@ namespace bin2cpp
       return false;
     fclose(f);
     return true;
+  }
+
+  const char * getVersionString()
+  {
+    return BINCPP_VERSION;
   }
 
 }; //bin2cpp

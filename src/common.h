@@ -47,4 +47,11 @@ namespace bin2cpp
   ///<return>Returns true when the file exists. Returns false otherwise.<return>
   bool fileExists(const char * iFilePath);
 
+  /*
+  Description:
+    Returns the application version number.
+  */
+  const char * getVersionString();
+
+
 }; //bin2cpp

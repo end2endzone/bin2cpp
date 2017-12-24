@@ -1,5 +1,8 @@
-#include "md5.h"
+#pragma once
+
 #include <string>
+
+#include "md5.h"
 
 struct MD5DIGEST
 {
