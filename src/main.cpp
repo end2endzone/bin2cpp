@@ -3,7 +3,8 @@
 
 #include "targetver.h"
 
-#include "bin2cpp.h"
+#include "errorcodes.h"
+#include "SegmentGenerator.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -167,7 +168,8 @@ int main(int argc, char* argv[])
   }
 
   //execute
-  bin2cpp::ErrorCodes result = bin2cpp::createCppEmbeddedFile(inputFilename.c_str(), outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), chunkSize, overrideExisting);
+  bin2cpp::SegmentGenerator generator;
+  bin2cpp::ErrorCodes result = generator.createCppEmbeddedFile(inputFilename.c_str(), outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), chunkSize, overrideExisting);
   if (result == bin2cpp::ErrorCodes::Success)
   {
     if (!quiet)

@@ -88,11 +88,12 @@
     </CustomBuildStep>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\bin2cpp.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\SegmentGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\bin2cpp.h" />
+    <ClInclude Include="..\src\IGenerator.h" />
+    <ClInclude Include="..\src\SegmentGenerator.h" />
     <ClInclude Include="..\src\targetver.h" />
   </ItemGroup>
   <ItemGroup>
