@@ -23,6 +23,17 @@ namespace bin2cpp
       return getter;
     }
 
+    bool isPrintableCharacter(char c)
+    {
+      if (c == 39) // character ' must be escaped with \' which is not supported right now
+        return false;
+      if (c == 92) // character \ must be escaped with \\ which is not supported right now
+        return false;
+      if (c >= 32 && c<= 126)
+        return true;
+      return false;
+    }
+
     std::string toCppString(const unsigned char * iBuffer, size_t iSize)
     {
       std::ostringstream oss;
@@ -31,7 +42,10 @@ namespace bin2cpp
       {
         unsigned char c = iBuffer[i];
 
-        oss << (int)c;
+        if (isPrintableCharacter((char)c))
+          oss << '\'' << (char)c << '\'';
+        else
+          oss << (int)c; //print as decimal value
 
         size_t lastByteIndex = iSize-1;
 
