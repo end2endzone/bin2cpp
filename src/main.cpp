@@ -6,6 +6,7 @@
 #include "errorcodes.h"
 #include "SegmentGenerator.h"
 #include "StringGenerator.h"
+#include "ArrayGenerator.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -169,8 +170,9 @@ int main(int argc, char* argv[])
   }
 
   //execute
-  bin2cpp::SegmentGenerator generator;
   //bin2cpp::StringGenerator generator;
+  //bin2cpp::ArrayGenerator generator;
+  bin2cpp::SegmentGenerator generator;
   bin2cpp::ErrorCodes result = generator.createCppEmbeddedFile(inputFilename.c_str(), outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), chunkSize, overrideExisting);
   if (result == bin2cpp::ErrorCodes::Success)
   {
