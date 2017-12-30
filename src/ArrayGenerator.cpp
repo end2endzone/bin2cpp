@@ -221,7 +221,7 @@ namespace bin2cpp
         numLinePrinted++;
       }
 
-      //end the array all the file content is printed
+      //end the array. all the file content is printed
       if (isLastChunk)
       {
         fprintf(cpp, "\n");

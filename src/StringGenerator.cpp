@@ -346,6 +346,7 @@ namespace bin2cpp
     MD5Init(&context);
 
     //create buffer for each chunks from input buffer
+    int numLinePrinted = 0;
     unsigned char * buffer = new unsigned char[iChunkSize];
     while(!feof(input))
     {
@@ -354,23 +355,26 @@ namespace bin2cpp
 
       bool isLastChunk = !(readSize == iChunkSize);
 
-      if (readSize == 0)
-        continue; //nothing to output if nothing was read
+      if (readSize > 0)
+      {
+        if (numLinePrinted > 0)
+        {
+          //end previous line
+          fprintf(cpp, "\n");
+        }
 
-      //send to MD5 for analysist
-      MD5Update(&context, buffer, readSize);
+        //send to MD5 for analysist
+        MD5Update(&context, buffer, readSize);
 
-      //output data
-      fprintf(cpp, "      \"%s\"", bin2cpp::StringGeneratorUtils::toCppString(buffer, readSize).c_str());
+        //output
+        fprintf(cpp, "        \"%s\"", bin2cpp::StringGeneratorUtils::toCppString(buffer, readSize).c_str());
+        numLinePrinted++;
+      }
 
-      //end the string if last buffer
-      if (feof(input))
+      //end the string if last chunk printed
+      if (isLastChunk)
       {
         fprintf(cpp, ";\n");
-      }
-      else
-      {
-        fprintf(cpp, "\n");
       }
     }
     delete[] buffer;
