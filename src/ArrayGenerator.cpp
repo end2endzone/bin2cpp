@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "common.h"
+#include "cppencoder.h"
 #include "md5support.h"
 #include "md5.h"
 #include "md5Ex.h"
