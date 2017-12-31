@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string>
 #include <stdlib.h>
-#include <sstream>
 
 #include "common.h"
 #include "md5support.h"
@@ -12,43 +11,6 @@
 
 namespace bin2cpp
 {
-  namespace ArrayGeneratorUtils
-  {
-    bool isPrintableCharacter(char c)
-    {
-      if (c == 39) // character ' must be escaped with \' which is not supported right now
-        return false;
-      if (c == 92) // character \ must be escaped with \\ which is not supported right now
-        return false;
-      if (c >= 32 && c<= 126)
-        return true;
-      return false;
-    }
-
-    std::string toCppString(const unsigned char * iBuffer, size_t iSize)
-    {
-      std::ostringstream oss;
-
-      for(size_t i=0; i<iSize; i++)
-      {
-        unsigned char c = iBuffer[i];
-
-        if (isPrintableCharacter((char)c))
-          oss << '\'' << (char)c << '\'';
-        else
-          oss << (int)c; //print as decimal value
-
-        size_t lastByteIndex = iSize-1;
-
-        if (i != lastByteIndex)
-          oss << ",";
-      }
-
-      return oss.str();
-    }
-
-  }; //ArrayGeneratorUtils
-
   ArrayGenerator::ArrayGenerator()
   {
   }
@@ -173,7 +135,7 @@ namespace bin2cpp
         MD5Update(&context, buffer, readSize);
 
         //output
-        fprintf(cpp, "        %s", bin2cpp::ArrayGeneratorUtils::toCppString(buffer, readSize).c_str());
+        fprintf(cpp, "        %s", toCppCharactersArray(buffer, readSize).c_str());
         numLinePrinted++;
       }
 
