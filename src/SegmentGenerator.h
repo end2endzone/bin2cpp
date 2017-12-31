@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IGenerator.h"
+#include "BaseGenerator.h"
 
 namespace bin2cpp
 {
@@ -9,7 +9,7 @@ namespace bin2cpp
   ///This generator stores data in segment of a maximum of 65535 bytes.
   ///Each 'segment' can be accessed separately.
   ///</summary>
-  class SegmentGenerator : public virtual IGenerator
+  class SegmentGenerator : public BaseGenerator
   {
   public:
     SegmentGenerator();

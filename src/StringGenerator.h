@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IGenerator.h"
+#include "BaseGenerator.h"
 
 namespace bin2cpp
 {
@@ -8,7 +8,7 @@ namespace bin2cpp
   ///<summary>
   ///This generator stores data in a single string of a maximum of 65535 bytes.
   ///</summary>
-  class StringGenerator : public virtual IGenerator
+  class StringGenerator : public BaseGenerator
   {
   public:
     StringGenerator();

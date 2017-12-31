@@ -89,12 +89,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ArrayGenerator.cpp" />
+    <ClCompile Include="..\src\BaseGenerator.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\SegmentGenerator.cpp" />
     <ClCompile Include="..\src\StringGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ArrayGenerator.h" />
+    <ClInclude Include="..\src\BaseGenerator.h" />
     <ClInclude Include="..\src\IGenerator.h" />
     <ClInclude Include="..\src\SegmentGenerator.h" />
     <ClInclude Include="..\src\StringGenerator.h" />

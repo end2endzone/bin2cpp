@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IGenerator.h"
+#include "BaseGenerator.h"
 
 namespace bin2cpp
 {
@@ -9,7 +9,7 @@ namespace bin2cpp
   ///This generator stores data in a huge array.
   ///The syntax is the following:     const char foo[] = { 97, 98, 99, 100, ..., 0 };
   ///</summary>
-  class ArrayGenerator : public virtual IGenerator
+  class ArrayGenerator : public BaseGenerator
   {
   public:
     ArrayGenerator();
