@@ -227,12 +227,9 @@ namespace bin2cpp
       fprintf(header, "  {\n");
       fprintf(header, "  public:\n");
       fprintf(header, "    virtual size_t getSize() const = 0;\n");
-      fprintf(header, "    virtual size_t getSegmentSize() const = 0;\n");
-      fprintf(header, "    virtual size_t getNumSegments() const = 0;\n");
       fprintf(header, "    virtual const char * getFilename() const = 0;\n");
-      fprintf(header, "    virtual const char * getSegment(size_t iIndex, size_t & oLength) const = 0;\n");
+      fprintf(header, "    virtual const char * getBuffer() const = 0;\n");
       fprintf(header, "    virtual const char * getMd5() const = 0;\n");
-      fprintf(header, "    virtual char * newBuffer() const = 0;\n");
       fprintf(header, "    virtual bool save(const char * iFilename) const = 0;\n");
       fprintf(header, "  };\n");
       fprintf(header, "  #endif\n");
@@ -336,20 +333,15 @@ namespace bin2cpp
     fprintf(cpp, "  class %s : public virtual bin2cpp::File\n", className.c_str());
     fprintf(cpp, "  {\n");
     fprintf(cpp, "  public:\n");
-    fprintf(cpp, "    %s() {}\n", className.c_str());
+    fprintf(cpp, "    %s() { build(); }\n", className.c_str());
     fprintf(cpp, "    ~%s() {}\n", className.c_str());
     fprintf(cpp, "    virtual size_t getSize() const { return %d; }\n", fileSize);
-    fprintf(cpp, "    virtual size_t getSegmentSize() const { return %d; }\n", iChunkSize);
-    fprintf(cpp, "    virtual size_t getNumSegments() const { return %d; }\n", numSegments);
     fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", getFilename(iInputFilename).c_str());
-    fprintf(cpp, "    virtual const char * getSegment(size_t iIndex, size_t & oLength) const\n");
+    fprintf(cpp, "    virtual const char * getBuffer() const { return mBuffer.c_str(); }\n");
+    fprintf(cpp, "    void build()\n");
     fprintf(cpp, "    {\n");
-    fprintf(cpp, "      oLength = 0;\n");
-    fprintf(cpp, "      if (iIndex >= getNumSegments())\n");
-    fprintf(cpp, "        return NULL;\n");
-    fprintf(cpp, "      const char * buffer = NULL;\n");
-    fprintf(cpp, "      size_t index = 0;\n");
-    fprintf(cpp, "      oLength = getSegmentSize();\n");
+    fprintf(cpp, "      mBuffer.clear();\n");
+    fprintf(cpp, "      mBuffer.reserve(getSize()); //allocate all required memory at once to prevent reallocations\n");
 
     //Compute MD5 while generating cpp code
     MD5_CTX context;
@@ -364,31 +356,14 @@ namespace bin2cpp
 
       bool isLastChunk = !(readSize == iChunkSize);
 
-      if (isLastChunk || readSize == 0)
-        fprintf(cpp, "      oLength = %d;\n", lastSegmentSize);
-
       if (readSize == 0)
         continue; //nothing to output if nothing was read
 
       //send to MD5 for analysist
       MD5Update(&context, buffer, readSize);
 
-      //output mode 1
-      fprintf(cpp, "      buffer = \"%s\"; if (iIndex == index) return buffer; index++;\n", bin2cpp::SegmentGeneratorUtils::toCppString(buffer, readSize).c_str(), readSize);
-
-      //output mode 2. DOES NOT COMPILE!
-      //fprintf(cpp, "  { const unsigned char buffer[] = {%s}; fwrite(buffer, 1, %d, f); }\n", arrayToCppArray((unsigned char *)buffer, readSize).c_str(), readSize);
-
-      ////output mode 3 (slower than mode 1)
-      //static bool firstPass = true;
-      //if (firstPass)
-      //    fprintf(cpp, "  unsigned char buffer[%d];\n", iChunkSize);
-      //firstPass = false;
-      //for(size_t i=0; i<readSize; i++)
-      //{
-      //  fprintf(cpp, "  buffer[%d] = %s;\n", i, arrayToCppArray((unsigned char *)&buffer[i], 1).c_str());
-      //}
-      //fprintf(cpp, "  fwrite(buffer, 1, %d, f);\n", readSize);
+      //output
+      fprintf(cpp, "      mBuffer.append(\"%s\", %d);\n", bin2cpp::SegmentGeneratorUtils::toCppString(buffer, readSize).c_str(), readSize);
     }
     delete[] buffer;
     buffer = NULL;
@@ -399,42 +374,20 @@ namespace bin2cpp
     std::string md5String = toString(digest);
 
     //write cpp file footer
-    fprintf(cpp, "      oLength = 0;\n");
-    fprintf(cpp, "      return NULL;\n");
     fprintf(cpp, "    }\n");
     fprintf(cpp, "    virtual const char * getMd5() const { return \"%s\"; }\n", md5String.c_str() );
-    fprintf(cpp, "    virtual char * newBuffer() const\n");
-    fprintf(cpp, "    {\n");
-    fprintf(cpp, "      size_t size = getSize();\n");
-    fprintf(cpp, "      char * buffer = new char[size];\n");
-    fprintf(cpp, "      if (buffer == NULL)\n");
-    fprintf(cpp, "        return NULL;\n");
-    fprintf(cpp, "      size_t numSegments = getNumSegments();\n");
-    fprintf(cpp, "      size_t segmentLength = 0;\n");
-    fprintf(cpp, "      size_t index = 0;\n");
-    fprintf(cpp, "      for(size_t i=0; i<numSegments; i++)\n");
-    fprintf(cpp, "      {\n");
-    fprintf(cpp, "        const char * segmentBuffer = getSegment(i, segmentLength);\n");
-    fprintf(cpp, "        memcpy(&buffer[index], segmentBuffer, segmentLength);\n");
-    fprintf(cpp, "        index += segmentLength;\n");
-    fprintf(cpp, "      }\n");
-    fprintf(cpp, "      return buffer;\n");
-    fprintf(cpp, "    }\n");
     fprintf(cpp, "    virtual bool save(const char * iFilename) const\n");
     fprintf(cpp, "    {\n");
     fprintf(cpp, "      FILE * f = fopen(iFilename, \"wb\");\n");
     fprintf(cpp, "      if (!f) return false;\n");
-    fprintf(cpp, "      size_t numSegments = getNumSegments();\n");
-    fprintf(cpp, "      size_t segmentLength = 0;\n");
-    fprintf(cpp, "      const char * buffer = NULL;\n");
-    fprintf(cpp, "      for(size_t i=0; i<numSegments; i++)\n");
-    fprintf(cpp, "      {\n");
-    fprintf(cpp, "        buffer = getSegment(i, segmentLength);\n");
-    fprintf(cpp, "        fwrite(buffer, 1, segmentLength, f);\n");
-    fprintf(cpp, "      }\n");
+    fprintf(cpp, "      size_t fileSize = getSize();\n");
+    fprintf(cpp, "      const char * buffer = getBuffer();\n");
+    fprintf(cpp, "      fwrite(buffer, 1, fileSize, f);\n");
     fprintf(cpp, "      fclose(f);\n");
     fprintf(cpp, "      return true;\n");
     fprintf(cpp, "    }\n");
+    fprintf(cpp, "  private:\n");
+    fprintf(cpp, "    std::string mBuffer;\n");
     fprintf(cpp, "  };\n");
     fprintf(cpp, "  const File & %s() { static %s _instance; return _instance; }\n", getterFunctionName.c_str(), className.c_str());
     fprintf(cpp, "}; //bin2cpp\n");
