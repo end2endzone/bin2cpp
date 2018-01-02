@@ -31,19 +31,12 @@ namespace bin2cpp
     std::string functionIdentifier = iFunctionIdentifier;
     functionIdentifier[0] = toupper(functionIdentifier[0]);
 
-    //Build header file path
-    std::string headerPath;
-    headerPath.append(iOutputFolder);
-    if (headerPath[headerPath.length()-1] != '\\')
-      headerPath.append("\\");
-    headerPath.append(iHeaderFilename);
-
-    //Build cpp file file
-    std::string outputCppFilename = headerPath;
-    strReplace(outputCppFilename, ".h", ".cpp");
+    //Build header and cpp file path
+    std::string headerPath = getHeaderFilePath(iOutputFolder, iHeaderFilename);
+    std::string outputCppFilename = getCppFilePath(iOutputFolder, iHeaderFilename);
 
     //check if output files already exists
-    if (fileExists(headerPath.c_str()) || fileExists(outputCppFilename.c_str()))
+    if (fileExists(outputCppFilename.c_str()))
     {
       //compute input/output file md5
       std::string inputFileHexDigest = getFileHexDigest(iInputFilename);
@@ -57,14 +50,6 @@ namespace bin2cpp
       //md5 not identical
       if (!iOverrideExisting)
         return bin2cpp::ErrorCodes::OutputFilesAlreadyExist;
-    }
-
-    //create Header file
-    bin2cpp::ErrorCodes headerResult = createHeaderEmbededFile(iOutputFolder, iHeaderFilename, functionIdentifier.c_str(), iOverrideExisting);
-    if (headerResult != bin2cpp::ErrorCodes::Success)
-    {
-      fclose(input);
-      return headerResult;
     }
 
     //create cpp file

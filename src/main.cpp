@@ -169,29 +169,79 @@ int main(int argc, char* argv[])
     printf("Embedding \"%s\" into \"%s\"%s%s...\n", inputFilename.c_str(), headerFilename.c_str(), chunkInfo.c_str(), overrideInfo.c_str());
   }
 
-  //execute
+  //select generator
   //bin2cpp::StringGenerator generator;
   //bin2cpp::ArrayGenerator generator;
   bin2cpp::SegmentGenerator generator;
-  bin2cpp::ErrorCodes result = generator.createCppEmbeddedFile(inputFilename.c_str(), outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), chunkSize, overrideExisting);
-  if (result == bin2cpp::ErrorCodes::Success)
+
+  //generate header
+  bool headerSuccess = false;
+  if (!quiet)
+  {
+    printf("Generating header file...\n");
+  }
+  bin2cpp::ErrorCodes headerResult = generator.createHeaderEmbededFile(outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), overrideExisting);
+  if (headerResult == bin2cpp::ErrorCodes::Success)
   {
     if (!quiet)
     {
       printf("Done.\n");
     }
-	  return 0;
+    headerSuccess = true;
   }
-  else if (result == bin2cpp::ErrorCodes::OutputFilesSkipped)
+  else if (headerResult == bin2cpp::ErrorCodes::OutputFilesSkipped)
   {
     if (!quiet)
     {
-      printf("%s.\n", getErrorCodeDescription(result));
+      printf("Warning: %s.\n", getErrorCodeDescription(headerResult));
     }
-	  return 0;
+    headerSuccess = true;
+  }
+  else
+  {
+    if (!quiet)
+    {
+      printf("Error: %s.\n", getErrorCodeDescription(headerResult));
+    }
+    headerSuccess = false;
+  }
+
+  //generate cpp
+  bool cppSuccess = false;
+  if (!quiet)
+  {
+    printf("Generating cpp file...\n");
+  }
+  bin2cpp::ErrorCodes cppResult = generator.createCppEmbeddedFile(inputFilename.c_str(), outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), chunkSize, overrideExisting);
+  if (cppResult == bin2cpp::ErrorCodes::Success)
+  {
+    if (!quiet)
+    {
+      printf("Done.\n");
+    }
+    cppSuccess = true;
+  }
+  else if (cppResult == bin2cpp::ErrorCodes::OutputFilesSkipped)
+  {
+    if (!quiet)
+    {
+      printf("Warning: %s.\n", getErrorCodeDescription(cppResult));
+    }
+    cppSuccess = true;
+  }
+  else
+  {
+    if (!quiet)
+    {
+      printf("Error: %s.\n", getErrorCodeDescription(cppResult));
+    }
+    cppSuccess = false;
   }
   
+  if (cppSuccess && headerSuccess)
+    return 0;
+
   //error found
-  printf("Embedding failed! %s.\n", getErrorCodeDescription(result));
+  printf("Embedding failed!\n");
   return 2;
 }

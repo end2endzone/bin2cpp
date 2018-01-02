@@ -19,6 +19,8 @@ namespace bin2cpp
 
   protected:
     virtual std::string getGetterFunctionName(const char * iFunctionIdentifier);
+    virtual std::string getHeaderFilePath(const char * iOutputFolder, const char * iHeaderFilename);
+    virtual std::string getCppFilePath(const char * iOutputFolder, const char * iHeaderFilename);
   };
 
 }; //bin2cpp

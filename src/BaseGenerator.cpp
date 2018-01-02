@@ -20,11 +20,37 @@ namespace bin2cpp
 
   std::string BaseGenerator::getGetterFunctionName(const char * iFunctionIdentifier)
   {
+    //Uppercase function identifier
+    std::string functionIdentifier = iFunctionIdentifier;
+    functionIdentifier[0] = toupper(functionIdentifier[0]);
+
     std::string getter;
     getter.append("get");
-    getter.append(iFunctionIdentifier);
+    getter.append(functionIdentifier);
     getter.append("File");
     return getter;
+  }
+
+  std::string BaseGenerator::getHeaderFilePath(const char * iOutputFolder, const char * iHeaderFilename)
+  {
+    //Build header file path
+    std::string headerPath = iOutputFolder;
+    if (headerPath[headerPath.length()-1] != '\\')
+      headerPath.append("\\");
+    headerPath.append(iHeaderFilename);
+
+    return headerPath;
+  }
+
+  std::string BaseGenerator::getCppFilePath(const char * iOutputFolder, const char * iHeaderFilename)
+  {
+    std::string headerPath = getHeaderFilePath(iOutputFolder, iHeaderFilename);
+
+    //Build cpp file file
+    std::string cppPath = headerPath;
+    strReplace(cppPath, ".h", ".cpp");
+
+    return cppPath;
   }
 
   bin2cpp::ErrorCodes BaseGenerator::createHeaderEmbededFile(const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, bool iOverrideExisting)
