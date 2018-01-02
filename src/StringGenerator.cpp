@@ -20,6 +20,11 @@ namespace bin2cpp
   {
   }
 
+  const char * StringGenerator::getName() const
+  {
+    return "string";
+  }
+
   bin2cpp::ErrorCodes StringGenerator::createCppEmbeddedFile(const char * iInputFilename, const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, size_t iChunkSize, bool iOverrideExisting)
   {
     //check if input file exists

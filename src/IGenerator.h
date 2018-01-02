@@ -11,6 +11,12 @@ namespace bin2cpp
   public:
 
     ///<summary>
+    ///Get the name of the generator.
+    ///</summary>
+    ///<returns>Returns the name of the generator</returns>
+    virtual const char * getName() const = 0;
+
+    ///<summary>
     ///Creates a header file for embedding a given file into C++ source code.
     ///</summary>
     ///<param name="iOutputFolder">The output folder where to save the generated files.</param>

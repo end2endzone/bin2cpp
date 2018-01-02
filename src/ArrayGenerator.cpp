@@ -20,6 +20,11 @@ namespace bin2cpp
   {
   }
 
+  const char * ArrayGenerator::getName() const
+  {
+    return "array";
+  }
+
   bin2cpp::ErrorCodes ArrayGenerator::createCppEmbeddedFile(const char * iInputFilename, const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, size_t iChunkSize, bool iOverrideExisting)
   {
     //check if input file exists

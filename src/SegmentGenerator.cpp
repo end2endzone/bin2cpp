@@ -20,6 +20,11 @@ namespace bin2cpp
   {
   }
 
+  const char * SegmentGenerator::getName() const
+  {
+    return "segment";
+  }
+
   bin2cpp::ErrorCodes SegmentGenerator::createCppEmbeddedFile(const char * iInputFilename, const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, size_t iChunkSize, bool iOverrideExisting)
   {
     //check if input file exists
