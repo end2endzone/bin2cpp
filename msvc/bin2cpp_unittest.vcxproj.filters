@@ -87,6 +87,9 @@
     <ClCompile Include="..\test\application.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="generated_files\testSequential1000\_testSequential1000.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin2cppTest.x86.debug.xml">
@@ -157,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="..\test\application.h">
       <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testSequential1000\_testSequential1000.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

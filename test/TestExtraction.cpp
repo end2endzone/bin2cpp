@@ -10,6 +10,7 @@
 #include "generated_files\testRandom6\_testRandom6.h"
 #include "generated_files\testRandom7\_testRandom7.h"
 #include "generated_files\testRandom8\_testRandom8.h"
+#include "generated_files\testSequential1000\_testSequential1000.h"
 #include "generated_files\testSequential10MB\_testSequential10MB.h"
 #include "generated_files\testText10\_testText10.h"
 #include "generated_files\testText1000\_testText1000.h"
@@ -225,6 +226,21 @@ TEST_F(TestExtraction, testRandom8)
   static const std::string outputFilePath   = getActualFilePath();
 
   const bin2cpp::File & file = bin2cpp::getTestRandom8File();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testSequential1000)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp::File & file = bin2cpp::getTestSequential1000File();
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 

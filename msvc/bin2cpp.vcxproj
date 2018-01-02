@@ -53,7 +53,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -71,7 +71,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -88,11 +88,18 @@
     </CustomBuildStep>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\bin2cpp.cpp" />
+    <ClCompile Include="..\src\ArrayGenerator.cpp" />
+    <ClCompile Include="..\src\BaseGenerator.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\SegmentGenerator.cpp" />
+    <ClCompile Include="..\src\StringGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\bin2cpp.h" />
+    <ClInclude Include="..\src\ArrayGenerator.h" />
+    <ClInclude Include="..\src\BaseGenerator.h" />
+    <ClInclude Include="..\src\IGenerator.h" />
+    <ClInclude Include="..\src\SegmentGenerator.h" />
+    <ClInclude Include="..\src\StringGenerator.h" />
     <ClInclude Include="..\src\targetver.h" />
   </ItemGroup>
   <ItemGroup>

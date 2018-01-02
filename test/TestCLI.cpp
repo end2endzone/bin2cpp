@@ -285,3 +285,73 @@ TEST_F(TestCLI, testNoHeader)
   //assert generated code
   ASSERT_TRUE(hlp.fileExists(headerFilePath.c_str()));
 }
+
+TEST_F(TestCLI, testGenerators)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  //define all command line generators
+  std::vector<std::string> generators;
+  generators.push_back("segment");
+  generators.push_back("string");
+  generators.push_back("array");
+
+  //generate cpp output for each generators
+  std::vector<std::string> files;
+  for(size_t genIndex = 0; genIndex<generators.size(); genIndex++)
+  {
+    const char * generatorName = generators[genIndex].c_str();
+
+    std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + "." + generatorName + ".h";
+    std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+    std::string cppFilePath = headerFilePath; replaceAll(cppFilePath, ".h", ".cpp");
+
+    //build command line
+    std::string cmdline;
+    cmdline.append(getBin2cppPath());
+    cmdline.append(" --file=");
+    cmdline.append(getBin2cppPath()); //itself
+    cmdline.append(" --output=generated_files");
+    cmdline.append(" --headerfile=");
+    cmdline.append(headerFileName);
+    cmdline.append(" --identifier=");
+    cmdline.append(hlp.getTestCaseName().c_str());
+    cmdline.append(" --generator=");
+    cmdline.append(generatorName);
+
+    cmdline.append(" >");
+    cmdline.append(outputFilePath.c_str());
+
+    //delete generated files
+    ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+    ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
+    //run the command
+    int returnCode = system(cmdline.c_str());
+    ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+    //remember this source file
+    files.push_back(cppFilePath);
+  }
+
+  //assert all files different
+  if (files.size() >= 2)
+  {
+    for(size_t i=0; i<files.size()-1; i++)
+    {
+      for(size_t j=1; j<files.size(); j++)
+      {
+        const std::string & fileA = files[i];
+        const std::string & fileB = files[j];
+
+        if (fileA != fileB)
+        {
+          std::string reason;
+          bool isSourceCodeIdentical = hlp.isFileEquals(fileA.c_str(), fileB.c_str(), reason);
+          ASSERT_FALSE( isSourceCodeIdentical ) << reason.c_str();
+        }
+      }
+    }
+  }
+}

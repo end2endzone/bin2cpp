@@ -58,7 +58,12 @@ namespace bin2cpp
     bool found = parseArgument(name, tmp, argc, argv);
     if (found)
     {
-      if (1 == sscanf(tmp.c_str(), "%zu", &value))
+#ifdef _WIN32
+      static const char * format = "%Iu";
+#else
+      static const char * format = "%zu";
+#endif
+      if (1 == sscanf(tmp.c_str(), format, &value))
       {
         return true;
       }

@@ -106,4 +106,32 @@ namespace bin2cpp
     return BINCPP_VERSION;
   }
 
+  void toHexString(unsigned char c, unsigned char & c1, unsigned char & c2)
+  {
+    static const char * hexCharacters = "0123456789abcdef";
+    c1 = hexCharacters[c/16];
+    c2 = hexCharacters[c%16];
+  }
+
+  void toOctString(unsigned char c, unsigned char & c1, unsigned char & c2, unsigned char & c3)
+  {
+    static const char * octCharacters = "01234567";
+    c3 = octCharacters[c%8];
+    c /= 8;
+    c2 = octCharacters[c%8];
+    c /= 8;
+    c1 = octCharacters[c];
+  }
+
+  bool isPrintableCharacter(const char c)
+  {
+    if (c == 39) // character ' must be escaped with \' which is not supported right now
+      return false;
+    if (c == 92) // character \ must be escaped with \\ which is not supported right now
+      return false;
+    if (c >= 32 && c<= 126)
+      return true;
+    return false;
+  }
+
 }; //bin2cpp

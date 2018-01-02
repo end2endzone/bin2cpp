@@ -3,7 +3,10 @@
 
 #include "targetver.h"
 
-#include "bin2cpp.h"
+#include "errorcodes.h"
+#include "SegmentGenerator.h"
+#include "StringGenerator.h"
+#include "ArrayGenerator.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -31,16 +34,17 @@ void printUsage()
   //usage string in docopt format. See http://docopt.org/
   static const char usage[] = 
     "Usage:\n"
-    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--chunksize=<value>] [--override] [--noheader] [--quiet]\n"
-    "  bin2cpp -h | --help\n"
+    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--generator=<name>] [--chunksize=<value>] [--override] [--noheader] [--quiet]\n"
+    "  bin2cpp --help\n"
     "  bin2cpp --version\n"
     "\n"
     "Options:\n"
-    "  --help               Display this help message."
-    "  --version            Display this application version."
+    "  --help               Display this help message.\n"
+    "  --version            Display this application version.\n"
     "  --file=<path>        Path of the input file used for embedding as a C++ source code.\n"
     "  --output=<path>      Output folder where to create generated code. ie: .\\generated_files\n"
     "  --headerfile=<name>  File name of the generated C++ Header file. ie: SplashScreen.h\n"
+    "  --generator=<name>   Name of the generator to use. Possible values are 'segment', 'string' and 'array'. [default: segment].\n"
     "  --identifier=<name>  Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
     "  --chunksize=<value>  Size in bytes of each string segments (bytes per row). [default: 200].\n"
     "  --override           Tells bin2cpp to overwrite the destination files.\n"
@@ -148,6 +152,44 @@ int main(int argc, char* argv[])
     overrideExisting = true;
   }
 
+  //select generator
+  bin2cpp::SegmentGenerator segmentGenerator;
+  bin2cpp::StringGenerator stringGenerator;
+  bin2cpp::ArrayGenerator arrayGenerator;
+  bin2cpp::IGenerator * selectedGenerator = NULL;
+
+  std::string generatorName;
+  if (bin2cpp::parseArgument("generator", generatorName, argc, argv))
+  {
+    if (generatorName == "segment")
+    {
+      selectedGenerator = &segmentGenerator;
+    }
+    else if (generatorName == "string")
+    {
+      selectedGenerator = &stringGenerator;
+    }
+    else if (generatorName == "array")
+    {
+      selectedGenerator = &arrayGenerator;
+    }
+
+    //validate generator selection
+    if (selectedGenerator == NULL)
+    {
+      bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
+      printf("Error (%s). Unknown values for 'generator' argument!\n", getErrorCodeDescription(error));
+      printUsage();
+      return error;
+    }
+  }
+
+  //apply default generator
+  if (selectedGenerator == NULL)
+  {
+    selectedGenerator = &segmentGenerator;
+  }
+
   // printing info
   std::string chunkInfo = "";
   if (chunkSize != DEFAULT_CHUNK_SIZE)
@@ -164,28 +206,77 @@ int main(int argc, char* argv[])
   if (!quiet)
   {
     printf("Embedding \"%s\" into \"%s\"%s%s...\n", inputFilename.c_str(), headerFilename.c_str(), chunkInfo.c_str(), overrideInfo.c_str());
+    printf("Using '%s' generator...\n", selectedGenerator->getName());
   }
 
-  //execute
-  bin2cpp::ErrorCodes result = bin2cpp::createCppEmbeddedFile(inputFilename.c_str(), outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), chunkSize, overrideExisting);
-  if (result == bin2cpp::ErrorCodes::Success)
+  //generate header
+  bool headerSuccess = false;
+  if (!quiet)
+  {
+    printf("Generating header file...\n");
+  }
+  bin2cpp::ErrorCodes headerResult = selectedGenerator->createHeaderEmbededFile(outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), overrideExisting);
+  if (headerResult == bin2cpp::ErrorCodes::Success)
   {
     if (!quiet)
     {
       printf("Done.\n");
     }
-	  return 0;
+    headerSuccess = true;
   }
-  else if (result == bin2cpp::ErrorCodes::OutputFilesSkipped)
+  else if (headerResult == bin2cpp::ErrorCodes::OutputFilesSkipped)
   {
     if (!quiet)
     {
-      printf("%s.\n", getErrorCodeDescription(result));
+      printf("Warning: %s.\n", getErrorCodeDescription(headerResult));
     }
-	  return 0;
+    headerSuccess = true;
+  }
+  else
+  {
+    if (!quiet)
+    {
+      printf("Error: %s.\n", getErrorCodeDescription(headerResult));
+    }
+    headerSuccess = false;
+  }
+
+  //generate cpp
+  bool cppSuccess = false;
+  if (!quiet)
+  {
+    printf("Generating cpp file...\n");
+  }
+  bin2cpp::ErrorCodes cppResult = selectedGenerator->createCppEmbeddedFile(inputFilename.c_str(), outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), chunkSize, overrideExisting);
+  if (cppResult == bin2cpp::ErrorCodes::Success)
+  {
+    if (!quiet)
+    {
+      printf("Done.\n");
+    }
+    cppSuccess = true;
+  }
+  else if (cppResult == bin2cpp::ErrorCodes::OutputFilesSkipped)
+  {
+    if (!quiet)
+    {
+      printf("Warning: %s.\n", getErrorCodeDescription(cppResult));
+    }
+    cppSuccess = true;
+  }
+  else
+  {
+    if (!quiet)
+    {
+      printf("Error: %s.\n", getErrorCodeDescription(cppResult));
+    }
+    cppSuccess = false;
   }
   
+  if (cppSuccess && headerSuccess)
+    return 0;
+
   //error found
-  printf("Embedding failed! %s.\n", getErrorCodeDescription(result));
+  printf("Embedding failed!\n");
   return 2;
 }

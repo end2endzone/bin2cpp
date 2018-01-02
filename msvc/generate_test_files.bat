@@ -72,6 +72,12 @@ mkdir %OUTDIR% 1>NUL 2>NUL
 testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=html
 bin2cpp.exe --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --override
 
+set TEST_NAME=testSequential1000
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=sequential
+bin2cpp.exe --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=180 --override
+
 set TEST_NAME=testSequential10MB
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
@@ -107,7 +113,6 @@ set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 echo testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=random --seed=1
 testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=random --seed=1
-echo bin2cpp.exe --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --chunksize=100 --override
 bin2cpp.exe --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --chunksize=100 --override
 
 dir >NUL
