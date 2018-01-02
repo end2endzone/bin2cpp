@@ -29,7 +29,7 @@ namespace bin2cpp
 
     //Uppercase function identifier
     std::string functionIdentifier = iFunctionIdentifier;
-    functionIdentifier[0] = toupper(functionIdentifier[0]);
+    functionIdentifier[0] = (char)toupper(functionIdentifier[0]);
 
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(iOutputFolder, iHeaderFilename);
@@ -62,8 +62,6 @@ namespace bin2cpp
 
     //determine segment size
     long fileSize = getFileSize(input);
-    long lastSegmentSize = fileSize%iChunkSize;
-    size_t numSegments = fileSize/iChunkSize + (lastSegmentSize == 0 ? 0 : 1);
 
     //Build class name
     std::string className;

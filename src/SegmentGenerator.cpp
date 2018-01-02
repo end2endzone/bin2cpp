@@ -29,7 +29,7 @@ namespace bin2cpp
 
     //Uppercase function identifier
     std::string functionIdentifier = iFunctionIdentifier;
-    functionIdentifier[0] = toupper(functionIdentifier[0]);
+    functionIdentifier[0] = (char)toupper(functionIdentifier[0]);
 
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(iOutputFolder, iHeaderFilename);

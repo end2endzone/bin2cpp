@@ -22,7 +22,7 @@ namespace bin2cpp
   {
     //Uppercase function identifier
     std::string functionIdentifier = iFunctionIdentifier;
-    functionIdentifier[0] = toupper(functionIdentifier[0]);
+    functionIdentifier[0] = (char)toupper(functionIdentifier[0]);
 
     std::string getter;
     getter.append("get");
