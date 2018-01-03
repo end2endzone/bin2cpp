@@ -36,6 +36,9 @@
     <ClInclude Include="..\src\cppencoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\argumentparser.cpp">
@@ -57,6 +60,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\cppencoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

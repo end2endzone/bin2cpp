@@ -81,6 +81,7 @@
     <ClCompile Include="..\src\common.cpp" />
     <ClCompile Include="..\src\cppencoder.cpp" />
     <ClCompile Include="..\src\errorcodes.cpp" />
+    <ClCompile Include="..\src\logger.cpp" />
     <ClCompile Include="..\src\md5.cpp" />
     <ClCompile Include="..\src\md5support.cpp" />
     <ClCompile Include="..\src\md5Ex.cpp" />
@@ -90,6 +91,7 @@
     <ClInclude Include="..\src\common.h" />
     <ClInclude Include="..\src\cppencoder.h" />
     <ClInclude Include="..\src\errorcodes.h" />
+    <ClInclude Include="..\src\logger.h" />
     <ClInclude Include="..\src\md5.h" />
     <ClInclude Include="..\src\md5support.h" />
     <ClInclude Include="..\src\md5Ex.h" />

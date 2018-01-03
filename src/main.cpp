@@ -14,6 +14,7 @@
 
 #include "common.h"
 #include "argumentparser.h"
+#include "logger.h"
 
 //#define ENABLE_BREAKPOINT_DEBUGGING
 
@@ -87,6 +88,8 @@ int main(int argc, char* argv[])
   if (quiet)
     noheader = true;
 
+  bin2cpp::setQuietMode(quiet);
+
   //look for version
   if (bin2cpp::parseArgument("version", dummy, argc, argv))
   {
@@ -107,7 +110,7 @@ int main(int argc, char* argv[])
   if (!bin2cpp::parseArgument("file", inputFilename, argc, argv))
   {
     bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
-    printf("Error (%s). Missing 'file' argument!\n", getErrorCodeDescription(error));
+    bin2cpp::log(bin2cpp::LOG_ERROR, "%s (file)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
@@ -115,7 +118,7 @@ int main(int argc, char* argv[])
   if (!bin2cpp::parseArgument("output", outputFolder, argc, argv))
   {
     bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
-    printf("Error (%s). Missing 'output' argument!\n", getErrorCodeDescription(error));
+    bin2cpp::log(bin2cpp::LOG_ERROR, "%s (output)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
@@ -123,7 +126,7 @@ int main(int argc, char* argv[])
   if (!bin2cpp::parseArgument("headerfile", headerFilename, argc, argv))
   {
     bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
-    printf("Error (%s). Missing 'headerfile' argument!\n", getErrorCodeDescription(error));
+    bin2cpp::log(bin2cpp::LOG_ERROR, "%s (headerfile)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
@@ -131,7 +134,7 @@ int main(int argc, char* argv[])
   if (!bin2cpp::parseArgument("identifier", functionIdentifier, argc, argv))
   {
     bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
-    printf("Error (%s). Missing 'identifier' argument!\n", getErrorCodeDescription(error));
+    bin2cpp::log(bin2cpp::LOG_ERROR, "%s (identifier)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
@@ -178,7 +181,7 @@ int main(int argc, char* argv[])
     if (selectedGenerator == NULL)
     {
       bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
-      printf("Error (%s). Unknown values for 'generator' argument!\n", getErrorCodeDescription(error));
+      bin2cpp::log(bin2cpp::LOG_ERROR, "%s, unknown values for 'generator' argument!", getErrorCodeDescription(error));
       printUsage();
       return error;
     }
@@ -203,46 +206,28 @@ int main(int argc, char* argv[])
   std::string overrideInfo = "";
   if (overrideExisting)
     overrideInfo = " overriding existing files";
-  if (!quiet)
-  {
-    printf("Embedding \"%s\" into \"%s\"%s%s...\n", inputFilename.c_str(), headerFilename.c_str(), chunkInfo.c_str(), overrideInfo.c_str());
-    printf("Using '%s' generator...\n", selectedGenerator->getName());
-  }
+  bin2cpp::log(bin2cpp::LOG_INFO, "Embedding \"%s\" into \"%s\"%s%s...", inputFilename.c_str(), headerFilename.c_str(), chunkInfo.c_str(), overrideInfo.c_str());
+  bin2cpp::log(bin2cpp::LOG_INFO, "Using '%s' generator...", selectedGenerator->getName());
 
   //generate header
-  bool headerSuccess = false;
-  if (!quiet)
-  {
-    printf("Generating header file...\n");
-  }
+  bin2cpp::log(bin2cpp::LOG_INFO, "Generating header file...");
   bin2cpp::ErrorCodes headerResult = selectedGenerator->createHeaderEmbededFile(outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), overrideExisting);
   if (headerResult == bin2cpp::ErrorCodes::Success)
   {
-    if (!quiet)
-    {
-      printf("Done.\n");
-    }
-    headerSuccess = true;
+    bin2cpp::log(bin2cpp::LOG_INFO, "done");
   }
   else if (headerResult == bin2cpp::ErrorCodes::OutputFilesSkipped)
   {
-    if (!quiet)
-    {
-      printf("Warning: %s.\n", getErrorCodeDescription(headerResult));
-    }
-    headerSuccess = true;
+    bin2cpp::log(bin2cpp::LOG_WARNING, "%s", getErrorCodeDescription(headerResult));
   }
   else
   {
-    if (!quiet)
-    {
-      printf("Error: %s.\n", getErrorCodeDescription(headerResult));
-    }
-    headerSuccess = false;
+    bin2cpp::log(bin2cpp::LOG_ERROR, "%s", getErrorCodeDescription(headerResult));
+    bin2cpp::log(bin2cpp::LOG_ERROR, "Embedding failed!");
+    return headerResult;
   }
 
   //generate cpp
-  bool cppSuccess = false;
   if (!quiet)
   {
     printf("Generating cpp file...\n");
@@ -250,33 +235,19 @@ int main(int argc, char* argv[])
   bin2cpp::ErrorCodes cppResult = selectedGenerator->createCppEmbeddedFile(inputFilename.c_str(), outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), chunkSize, overrideExisting);
   if (cppResult == bin2cpp::ErrorCodes::Success)
   {
-    if (!quiet)
-    {
-      printf("Done.\n");
-    }
-    cppSuccess = true;
+    bin2cpp::log(bin2cpp::LOG_INFO, "done");
   }
   else if (cppResult == bin2cpp::ErrorCodes::OutputFilesSkipped)
   {
-    if (!quiet)
-    {
-      printf("Warning: %s.\n", getErrorCodeDescription(cppResult));
-    }
-    cppSuccess = true;
+    bin2cpp::log(bin2cpp::LOG_WARNING, "%s", getErrorCodeDescription(cppResult));
   }
   else
   {
-    if (!quiet)
-    {
-      printf("Error: %s.\n", getErrorCodeDescription(cppResult));
-    }
-    cppSuccess = false;
+    bin2cpp::log(bin2cpp::LOG_ERROR, "%s", getErrorCodeDescription(cppResult));
+    bin2cpp::log(bin2cpp::LOG_ERROR, "Embedding failed!");
+    return cppResult;
   }
-  
-  if (cppSuccess && headerSuccess)
-    return 0;
-
-  //error found
-  printf("Embedding failed!\n");
-  return 2;
+ 
+  //success
+  return 0;
 }
