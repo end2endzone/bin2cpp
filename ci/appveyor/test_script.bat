@@ -1,12 +1,29 @@
-echo ======================================================================
-echo Running unit tests
+@echo off
+
+echo Change directory to output directory
+cd /d %~dp0
+cd ..\..\msvc\Win32\Release
+
 echo =======================================================================
+echo Generating test files...
+echo =======================================================================
+echo Deleting previous folder...
+rmdir /q/s generated_files >NUL 2>NUL
+echo Creating new folder...
+mkdir generated_files
+echo Creating files...
+call generate_test_files.bat
+echo all test files generated...
+echo.
 
-REM Run unit tests with current directory as project file
-cd /d c:\projects\bin2cpp\msvc
-.\Win32\Release\bin2cpp_unittest.exe
+echo =======================================================================
+echo Running unit tests...
+echo =======================================================================
+bin2cpp_unittest.exe
+echo done
+echo.
 
-echo ======================================================================
+echo =======================================================================
 echo Uploading test results to AppVeyor
 echo =======================================================================
 set TEST_RESULT_URL=https://ci.appveyor.com/api/testresults/junit/%APPVEYOR_JOB_ID%
