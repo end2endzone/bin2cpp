@@ -79,7 +79,7 @@ test_script:
 #---------------------------------#
 
 artifacts:
-- path: msvc\bin2cppTest.x86.release.xml
+- path: msvc\Win32\Release\bin2cppTest.x86.release.xml
   name: bin2cppTest.x86.release.xml
 - path: nsis\bin\*.zip
   name: bin2cpp win32 portable
