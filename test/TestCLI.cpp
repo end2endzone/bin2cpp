@@ -42,41 +42,31 @@ namespace TestCLIUtils
     fclose(f);
     return true;
   }
+
+  bool deleteFile(const char * iPath)
+  {
+    if (hlp.fileExists(iPath))
+    {
+      bool deleted = remove(iPath) == 0;
+      return deleted;
+    }
+    return true; //file does not exists. Success.
+  }
+
+  std::string getBin2cppPath()
+  {
+    Application & app = Application::getInstance();
+    const Application::StringVector & arguments = app.getArguments();
+    const std::string & appPath = arguments[0];
+
+    //replace bin2cpp_unittest by bin2cpp
+    std::string bin2cppPath = appPath;
+    bin2cpp::strReplace(bin2cppPath, "_unittest", "");
+    return bin2cppPath;
+  }
+
 }
 using namespace TestCLIUtils;
-
-void replaceAll(std::string& str, const std::string& from, const std::string& to) {
-  if(from.empty())
-    return;
-  size_t start_pos = 0;
-  while((start_pos = str.find(from, start_pos)) != std::string::npos)
-  {
-    str.replace(start_pos, from.length(), to);
-    start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
-  }
-}
-
-bool deleteFile(const char * iPath)
-{
-  if (hlp.fileExists(iPath))
-  {
-    bool deleted = remove(iPath) == 0;
-    return deleted;
-  }
-  return true; //file does not exists. Success.
-}
-
-std::string getBin2cppPath()
-{
-  Application & app = Application::getInstance();
-  const Application::StringVector & arguments = app.getArguments();
-  const std::string & appPath = arguments[0];
-
-  //replace bin2cpp_unittest by bin2cpp
-  std::string bin2cppPath = appPath;
-  replaceAll(bin2cppPath, "_unittest", "");
-  return bin2cppPath;
-}
 
 void TestCLI::SetUp()
 {
@@ -170,7 +160,7 @@ TEST_F(TestCLI, testMinimum)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-  std::string cppFilePath = headerFilePath; replaceAll(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
 
   //build command line
   std::string cmdline;
@@ -214,7 +204,7 @@ TEST_F(TestCLI, testQuiet)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-  std::string cppFilePath = headerFilePath; replaceAll(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
 
   //build command line
   std::string cmdline;
@@ -260,7 +250,7 @@ TEST_F(TestCLI, testNoHeader)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-  std::string cppFilePath = headerFilePath; replaceAll(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
 
   //build command line
   std::string cmdline;
@@ -317,7 +307,7 @@ TEST_F(TestCLI, testGenerators)
 
     std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + "." + generatorName + ".h";
     std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-    std::string cppFilePath = headerFilePath; replaceAll(cppFilePath, ".h", ".cpp");
+    std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
 
     //build command line
     std::string cmdline;
@@ -375,7 +365,7 @@ TEST_F(TestCLI, testOverride)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-  std::string cppFilePath = headerFilePath; replaceAll(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
 
   //build command line
   std::string cmdline;

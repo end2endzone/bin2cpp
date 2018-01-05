@@ -1,9 +1,10 @@
 echo ======================================================================
 echo Running unit tests
 echo =======================================================================
+
+REM Run unit tests with current directory as project file
 cd /d c:\projects\bin2cpp\msvc
-set path=%PATH%;c:\projects\bin2cpp\msvc\Win32\Release
-bin2cpp_unittest.exe
+.\Win32\Release\bin2cpp_unittest.exe
 
 echo ======================================================================
 echo Uploading test results to AppVeyor
