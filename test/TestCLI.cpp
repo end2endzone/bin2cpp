@@ -1,6 +1,8 @@
 #include "TestCLI.h"
 #include "gtesthelper.h"
 #include "application.h"
+#include "errorcodes.h"
+#include "common.h"
 
 #define ASSERT_TEXT_IN_FILE(expected, filepath, text) {\
   int line = -1;  int col = -1;  bool textFound = gTestHelper::getInstance().findInFile(filepath, text, line, col);\
@@ -29,6 +31,16 @@ namespace TestCLIUtils
     file.append(hlp.getTestQualifiedName());
     file.append(".actual.txt");
     return file;
+  }
+
+  bool createDummyFile(const char * iPath)
+  {
+    FILE * f = fopen(iPath, "w");
+    if (!f)
+      return false;
+    fputs("foobar", f);
+    fclose(f);
+    return true;
   }
 }
 using namespace TestCLIUtils;
@@ -354,4 +366,65 @@ TEST_F(TestCLI, testGenerators)
       }
     }
   }
+}
+
+TEST_F(TestCLI, testOverride)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string cppFilePath = headerFilePath; replaceAll(cppFilePath, ".h", ".cpp");
+
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(hlp.getTestCaseName().c_str());
+
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+  //delete cpp file (header file still exits)
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
+  //run the command (again, expecting header file already exists)
+  returnCode = system(cmdline.c_str());
+  ASSERT_EQ(bin2cpp::ErrorCodes::OutputFileAlreadyExist, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+  //create dummy haeder & cpp file
+  ASSERT_TRUE(createDummyFile(headerFilePath.c_str()));
+  ASSERT_TRUE(createDummyFile(cppFilePath.c_str()));
+
+  //run the command (again, expecting both files already exists)
+  returnCode = system(cmdline.c_str());
+  ASSERT_EQ(bin2cpp::ErrorCodes::OutputFileAlreadyExist, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+  //add the override flag
+  bin2cpp::strReplace(cmdline, "--file", "--override --file");
+
+  //run the command (again, expecting overriding both files)
+  returnCode = system(cmdline.c_str());
+  ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+  ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), bin2cpp::getErrorCodeDescription(bin2cpp::ErrorCodes::OutputFileAlreadyExist))
+  ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), bin2cpp::getErrorCodeDescription(bin2cpp::ErrorCodes::OutputFilesSkipped))
+
+  //run the command (again, expecting skipping files)
+  returnCode = system(cmdline.c_str());
+  ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), bin2cpp::getErrorCodeDescription(bin2cpp::ErrorCodes::OutputFilesSkipped))
 }

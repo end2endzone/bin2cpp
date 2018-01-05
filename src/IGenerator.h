@@ -24,7 +24,7 @@ namespace bin2cpp
     ///<param name="iFunctionIdentifier">The unique identifier name for each data accessor functions.</param>
     ///<param name="iOverrideExisting">Override existing output files.</param>
     ///<returns>Returns an enum of type ErrorCodes which defines the results.</returns>
-    virtual bin2cpp::ErrorCodes createHeaderEmbededFile(const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, bool iOverrideExisting) = 0;
+    virtual bin2cpp::ErrorCodes createHeaderEmbededFile(const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier) = 0;
 
     ///<summary>
     ///Creates a cpp source file for embedding a given file into C++ source code.
@@ -36,7 +36,7 @@ namespace bin2cpp
     ///<param name="iChunkSize">The size in bytes of each chunk of data.</param>
     ///<param name="iOverrideExisting">Override existing output files.</param>
     ///<returns>Returns an enum of type ErrorCodes which defines the results.</returns>
-    virtual bin2cpp::ErrorCodes createCppEmbeddedFile(const char * iInputFilename, const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, size_t iChunkSize, bool iOverrideExisting) = 0;
+    virtual bin2cpp::ErrorCodes createCppEmbeddedFile(const char * iInputFilename, const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, size_t iChunkSize) = 0;
   };
   
 }; //bin2cpp

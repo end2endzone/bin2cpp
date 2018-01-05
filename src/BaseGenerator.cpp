@@ -53,7 +53,7 @@ namespace bin2cpp
     return cppPath;
   }
 
-  bin2cpp::ErrorCodes BaseGenerator::createHeaderEmbededFile(const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, bool iOverrideExisting)
+  bin2cpp::ErrorCodes BaseGenerator::createHeaderEmbededFile(const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier)
   {
     std::string outputHeaderPath = std::string(iOutputFolder) + "\\" + iHeaderFilename;
 

@@ -21,3 +21,4 @@
 /msvc/TestCLI.testNoHeader.actual.txt
 /msvc/TestCLI.testQuiet.actual.txt
 /msvc/TestCLI.testGenerators.actual.txt
+/msvc/TestCLI.testOverride.actual.txt

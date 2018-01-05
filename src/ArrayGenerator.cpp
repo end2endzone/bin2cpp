@@ -25,7 +25,7 @@ namespace bin2cpp
     return "array";
   }
 
-  bin2cpp::ErrorCodes ArrayGenerator::createCppEmbeddedFile(const char * iInputFilename, const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, size_t iChunkSize, bool iOverrideExisting)
+  bin2cpp::ErrorCodes ArrayGenerator::createCppEmbeddedFile(const char * iInputFilename, const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, size_t iChunkSize)
   {
     //check if input file exists
     FILE * input = fopen(iInputFilename, "rb");
@@ -39,23 +39,6 @@ namespace bin2cpp
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(iOutputFolder, iHeaderFilename);
     std::string outputCppFilename = getCppFilePath(iOutputFolder, iHeaderFilename);
-
-    //check if output files already exists
-    if (fileExists(outputCppFilename.c_str()))
-    {
-      //compute input/output file md5
-      std::string inputFileHexDigest = getFileHexDigest(iInputFilename);
-      std::string sourceFileHexDigest = getGeneratedFileHexDigest(outputCppFilename.c_str());
-      if (inputFileHexDigest == sourceFileHexDigest)
-      {
-        //md5 identical
-        return bin2cpp::ErrorCodes::OutputFilesSkipped;
-      }
-
-      //md5 not identical
-      if (!iOverrideExisting)
-        return bin2cpp::ErrorCodes::OutputFilesAlreadyExist;
-    }
 
     //create cpp file
     FILE * cpp = fopen(outputCppFilename.c_str(), "w");
@@ -162,6 +145,7 @@ namespace bin2cpp
     fprintf(cpp, "}; //bin2cpp\n");
 
     fclose(input);
+    fclose(cpp);
 
     return bin2cpp::ErrorCodes::Success;
   }

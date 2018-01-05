@@ -25,7 +25,7 @@ namespace bin2cpp
     return "segment";
   }
 
-  bin2cpp::ErrorCodes SegmentGenerator::createCppEmbeddedFile(const char * iInputFilename, const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, size_t iChunkSize, bool iOverrideExisting)
+  bin2cpp::ErrorCodes SegmentGenerator::createCppEmbeddedFile(const char * iInputFilename, const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, size_t iChunkSize)
   {
     //check if input file exists
     FILE * input = fopen(iInputFilename, "rb");
@@ -40,23 +40,6 @@ namespace bin2cpp
     std::string headerPath = getHeaderFilePath(iOutputFolder, iHeaderFilename);
     std::string outputCppFilename = getCppFilePath(iOutputFolder, iHeaderFilename);
 
-    //check if output files already exists
-    if (fileExists(outputCppFilename.c_str()))
-    {
-      //compute input/output file md5
-      std::string inputFileHexDigest = getFileHexDigest(iInputFilename);
-      std::string sourceFileHexDigest = getGeneratedFileHexDigest(outputCppFilename.c_str());
-      if (inputFileHexDigest == sourceFileHexDigest)
-      {
-        //md5 identical
-        return bin2cpp::ErrorCodes::OutputFilesSkipped;
-      }
-
-      //md5 not identical
-      if (!iOverrideExisting)
-        return bin2cpp::ErrorCodes::OutputFilesAlreadyExist;
-    }
-
     //create cpp file
     FILE * cpp = fopen(outputCppFilename.c_str(), "w");
     if (!cpp)
@@ -67,8 +50,8 @@ namespace bin2cpp
 
     //determine segment size
     long fileSize = getFileSize(input);
-    long lastSegmentSize = fileSize%iChunkSize;
-    size_t numSegments = fileSize/iChunkSize + (lastSegmentSize == 0 ? 0 : 1);
+    //long lastSegmentSize = fileSize%iChunkSize;
+    //size_t numSegments = fileSize/iChunkSize + (lastSegmentSize == 0 ? 0 : 1);
 
     //Build class name
     std::string className;
@@ -152,6 +135,7 @@ namespace bin2cpp
     fprintf(cpp, "}; //bin2cpp\n");
 
     fclose(input);
+    fclose(cpp);
 
     return bin2cpp::ErrorCodes::Success;
   }

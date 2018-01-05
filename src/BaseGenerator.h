@@ -15,7 +15,7 @@ namespace bin2cpp
     virtual ~BaseGenerator();
 
     //same header file for all generators
-    virtual bin2cpp::ErrorCodes createHeaderEmbededFile(const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, bool iOverrideExisting);
+    virtual bin2cpp::ErrorCodes createHeaderEmbededFile(const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier);
 
   protected:
     virtual std::string getGetterFunctionName(const char * iFunctionIdentifier);

@@ -101,6 +101,32 @@ namespace bin2cpp
     return true;
   }
 
+  std::string getEnvironmentVariable(const char * iName)
+  {
+    const char * value = getenv(iName);
+    if (value == NULL)
+      return std::string();
+    else
+      return std::string(value);
+  }
+
+  std::string getTemporaryFileName()
+  {
+    char rndvalue[1024];
+    itoa(rand(), rndvalue, 10);
+
+    std::string name = std::string("random") + rndvalue + ".tmp";
+    return name;
+  }
+
+  std::string getTemporaryFilePath()
+  {
+    std::string temp = getEnvironmentVariable("TEMP");
+
+    std::string rndpath = temp + "\\" + getTemporaryFileName();
+    return rndpath;
+  }
+
   const char * getVersionString()
   {
     return BINCPP_VERSION;

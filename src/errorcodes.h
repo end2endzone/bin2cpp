@@ -8,7 +8,7 @@ namespace bin2cpp
   class ErrorCodes
   {
   public:
-    enum Enum { Success, MissingArguments, InputFileNotFound, UnableToCreateOutputFiles, OutputFilesAlreadyExist, OutputFilesSkipped };
+    enum Enum { Success, MissingArguments, InputFileNotFound, UnableToCreateOutputFiles, OutputFileAlreadyExist, OutputFilesSkipped };
 
     ErrorCodes(const ErrorCodes & iEnum);
     ErrorCodes(int iValue);

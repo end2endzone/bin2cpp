@@ -47,6 +47,25 @@ namespace bin2cpp
   ///<return>Returns true when the file exists. Returns false otherwise.<return>
   bool fileExists(const char * iFilePath);
 
+  ///<summary>
+  ///Returns value of an environment variable.
+  ///</summary>
+  ///<param name="iName">Name of the variable</param>
+  ///<return>Returns the value of the given environment variable.<return>
+  std::string getEnvironmentVariable(const char * iName);
+
+  ///<summary>
+  ///Returns the file name of a tempporary file.
+  ///</summary>
+  ///<return>Returns the file name of a tempporary file.<return>
+  std::string getTemporaryFileName();
+
+  ///<summary>
+  ///Returns the path of a tempporary file.
+  ///</summary>
+  ///<return>Returns the path of a tempporary file.<return>
+  std::string getTemporaryFilePath();
+
   /*
   Description:
     Returns the application version number.
