@@ -7,9 +7,68 @@
 #include <stdlib.h>
 #include <string>
 #include <stdlib.h>
+#include <direct.h>
+#include <sstream>
 
 namespace bin2cpp
 {
+  //Note: http://www.parashift.com/c++-faq-lite/misc-technical-issues.html#faq-39.2
+  template <class T>
+  inline std::string toStringT (const T & t)
+  {
+    std::stringstream out;
+    out << t;
+    std::string s;
+    s = out.str().c_str();
+    return s;
+  }
+
+  //template <class T>
+  //inline void toT (const char * iValue, T & t)
+  //{
+  //  std::string tmpString = iValue;
+  //  std::istringstream inputStream(tmpString);
+  //  inputStream >> t;
+  //}
+
+  //specializations
+  template<>
+  inline std::string toStringT<unsigned char>(const unsigned char & t)
+  {
+    std::stringstream out;
+    out << (int)t;
+    std::string s;
+    s = out.str();
+    return s;
+  }
+  template<>
+  inline std::string toStringT<char>(const char & t)
+  {
+    std::stringstream out;
+    out << (int)t;
+    std::string s;
+    s = out.str();
+    return s;
+  }
+
+  //template<>
+  //inline void toT<unsigned char>(const char * iValue, unsigned char & t)
+  //{
+  //  std::string tmpString = iValue;
+  //  std::istringstream inputStream(tmpString);
+  //  uint16 tmp = 0;
+  //  inputStream >> tmp;
+  //  t = (unsigned char)tmp;
+  //}
+  //template<>
+  //inline void toT<char>(const char * iValue, char & t)
+  //{
+  //  std::string tmpString = iValue;
+  //  std::istringstream inputStream(tmpString);
+  //  sint16 tmp = 0;
+  //  inputStream >> tmp;
+  //  t = (char)tmp;
+  //}
 
   int getCopyrightYear()
   {
@@ -158,6 +217,219 @@ namespace bin2cpp
     if (c >= 32 && c<= 126)
       return true;
     return false;
+  }
+
+  std::string getParentPath(const std::string & iPath)
+  {
+    std::string parent;
+
+    char separator = getPathSeparator();
+
+    std::size_t offset = iPath.find_last_of("/\\");
+    if (offset != std::string::npos)
+    {
+      //found
+      parent = iPath.substr(0,offset);
+    }
+
+    return parent;
+  }
+
+  void splitPath(const std::string & iPath, std::string & oFolder, std::string & oFilename)
+  {
+    //char separator = getPathSeparator();
+
+    ////reset everything
+    //oFilename = "";
+    //oFolder = "";
+
+    ////start from the end and capture each character into oFilename
+    //bool wDumpingInFilename = true;
+    //for(int i = iPath.size() - 1; i >= 0; i--)
+    //{
+    //  char c = iPath[i];
+    //  if (c == separator && wDumpingInFilename)
+    //  {
+    //    wDumpingInFilename = false;
+    //  }
+
+    //  //decide where the character will be dumped
+    //  std::string * wDestination = NULL;
+    //  if (wDumpingInFilename)
+    //  {
+    //    wDestination = &oFilename;
+    //  }
+    //  else
+    //  {
+    //    wDestination = &oFolder;
+    //  }
+
+    //  //dump c into destination string
+    //  wDestination->insert(0, 1, c);
+    //}
+
+    //if (oFolder.size() == 0)
+    //{
+    //  oFolder = std::string(".") + separator;
+    //}
+
+    oFolder = "";
+    oFilename = "";
+
+    char separator = getPathSeparator();
+
+    std::size_t offset = iPath.find_last_of("/\\");
+    if (offset != std::string::npos)
+    {
+      //found
+      oFolder = iPath.substr(0,offset);
+      oFilename = iPath.substr(offset+1);
+    }
+    else
+    {
+      oFilename = iPath;
+    }
+  }
+
+  char getPathSeparator()
+  {
+#ifdef _WIN32
+    return '\\';
+#endif
+  }
+
+  std::string getCurrentFolder()
+  {
+    return std::string(_getcwd(NULL, 0));
+  }
+
+  std::string getFileExtention(const std::string & iPath)
+  {
+    //extract filename from path to prevent
+    //reading a folder's extension
+    std::string folder;
+    std::string filename;
+    splitPath(iPath, folder, filename);
+
+    std::string extension;
+    std::size_t offset = filename.find_last_of(".");
+    if (offset != std::string::npos)
+    {
+      //found
+      //name = filename.substr(0,offset);
+      extension = filename.substr(offset+1);
+    }
+
+    return extension;
+  }
+  
+  std::string getUserFriendlySize(uint64_t iBytesSize)
+  {
+    static const uint64_t kbLimit = 1024;
+    static const uint64_t mbLimit = kbLimit*1000;
+    static const uint64_t gbLimit = 1024*mbLimit;
+    static const uint64_t tbLimit = 1024*gbLimit;
+
+    FileSizeEnum preferedUnit = Bytes;
+    
+    if (iBytesSize < kbLimit)
+    {
+      //bytes
+    }
+    else if (iBytesSize < mbLimit)
+    {
+      preferedUnit = Kilobytes;
+    }
+    else if (iBytesSize < gbLimit)
+    {
+      preferedUnit = Megabytes;
+    }
+    else if (iBytesSize < tbLimit)
+    {
+      preferedUnit = Gigabytes;
+    }
+    else
+    {
+      preferedUnit = Terabytes;
+    }
+
+    return getUserFriendlySize(iBytesSize, preferedUnit);
+  }
+
+  std::string getUserFriendlySize(uint64_t iBytesSize, FileSizeEnum iUnit)
+  {
+    static const uint64_t digitsPrecision = 100;
+    static const uint64_t factor = 1024;
+    static const uint64_t kbPrecision = 1;
+    static const uint64_t mbPrecision = 1024*kbPrecision;
+    static const uint64_t gbPrecision = 1024*mbPrecision;
+    static const uint64_t tbPrecision = 1024*gbPrecision;
+
+    std::string friendlySize;
+
+    //Convert iSize to a formattedSize
+    //double unitPower = double(iUnit.getValue());
+    //double multiplicator = pow(1024.0, unitPower);
+    //double sizeInSpecifiedUnit = double(iSize)/multiplicator;
+    //double formattedSize = double(uint64_t(sizeInSpecifiedUnit * 100.0)) / 100.0;
+    double formattedSize = 0.0;
+    switch(iUnit)
+    {
+    case Bytes:
+      formattedSize = double( iBytesSize );
+      break;
+    case Kilobytes:
+      formattedSize = double( ((iBytesSize*digitsPrecision)/factor)/kbPrecision )/double(digitsPrecision);
+      break;
+    case Megabytes:
+      formattedSize = double( uint64_t(uint64_t(iBytesSize/factor)*digitsPrecision)/mbPrecision )/double(digitsPrecision);
+      break;
+    case Gigabytes:
+      formattedSize = double( uint64_t(uint64_t(iBytesSize/factor)*digitsPrecision)/gbPrecision )/double(digitsPrecision);
+      break;
+    case Terabytes:
+      formattedSize = double( uint64_t(uint64_t(iBytesSize/factor)*digitsPrecision)/tbPrecision )/double(digitsPrecision);
+      break;
+    };
+
+    //Add formattedSize to friendlySize
+    static const int BUFFER_SIZE = 1024;
+    char buffer[BUFFER_SIZE];
+    sprintf(buffer, "%.2f", formattedSize);
+    friendlySize = buffer;
+
+    //Append unit descrition to friendlySize
+    switch(iUnit)
+    {
+    case Bytes:
+      {
+        friendlySize = toStringT(iBytesSize);
+        friendlySize += " bytes";
+      };
+      break;
+    case Kilobytes:
+      {
+        friendlySize += " KB";
+      };
+      break;
+    case Megabytes:
+      {
+        friendlySize += " MB";
+      };
+      break;
+    case Gigabytes:
+      {
+        friendlySize += " GB";
+      };
+      break;
+    case Terabytes:
+      {
+        friendlySize += " TB";
+      };
+      break;
+    };
+
+    return friendlySize;
   }
 
 }; //bin2cpp

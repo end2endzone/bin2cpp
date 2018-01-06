@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 #include <string>
 
 namespace bin2cpp
@@ -99,5 +100,56 @@ namespace bin2cpp
   ///<param name="c">The input character value</param>
   ///<return>Returns true if the given character is printable to a console.<return>
   bool isPrintableCharacter(const char c);
+
+  ///<summary>
+  ///Returns the parent element of a path. For files, returns the file's directory. For folders, returns the parent path
+  ///</summary>
+  ///<param name="iPath">The input path to split.</param>
+  ///<return>Returns the parent element of a path.<return>
+  std::string getParentPath(const std::string & iPath);
+
+  ///<summary>
+  ///Splits a path into a folder and a filename.
+  ///</summary>
+  ///<param name="iPath">The input path to split.</param>
+  ///<param name="oFolder">The output folder of the given path.</param>
+  ///<param name="oFile">The output file of the given path.</param>
+  ///<return>Returns a the folder and the filename of the given path.<return>
+  void splitPath(const std::string & iPath, std::string & oFolder, std::string & oFilename);
+
+  ///<summary>
+  ///Gets the character that represents the path separator.
+  ///</summary>
+  ///<return>Returns the character that represents the path separator.<return>
+  char getPathSeparator();
+
+  ///<summary>
+  ///Returns the current folder
+  ///</summary>
+  ///<return>Returns the current folder<return>
+  std::string getCurrentFolder();
+
+  ///<summary>
+  ///Returns the extension of a file.
+  ///</summary>
+  ///<param name="iPath">The valid path to a file.</param>
+  ///<return>Returns the extension of a file.<return>
+  std::string getFileExtention(const std::string & iPath);
+  
+  enum FileSizeEnum {Bytes, Kilobytes, Megabytes, Gigabytes, Terabytes};
+
+  ///<summary>
+  ///Returns a given size in a user friendly format and units.
+  ///</summary>
+  ///<param name="iPath">The size in bytes</param>
+  ///<return>Returns a given size in a user friendly format and units.<return>
+  std::string getUserFriendlySize(uint64_t iBytesSize);
+
+  ///<summary>
+  ///Returns a given size in a user friendly format and units.
+  ///</summary>
+  ///<param name="iPath">The size in bytes</param>
+  ///<return>Returns a given size in a user friendly format and units.<return>
+  std::string getUserFriendlySize(uint64_t iBytesSize, FileSizeEnum iUnit);
 
 }; //bin2cpp
