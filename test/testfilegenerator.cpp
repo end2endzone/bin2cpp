@@ -7,26 +7,12 @@
 #include <string>
 #include <time.h>       /* time */
 #include "argumentparser.h"
+#include "logger.h"
 #include "..\version_info.h"
 
 const char * getVersionString()
 {
   return BINCPP_VERSION;
-}
-
-bool generateSequentialBinaryFile(size_t size, const char * iFilename)
-{
-  FILE * f = fopen(iFilename, "wb");
-  if (f == NULL)
-    return false;
-  for(size_t i=0; i<size; i++)
-  {
-    unsigned int byteInt = i*i + i*3593 + 244;
-    unsigned char byte = byteInt%256;
-    fwrite(&byte, 1, 1, f);
-  }
-  fclose(f);
-  return true;
 }
 
 void usage()
@@ -55,7 +41,7 @@ enum RETURN_CODE
 
 int main(int argc, char **argv)
 {
-  printf("Test file generator v%s\n", getVersionString());
+  bin2cpp::log(bin2cpp::LOG_INFO, "Test file generator v%s", getVersionString());
 
   //parse arguments
   std::string file;
@@ -66,7 +52,7 @@ int main(int argc, char **argv)
 
   if (!bin2cpp::parseArgument("file", file, argc, argv))
   {
-    printf("Error: Missing 'file' argument!\n");
+    bin2cpp::log(bin2cpp::LOG_ERROR, "Missing 'file' argument!\n");
     usage();
     return MISSING_FILE;
   }
@@ -77,7 +63,7 @@ int main(int argc, char **argv)
     size = tmpSize;
     if (size <= 0)
     {
-      printf("Error: Invalid file size!\n");
+      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid file size!\n");
       return INVALID_FILE_SIZE;
     }
   }
@@ -88,7 +74,7 @@ int main(int argc, char **argv)
     seed = tmpSeed;
     if (seed < 0)
     {
-      printf("Error: Invalid seed value!\n");
+      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid seed value!\n");
       return INVALID_SEED;
     }
   }
@@ -99,7 +85,7 @@ int main(int argc, char **argv)
     skip = tmpSkip;
     if (skip < 0)
     {
-      printf("Error: Invalid skip value!\n");
+      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid skip value!\n");
       return INVALID_SKIP;
     }
   }
@@ -116,25 +102,25 @@ int main(int argc, char **argv)
     }
     else
     {
-      printf("Error: Invalid fill parameter!\n");
+      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid fill parameter!\n");
       return INVALID_FILL_PARAMETER;
     }
   }
 
   static const size_t ONE_MIB = 1024*1024;
-  printf("Generating the following file:\n");
-  printf("  path: %s\n", file.c_str());
+  bin2cpp::log(bin2cpp::LOG_INFO, "Generating the following file:\n");
+  bin2cpp::log(bin2cpp::LOG_INFO, "  path: %s\n", file.c_str());
   if (size >= ONE_MIB)
-    printf("  size: %d bytes (%.2f MiB)\n", size, size/float(ONE_MIB));
+    bin2cpp::log(bin2cpp::LOG_INFO, "  size: %d bytes (%.2f MiB)\n", size, size/float(ONE_MIB));
   else
-    printf("  size: %d bytes\n", size);
-  printf("  fill: %s\n", fill.c_str());
+    bin2cpp::log(bin2cpp::LOG_INFO, "  size: %d bytes\n", size);
+  bin2cpp::log(bin2cpp::LOG_INFO, "  fill: %s\n", fill.c_str());
 
   //process with file generation
   FILE * f = fopen(file.c_str(), "wb");
   if (!f)
   {
-    printf("Error: Cannot create file '%s'!\n", file.c_str());
+    bin2cpp::log(bin2cpp::LOG_ERROR, "Cannot create file '%s'!\n", file.c_str());
     return 4;
   }
 
@@ -211,7 +197,7 @@ int main(int argc, char **argv)
 
   fclose(f);
 
-  printf("done!\n");
+  bin2cpp::log(bin2cpp::LOG_INFO, "done!\n");
 
   return EXIT_NO_ERROR;
 }
