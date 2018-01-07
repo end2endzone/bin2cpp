@@ -228,7 +228,7 @@ int main(int argc, char* argv[])
     //generate a temporary file and compare the two to see if they are different.
     std::string tmpFileName = bin2cpp::getTemporaryFileName();
     std::string tempFilePath = bin2cpp::getEnvironmentVariable("TEMP") + "\\" + tmpFileName;
-    headerResult = generator->createHeaderEmbededFile(bin2cpp::getEnvironmentVariable("TEMP").c_str(), tmpFileName.c_str(), functionIdentifier.c_str());
+    headerResult = generator->createHeaderEmbededFile(tempFilePath.c_str(), functionIdentifier.c_str());
     
     //if still success
     if (headerResult == bin2cpp::ErrorCodes::Success)
@@ -253,7 +253,7 @@ int main(int argc, char* argv[])
   if (headerResult == bin2cpp::ErrorCodes::Success)
   {
     //generate file or override existing
-    headerResult = generator->createHeaderEmbededFile(outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str());
+    headerResult = generator->createHeaderEmbededFile(outputHeaderPath.c_str(), functionIdentifier.c_str());
   }
   if (headerResult == bin2cpp::ErrorCodes::Success)
   {
@@ -291,7 +291,7 @@ int main(int argc, char* argv[])
     //generate a temporary file and compare the two to see if they are different.
     std::string tmpFileName = bin2cpp::getTemporaryFileName();
     std::string tempFilePath = bin2cpp::getEnvironmentVariable("TEMP") + "\\" + cppFilename;
-    cppResult = generator->createCppEmbeddedFile(inputFilename.c_str(), bin2cpp::getEnvironmentVariable("TEMP").c_str(), headerFilename.c_str(), functionIdentifier.c_str(), chunkSize);
+    cppResult = generator->createCppEmbeddedFile(inputFilename.c_str(), tempFilePath.c_str(), functionIdentifier.c_str(), chunkSize);
     
     //if still success
     if (cppResult == bin2cpp::ErrorCodes::Success)
@@ -316,7 +316,7 @@ int main(int argc, char* argv[])
   if (cppResult == bin2cpp::ErrorCodes::Success)
   {
     //generate file or override existing
-    cppResult = generator->createCppEmbeddedFile(inputFilename.c_str(), outputFolder.c_str(), headerFilename.c_str(), functionIdentifier.c_str(), chunkSize);
+    cppResult = generator->createCppEmbeddedFile(inputFilename.c_str(), outputCppPath.c_str(), functionIdentifier.c_str(), chunkSize);
   }
   if (cppResult == bin2cpp::ErrorCodes::Success)
   {

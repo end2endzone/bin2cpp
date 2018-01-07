@@ -15,12 +15,12 @@ namespace bin2cpp
     virtual ~BaseGenerator();
 
     //same header file for all generators
-    virtual bin2cpp::ErrorCodes createHeaderEmbededFile(const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier);
+    virtual bin2cpp::ErrorCodes createHeaderEmbededFile(const char * iHeaderFilePath, const char * iFunctionIdentifier);
 
   protected:
     virtual std::string getGetterFunctionName(const char * iFunctionIdentifier);
-    virtual std::string getHeaderFilePath(const char * iOutputFolder, const char * iHeaderFilename);
-    virtual std::string getCppFilePath(const char * iOutputFolder, const char * iHeaderFilename);
+    virtual std::string getHeaderFilePath(const char * iCppFilePath);
+    virtual std::string getCppFilePath(const char * iHeaderFilePath);
   };
 
 }; //bin2cpp

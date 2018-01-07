@@ -25,7 +25,7 @@ namespace bin2cpp
     return "segment";
   }
 
-  bin2cpp::ErrorCodes SegmentGenerator::createCppEmbeddedFile(const char * iInputFilename, const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier, size_t iChunkSize)
+  bin2cpp::ErrorCodes SegmentGenerator::createCppEmbeddedFile(const char * iInputFilename, const char * iCppFilePath, const char * iFunctionIdentifier, size_t iChunkSize)
   {
     //check if input file exists
     FILE * input = fopen(iInputFilename, "rb");
@@ -37,11 +37,13 @@ namespace bin2cpp
     functionIdentifier[0] = (char)toupper(functionIdentifier[0]);
 
     //Build header and cpp file path
-    std::string headerPath = getHeaderFilePath(iOutputFolder, iHeaderFilename);
-    std::string outputCppFilename = getCppFilePath(iOutputFolder, iHeaderFilename);
+    std::string headerPath = getHeaderFilePath(iCppFilePath);
+    std::string cppPath = iCppFilePath;
+    std::string headerFilename = getFilename(headerPath.c_str());
+    std::string cppFilename = getFilename(iCppFilePath);
 
     //create cpp file
-    FILE * cpp = fopen(outputCppFilename.c_str(), "w");
+    FILE * cpp = fopen(cppPath.c_str(), "w");
     if (!cpp)
     {
       fclose(input);
@@ -67,7 +69,7 @@ namespace bin2cpp
     fprintf(cpp, " * Copyright (C) 2013-%d end2endzone.com. All rights reserved.\n", bin2cpp::getCopyrightYear());
     fprintf(cpp, " * Do not modify this file.\n");
     fprintf(cpp, " */\n");
-    fprintf(cpp, "#include \"%s\"\n", iHeaderFilename );
+    fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str() );
     fprintf(cpp, "#include <stdio.h> //for FILE\n");
     fprintf(cpp, "#include <string> //for memcpy\n");
     fprintf(cpp, "namespace bin2cpp\n");
@@ -96,7 +98,7 @@ namespace bin2cpp
       //read a chunk of the file
       size_t readSize = fread(buffer, 1, iChunkSize, input);
 
-      bool isLastChunk = !(readSize == iChunkSize);
+      //bool isLastChunk = !(readSize == iChunkSize);
 
       if (readSize == 0)
         continue; //nothing to output if nothing was read

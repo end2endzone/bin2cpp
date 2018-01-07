@@ -31,33 +31,25 @@ namespace bin2cpp
     return getter;
   }
 
-  std::string BaseGenerator::getHeaderFilePath(const char * iOutputFolder, const char * iHeaderFilename)
+  std::string BaseGenerator::getHeaderFilePath(const char * iCppFilePath)
   {
     //Build header file path
-    std::string headerPath = iOutputFolder;
-    if (headerPath[headerPath.length()-1] != '\\')
-      headerPath.append("\\");
-    headerPath.append(iHeaderFilename);
-
+    std::string headerPath = iCppFilePath;
+    strReplace(headerPath, ".cpp", ".h");
     return headerPath;
   }
 
-  std::string BaseGenerator::getCppFilePath(const char * iOutputFolder, const char * iHeaderFilename)
+  std::string BaseGenerator::getCppFilePath(const char * iHeaderFilePath)
   {
-    std::string headerPath = getHeaderFilePath(iOutputFolder, iHeaderFilename);
-
-    //Build cpp file file
-    std::string cppPath = headerPath;
-    strReplace(cppPath, ".h", ".cpp");
-
+    //Build header file path
+    std::string cppPath = iHeaderFilePath;
+    strReplace(cppPath, ".cpp", ".h");
     return cppPath;
   }
 
-  bin2cpp::ErrorCodes BaseGenerator::createHeaderEmbededFile(const char * iOutputFolder, const char * iHeaderFilename, const char * iFunctionIdentifier)
+  bin2cpp::ErrorCodes BaseGenerator::createHeaderEmbededFile(const char * iHeaderFilePath, const char * iFunctionIdentifier)
   {
-    std::string outputHeaderPath = std::string(iOutputFolder) + "\\" + iHeaderFilename;
-
-    FILE * header = fopen(outputHeaderPath.c_str(), "w");
+    FILE * header = fopen(iHeaderFilePath, "w");
     if (!header)
       return bin2cpp::ErrorCodes::UnableToCreateOutputFiles;
 
