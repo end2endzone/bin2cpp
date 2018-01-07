@@ -16,18 +16,35 @@ const char * getVersionString()
   return BINCPP_VERSION;
 }
 
-void usage()
+void printVersion()
 {
-  printf("Usage:\n");
-  printf("  --file: Path of the generated file\n");
-  printf("  --size: Size of generated file in bytes. Defaults to 1024\n");
-  printf("  --seed: Define a seed value to initialze the random number generator. Defaults to local time\n");
-  printf("  --skip: Define the number of random number to skip before dumping to the file. Defaults to 0\n");
-  printf("  --fill: Name of the filling strategy. Must be one of the following:\n");
-  printf("          sequential  : Insert values from 0x00 to 0xFF into the file. Default option.\n");
-  printf("          random      : Insert random data into the file\n");
-  printf("          text        : Insert text data into the file.\n");
-  printf("          html        : Insert html data into the file.\n");
+  printf("testfilegenerator v%s\n", bin2cpp::getVersionString() );
+}
+
+void printUsage()
+{
+  //usage string in docopt format. See http://docopt.org/
+  static const char usage[] = 
+    "Usage:\n"
+    "  testfilegenerator --file=<path> [--size=<value>] [--quiet] [--fill=<name>] [--seed=<value>] [--skip=<value>]\n"
+    "  testfilegenerator --help\n"
+    "  testfilegenerator --version\n"
+    "\n"
+    "Options:\n"
+    "  --help               Display this help message.\n"
+    "  --version            Display this application version.\n"
+    "  --file=<path>        Path of the generated file.\n"
+    "  --size=<value>       Size of generated file in bytes. [default: 1024]\n"
+    "  --fill=<name>        Name of the filling strategy. Must be one of the following:\n"
+    "                         sequential  : Insert values from 0x00 to 0xFF into the file. Default option.\n"
+    "                         random      : Insert random data into the file. See 'seed' and 'skip' options.\n"
+    "                         text        : Insert text data into the file.\n"
+    "                         html        : Insert html data into the file.\n"
+    "  --seed=<value>       Define a seed value to initialze the random number generator. Defaults to local time.\n"
+    "  --skip=<value>       Define the number of random number to skip before dumping to the file. [default: 0]\n"
+    "  --quiet              Do not log any message to standard output.\n"
+    "\n";
+  printf("%s", usage);
 }
 
 enum RETURN_CODE
@@ -42,8 +59,6 @@ enum RETURN_CODE
 
 int main(int argc, char **argv)
 {
-  bin2cpp::log(bin2cpp::LOG_INFO, "Test file generator v%s", getVersionString());
-
   //parse arguments
   std::string file;
   int size = 1024; //in bytes
@@ -51,13 +66,38 @@ int main(int argc, char **argv)
   unsigned int skip = 0;
   std::string fill = "sequential";
 
+  //help
+  std::string tmp;
+  if (bin2cpp::parseArgument("help", tmp, argc, argv))
+  {
+    printVersion();
+    printUsage();
+    return EXIT_NO_ERROR;
+  }
+
+  //version
+  if (bin2cpp::parseArgument("version", tmp, argc, argv))
+  {
+    printVersion();
+    return EXIT_NO_ERROR;
+  }
+
+  //quiet
+  std::string tmpQuiet;
+  if (bin2cpp::parseArgument("quiet", tmpQuiet, argc, argv))
+  {
+    bin2cpp::setQuietMode(true);
+  }
+
+  //file
   if (!bin2cpp::parseArgument("file", file, argc, argv))
   {
     bin2cpp::log(bin2cpp::LOG_ERROR, "Missing 'file' argument!");
-    usage();
+    printUsage();
     return MISSING_FILE;
   }
 
+  //size
   int tmpSize = 0;
   if (bin2cpp::parseArgument("size", tmpSize, argc, argv))
   {
@@ -69,6 +109,7 @@ int main(int argc, char **argv)
     }
   }
 
+  //seed
   int tmpSeed = 0;
   if (bin2cpp::parseArgument("seed", tmpSeed, argc, argv))
   {
@@ -80,6 +121,7 @@ int main(int argc, char **argv)
     }
   }
 
+  //skip
   int tmpSkip = 0;
   if (bin2cpp::parseArgument("skip", tmpSkip, argc, argv))
   {
@@ -91,6 +133,7 @@ int main(int argc, char **argv)
     }
   }
 
+  //fill
   std::string tmpFill;
   if (bin2cpp::parseArgument("fill", tmpFill, argc, argv))
   {

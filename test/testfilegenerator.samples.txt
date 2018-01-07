@@ -1,0 +1,3 @@
+--file=c:\temp\foobar.bin --size=100000 --fill=random --seed=5
+--version
+--help
