@@ -8,6 +8,7 @@
 #include <time.h>       /* time */
 #include "argumentparser.h"
 #include "logger.h"
+#include "common.h"
 #include "..\version_info.h"
 
 const char * getVersionString()
@@ -52,7 +53,7 @@ int main(int argc, char **argv)
 
   if (!bin2cpp::parseArgument("file", file, argc, argv))
   {
-    bin2cpp::log(bin2cpp::LOG_ERROR, "Missing 'file' argument!\n");
+    bin2cpp::log(bin2cpp::LOG_ERROR, "Missing 'file' argument!");
     usage();
     return MISSING_FILE;
   }
@@ -63,7 +64,7 @@ int main(int argc, char **argv)
     size = tmpSize;
     if (size <= 0)
     {
-      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid file size!\n");
+      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid file size!");
       return INVALID_FILE_SIZE;
     }
   }
@@ -74,7 +75,7 @@ int main(int argc, char **argv)
     seed = tmpSeed;
     if (seed < 0)
     {
-      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid seed value!\n");
+      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid seed value!");
       return INVALID_SEED;
     }
   }
@@ -85,7 +86,7 @@ int main(int argc, char **argv)
     skip = tmpSkip;
     if (skip < 0)
     {
-      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid skip value!\n");
+      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid skip value!");
       return INVALID_SKIP;
     }
   }
@@ -102,25 +103,22 @@ int main(int argc, char **argv)
     }
     else
     {
-      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid fill parameter!\n");
+      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid fill parameter!");
       return INVALID_FILL_PARAMETER;
     }
   }
 
-  static const size_t ONE_MIB = 1024*1024;
-  bin2cpp::log(bin2cpp::LOG_INFO, "Generating the following file:\n");
-  bin2cpp::log(bin2cpp::LOG_INFO, "  path: %s\n", file.c_str());
-  if (size >= ONE_MIB)
-    bin2cpp::log(bin2cpp::LOG_INFO, "  size: %d bytes (%.2f MiB)\n", size, size/float(ONE_MIB));
-  else
-    bin2cpp::log(bin2cpp::LOG_INFO, "  size: %d bytes\n", size);
-  bin2cpp::log(bin2cpp::LOG_INFO, "  fill: %s\n", fill.c_str());
+  //building info string
+  static const int BUFFER_SIZE = 4096;
+  char infostr[BUFFER_SIZE];
+  sprintf(infostr, "Writing %d bytes (%s) of %s data into '%s'.", size, bin2cpp::getUserFriendlySize(size).c_str(), fill.c_str(), file.c_str());
+  bin2cpp::log(bin2cpp::LOG_INFO, "%s", infostr);
 
   //process with file generation
   FILE * f = fopen(file.c_str(), "wb");
   if (!f)
   {
-    bin2cpp::log(bin2cpp::LOG_ERROR, "Cannot create file '%s'!\n", file.c_str());
+    bin2cpp::log(bin2cpp::LOG_ERROR, "Cannot create file '%s'!", file.c_str());
     return 4;
   }
 
@@ -196,8 +194,6 @@ int main(int argc, char **argv)
   }
 
   fclose(f);
-
-  bin2cpp::log(bin2cpp::LOG_INFO, "done!\n");
 
   return EXIT_NO_ERROR;
 }
