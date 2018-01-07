@@ -92,7 +92,7 @@ namespace bin2cpp
     //try to convert the int value back to string and check for equality.
     static const int BUFFER_SIZE = 1024;
     char buffer[BUFFER_SIZE];
-    itoa(intValue, buffer, 10);
+    _itoa(intValue, buffer, 10);
     if (std::string(buffer) == iValue)
       return true;
     return false;
@@ -172,7 +172,7 @@ namespace bin2cpp
   std::string getTemporaryFileName()
   {
     char rndvalue[1024];
-    itoa(rand(), rndvalue, 10);
+    _itoa(rand(), rndvalue, 10);
 
     std::string name = std::string("random") + rndvalue + ".tmp";
     return name;
