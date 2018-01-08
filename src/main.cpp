@@ -25,8 +25,7 @@
 
 void printHeader()
 {
-  printf("bin2cpp v%s\n", bin2cpp::getVersionString() );
-  printf("Convert binary files into C++ source code.\n");
+  printf("bin2cpp v%s - Convert binary files into C++ source code.\n", bin2cpp::getVersionString() );
   printf("Copyright (C) 2013-%d end2endzone.com. All rights reserved.\n", bin2cpp::getCopyrightYear());
   printf("bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp \n");
 }
@@ -208,14 +207,13 @@ int main(int argc, char* argv[])
   if (overrideExisting)
     overrideInfo = " overriding existing files";
   bin2cpp::log(bin2cpp::LOG_INFO, "Embedding \"%s\" into \"%s\"%s%s...", inputFilename.c_str(), headerFilename.c_str(), chunkInfo.c_str(), overrideInfo.c_str());
-  bin2cpp::log(bin2cpp::LOG_INFO, "Using '%s' generator...", generator->getName());
-
+  
   //generate header
-  bin2cpp::log(bin2cpp::LOG_INFO, "Generating header file...");
+  std::string outputHeaderPath = outputFolder + "\\" + headerFilename;
+  bin2cpp::log(bin2cpp::LOG_INFO, "Writing header file \"%s\"...", outputHeaderPath.c_str());
   bin2cpp::ErrorCodes headerResult = bin2cpp::ErrorCodes::Success;
 
   //check if header file already exists
-  std::string outputHeaderPath = outputFolder + "\\" + headerFilename;
   if (bin2cpp::fileExists(outputHeaderPath.c_str()))
   {
     if (!overrideExisting)
@@ -257,7 +255,7 @@ int main(int argc, char* argv[])
   }
   if (headerResult == bin2cpp::ErrorCodes::Success)
   {
-    bin2cpp::log(bin2cpp::LOG_INFO, "done");
+    //OK
   }
   else if (headerResult == bin2cpp::ErrorCodes::OutputFilesSkipped)
   {
@@ -271,14 +269,14 @@ int main(int argc, char* argv[])
   }
 
   //generate cpp
-  bin2cpp::log(bin2cpp::LOG_INFO, "Generating cpp file...");
+  std::string outputCppPath = outputFolder + "\\" + headerFilename;
+  bin2cpp::strReplace(outputCppPath, ".h", ".cpp");
+  bin2cpp::log(bin2cpp::LOG_INFO, "Writing cpp file \"%s\"...", outputCppPath.c_str());
   bin2cpp::ErrorCodes cppResult = bin2cpp::ErrorCodes::Success;
  
   //check if cpp file already exists
-  std::string outputCppPath = outputFolder + "\\" + headerFilename;
   std::string cppFilename = headerFilename;
   bin2cpp::strReplace(cppFilename, ".h", ".cpp");
-  bin2cpp::strReplace(outputCppPath, ".h", ".cpp");
   if (bin2cpp::fileExists(outputCppPath.c_str()))
   {
     if (!overrideExisting)
@@ -320,7 +318,7 @@ int main(int argc, char* argv[])
   }
   if (cppResult == bin2cpp::ErrorCodes::Success)
   {
-    bin2cpp::log(bin2cpp::LOG_INFO, "done");
+    //OK
   }
   else if (cppResult == bin2cpp::ErrorCodes::OutputFilesSkipped)
   {
