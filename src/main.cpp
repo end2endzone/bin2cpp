@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
   MessageBox(NULL, "", "", MB_OK);
   #endif
 
-  //look for help
+  //help
   std::string dummy;
   if (bin2cpp::parseArgument("help", dummy, argc, argv))
   {
@@ -70,14 +70,14 @@ int main(int argc, char* argv[])
     return bin2cpp::ErrorCodes::Success;
   }
 
-  //look for noheader
+  //noheader
   bool noheader = false;
   if (bin2cpp::parseArgument("noheader", dummy, argc, argv))
   {
     noheader = true;
   }
 
-  //look for quiet
+  //quiet
   bool quiet = false;
   if (bin2cpp::parseArgument("quiet", dummy, argc, argv))
   {
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 
   bin2cpp::setQuietMode(quiet);
 
-  //look for version
+  //version
   if (bin2cpp::parseArgument("version", dummy, argc, argv))
   {
     if (!noheader)
@@ -102,12 +102,12 @@ int main(int argc, char* argv[])
     printHeader();
 
   //mandatory arguments
-  std::string inputFilename;
+  std::string inputFile;
   std::string outputFolder;
   std::string headerFilename;
   std::string functionIdentifier;
 
-  if (!bin2cpp::parseArgument("file", inputFilename, argc, argv))
+  if (!bin2cpp::parseArgument("file", inputFile, argc, argv))
   {
     bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
     bin2cpp::log(bin2cpp::LOG_ERROR, "%s (file)", getErrorCodeDescription(error));
@@ -206,11 +206,11 @@ int main(int argc, char* argv[])
   std::string overrideInfo = "";
   if (overrideExisting)
     overrideInfo = " overriding existing files";
-  bin2cpp::log(bin2cpp::LOG_INFO, "Embedding \"%s\" into \"%s\"%s%s...", inputFilename.c_str(), headerFilename.c_str(), chunkInfo.c_str(), overrideInfo.c_str());
+  bin2cpp::log(bin2cpp::LOG_INFO, "Embedding \"%s\" into \"%s\"%s%s...", inputFile.c_str(), headerFilename.c_str(), chunkInfo.c_str(), overrideInfo.c_str());
   
   //generate header
   std::string outputHeaderPath = outputFolder + "\\" + headerFilename;
-  bin2cpp::log(bin2cpp::LOG_INFO, "Writing header file \"%s\"...", outputHeaderPath.c_str());
+  bin2cpp::log(bin2cpp::LOG_INFO, "Writing file \"%s\"...", outputHeaderPath.c_str());
   bin2cpp::ErrorCodes headerResult = bin2cpp::ErrorCodes::Success;
 
   //check if header file already exists
@@ -221,30 +221,6 @@ int main(int argc, char* argv[])
       bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::OutputFileAlreadyExist;
       bin2cpp::log(bin2cpp::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), outputHeaderPath.c_str());
       return error;
-    }
-
-    //generate a temporary file and compare the two to see if they are different.
-    std::string tmpFileName = bin2cpp::getTemporaryFileName();
-    std::string tempFilePath = bin2cpp::getEnvironmentVariable("TEMP") + "\\" + tmpFileName;
-    headerResult = generator->createHeaderEmbededFile(tempFilePath.c_str(), functionIdentifier.c_str());
-    
-    //if still success
-    if (headerResult == bin2cpp::ErrorCodes::Success)
-    {
-      //If different, then override the existing one
-      //If the same, leave the existing file alone.
-      std::string existingFileMd5 = bin2cpp::getFileHexDigest(outputHeaderPath.c_str());
-      std::string tempFileMd5 = bin2cpp::getFileHexDigest(tempFilePath.c_str());
-    
-      //temporary file not required anymore
-      remove(tempFilePath.c_str());
-
-      //should we override the target file?
-      if (existingFileMd5 == tempFileMd5)
-      {
-        //existing file is up to date
-        headerResult = bin2cpp::ErrorCodes::OutputFilesSkipped;
-      }
     }
   }
 
@@ -271,7 +247,7 @@ int main(int argc, char* argv[])
   //generate cpp
   std::string outputCppPath = outputFolder + "\\" + headerFilename;
   bin2cpp::strReplace(outputCppPath, ".h", ".cpp");
-  bin2cpp::log(bin2cpp::LOG_INFO, "Writing cpp file \"%s\"...", outputCppPath.c_str());
+  bin2cpp::log(bin2cpp::LOG_INFO, "Writing file \"%s\"...", outputCppPath.c_str());
   bin2cpp::ErrorCodes cppResult = bin2cpp::ErrorCodes::Success;
  
   //check if cpp file already exists
@@ -285,36 +261,12 @@ int main(int argc, char* argv[])
       bin2cpp::log(bin2cpp::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), outputCppPath.c_str());
       return error;
     }
-
-    //generate a temporary file and compare the two to see if they are different.
-    std::string tmpFileName = bin2cpp::getTemporaryFileName();
-    std::string tempFilePath = bin2cpp::getEnvironmentVariable("TEMP") + "\\" + cppFilename;
-    cppResult = generator->createCppEmbeddedFile(inputFilename.c_str(), tempFilePath.c_str(), functionIdentifier.c_str(), chunkSize);
-    
-    //if still success
-    if (cppResult == bin2cpp::ErrorCodes::Success)
-    {
-      //If different, then override the existing one
-      //If the same, leave the existing file alone.
-      std::string existingFileMd5 = bin2cpp::getFileHexDigest(outputCppPath.c_str());
-      std::string tempFileMd5 = bin2cpp::getFileHexDigest(tempFilePath.c_str());
-    
-      //temporary file not required anymore
-      remove(tempFilePath.c_str());
-
-      //should we override the target file?
-      if (existingFileMd5 == tempFileMd5)
-      {
-        //existing file is up to date
-        cppResult = bin2cpp::ErrorCodes::OutputFilesSkipped;
-      }
-    }
   }
 
   if (cppResult == bin2cpp::ErrorCodes::Success)
   {
     //generate file or override existing
-    cppResult = generator->createCppEmbeddedFile(inputFilename.c_str(), outputCppPath.c_str(), functionIdentifier.c_str(), chunkSize);
+    cppResult = generator->createCppEmbeddedFile(inputFile.c_str(), outputCppPath.c_str(), functionIdentifier.c_str(), chunkSize);
   }
   if (cppResult == bin2cpp::ErrorCodes::Success)
   {
