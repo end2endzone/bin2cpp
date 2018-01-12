@@ -82,13 +82,10 @@ namespace bin2cpp
   {
     static const int DEFAULT_YEAR = 2016;
     std::string compilationDate = __DATE__;
-    size_t space1Pos = compilationDate.find(" ", 0);
-    if (space1Pos == std::string::npos)
+    size_t lastSpace = compilationDate.find_last_of(" ");
+    if (lastSpace == std::string::npos)
       return DEFAULT_YEAR;
-    size_t space2Pos = compilationDate.find(" ", space1Pos+1);
-    if (space2Pos == std::string::npos)
-      return DEFAULT_YEAR;
-    const char * yearStr = &compilationDate[space2Pos+1];
+    const char * yearStr = &compilationDate[lastSpace+1];
     int year = atoi(yearStr);
     return year;
   }
