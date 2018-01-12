@@ -11,9 +11,21 @@
 #include "common.h"
 #include "..\version_info.h"
 
+using namespace bin2cpp;
+
 const char * getVersionString()
 {
   return BINCPP_VERSION;
+}
+
+std::string getSizeAdditionalInfo(int size)
+{
+  std::string output;
+  if (size > 1024)
+  {
+    output << " (" << getUserFriendlySize(size) << ")";
+  }
+  return output;
 }
 
 void printVersion()
@@ -152,10 +164,9 @@ int main(int argc, char **argv)
   }
 
   //building info string
-  static const int BUFFER_SIZE = 4096;
-  char infostr[BUFFER_SIZE];
-  sprintf(infostr, "Writing %d bytes (%s) of %s data into '%s'.", size, bin2cpp::getUserFriendlySize(size).c_str(), fill.c_str(), file.c_str());
-  bin2cpp::log(bin2cpp::LOG_INFO, "%s", infostr);
+  std::string infostr;
+  infostr << "Writing " << size << " bytes" << getSizeAdditionalInfo(size) << " of " << fill << " data into \'" << file << "\'.";
+  bin2cpp::log(bin2cpp::LOG_INFO, "%s", infostr.c_str());
 
   //process with file generation
   FILE * f = fopen(file.c_str(), "wb");

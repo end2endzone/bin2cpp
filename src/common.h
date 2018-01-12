@@ -186,6 +186,13 @@ namespace bin2cpp
   ///</summary>
   ///<param name="value">The value to append to the given string.</param>
   ///<return>Returns the given string.<return>
+  std::string& operator<<(std::string& str, const size_t & value);
+
+  ///<summary>
+  ///Streams a value to an existing string.
+  ///</summary>
+  ///<param name="value">The value to append to the given string.</param>
+  ///<return>Returns the given string.<return>
   std::string& operator<<(std::string& str, const uint64_t & value);
 
 }; //bin2cpp

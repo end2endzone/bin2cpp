@@ -467,6 +467,14 @@ namespace bin2cpp
     return str;
   }
 
+  std::string& operator<<(std::string& str, const size_t & value)
+  {
+    std::stringstream out;
+    out << value;
+    str.append( out.str() );
+    return str;
+  }
+
   std::string& operator<<(std::string& str, const uint64_t & value)
   {
     std::stringstream out;

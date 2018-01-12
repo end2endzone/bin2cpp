@@ -23,6 +23,8 @@
 #include <windows.h>
 #endif
 
+using namespace bin2cpp;
+
 void printHeader()
 {
   printf("bin2cpp v%s - Convert binary files into C++ source code.\n", bin2cpp::getVersionString() );
@@ -194,20 +196,19 @@ int main(int argc, char* argv[])
   }
 
   // printing info
-  std::string chunkInfo = "";
+  std::string info;
+  info << "Embedding \"" << inputFile << "\"";
   if (chunkSize != DEFAULT_CHUNK_SIZE)
   {
-    std::stringstream ss;
-    ss << " using chunks of ";
-    ss << chunkSize;
-    ss << " bytes";
-    chunkInfo.append(ss.str());
+    info << " using chunks of ";
+    info << chunkSize;
+    info << " bytes";
   }
-  std::string overrideInfo = "";
   if (overrideExisting)
-    overrideInfo = " overriding existing files";
-  bin2cpp::log(bin2cpp::LOG_INFO, "Embedding \"%s\" into \"%s\"%s%s...", inputFile.c_str(), headerFilename.c_str(), chunkInfo.c_str(), overrideInfo.c_str());
-  
+    info << " overriding existing files";
+  info << "...";
+  bin2cpp::log(bin2cpp::LOG_INFO, info.c_str());
+
   //generate header
   std::string outputHeaderPath = outputFolder + "\\" + headerFilename;
   bin2cpp::log(bin2cpp::LOG_INFO, "Writing file \"%s\"...", outputHeaderPath.c_str());

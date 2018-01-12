@@ -10,8 +10,6 @@ echo REPOSITORY_ROOT=%REPOSITORY_ROOT%
 echo done.
 echo.
 
-set APPVEYOR_BUILD_VERSION=1.2.3
-
 REM **************** version_info.bat ****************
 set OUTPUTFILE=%REPOSITORY_ROOT%\version_info.bat
 echo Updating %OUTPUTFILE%...
