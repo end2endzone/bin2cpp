@@ -22,6 +22,7 @@ namespace bin2cpp
     virtual std::string getHeaderFilePath(const char * iCppFilePath);
     virtual std::string getCppFilePath(const char * iHeaderFilePath);
     virtual std::string getFileHeading(const char * iInputFilename);
+    virtual std::string getSaveMethodImplementation();
   };
 
 }; //bin2cpp

@@ -117,16 +117,7 @@ namespace bin2cpp
     //write cpp file footer
     fprintf(cpp, "    }\n");
     fprintf(cpp, "    virtual const char * getMd5() const { return \"%s\"; }\n", md5String.c_str() );
-    fprintf(cpp, "    virtual bool save(const char * iFilename) const\n");
-    fprintf(cpp, "    {\n");
-    fprintf(cpp, "      FILE * f = fopen(iFilename, \"wb\");\n");
-    fprintf(cpp, "      if (!f) return false;\n");
-    fprintf(cpp, "      size_t fileSize = getSize();\n");
-    fprintf(cpp, "      const char * buffer = getBuffer();\n");
-    fprintf(cpp, "      fwrite(buffer, 1, fileSize, f);\n");
-    fprintf(cpp, "      fclose(f);\n");
-    fprintf(cpp, "      return true;\n");
-    fprintf(cpp, "    }\n");
+    fprintf(cpp, "%s", getSaveMethodImplementation().c_str());
     fprintf(cpp, "  private:\n");
     fprintf(cpp, "    std::string mBuffer;\n");
     fprintf(cpp, "  };\n");

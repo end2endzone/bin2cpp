@@ -61,6 +61,22 @@ namespace bin2cpp
     return header;
   }
 
+  std::string BaseGenerator::getSaveMethodImplementation()
+  {
+    std::string output;
+    output << "    virtual bool save(const char * iFilename) const\n";
+    output << "    {\n";
+    output << "      FILE * f = fopen(iFilename, \"wb\");\n";
+    output << "      if (!f) return false;\n";
+    output << "      size_t fileSize = getSize();\n";
+    output << "      const char * buffer = getBuffer();\n";
+    output << "      fwrite(buffer, 1, fileSize, f);\n";
+    output << "      fclose(f);\n";
+    output << "      return true;\n";
+    output << "    }\n";
+    return output;
+  }
+
   bin2cpp::ErrorCodes BaseGenerator::createHeaderEmbededFile(const char * iInputFilename, const char * iHeaderFilePath, const char * iFunctionIdentifier)
   {
     FILE * header = fopen(iHeaderFilePath, "w");
