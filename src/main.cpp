@@ -227,7 +227,7 @@ int main(int argc, char* argv[])
   if (headerResult == bin2cpp::ErrorCodes::Success)
   {
     //generate file or override existing
-    headerResult = generator->createHeaderEmbededFile(outputHeaderPath.c_str(), functionIdentifier.c_str());
+    headerResult = generator->createHeaderEmbededFile(inputFile.c_str(), outputHeaderPath.c_str(), functionIdentifier.c_str());
   }
   if (headerResult == bin2cpp::ErrorCodes::Success)
   {

@@ -19,10 +19,11 @@ namespace bin2cpp
     ///<summary>
     ///Creates a header file for embedding a given file into C++ source code.
     ///</summary>
-    ///<param name="iFilePath">The path of the header file (*.h) that is used for getting access to the functions.</param>
+    ///<param name="iInputFilename">The path of the input file (resource) to embeded as a C++ source code.</param>
+    ///<param name="iHeaderFilePath">The path of the header file (*.h) that is used for getting access to the functions.</param>
     ///<param name="iFunctionIdentifier">The unique identifier name for each data accessor functions.</param>
     ///<returns>Returns an enum of type ErrorCodes which defines the results.</returns>
-    virtual bin2cpp::ErrorCodes createHeaderEmbededFile(const char * iHeaderFilePath, const char * iFunctionIdentifier) = 0;
+    virtual bin2cpp::ErrorCodes createHeaderEmbededFile(const char * iInputFilename, const char * iHeaderFilePath, const char * iFunctionIdentifier) = 0;
 
     ///<summary>
     ///Creates a cpp source file for embedding a given file into C++ source code.
