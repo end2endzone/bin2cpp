@@ -456,4 +456,26 @@ namespace bin2cpp
     return toStringT(value);
   }
 
+  std::string& operator<<(std::string& str, const std::string & value)
+  {
+    str.append(value);
+    return str;
+  }
+
+  std::string& operator<<(std::string& str, const int & value)
+  {
+    char buffer[1024];
+    sprintf(buffer, "%d", value);
+    str.append(buffer);
+    return str;
+  }
+
+  std::string& operator<<(std::string& str, const uint64_t & value)
+  {
+    std::stringstream out;
+    out << value;
+    str.append( out.str() );
+    return str;
+  }
+
 }; //bin2cpp

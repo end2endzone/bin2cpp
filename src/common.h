@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <string>
 #include <stdio.h>
-#include <stdint.h>
 
 namespace bin2cpp
 {
@@ -167,5 +166,26 @@ namespace bin2cpp
   ///<param name="value">The numeric value.</param>
   ///<return>Converts the given value to string.<return>
   std::string toString(const uint64_t & value);
+
+  ///<summary>
+  ///Streams a value to an existing string.
+  ///</summary>
+  ///<param name="value">The value to append to the given string.</param>
+  ///<return>Returns the given string.<return>
+  std::string& operator<<(std::string& str, const std::string & value);
+
+  ///<summary>
+  ///Streams a value to an existing string.
+  ///</summary>
+  ///<param name="value">The value to append to the given string.</param>
+  ///<return>Returns the given string.<return>
+  std::string& operator<<(std::string& str, const int & value);
+
+  ///<summary>
+  ///Streams a value to an existing string.
+  ///</summary>
+  ///<param name="value">The value to append to the given string.</param>
+  ///<return>Returns the given string.<return>
+  std::string& operator<<(std::string& str, const uint64_t & value);
 
 }; //bin2cpp

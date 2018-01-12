@@ -3,34 +3,11 @@
 #include <stdlib.h>
 #include <string>
 #include <stdlib.h>
-#include <sstream>
 
 #include "common.h"
 
 namespace bin2cpp
 {
-  std::string& operator<<(std::string& str, const std::string & value)
-  {
-    str.append(value);
-    return str;
-  }
-
-  std::string& operator<<(std::string& str, int value)
-  {
-    char buffer[1024];
-    sprintf(buffer, "%d", value);
-    str.append(buffer);
-    return str;
-  }
-
-  std::string& operator<<(std::string& str, uint64_t value)
-  {
-    std::stringstream out;
-    out << value;
-    str.append( out.str() );
-    return str;
-  }
-
   BaseGenerator::BaseGenerator()
   {
   }
