@@ -21,7 +21,7 @@ namespace bin2cpp
     virtual std::string getGetterFunctionName(const char * iFunctionIdentifier);
     virtual std::string getHeaderFilePath(const char * iCppFilePath);
     virtual std::string getCppFilePath(const char * iHeaderFilePath);
-    virtual std::string getHeaderComments(const char * iInputFilename);
+    virtual std::string getFileHeading(const char * iInputFilename);
   };
 
 }; //bin2cpp

@@ -63,7 +63,7 @@ namespace bin2cpp
     std::string getterFunctionName = getGetterFunctionName(functionIdentifier.c_str());
 
     //write cpp file heading
-    fprintf(cpp, "%s", getHeaderComments(iInputFilename).c_str());
+    fprintf(cpp, "%s", getFileHeading(iInputFilename).c_str());
     fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str() );
     fprintf(cpp, "#include <stdio.h> //for FILE\n");
     fprintf(cpp, "#include <string> //for memcpy\n");

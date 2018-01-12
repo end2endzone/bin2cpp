@@ -68,7 +68,7 @@ namespace bin2cpp
     return cppPath;
   }
 
-  std::string BaseGenerator::getHeaderComments(const char * iInputFilename)
+  std::string BaseGenerator::getFileHeading(const char * iInputFilename)
   {
     std::string filename = getFilename(iInputFilename);
     uint64_t fileDateModified = getFileModifiedDate(iInputFilename);
@@ -90,7 +90,7 @@ namespace bin2cpp
     if (!header)
       return bin2cpp::ErrorCodes::UnableToCreateOutputFiles;
 
-    std::string headercomments = getHeaderComments(iInputFilename);
+    std::string headercomments = getFileHeading(iInputFilename);
     fprintf(header, "%s", headercomments.c_str());
     fprintf(header, "#pragma once\n");
     fprintf(header, "#include <stddef.h>\n");
