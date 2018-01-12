@@ -6,9 +6,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include <stdlib.h>
 #include <direct.h>
 #include <sstream>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#ifndef WIN32
+#include <unistd.h>
+#endif
+#ifdef WIN32
+#define stat _stat
+#endif
 
 namespace bin2cpp
 {
@@ -430,6 +438,22 @@ namespace bin2cpp
     };
 
     return friendlySize;
+  }
+
+  uint64_t getFileModifiedDate(const std::string & iPath)
+  {
+    struct stat result;
+    uint64_t mod_time = 0;
+    if(stat(iPath.c_str(), &result)==0)
+    {
+      mod_time = result.st_mtime;
+    }
+    return mod_time;
+  }
+
+  std::string toString(const uint64_t & value)
+  {
+    return toStringT(value);
   }
 
 }; //bin2cpp

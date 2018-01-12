@@ -22,3 +22,4 @@
 /msvc/TestCLI.testQuiet.actual.txt
 /msvc/TestCLI.testGenerators.actual.txt
 /msvc/TestCLI.testOverride.actual.txt
+/msvc/TestCommon.testFileModifiedDate.actual.txt

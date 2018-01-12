@@ -26,6 +26,11 @@ namespace TestCommonUtils
 using namespace TestCommonUtils;
 using namespace bin2cpp;
 
+namespace TestCLIUtils
+{
+  extern bool createDummyFile(const char * iPath);
+};
+
 void TestCommon::SetUp()
 {
 }
@@ -129,4 +134,21 @@ TEST_F(TestCommon, testFileExtention)
     ASSERT_EQ(ext, "");
   }
 
+}
+
+TEST_F(TestCommon, testFileModifiedDate)
+{
+  //assert with file not found
+  {
+    uint64_t date = getFileModifiedDate("foobar.txt");
+    ASSERT_EQ(0, date);
+  }
+
+  //assert with a new file
+  {
+    std::string filePath = getActualFilePath();
+    TestCLIUtils::createDummyFile(filePath.c_str());
+    uint64_t date = getFileModifiedDate(filePath.c_str());
+    ASSERT_GT(date, 0);
+  }
 }

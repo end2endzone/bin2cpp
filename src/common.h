@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 #include <string>
+#include <stdio.h>
+#include <stdint.h>
 
 namespace bin2cpp
 {
@@ -151,5 +153,19 @@ namespace bin2cpp
   ///<param name="iPath">The size in bytes</param>
   ///<return>Returns a given size in a user friendly format and units.<return>
   std::string getUserFriendlySize(uint64_t iBytesSize, FileSizeEnum iUnit);
+
+  ///<summary>
+  ///Returns the modified date of the given file.
+  ///</summary>
+  ///<param name="iPath">The valid path to a file.</param>
+  ///<return>Returns the modified date of the given file.<return>
+  uint64_t getFileModifiedDate(const std::string & iPath);
+
+  ///<summary>
+  ///Converts the given value to string.
+  ///</summary>
+  ///<param name="value">The numeric value.</param>
+  ///<return>Converts the given value to string.<return>
+  std::string toString(const uint64_t & value);
 
 }; //bin2cpp
