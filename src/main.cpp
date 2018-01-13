@@ -209,25 +209,90 @@ int main(int argc, char* argv[])
   info << "...";
   bin2cpp::log(bin2cpp::LOG_INFO, info.c_str());
 
-  //generate header
+  //prepare output files path
   std::string outputHeaderPath = outputFolder + "\\" + headerFilename;
-  bin2cpp::log(bin2cpp::LOG_INFO, "Writing file \"%s\"...", outputHeaderPath.c_str());
+  std::string outputCppPath = outputFolder + "\\" + headerFilename;         bin2cpp::strReplace(outputCppPath, ".h", ".cpp");
+  std::string cppFilename = headerFilename;                                 bin2cpp::strReplace(cppFilename, ".h", ".cpp");
+  uint64_t lastModifiedDate = getFileModifiedDate(inputFile);
+  
   bin2cpp::ErrorCodes headerResult = bin2cpp::ErrorCodes::Success;
+  bin2cpp::ErrorCodes cppResult = bin2cpp::ErrorCodes::Success;
 
   //check if header file already exists
   if (bin2cpp::fileExists(outputHeaderPath.c_str()))
   {
-    if (!overrideExisting)
+    uint64_t outputModifiedDate = getOutputFileModifiedDate(outputHeaderPath);
+    bool outputFileOutdated = (outputModifiedDate == 0 || lastModifiedDate > outputModifiedDate);
+    if (outputFileOutdated)
     {
+      //should we force override flag ?
+      if (overrideExisting)
+      {
+        //no problem, user has already choosen to update the output files.
+      }
+      else
+      {
+        //force overriding output files.
+        std::string message;
+        message << "Output file \'" << headerFilename << "\' is out of date. Forcing override flag";
+        bin2cpp::log(bin2cpp::LOG_INFO, message.c_str());
+        overrideExisting = true;
+      }
+    }
+    else if (lastModifiedDate == outputModifiedDate)
+    {
+      //output file already up to date.
+      headerResult = bin2cpp::ErrorCodes::OutputFilesSkipped;
+    }
+    else if (!overrideExisting)
+    {
+      //fail if not overriding output file
       bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::OutputFileAlreadyExist;
       bin2cpp::log(bin2cpp::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), outputHeaderPath.c_str());
       return error;
     }
   }
 
+  //check if cpp file already exists
+  if (bin2cpp::fileExists(outputCppPath.c_str()))
+  {
+    uint64_t outputModifiedDate = getOutputFileModifiedDate(outputCppPath);
+    bool outputFileOutdated = (outputModifiedDate == 0 || lastModifiedDate > outputModifiedDate);
+    if (outputFileOutdated)
+    {
+      //should we force override flag ?
+      if (overrideExisting)
+      {
+        //no problem, user has already choosen to update the output files.
+      }
+      else
+      {
+        //force overriding output files.
+        std::string message;
+        message << "Output file \'" << cppFilename << "\' is out of date. Forcing override flag";
+        bin2cpp::log(bin2cpp::LOG_INFO, message.c_str());
+        overrideExisting = true;
+      }
+    }
+    else if (lastModifiedDate == outputModifiedDate)
+    {
+      //output file already up to date.
+      cppResult = bin2cpp::ErrorCodes::OutputFilesSkipped;
+    }
+    else if (!overrideExisting)
+    {
+      //fail if not overriding output file
+      bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::OutputFileAlreadyExist;
+      bin2cpp::log(bin2cpp::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), outputHeaderPath.c_str());
+      return error;
+    }
+  }
+
+  //generate header
   if (headerResult == bin2cpp::ErrorCodes::Success)
   {
     //generate file or override existing
+    bin2cpp::log(bin2cpp::LOG_INFO, "Writing file \"%s\"...", outputHeaderPath.c_str());
     headerResult = generator->createHeaderEmbededFile(inputFile.c_str(), outputHeaderPath.c_str(), functionIdentifier.c_str());
   }
   if (headerResult == bin2cpp::ErrorCodes::Success)
@@ -246,27 +311,10 @@ int main(int argc, char* argv[])
   }
 
   //generate cpp
-  std::string outputCppPath = outputFolder + "\\" + headerFilename;
-  bin2cpp::strReplace(outputCppPath, ".h", ".cpp");
-  bin2cpp::log(bin2cpp::LOG_INFO, "Writing file \"%s\"...", outputCppPath.c_str());
-  bin2cpp::ErrorCodes cppResult = bin2cpp::ErrorCodes::Success;
- 
-  //check if cpp file already exists
-  std::string cppFilename = headerFilename;
-  bin2cpp::strReplace(cppFilename, ".h", ".cpp");
-  if (bin2cpp::fileExists(outputCppPath.c_str()))
-  {
-    if (!overrideExisting)
-    {
-      bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::OutputFileAlreadyExist;
-      bin2cpp::log(bin2cpp::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), outputCppPath.c_str());
-      return error;
-    }
-  }
-
   if (cppResult == bin2cpp::ErrorCodes::Success)
   {
     //generate file or override existing
+    bin2cpp::log(bin2cpp::LOG_INFO, "Writing file \"%s\"...", outputCppPath.c_str());
     cppResult = generator->createCppEmbeddedFile(inputFile.c_str(), outputCppPath.c_str(), functionIdentifier.c_str(), chunkSize);
   }
   if (cppResult == bin2cpp::ErrorCodes::Success)

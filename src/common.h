@@ -161,6 +161,13 @@ namespace bin2cpp
   uint64_t getFileModifiedDate(const std::string & iPath);
 
   ///<summary>
+  ///Returns the modified date from an embedded file's c++ header/source file.
+  ///</summary>
+  ///<param name="iPath">The valid path to a c++ header/source file.</param>
+  ///<return>Returns the modified date from an embedded file's c++ header/source file.<return>
+  uint64_t getOutputFileModifiedDate(const std::string & iPath);
+
+  ///<summary>
   ///Converts the given value to string.
   ///</summary>
   ///<param name="value">The numeric value.</param>
@@ -194,5 +201,13 @@ namespace bin2cpp
   ///<param name="value">The value to append to the given string.</param>
   ///<return>Returns the given string.<return>
   std::string& operator<<(std::string& str, const uint64_t & value);
+
+  ///<summary>
+  ///Parse the given string into the given numeric variable.
+  ///</summary>
+  ///<param name="str">The input string which contains a numeric value.</param>
+  ///<param name="value">The output numeric value.</param>
+  ///<return>Returns true when the parsing is successful.<return>
+  bool parseValue(const std::string& str, uint64_t & oValue);
 
 }; //bin2cpp

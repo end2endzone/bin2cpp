@@ -20,6 +20,33 @@
 
 namespace bin2cpp
 {
+  template <class T>
+  inline bool parseValueT (const std::string& str, T & t)
+  {
+    static const T ZERO = (T)0;
+    static const T MULTIPLIER = (T)10;
+    static const T SIGN_MULTIPLIER = (T)-1;
+    bool parseOK = false;
+    t = ZERO;
+    for(size_t i=0; i<str.size(); i++)
+    {
+      char c = str[i];
+      if (c >= '0' && c <= '9')
+      {
+        t *= MULTIPLIER;
+        c -= '0'; //convert character to numeric value
+        t += (T)c;
+        parseOK = true;
+      }
+      else if (c == '-')
+      {
+        t *= SIGN_MULTIPLIER;
+        parseOK = true;
+      }
+    }
+    return parseOK;
+  }
+
   //Note: http://www.parashift.com/c++-faq-lite/misc-technical-issues.html#faq-39.2
   template <class T>
   inline std::string toStringT (const T & t)
@@ -448,6 +475,43 @@ namespace bin2cpp
     return mod_time;
   }
 
+  uint64_t getOutputFileModifiedDate(const std::string & iPath)
+  {
+    uint64_t mod_time = 0;
+
+    FILE * f = fopen(iPath.c_str(), "r");
+    if (!f)
+      return mod_time;
+
+    //create buffer for each chunks from input buffer
+    static const size_t BUFFER_SIZE = 10240;
+    char buffer[BUFFER_SIZE];
+    while(/*!feof(f)*/ fgets(buffer, BUFFER_SIZE, f) != NULL )
+    {
+      //read a text line of the file
+      std::string text = buffer;
+
+      static const char * lastModifiedTag = "last modified";
+      size_t lastModifiedIndex = text.find(lastModifiedTag);
+      if (lastModifiedIndex != std::string::npos)
+      {
+        std::string date = text.substr(lastModifiedIndex);
+        strReplace(date, lastModifiedTag, "");
+        strReplace(date, " ", "");
+        strReplace(date, ".", "");
+
+        //parse date into mod_time
+        bool parseOK = parseValue(date, mod_time);
+        if (parseOK)
+          fclose(f); //force existing while loop
+      }
+    }
+
+    fclose(f);
+
+    return mod_time;
+  }
+
   std::string toString(const uint64_t & value)
   {
     return toStringT(value);
@@ -481,6 +545,11 @@ namespace bin2cpp
     out << value;
     str.append( out.str() );
     return str;
+  }
+
+  bool parseValue(const std::string& str, uint64_t & oValue)
+  {
+    return parseValueT(str, oValue);
   }
 
 }; //bin2cpp
