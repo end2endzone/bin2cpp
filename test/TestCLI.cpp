@@ -1,7 +1,6 @@
 #include "TestCLI.h"
 #include "gtesthelper.h"
 #include "application.h"
-#include "errorcodes.h"
 #include "common.h"
 
 #define ASSERT_TEXT_IN_FILE(expected, filepath, text) {\

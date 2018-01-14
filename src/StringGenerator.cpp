@@ -6,9 +6,6 @@
 
 #include "common.h"
 #include "cppencoder.h"
-#include "md5support.h"
-#include "md5.h"
-#include "md5Ex.h"
 
 namespace bin2cpp
 {
@@ -80,10 +77,6 @@ namespace bin2cpp
     fprintf(cpp, "    {\n");
     fprintf(cpp, "      const char * buffer = ""\n");
 
-    //Compute MD5 while generating cpp code
-    MD5_CTX context;
-    MD5Init(&context);
-
     //create buffer for each chunks from input buffer
     int numLinePrinted = 0;
     unsigned char * buffer = new unsigned char[iChunkSize];
@@ -102,9 +95,6 @@ namespace bin2cpp
           fprintf(cpp, "\n");
         }
 
-        //send to MD5 for analysist
-        MD5Update(&context, buffer, readSize);
-
         //output
         fprintf(cpp, "        \"%s\"", toCppString(buffer, readSize).c_str());
         numLinePrinted++;
@@ -119,15 +109,9 @@ namespace bin2cpp
     delete[] buffer;
     buffer = NULL;
 
-    //compute final digest
-    MD5DIGEST digest;
-    MD5Final(digest.bytes, &context);
-    std::string md5String = toString(digest);
-
     //write cpp file footer
     fprintf(cpp, "      return buffer;\n");
     fprintf(cpp, "    }\n");
-    fprintf(cpp, "    virtual const char * getMd5() const { return \"%s\"; }\n", md5String.c_str() );
     fprintf(cpp, "%s", getSaveMethodImplementation().c_str());
     fprintf(cpp, "  };\n");
     fprintf(cpp, "  const File & %s() { static %s _instance; return _instance; }\n", getterFunctionName.c_str(), className.c_str());

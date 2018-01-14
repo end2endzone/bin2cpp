@@ -14,7 +14,6 @@
 #include "common.h"
 #include "argumentparser.h"
 #include "logger.h"
-#include "md5support.h"
 
 //#define ENABLE_BREAKPOINT_DEBUGGING
 

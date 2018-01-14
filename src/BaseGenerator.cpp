@@ -97,7 +97,6 @@ namespace bin2cpp
     fprintf(header, "    virtual size_t getSize() const = 0;\n");
     fprintf(header, "    virtual const char * getFilename() const = 0;\n");
     fprintf(header, "    virtual const char * getBuffer() const = 0;\n");
-    fprintf(header, "    virtual const char * getMd5() const = 0;\n");
     fprintf(header, "    virtual bool save(const char * iFilename) const = 0;\n");
     fprintf(header, "  };\n");
     fprintf(header, "  #endif\n");
