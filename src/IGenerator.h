@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include "errorcodes.h"
  
 namespace bin2cpp
 {

@@ -3,7 +3,6 @@
 
 #include "targetver.h"
 
-#include "errorcodes.h"
 #include "SegmentGenerator.h"
 #include "StringGenerator.h"
 #include "ArrayGenerator.h"
@@ -24,6 +23,60 @@
 #endif
 
 using namespace bin2cpp;
+
+enum APP_ERROR_CODES
+{
+  APP_ERROR_SUCCESS,
+  APP_ERROR_MISSINGARGUMENTS,
+  APP_ERROR_INPUTFILENOTFOUND,
+  APP_ERROR_UNABLETOCREATEOUTPUTFILES,
+};
+
+enum FILE_UPDATE_MODE
+{
+  WRITING,
+  UPDATING,
+  OVERWRITING,
+  SKIPPING,
+};
+
+const char * getErrorCodeDescription(const APP_ERROR_CODES & iErrorCode)
+{
+  switch(iErrorCode)
+  {
+  case APP_ERROR_SUCCESS:
+    return "Success";
+    break;
+  case APP_ERROR_MISSINGARGUMENTS:
+    return "Missing arguments";
+    break;
+  case APP_ERROR_INPUTFILENOTFOUND:
+    return "Unable to open input file";
+    break;
+  case APP_ERROR_UNABLETOCREATEOUTPUTFILES:
+    return "Unable to create output files";
+    break;
+  default:
+    return "Unknown error";
+  };
+}
+
+const char * getUpdateModeText(const FILE_UPDATE_MODE & iMode)
+{
+  switch(iMode)
+  {
+  case WRITING:
+    return "Writing";
+  case UPDATING:
+    return "Updating";
+  case OVERWRITING:
+    return "Overwriting";
+  case SKIPPING:
+    return "Skipping";
+  default:
+    return "Unknown";
+  };
+}
 
 //pre-declarations
 bool processFile(const std::string & inputFile, bin2cpp::IGenerator * generator, const std::string & functionIdentifier, const size_t & chunkSize, bool overrideExisting, const std::string & iOutputFilePath);
@@ -72,7 +125,7 @@ int main(int argc, char* argv[])
   {
     printHeader();
     printUsage();
-    return bin2cpp::ErrorCodes::Success;
+    return APP_ERROR_SUCCESS;
   }
 
   //noheader
@@ -100,7 +153,7 @@ int main(int argc, char* argv[])
   {
     if (!noheader)
       printHeader();
-    return bin2cpp::ErrorCodes::Success;
+    return APP_ERROR_SUCCESS;
   }
 
   if (!noheader && !quiet)
@@ -114,7 +167,7 @@ int main(int argc, char* argv[])
 
   if (!bin2cpp::parseArgument("file", inputFile, argc, argv))
   {
-    bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
+    APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
     bin2cpp::log(bin2cpp::LOG_ERROR, "%s (file)", getErrorCodeDescription(error));
     printUsage();
     return error;
@@ -122,7 +175,7 @@ int main(int argc, char* argv[])
 
   if (!bin2cpp::parseArgument("output", outputFolder, argc, argv))
   {
-    bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
+    APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
     bin2cpp::log(bin2cpp::LOG_ERROR, "%s (output)", getErrorCodeDescription(error));
     printUsage();
     return error;
@@ -130,7 +183,7 @@ int main(int argc, char* argv[])
 
   if (!bin2cpp::parseArgument("headerfile", headerFilename, argc, argv))
   {
-    bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
+    APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
     bin2cpp::log(bin2cpp::LOG_ERROR, "%s (headerfile)", getErrorCodeDescription(error));
     printUsage();
     return error;
@@ -138,7 +191,7 @@ int main(int argc, char* argv[])
 
   if (!bin2cpp::parseArgument("identifier", functionIdentifier, argc, argv))
   {
-    bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
+    APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
     bin2cpp::log(bin2cpp::LOG_ERROR, "%s (identifier)", getErrorCodeDescription(error));
     printUsage();
     return error;
@@ -185,7 +238,7 @@ int main(int argc, char* argv[])
     //validate generator selection
     if (generator == NULL)
     {
-      bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::MissingArguments;
+      APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
       bin2cpp::log(bin2cpp::LOG_ERROR, "%s, unknown values for 'generator' argument!", getErrorCodeDescription(error));
       printUsage();
       return error;
@@ -219,28 +272,20 @@ int main(int argc, char* argv[])
 
   //check if input file exists
   if (!bin2cpp::fileExists(inputFile.c_str()))
-    return bin2cpp::ErrorCodes::InputFileNotFound;
+    return APP_ERROR_INPUTFILENOTFOUND;
 
   //process files
   bool headerResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputHeaderPath);
   if (!headerResult)
-    return bin2cpp::ErrorCodes::UnableToCreateOutputFiles;
+    return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
   bool cppResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputCppPath);
   if (!cppResult)
-    return bin2cpp::ErrorCodes::UnableToCreateOutputFiles;
+    return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
   //success
-  return bin2cpp::ErrorCodes::Success;
+  return APP_ERROR_SUCCESS;
 }
-
-enum FILE_UPDATE_MODE
-{
-  WRITING,
-  UPDATING,
-  OVERWRITING,
-  SKIPPING,
-};
 
 FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::string & iOutputFilePath, bool overrideExisting)
 {
@@ -261,23 +306,6 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::str
 
   //file is out of date, update it
   return UPDATING;
-}
-
-const char * getUpdateModeText(const FILE_UPDATE_MODE & iMode)
-{
-  switch(iMode)
-  {
-  case WRITING:
-    return "Writing";
-  case UPDATING:
-    return "Updating";
-  case OVERWRITING:
-    return "Overwriting";
-  case SKIPPING:
-    return "Skipping";
-  default:
-    return "Unknown";
-  };
 }
 
 bool processFile(const std::string & inputFile, bin2cpp::IGenerator * generator, const std::string & functionIdentifier, const size_t & chunkSize, bool overrideExisting, const std::string & iOutputFilePath)
@@ -305,7 +333,7 @@ bool processFile(const std::string & inputFile, bin2cpp::IGenerator * generator,
   if (!result)
   {
     //there was an error generating file
-    bin2cpp::log(bin2cpp::LOG_ERROR, "%s", getErrorCodeDescription(result));
+    bin2cpp::log(bin2cpp::LOG_ERROR, "%s", getErrorCodeDescription(APP_ERROR_UNABLETOCREATEOUTPUTFILES));
     bin2cpp::log(bin2cpp::LOG_ERROR, "Embedding failed!");
   }
   return result;
