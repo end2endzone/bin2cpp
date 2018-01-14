@@ -23,3 +23,7 @@
 /msvc/TestCLI.testGenerators.actual.txt
 /msvc/TestCLI.testOverride.actual.txt
 /msvc/TestCommon.testFileModifiedDate.actual.txt
+/msvc/TestCLI.testNewFiles.actual.txt
+/msvc/TestCLI.testSkipping.actual.txt
+/msvc/TestCLI.testUpdating.actual.txt
+/msvc/TestCLI.testUpdatingFile.actual.txt

@@ -155,6 +155,7 @@ namespace bin2cpp
 
   ///<summary>
   ///Returns the modified date of the given file.
+  ///Note that the function returns the number of seconds elapsed since epoch since Jan 1st 1970.
   ///</summary>
   ///<param name="iPath">The valid path to a file.</param>
   ///<return>Returns the modified date of the given file.<return>
@@ -162,6 +163,7 @@ namespace bin2cpp
 
   ///<summary>
   ///Returns the modified date from an embedded file's c++ header/source file.
+  ///Note that the function returns the number of seconds elapsed since epoch since Jan 1st 1970.
   ///</summary>
   ///<param name="iPath">The valid path to a c++ header/source file.</param>
   ///<return>Returns the modified date from an embedded file's c++ header/source file.<return>
@@ -209,5 +211,25 @@ namespace bin2cpp
   ///<param name="value">The output numeric value.</param>
   ///<return>Returns true when the parsing is successful.<return>
   bool parseValue(const std::string& str, uint64_t & oValue);
+
+  ///<summary>
+  ///Determine if a given path is a c++ header file.
+  ///</summary>
+  ///<param name="iPath">An valid file path.</param>
+  ///<return>Returns true if iPath is a c++ header file. Returns false otherwise.<return>
+  bool isCppHeaderFile(const std::string & iPath);
+
+  ///<summary>
+  ///Determine if a given path is a c++ source file.
+  ///</summary>
+  ///<param name="iPath">An valid file path.</param>
+  ///<return>Returns true if iPath is a c++ source file. Returns false otherwise.<return>
+  bool isCppSourceFile(const std::string & iPath);
+
+  ///<summary>
+  ///Sleep the current thread by iTimeMs milliseconds.
+  ///</summary>
+  ///<param name="iTimeMs">The number of milliseconds to sleep.</param>
+  void sleep(const size_t & iTimeMs);
 
 }; //bin2cpp

@@ -18,6 +18,13 @@
 #define stat _stat
 #endif
 
+#ifdef WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
+#endif
+#include <Windows.h>
+#endif
+
 namespace bin2cpp
 {
   template <class T>
@@ -550,6 +557,27 @@ namespace bin2cpp
   bool parseValue(const std::string& str, uint64_t & oValue)
   {
     return parseValueT(str, oValue);
+  }
+
+  bool isCppHeaderFile(const std::string & iPath)
+  {
+    std::string extension = getFileExtention(iPath);
+    if (extension == "h" || extension == "hpp")
+      return true;
+    return false;
+  }
+
+  bool isCppSourceFile(const std::string & iPath)
+  {
+    std::string extension = getFileExtention(iPath);
+    if (extension == "cpp" || extension == "cxx")
+      return true;
+    return false;
+  }
+
+  void sleep(const size_t & iTimeMs)
+  {
+    Sleep(iTimeMs);
   }
 
 }; //bin2cpp

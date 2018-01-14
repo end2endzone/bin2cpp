@@ -215,13 +215,10 @@ int main(int argc, char* argv[])
   //prepare output files path
   std::string outputHeaderPath = outputFolder + "\\" + headerFilename;
   std::string outputCppPath = outputFolder + "\\" + headerFilename;         bin2cpp::strReplace(outputCppPath, ".h", ".cpp");
-  std::string cppFilename = headerFilename;                                 bin2cpp::strReplace(cppFilename, ".h", ".cpp");
-  
-  bin2cpp::ErrorCodes headerResult = bin2cpp::ErrorCodes::Success;
-  bin2cpp::ErrorCodes cppResult = bin2cpp::ErrorCodes::Success;
+  std::string cppFilename = headerFilename;                                 bin2cpp::strReplace(cppFilename, ".h", ".cpp");  
 
   //process files
-  headerResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputHeaderPath);
+  bin2cpp::ErrorCodes headerResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputHeaderPath);
   switch(headerResult)
   {
   case bin2cpp::ErrorCodes::Success:
@@ -232,7 +229,7 @@ int main(int argc, char* argv[])
     return headerResult;
   };
   
-  cppResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputCppPath);
+  bin2cpp::ErrorCodes cppResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputCppPath);
   switch(cppResult)
   {
   case bin2cpp::ErrorCodes::Success:
@@ -247,77 +244,85 @@ int main(int argc, char* argv[])
   return bin2cpp::ErrorCodes::Success;
 }
 
+enum FILE_UPDATE_MODE
+{
+  WRITING,
+  UPDATING,
+  OVERWRITING,
+  SKIPPING,
+};
+
+FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::string & iOutputFilePath, bool overrideExisting)
+{
+  if (!bin2cpp::fileExists(iOutputFilePath.c_str()))
+    return WRITING;
+  //at this point, we know that the file exists
+
+  if (overrideExisting)
+    return OVERWRITING;
+
+  //do not modify the output file if it is not out of date
+  uint64_t lastModifiedDate = getFileModifiedDate(inputFile);
+  uint64_t outputModifiedDate = getOutputFileModifiedDate(iOutputFilePath);
+  if (outputModifiedDate == 0)
+    bin2cpp::log(bin2cpp::LOG_WARNING, "Unable to get last modified date of file \'%s\'", iOutputFilePath.c_str());
+  if (lastModifiedDate == outputModifiedDate)
+    return SKIPPING;
+
+  //file is out of date, update it
+  return UPDATING;
+}
+
+const char * getUpdateModeText(const FILE_UPDATE_MODE & iMode)
+{
+  switch(iMode)
+  {
+  case WRITING:
+    return "Writing";
+  case UPDATING:
+    return "Updating";
+  case OVERWRITING:
+    return "Overwriting";
+  case SKIPPING:
+    return "Skipping";
+  default:
+    return "Unknown";
+  };
+}
+
 bin2cpp::ErrorCodes processFile(const std::string & inputFile, bin2cpp::IGenerator * generator, const std::string & functionIdentifier, const size_t & chunkSize, bool overrideExisting, const std::string & iOutputFilePath)
 {
-  uint64_t lastModifiedDate = getFileModifiedDate(iOutputFilePath);
-  std::string filename = getFilename(iOutputFilePath.c_str());
-  std::string extension = getFileExtention(iOutputFilePath);
+  FILE_UPDATE_MODE mode = getFileUpdateMode(inputFile, iOutputFilePath, overrideExisting);
 
-  bin2cpp::ErrorCodes result = bin2cpp::ErrorCodes::Success;
-
-  if (bin2cpp::fileExists(iOutputFilePath.c_str()))
-  {
-    uint64_t outputModifiedDate = getOutputFileModifiedDate(iOutputFilePath);
-    bool outputFileOutdated = (outputModifiedDate == 0 || lastModifiedDate > outputModifiedDate);
-    if (outputFileOutdated)
-    {
-      //should we force override flag ?
-      if (overrideExisting)
-      {
-        //no problem, user has already choosen to update the output files.
-      }
-      else
-      {
-        //force overriding output files.
-        std::string message;
-        message << "Output file \'" << filename << "\' is out of date. Forcing override flag";
-        bin2cpp::log(bin2cpp::LOG_INFO, message.c_str());
-        overrideExisting = true;
-      }
-    }
-    else if (lastModifiedDate == outputModifiedDate)
-    {
-      //output file already up to date.
-      result = bin2cpp::ErrorCodes::OutputFilesSkipped;
-    }
-    else if (!overrideExisting)
-    {
-      //fail if not overriding output file
-      bin2cpp::ErrorCodes error = bin2cpp::ErrorCodes::OutputFileAlreadyExist;
-      bin2cpp::log(bin2cpp::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), iOutputFilePath.c_str());
-      return error;
-    }
-  }
+  //writing message
+  bin2cpp::log(bin2cpp::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
+  
+  if (mode == SKIPPING)
+    return bin2cpp::ErrorCodes::OutputFilesSkipped;
 
   //generate file
-  if (result == bin2cpp::ErrorCodes::Success)
+  bin2cpp::ErrorCodes result = bin2cpp::ErrorCodes::Success;
+  if (isCppHeaderFile(iOutputFilePath))
   {
-    bin2cpp::log(bin2cpp::LOG_INFO, "Writing file \"%s\"...", iOutputFilePath.c_str());
-    if (extension == ".h")
-    {
-      //generate header
-      result = generator->createHeaderEmbededFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str());
-    }
-    else
-    {
-      //generate cpp
-      result = generator->createCppEmbeddedFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str(), chunkSize);
-    }
-  }
-  if (result == bin2cpp::ErrorCodes::Success)
-  {
-    //OK
-  }
-  else if (result == bin2cpp::ErrorCodes::OutputFilesSkipped)
-  {
-    bin2cpp::log(bin2cpp::LOG_WARNING, "%s", getErrorCodeDescription(result));
+    //generate header
+    result = generator->createHeaderEmbededFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str());
   }
   else
   {
+    //generate cpp
+    result = generator->createCppEmbeddedFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str(), chunkSize);
+  }
+  if (result == bin2cpp::ErrorCodes::Success ||
+      result == bin2cpp::ErrorCodes::OutputFilesSkipped)
+  {
+    //OK
+    return bin2cpp::ErrorCodes::Success;
+  }
+  else
+  {
+    //there was an error generating file
     bin2cpp::log(bin2cpp::LOG_ERROR, "%s", getErrorCodeDescription(result));
     bin2cpp::log(bin2cpp::LOG_ERROR, "Embedding failed!");
     return result;
   }
-  
-  return bin2cpp::ErrorCodes::Success;
 }
