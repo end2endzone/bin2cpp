@@ -77,7 +77,7 @@ namespace bin2cpp
     return output;
   }
 
-  bin2cpp::ErrorCodes BaseGenerator::createHeaderEmbededFile(const char * iInputFilename, const char * iHeaderFilePath, const char * iFunctionIdentifier)
+  bin2cpp::ErrorCodes BaseGenerator::createCppHeaderFile(const char * iInputFilename, const char * iHeaderFilePath, const char * iFunctionIdentifier)
   {
     FILE * header = fopen(iHeaderFilePath, "w");
     if (!header)

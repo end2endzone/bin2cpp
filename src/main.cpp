@@ -305,12 +305,12 @@ bin2cpp::ErrorCodes processFile(const std::string & inputFile, bin2cpp::IGenerat
   if (isCppHeaderFile(iOutputFilePath))
   {
     //generate header
-    result = generator->createHeaderEmbededFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str());
+    result = generator->createCppHeaderFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str());
   }
   else
   {
     //generate cpp
-    result = generator->createCppEmbeddedFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str(), chunkSize);
+    result = generator->createCppSourceFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str(), chunkSize);
   }
   if (result == bin2cpp::ErrorCodes::Success ||
       result == bin2cpp::ErrorCodes::OutputFilesSkipped)

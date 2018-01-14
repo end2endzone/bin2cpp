@@ -25,7 +25,7 @@ namespace bin2cpp
     return "array";
   }
 
-  bin2cpp::ErrorCodes ArrayGenerator::createCppEmbeddedFile(const char * iInputFilename, const char * iCppFilePath, const char * iFunctionIdentifier, size_t iChunkSize)
+  bin2cpp::ErrorCodes ArrayGenerator::createCppSourceFile(const char * iInputFilename, const char * iCppFilePath, const char * iFunctionIdentifier, size_t iChunkSize)
   {
     //check if input file exists
     FILE * input = fopen(iInputFilename, "rb");

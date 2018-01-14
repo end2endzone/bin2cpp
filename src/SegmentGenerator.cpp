@@ -25,7 +25,7 @@ namespace bin2cpp
     return "segment";
   }
 
-  bin2cpp::ErrorCodes SegmentGenerator::createCppEmbeddedFile(const char * iInputFilename, const char * iCppFilePath, const char * iFunctionIdentifier, size_t iChunkSize)
+  bin2cpp::ErrorCodes SegmentGenerator::createCppSourceFile(const char * iInputFilename, const char * iCppFilePath, const char * iFunctionIdentifier, size_t iChunkSize)
   {
     //check if input file exists
     FILE * input = fopen(iInputFilename, "rb");
