@@ -14,7 +14,7 @@ namespace bin2cpp
     StringGenerator();
     virtual ~StringGenerator();
     virtual const char * getName() const;
-    virtual bin2cpp::ErrorCodes createCppSourceFile(const char * iInputFilename, const char * iCppFilePath, const char * iFunctionIdentifier, size_t iChunkSize);
+    virtual bool createCppSourceFile(const char * iInputFilename, const char * iCppFilePath, const char * iFunctionIdentifier, size_t iChunkSize);
   };
 
 }; //bin2cpp

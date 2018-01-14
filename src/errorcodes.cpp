@@ -58,12 +58,6 @@ namespace bin2cpp
     case bin2cpp::ErrorCodes::UnableToCreateOutputFiles:
       return "Unable to create output files";
       break;
-    case bin2cpp::ErrorCodes::OutputFileAlreadyExist:
-      return "Output file already exist";
-      break;
-    case bin2cpp::ErrorCodes::OutputFilesSkipped:
-      return "No change to input files. Skipping file generation";
-      break;
     };
     return "Unknown";
   }

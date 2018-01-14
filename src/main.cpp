@@ -26,7 +26,7 @@
 using namespace bin2cpp;
 
 //pre-declarations
-bin2cpp::ErrorCodes processFile(const std::string & inputFile, bin2cpp::IGenerator * generator, const std::string & functionIdentifier, const size_t & chunkSize, bool overrideExisting, const std::string & iOutputFilePath);
+bool processFile(const std::string & inputFile, bin2cpp::IGenerator * generator, const std::string & functionIdentifier, const size_t & chunkSize, bool overrideExisting, const std::string & iOutputFilePath);
 
 void printHeader()
 {
@@ -217,28 +217,18 @@ int main(int argc, char* argv[])
   std::string outputCppPath = outputFolder + "\\" + headerFilename;         bin2cpp::strReplace(outputCppPath, ".h", ".cpp");
   std::string cppFilename = headerFilename;                                 bin2cpp::strReplace(cppFilename, ".h", ".cpp");  
 
+  //check if input file exists
+  if (!bin2cpp::fileExists(inputFile.c_str()))
+    return bin2cpp::ErrorCodes::InputFileNotFound;
+
   //process files
-  bin2cpp::ErrorCodes headerResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputHeaderPath);
-  switch(headerResult)
-  {
-  case bin2cpp::ErrorCodes::Success:
-  case bin2cpp::ErrorCodes::OutputFilesSkipped:
-    //ok
-    break;
-  default:
-    return headerResult;
-  };
+  bool headerResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputHeaderPath);
+  if (!headerResult)
+    return bin2cpp::ErrorCodes::UnableToCreateOutputFiles;
   
-  bin2cpp::ErrorCodes cppResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputCppPath);
-  switch(cppResult)
-  {
-  case bin2cpp::ErrorCodes::Success:
-  case bin2cpp::ErrorCodes::OutputFilesSkipped:
-    //ok
-    break;
-  default:
-    return cppResult;
-  };
+  bool cppResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputCppPath);
+  if (!cppResult)
+    return bin2cpp::ErrorCodes::UnableToCreateOutputFiles;
 
   //success
   return bin2cpp::ErrorCodes::Success;
@@ -290,7 +280,7 @@ const char * getUpdateModeText(const FILE_UPDATE_MODE & iMode)
   };
 }
 
-bin2cpp::ErrorCodes processFile(const std::string & inputFile, bin2cpp::IGenerator * generator, const std::string & functionIdentifier, const size_t & chunkSize, bool overrideExisting, const std::string & iOutputFilePath)
+bool processFile(const std::string & inputFile, bin2cpp::IGenerator * generator, const std::string & functionIdentifier, const size_t & chunkSize, bool overrideExisting, const std::string & iOutputFilePath)
 {
   FILE_UPDATE_MODE mode = getFileUpdateMode(inputFile, iOutputFilePath, overrideExisting);
 
@@ -298,10 +288,10 @@ bin2cpp::ErrorCodes processFile(const std::string & inputFile, bin2cpp::IGenerat
   bin2cpp::log(bin2cpp::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
   
   if (mode == SKIPPING)
-    return bin2cpp::ErrorCodes::OutputFilesSkipped;
+    return true; //skipping is success
 
   //generate file
-  bin2cpp::ErrorCodes result = bin2cpp::ErrorCodes::Success;
+  bool result = false;
   if (isCppHeaderFile(iOutputFilePath))
   {
     //generate header
@@ -312,17 +302,11 @@ bin2cpp::ErrorCodes processFile(const std::string & inputFile, bin2cpp::IGenerat
     //generate cpp
     result = generator->createCppSourceFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str(), chunkSize);
   }
-  if (result == bin2cpp::ErrorCodes::Success ||
-      result == bin2cpp::ErrorCodes::OutputFilesSkipped)
-  {
-    //OK
-    return bin2cpp::ErrorCodes::Success;
-  }
-  else
+  if (!result)
   {
     //there was an error generating file
     bin2cpp::log(bin2cpp::LOG_ERROR, "%s", getErrorCodeDescription(result));
     bin2cpp::log(bin2cpp::LOG_ERROR, "Embedding failed!");
-    return result;
   }
+  return result;
 }

@@ -25,12 +25,12 @@ namespace bin2cpp
     return "segment";
   }
 
-  bin2cpp::ErrorCodes SegmentGenerator::createCppSourceFile(const char * iInputFilename, const char * iCppFilePath, const char * iFunctionIdentifier, size_t iChunkSize)
+  bool SegmentGenerator::createCppSourceFile(const char * iInputFilename, const char * iCppFilePath, const char * iFunctionIdentifier, size_t iChunkSize)
   {
     //check if input file exists
     FILE * input = fopen(iInputFilename, "rb");
     if (!input)
-      return bin2cpp::ErrorCodes::InputFileNotFound;
+      return false;
 
     //Uppercase function identifier
     std::string functionIdentifier = iFunctionIdentifier;
@@ -47,7 +47,7 @@ namespace bin2cpp
     if (!cpp)
     {
       fclose(input);
-      return bin2cpp::ErrorCodes::UnableToCreateOutputFiles;
+      return false;
     }
 
     //determine file properties
@@ -127,7 +127,7 @@ namespace bin2cpp
     fclose(input);
     fclose(cpp);
 
-    return bin2cpp::ErrorCodes::Success;
+    return true;
   }
 
 }; //bin2cpp

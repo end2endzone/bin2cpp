@@ -77,11 +77,11 @@ namespace bin2cpp
     return output;
   }
 
-  bin2cpp::ErrorCodes BaseGenerator::createCppHeaderFile(const char * iInputFilename, const char * iHeaderFilePath, const char * iFunctionIdentifier)
+  bool BaseGenerator::createCppHeaderFile(const char * iInputFilename, const char * iHeaderFilePath, const char * iFunctionIdentifier)
   {
     FILE * header = fopen(iHeaderFilePath, "w");
     if (!header)
-      return bin2cpp::ErrorCodes::UnableToCreateOutputFiles;
+      return false;
 
     std::string headercomments = getFileHeading(iInputFilename);
     fprintf(header, "%s", headercomments.c_str());
@@ -106,7 +106,7 @@ namespace bin2cpp
 
     fclose(header);
 
-    return bin2cpp::ErrorCodes::Success;
+    return true;
   }
 
 }; //bin2cpp
