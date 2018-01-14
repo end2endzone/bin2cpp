@@ -15,12 +15,6 @@
 #include "argumentparser.h"
 #include "logger.h"
 
-//#define ENABLE_BREAKPOINT_DEBUGGING
-
-#ifdef ENABLE_BREAKPOINT_DEBUGGING
-#include <windows.h>
-#endif
-
 using namespace bin2cpp;
 
 enum APP_ERROR_CODES
@@ -114,10 +108,6 @@ void printUsage()
 
 int main(int argc, char* argv[])
 {
-  #ifdef ENABLE_BREAKPOINT_DEBUGGING
-  MessageBox(NULL, "", "", MB_OK);
-  #endif
-
   //help
   std::string dummy;
   if (bin2cpp::parseArgument("help", dummy, argc, argv))
