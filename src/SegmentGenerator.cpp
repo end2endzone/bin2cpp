@@ -22,7 +22,7 @@ namespace bin2cpp
     return "segment";
   }
 
-  bool SegmentGenerator::createCppSourceFile(const char * iInputFilename, const char * iCppFilePath, const char * iFunctionIdentifier, size_t iChunkSize)
+  bool SegmentGenerator::createCppSourceFile(const char * iInputFilename, const char * iCppFilePath, const char * iFunctionIdentifier, size_t iChunkSize, const char * iNamespace, const char * iBaseClass)
   {
     //check if input file exists
     FILE * input = fopen(iInputFilename, "rb");
@@ -66,9 +66,9 @@ namespace bin2cpp
     fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str() );
     fprintf(cpp, "#include <stdio.h> //for FILE\n");
     fprintf(cpp, "#include <string> //for memcpy\n");
-    fprintf(cpp, "namespace bin2cpp\n");
+    fprintf(cpp, "namespace %s\n", iNamespace);
     fprintf(cpp, "{\n");
-    fprintf(cpp, "  class %s : public virtual bin2cpp::File\n", className.c_str());
+    fprintf(cpp, "  class %s : public virtual %s::%s\n", className.c_str(), iNamespace, iBaseClass);
     fprintf(cpp, "  {\n");
     fprintf(cpp, "  public:\n");
     fprintf(cpp, "    %s() { build(); }\n", className.c_str());
@@ -105,8 +105,8 @@ namespace bin2cpp
     fprintf(cpp, "  private:\n");
     fprintf(cpp, "    std::string mBuffer;\n");
     fprintf(cpp, "  };\n");
-    fprintf(cpp, "  const File & %s() { static %s _instance; return _instance; }\n", getterFunctionName.c_str(), className.c_str());
-    fprintf(cpp, "}; //bin2cpp\n");
+    fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", iBaseClass, getterFunctionName.c_str(), className.c_str());
+    fprintf(cpp, "}; //%s\n", iNamespace);
 
     fclose(input);
     fclose(cpp);

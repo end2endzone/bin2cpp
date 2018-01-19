@@ -93,6 +93,21 @@
     <ClCompile Include="..\test\TestCommon.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="generated_files\testGeneratorArray10000\_testGeneratorArray10000.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testGeneratorSegment10000\_testGeneratorSegment10000.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testGeneratorString10000\_testGeneratorString10000.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testBaseClass\_testBaseClass.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testNamespace\_testNamespace.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin2cppTest.x86.debug.xml">
@@ -169,6 +184,21 @@
     </ClInclude>
     <ClInclude Include="..\test\TestCommon.h">
       <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testGeneratorArray10000\_testGeneratorArray10000.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testGeneratorSegment10000\_testGeneratorSegment10000.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testGeneratorString10000\_testGeneratorString10000.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testBaseClass\_testBaseClass.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testNamespace\_testNamespace.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

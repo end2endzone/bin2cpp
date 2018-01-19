@@ -6,6 +6,7 @@ Changes for 2.0:
 * Fixed issue #19: Add NSIS as a prerequisite in README and INSTALL
 * Fixed issue #17: Implement a --help and --h
 * Fixed issue  #5: Fixed issue #5 - Remove the concept of segment
+* Fixed issue #16: Implement a --namespace argument
 
 Changes for 1.4:
 

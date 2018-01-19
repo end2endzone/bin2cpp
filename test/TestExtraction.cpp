@@ -12,12 +12,21 @@
 #include "generated_files\testRandom8\_testRandom8.h"
 #include "generated_files\testSequential1000\_testSequential1000.h"
 #include "generated_files\testSequential10MB\_testSequential10MB.h"
+#include "generated_files\testGeneratorArray10000\_testGeneratorArray10000.h"
+#include "generated_files\testGeneratorSegment10000\_testGeneratorSegment10000.h"
+#include "generated_files\testGeneratorString10000\_testGeneratorString10000.h"
 #include "generated_files\testText10\_testText10.h"
 #include "generated_files\testText1000\_testText1000.h"
 #include "generated_files\testText100000\_testText100000.h"
 #include "generated_files\testIssue12\_testIssue12.h"
 #include "generated_files\testIssue12Mini\_testIssue12Mini.h"
 #include "generated_files\testIssue13\_testIssue13.h"
+
+#undef BIN2CPP_EMBEDDEDFILE_CLASS
+#include "generated_files\testNamespace\_testNamespace.h"
+
+#undef BIN2CPP_EMBEDDEDFILE_CLASS
+#include "generated_files\testBaseClass\_testBaseClass.h"
 
 namespace TestExtractionUtils
 {
@@ -256,6 +265,81 @@ TEST_F(TestExtraction, testSequential10MB)
   static const std::string outputFilePath   = getActualFilePath();
 
   const bin2cpp::File & file = bin2cpp::getTestSequential10MBFile();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testGeneratorArray10000)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp::File & file = bin2cpp::getTestGeneratorArray10000File();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testGeneratorSegment10000)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp::File & file = bin2cpp::getTestGeneratorSegment10000File();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testGeneratorString10000)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp::File & file = bin2cpp::getTestGeneratorString10000File();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testNamespace)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const foobar::File & file = foobar::getTestNamespaceFile();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testBaseClass)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp::Resource & file = bin2cpp::getTestBaseClassFile();
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 

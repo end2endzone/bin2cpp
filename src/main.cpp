@@ -72,7 +72,7 @@ const char * getUpdateModeText(const FILE_UPDATE_MODE & iMode)
 }
 
 //pre-declarations
-bool processFile(const std::string & inputFile, bin2cpp::IGenerator * generator, const std::string & functionIdentifier, const size_t & chunkSize, bool overrideExisting, const std::string & iOutputFilePath);
+bool processFile(const std::string & inputFile, bin2cpp::IGenerator * generator, const std::string & functionIdentifier, const size_t & chunkSize, bool overrideExisting, const std::string & iOutputFilePath, const std::string & iNamespace, const std::string & iBaseClass);
 
 void printHeader()
 {
@@ -86,7 +86,7 @@ void printUsage()
   //usage string in docopt format. See http://docopt.org/
   static const char usage[] = 
     "Usage:\n"
-    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--generator=<name>] [--chunksize=<value>] [--override] [--noheader] [--quiet]\n"
+    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--generator=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<value>] [--override] [--noheader] [--quiet]\n"
     "  bin2cpp --help\n"
     "  bin2cpp --version\n"
     "\n"
@@ -99,6 +99,8 @@ void printUsage()
     "  --generator=<name>   Name of the generator to use. Possible values are 'segment', 'string' and 'array'. [default: segment].\n"
     "  --identifier=<name>  Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
     "  --chunksize=<value>  Size in bytes of each string segments (bytes per row). [default: 200].\n"
+    "  --baseclass=<value>  The name of the interface for embedded files. [default: File].\n"
+    "  --namespace=<value>  The namespace of the generated source code [default: bin2cpp].\n"
     "  --override           Tells bin2cpp to overwrite the destination files.\n"
     "  --noheader           Do not print program header to standard output.\n"
     "  --quiet              Do not log any message to standard output.\n"
@@ -190,6 +192,10 @@ int main(int argc, char* argv[])
   static const size_t DEFAULT_CHUNK_SIZE = 200;
   size_t chunkSize = DEFAULT_CHUNK_SIZE;
   bool overrideExisting = false;
+  static const char * DEFAULT_NAMESPACE = "bin2cpp";
+  static const char * DEFAULT_BASECLASSNAME = "File";
+  std::string codeNamespace;
+  std::string baseClass;
 
   size_t tmpChunkSize = 0;
   if (bin2cpp::parseArgument("chunksize", tmpChunkSize, argc, argv))
@@ -200,6 +206,16 @@ int main(int argc, char* argv[])
   if (bin2cpp::parseArgument("override", dummy, argc, argv))
   {
     overrideExisting = true;
+  }
+
+  if (!bin2cpp::parseArgument("namespace", codeNamespace, argc, argv))
+  {
+    codeNamespace = DEFAULT_NAMESPACE;
+  }
+
+  if (!bin2cpp::parseArgument("baseclass", baseClass, argc, argv))
+  {
+    baseClass = DEFAULT_BASECLASSNAME;
   }
 
   //select generator
@@ -264,11 +280,11 @@ int main(int argc, char* argv[])
     return APP_ERROR_INPUTFILENOTFOUND;
 
   //process files
-  bool headerResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputHeaderPath);
+  bool headerResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputHeaderPath, codeNamespace, baseClass);
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult = processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputCppPath);
+  bool cppResult =    processFile(inputFile, generator, functionIdentifier, chunkSize, overrideExisting, outputCppPath,    codeNamespace, baseClass);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
@@ -297,7 +313,7 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::str
   return UPDATING;
 }
 
-bool processFile(const std::string & inputFile, bin2cpp::IGenerator * generator, const std::string & functionIdentifier, const size_t & chunkSize, bool overrideExisting, const std::string & iOutputFilePath)
+bool processFile(const std::string & inputFile, bin2cpp::IGenerator * generator, const std::string & functionIdentifier, const size_t & chunkSize, bool overrideExisting, const std::string & iOutputFilePath, const std::string & iNamespace, const std::string & iBaseClass)
 {
   FILE_UPDATE_MODE mode = getFileUpdateMode(inputFile, iOutputFilePath, overrideExisting);
 
@@ -312,12 +328,12 @@ bool processFile(const std::string & inputFile, bin2cpp::IGenerator * generator,
   if (isCppHeaderFile(iOutputFilePath))
   {
     //generate header
-    result = generator->createCppHeaderFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str());
+    result = generator->createCppHeaderFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str(), chunkSize, iNamespace.c_str(), iBaseClass.c_str());
   }
   else
   {
     //generate cpp
-    result = generator->createCppSourceFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str(), chunkSize);
+    result = generator->createCppSourceFile(inputFile.c_str(), iOutputFilePath.c_str(), functionIdentifier.c_str(), chunkSize, iNamespace.c_str(), iBaseClass.c_str());
   }
   if (!result)
   {

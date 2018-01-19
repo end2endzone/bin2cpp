@@ -78,7 +78,7 @@ namespace bin2cpp
     return output;
   }
 
-  bool BaseGenerator::createCppHeaderFile(const char * iInputFilename, const char * iHeaderFilePath, const char * iFunctionIdentifier)
+  bool BaseGenerator::createCppHeaderFile(const char * iInputFilename, const char * iHeaderFilePath, const char * iFunctionIdentifier, size_t iChunkSize, const char * iNamespace, const char * iBaseClass)
   {
     FILE * header = fopen(iHeaderFilePath, "w");
     if (!header)
@@ -88,11 +88,11 @@ namespace bin2cpp
     fprintf(header, "%s", headercomments.c_str());
     fprintf(header, "#pragma once\n");
     fprintf(header, "#include <stddef.h>\n");
-    fprintf(header, "namespace bin2cpp\n");
+    fprintf(header, "namespace %s\n", iNamespace);
     fprintf(header, "{\n");
     fprintf(header, "  #ifndef BIN2CPP_EMBEDDEDFILE_CLASS\n");
     fprintf(header, "  #define BIN2CPP_EMBEDDEDFILE_CLASS\n");
-    fprintf(header, "  class File\n");
+    fprintf(header, "  class %s\n", iBaseClass);
     fprintf(header, "  {\n");
     fprintf(header, "  public:\n");
     fprintf(header, "    virtual size_t getSize() const = 0;\n");
@@ -101,8 +101,8 @@ namespace bin2cpp
     fprintf(header, "    virtual bool save(const char * iFilename) const = 0;\n");
     fprintf(header, "  };\n");
     fprintf(header, "  #endif\n");
-    fprintf(header, "  const File & %s();\n", getGetterFunctionName(iFunctionIdentifier).c_str());
-    fprintf(header, "}; //bin2cpp\n");
+    fprintf(header, "  const %s & %s();\n", iBaseClass, getGetterFunctionName(iFunctionIdentifier).c_str());
+    fprintf(header, "}; //%s\n", iNamespace);
 
     fclose(header);
 
