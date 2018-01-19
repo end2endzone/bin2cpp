@@ -75,34 +75,6 @@ namespace bin2cpp
   const char * getVersionString();
 
   ///<summary>
-  ///Converts a single byte character to the two characters representing this byte in hexadicimal.
-  ///For instance, toHexString(64, c1, c2) assigns c1='4' and c2='0'
-  ///</summary>
-  ///<param name="c">The input byte value</param>
-  ///<param name="c1">The first  character of the hexadecimal string.</param>
-  ///<param name="c2">The second character of the hexadecimal string.</param>
-  ///<return>The the two characters representing the hexadecimal value of c.<return>
-  void toHexString(unsigned char c, unsigned char & c1, unsigned char & c2);
-
-  ///<summary>
-  ///Converts a single byte character to the 3 characters representing this byte in octal.
-  ///For instance, toOctString(83, c1, c2, c3) assigns c1='1', c2='2' and c3='3'
-  ///</summary>
-  ///<param name="c">The input byte value</param>
-  ///<param name="c1">The first  character of the octal string.</param>
-  ///<param name="c2">The second character of the octal string.</param>
-  ///<param name="c3">The third  character of the octal string.</param>
-  ///<return>The the two characters representing the hexadecimal value of c.<return>
-  void toOctString(unsigned char c, unsigned char & c1, unsigned char & c2, unsigned char & c3);
-
-  ///<summary>
-  ///Returns true if the given character is printable to a console.
-  ///</summary>
-  ///<param name="c">The input character value</param>
-  ///<return>Returns true if the given character is printable to a console.<return>
-  bool isPrintableCharacter(const char c);
-
-  ///<summary>
   ///Returns the parent element of a path. For files, returns the file's directory. For folders, returns the parent path
   ///</summary>
   ///<param name="iPath">The input path to split.</param>

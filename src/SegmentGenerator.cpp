@@ -94,7 +94,7 @@ namespace bin2cpp
         continue; //nothing to output if nothing was read
 
       //output
-      fprintf(cpp, "      mBuffer.append(\"%s\", %d);\n", toCppString(buffer, readSize).c_str(), readSize);
+      fprintf(cpp, "      mBuffer.append(\"%s\", %d);\n", cppencoder::toOctString(buffer, readSize, false).c_str(), readSize);
     }
     delete[] buffer;
     buffer = NULL;

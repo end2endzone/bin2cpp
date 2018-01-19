@@ -230,34 +230,6 @@ namespace bin2cpp
     return BINCPP_VERSION;
   }
 
-  void toHexString(unsigned char c, unsigned char & c1, unsigned char & c2)
-  {
-    static const char * hexCharacters = "0123456789abcdef";
-    c1 = hexCharacters[c/16];
-    c2 = hexCharacters[c%16];
-  }
-
-  void toOctString(unsigned char c, unsigned char & c1, unsigned char & c2, unsigned char & c3)
-  {
-    static const char * octCharacters = "01234567";
-    c3 = octCharacters[c%8];
-    c /= 8;
-    c2 = octCharacters[c%8];
-    c /= 8;
-    c1 = octCharacters[c];
-  }
-
-  bool isPrintableCharacter(const char c)
-  {
-    if (c == 39) // character ' must be escaped with \' which is not supported right now
-      return false;
-    if (c == 92) // character \ must be escaped with \\ which is not supported right now
-      return false;
-    if (c >= 32 && c<= 126)
-      return true;
-    return false;
-  }
-
   std::string getParentPath(const std::string & iPath)
   {
     std::string parent;
@@ -276,42 +248,6 @@ namespace bin2cpp
 
   void splitPath(const std::string & iPath, std::string & oFolder, std::string & oFilename)
   {
-    //char separator = getPathSeparator();
-
-    ////reset everything
-    //oFilename = "";
-    //oFolder = "";
-
-    ////start from the end and capture each character into oFilename
-    //bool wDumpingInFilename = true;
-    //for(int i = iPath.size() - 1; i >= 0; i--)
-    //{
-    //  char c = iPath[i];
-    //  if (c == separator && wDumpingInFilename)
-    //  {
-    //    wDumpingInFilename = false;
-    //  }
-
-    //  //decide where the character will be dumped
-    //  std::string * wDestination = NULL;
-    //  if (wDumpingInFilename)
-    //  {
-    //    wDestination = &oFilename;
-    //  }
-    //  else
-    //  {
-    //    wDestination = &oFolder;
-    //  }
-
-    //  //dump c into destination string
-    //  wDestination->insert(0, 1, c);
-    //}
-
-    //if (oFolder.size() == 0)
-    //{
-    //  oFolder = std::string(".") + separator;
-    //}
-
     oFolder = "";
     oFilename = "";
 

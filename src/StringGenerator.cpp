@@ -96,7 +96,7 @@ namespace bin2cpp
         }
 
         //output
-        fprintf(cpp, "        \"%s\"", toCppString(buffer, readSize).c_str());
+        fprintf(cpp, "        \"%s\"", cppencoder::toOctString(buffer, readSize, false).c_str());
         numLinePrinted++;
       }
 

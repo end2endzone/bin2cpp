@@ -9,162 +9,233 @@
 #include <stdlib.h>
 #include <sstream>
 
-namespace bin2cpp
+//http://stackoverflow.com/questions/10057258/how-does-x-work-in-a-string
+//http://en.cppreference.com/w/cpp/language/escape
+
+namespace cppencoder
 {
-  std::string gHexSymbols[256];
-  std::string gSmallestSymbols[256];
-  std::string gOctSymbols[256];
-
-  void initCppSymbols()
+  struct CONTROL_CHARACTER
   {
-    //Build default symbols
-    static const int BUFFER_SIZE = 10;
-    unsigned char buffer[BUFFER_SIZE];
-    for(unsigned int i=0; i<=255; i++)
-    {
-      //hex
-      buffer[0] = '\\';
-      buffer[1] = 'x';
-      toHexString((unsigned char)i, buffer[2], buffer[3]);
-      buffer[4] = 0;
-      //sprintf((char*)buffer, "\\x%02x", (unsigned char)iBuffer[i]);
-      gHexSymbols[i] = (char*)buffer;
+    char c;
+    const char * escapeStr;
+  };
+  //https://stackoverflow.com/questions/10220401/rules-for-c-string-literals-escape-character
+  static const CONTROL_CHARACTER gCtrlChars[] = {
+    {'\0',"\\0"},   //0x00, null
+    {'\a',"\\a"},   //0x07, alert (bell)
+    {'\b',"\\b"},   //0x08, backspace
+    {'\t',"\\t"},   //0x09, horizontal tab
+    {'\n',"\\n"},   //0x0A, newline (or line feed)
+    {'\v',"\\v"},   //0x0B, vertical tab
+    {'\f',"\\f"},   //0x0C, form feed
+    {'\r',"\\r"},   //0x0D, carriage return
+    //{'\e',"\\e"}, //0x1B, //escape.  VS2010: warning C4129: 'e' : unrecognized character escape sequence
+    {'\"',"\\\""},  //0x22
+    {'\'',"\\\'"},  //0x27
+    {'\?',"\\\?"},  //0x3F
+    {'\\',"\\\\"},  //0x5C
+  };
+  static const size_t gNumCtrlChars = sizeof(gCtrlChars)/sizeof(gCtrlChars[0]);
 
-      //oct
-      buffer[0] = '\\';
-      toOctString((unsigned char)i, buffer[1], buffer[2], buffer[3]);
-      buffer[4] = 0;
-      gOctSymbols[i] = (char*)buffer;
-
-      //smallest (uses HEX format as must as possible)
-      gSmallestSymbols[i] = gHexSymbols[i];
-    }
-
-    //http://stackoverflow.com/questions/5784969/when-did-c-compilers-start-considering-more-than-two-hex-digits-in-string-lite
-    //http://stackoverflow.com/questions/10057258/how-does-x-work-in-a-string
-    //http://en.cppreference.com/w/cpp/language/escape
-
-    //Build smallest symbol optimizations (printable characters)
-    for(unsigned int i=32; i<=126; i++)
-    {
-      buffer[0] = i;
-      buffer[1] = '\0';
-      gSmallestSymbols[i] = (char*)buffer;
-    }
-
-    //Control characters:
-    //https://stackoverflow.com/questions/10220401/rules-for-c-string-literals-escape-character
-    gSmallestSymbols[0x00] = "\\0";
-    gSmallestSymbols[0x07] = "\\a";   //allert (bell)
-    gSmallestSymbols[0x08] = "\\b";   //backspace
-    gSmallestSymbols[0x09] = "\\t";   //horizonal tab
-    gSmallestSymbols[0x0A] = "\\n";   //newline (or line feed)
-    gSmallestSymbols[0x0B] = "\\v";   //vertical tab
-    gSmallestSymbols[0x0C] = "\\f";   //form feed
-    gSmallestSymbols[0x0D] = "\\r";   //carriage return
-    //gSmallestSymbols[0x1B] = "\\e";   //escape.  VS2010: warning C4129: 'e' : unrecognized character escape sequence
-
-    gSmallestSymbols['\"'] = "\\\"";
-    gSmallestSymbols['\''] = "\\\'";
-    gSmallestSymbols['\?'] = "\\\?";
-    gSmallestSymbols['\\'] = "\\\\";
+  bool isPrintableCharacter(const char c)
+  {
+    if (c == 39) // character ' must be escaped with \' which is not supported right now
+      return false;
+    if (c == 92) // character \ must be escaped with \\ which is not supported right now
+      return false;
+    if (c >= 32 && c<= 126)
+      return true;
+    return false;
   }
 
-  std::string toCppString(const unsigned char * iBuffer, size_t iSize)
+  bool isControlCharacter(char c)
   {
-    static bool firstPass = true;
-    if (firstPass)
+    for(size_t i=0; i<gNumCtrlChars; i++)
     {
-      initCppSymbols();
-      firstPass = false;
+      const CONTROL_CHARACTER & ctrl = gCtrlChars[i];
+      if (ctrl.c == c)
+        return true;
     }
+    return false;
+  }
 
-    //Build an array of choices between HEX, OCT and BEST format
-    enum Format { FormatSmallest, FormatHex, FormatOct };
-    Format * formats = new Format[iSize];
+  bool isHexCharacter(char c)
+  {
+    if (c >= '0' && c <= '9')
+      return true;
+    if (c >= 'a' && c <= 'f')
+      return true;
+    if (c >= 'A' && c <= 'F')
+      return true;
+    return false;
+  }
 
-    //default all buffer character to use the smallest format
+  bool isDigitCharacter(char c)
+  {
+    if (c >= '0' && c <= '9')
+      return true;
+    return false;
+  }
+
+  const char * getControlCharacterEscapeString(char c)
+  {
+    for(size_t i=0; i<gNumCtrlChars; i++)
+    {
+      const CONTROL_CHARACTER & ctrl = gCtrlChars[i];
+      if (ctrl.c == c)
+        return ctrl.escapeStr;
+    }
+    return NULL;
+  }
+
+  const char * toOctString(unsigned char c)
+  {
+    static char buffer[] = {'\\', '9', '9', '9', '\0'};
+    static const char * octCharacters = "01234567";
+    buffer[3] = octCharacters[c%8];
+    c /= 8;
+    buffer[2] = octCharacters[c%8];
+    c /= 8;
+    buffer[1] = octCharacters[c];
+    return buffer;
+  }
+
+  const char * toHexString(unsigned char c)
+  {
+    static char buffer[] = {'\\', 'x', 'f', 'f', '\0'};
+    static const char * hexCharacters = "0123456789abcdef";
+    buffer[3] = hexCharacters[c%16];
+    c /= 16;
+    buffer[2] = hexCharacters[c];
+    return buffer;
+  }
+
+  std::string toOctString(const unsigned char * iBuffer, size_t iSize)
+  {
+    return toOctString(iBuffer, iSize, true);
+  }
+
+  std::string toOctString(const unsigned char * iBuffer, size_t iSize, bool iDisableWarningC4125)
+  {
+    std::string output;
+
+    //estimate the size of the output string to prevent memory copy
+    //assume 50% of buffer is *NOT* printable
+    size_t nonPrintableSize = ((iSize*50)/100);
+    size_t estimatedStringSize = iSize - nonPrintableSize + nonPrintableSize*4; //4 bytes per octal characters
+    output.reserve(estimatedStringSize);
+
+    enum CHARACTER_TYPE
+    {
+      OCTAL,
+      CONTROL,
+      PRINTABLE,
+    };
+
+    CHARACTER_TYPE previous = PRINTABLE;
     for(size_t i=0; i<iSize; i++)
     {
-      const std::string * smallestRepresentation = &gSmallestSymbols[iBuffer[i]];
-      const std::string *      hexRepresentation =      &gHexSymbols[iBuffer[i]];
-      const std::string *      octRepresentation =      &gOctSymbols[iBuffer[i]];
-      formats[i] = FormatSmallest;
-      if ( *smallestRepresentation == *octRepresentation)
-        formats[i] = FormatOct;
-      if ( *smallestRepresentation == *hexRepresentation)
-        formats[i] = FormatHex;
-    }
+      unsigned char c = iBuffer[i];
+      unsigned char next = iBuffer[i+1];
+      if (i+1 == iSize) //if out of scope
+        next = '\0';
 
-    //a single character representation cannot follow an HEX representation
-    for(size_t i=1; i<iSize; i++)
-    {
-      //get this character representation
-      const std::string * charRepresentation = NULL;
-      switch(formats[i])
+      if (c == 0 && !isDigitCharacter(next))
       {
-      case FormatSmallest:
-        charRepresentation = &gSmallestSymbols[iBuffer[i]];
-        break;
-      case FormatOct:
-        charRepresentation =      &gOctSymbols[iBuffer[i]];
-        break;
-      case FormatHex:
-        charRepresentation =      &gHexSymbols[iBuffer[i]];
-        break;
-      };
-
-      //if current element is a single character representation
-      if (charRepresentation->size() == 1)
+        //safe to encode NULL character as '\0' instead of '\000'
+        output.append(getControlCharacterEscapeString(c));
+        previous = OCTAL;
+      }
+      else if (c == 0)
       {
-        //the preceding representation must be an oct representation or another single character
-        if (
-          formats[i-1] == FormatOct || 
-          (formats[i-1] == FormatSmallest && gSmallestSymbols[iBuffer[i]].size() == 1)
-          )
-        {
-          //fine
-        }
-        else
-        {
-          //force OCT format
-          formats[i-1] = FormatOct;
-        }
+        output.append(toOctString(c));
+        previous = OCTAL;
+      }
+      else if (isControlCharacter(c))
+      {
+        output.append(getControlCharacterEscapeString(c));
+        previous = CONTROL;
+      }
+      else if (iDisableWarningC4125 && previous == OCTAL && isDigitCharacter(c) ) //prevent warning C4125: decimal digit terminates octal escape sequence
+      {
+        //character must be encoded as octal instead of printable
+        output.append(toOctString(c));
+        previous = OCTAL;
+      }
+      else if (isPrintableCharacter(c))
+      {
+        output.append(1, c);
+        previous = PRINTABLE;
+      }
+      else
+      {
+        output.append(toOctString(c));
+        previous = OCTAL;
       }
     }
 
-    //a NULL character cannot be followed by a single character if it is between 0 and 9
-    for(size_t i=0; i<iSize-1; i++)
-    {
-      unsigned char c0 = iBuffer[i];
-      unsigned char c1 = iBuffer[i+1];
-      if (c0 == '\0' && (c1 >= '0' && c1 <= '9'))
-        formats[i] = FormatOct;
-    }
+    return output;
+  }
 
+  std::string toHexString(const unsigned char * iBuffer, size_t iSize)
+  {
     std::string output;
+
+    //estimate the size of the output string to prevent memory copy
+    //assume 50% of buffer is *NOT* printable
+    size_t nonPrintableSize = ((iSize*50)/100);
+    size_t estimatedStringSize = iSize - nonPrintableSize + nonPrintableSize*4; //4 bytes per hex characters
+    output.reserve(estimatedStringSize);
+
+    enum CHARACTER_TYPE
+    {
+      HEX,
+      CONTROL,
+      PRINTABLE,
+    };
+
+    CHARACTER_TYPE previous = PRINTABLE;
     for(size_t i=0; i<iSize; i++)
     {
-      //get this character representation
-      const std::string * charRepresentation = NULL;
-      switch(formats[i])
+      unsigned char c = iBuffer[i];
+      unsigned char next = iBuffer[i+1];
+      if (i+1 == iSize) //if out of scope
+        next = '\0';
+
+      if (c == 0 && !isDigitCharacter(next))
       {
-      case FormatSmallest:
-        charRepresentation = &gSmallestSymbols[iBuffer[i]];
-        break;
-      case FormatOct:
-        charRepresentation =      &gOctSymbols[iBuffer[i]];
-        break;
-      case FormatHex:
-        charRepresentation =      &gHexSymbols[iBuffer[i]];
-        break;
-      };
-
-      //append
-      output.append(charRepresentation->c_str());
+        //safe to encode NULL character as '\0' instead of '\000'
+        output.append(getControlCharacterEscapeString(c));
+        previous = CONTROL;
+      }
+      else if (c == 0)
+      {
+        output.append(toHexString(c));
+        previous = HEX;
+      }
+      else if (isControlCharacter(c))
+      {
+        output.append(getControlCharacterEscapeString(c));
+        previous = CONTROL;
+      }
+      else if (previous == HEX && isHexCharacter(c)) //an hexadecimal letter cannot follow an hexadecimal escape sequence.
+      {
+        //must also be printed as an hexadecimal escape sequence
+        //http://stackoverflow.com/questions/5784969/when-did-c-compilers-start-considering-more-than-two-hex-digits-in-string-lite
+        output.append(toHexString(c));
+        previous = HEX;
+      }
+      else if (isPrintableCharacter(c))
+      {
+        output.append(1, c);
+        previous = PRINTABLE;
+      }
+      else
+      {
+        output.append(toHexString(c));
+        previous = HEX;
+      }
     }
-
-    delete[] formats;
 
     return output;
   }
@@ -191,5 +262,4 @@ namespace bin2cpp
     return oss.str();
   }
 
-
-}; //bin2cpp
+}; //cppencoder
