@@ -3,22 +3,28 @@ Changes for 2.0:
 * New feature (issue #2): Update command line parameters syntax with the --name=value syntax
 * New feature: Command line --noheader to not display the application header in the console output.
 * New feature: Command line --quiet to not output any message to standard output.
-* Fixed issue #19: Add NSIS as a prerequisite in README and INSTALL
-* Fixed issue #17: Implement a --help and --h
-* Fixed issue  #5: Fixed issue #5 - Remove the concept of segment
+* New feature: Command line --baseclass to change the default name of the interface which is File
+* Fixed issue  #5: Remove the concept of segment
 * Fixed issue #16: Implement a --namespace argument
+* Fixed issue #17: Implement a --help and --h
+* Fixed issue #19: Add NSIS as a prerequisite in README and INSTALL
+* Fixed issue #20: Modify how 'override' argument is implemented
+* Fixed issue #21: Add a reference to source code location in generated files.
 
 Changes for 1.4:
 
 * New feature: Now encoding binary using c++ control characters. Reduces the size of the output.
-* Fixed issue  #7: Optimize carriage return text
-* Fixed issue  #4: Remove absolute path from include statement in cpp generated code
-* Fixed issue  #3: Make File class const in header generated files.
-* Fixed issue #10: Move test file generation script to output dir
-* Fixed issue #12: Fix failling test: TestExtraction.testRandom3()
-* Fixed issue #31: bin2cpp crashes when encoding a generated file with size=1000 fill=random seed=1
 * Fixed issue  #1: Update README file
+* Fixed issue  #3: Make File class const in header generated files.
+* Fixed issue  #4: Remove absolute path from include statement in cpp generated code
+* Fixed issue  #5: Remove the concept of segment in the interface
+* Fixed issue  #7: Optimize carriage return text
+* Fixed issue  #8: Store binary data as HEX or OCT
+* Fixed issue #10: Move test file generation script to output dir
 * Fixed issue #11: Define googletest API as a git submodule
+* Fixed issue #12: Fix failling test: TestExtraction.testRandom3()
+* Fixed issue #13: bin2cpp crashes when encoding a generated file with size=1000 fill=random seed=1
+* Fixed issue #31: bin2cpp crashes when encoding a generated file with size=1000 fill=random seed=1
 
 Changes for 1.3.40:
 
