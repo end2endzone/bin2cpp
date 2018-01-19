@@ -11,6 +11,7 @@ Changes for 2.0:
 * Fixed issue #19: Add NSIS as a prerequisite in README and INSTALL
 * Fixed issue #20: Modify how 'override' argument is implemented
 * Fixed issue #21: Add a reference to source code location in generated files.
+* Fixed issue #22: Modify IGenerator interface to use setters/getters.
 
 Changes for 1.4:
 

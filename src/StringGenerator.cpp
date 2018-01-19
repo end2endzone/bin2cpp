@@ -22,15 +22,15 @@ namespace bin2cpp
     return "string";
   }
 
-  bool StringGenerator::createCppSourceFile(const char * iInputFilename, const char * iCppFilePath, const char * iFunctionIdentifier, size_t iChunkSize, const char * iNamespace, const char * iBaseClass)
+  bool StringGenerator::createCppSourceFile(const char * iCppFilePath)
   {
     //check if input file exists
-    FILE * input = fopen(iInputFilename, "rb");
+    FILE * input = fopen(mInputFile.c_str(), "rb");
     if (!input)
       return false;
 
     //Uppercase function identifier
-    std::string functionIdentifier = iFunctionIdentifier;
+    std::string functionIdentifier = mFunctionIdentifier;
     functionIdentifier[0] = (char)toupper(functionIdentifier[0]);
 
     //Build header and cpp file path
@@ -49,7 +49,7 @@ namespace bin2cpp
 
     //determine file properties
     long fileSize = getFileSize(input);
-    std::string filename = getFilename(iInputFilename);
+    std::string filename = getFilename(mInputFile.c_str());
 
     //Build class name
     std::string className;
@@ -57,35 +57,35 @@ namespace bin2cpp
     className.append("File");
 
     //Build function 
-    std::string getterFunctionName = getGetterFunctionName(functionIdentifier.c_str());
+    std::string getterFunctionName = getGetterFunctionName();
 
     //write cpp file heading
-    fprintf(cpp, "%s", getFileHeading(iInputFilename).c_str());
+    fprintf(cpp, "%s", getHeaderTemplate().c_str());
     fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str() );
     fprintf(cpp, "#include <stdio.h> //for FILE\n");
     fprintf(cpp, "#include <string> //for memcpy\n");
-    fprintf(cpp, "namespace %s\n", iNamespace);
+    fprintf(cpp, "namespace %s\n", mNamespace.c_str());
     fprintf(cpp, "{\n");
-    fprintf(cpp, "  class %s : public virtual %s::%s\n", className.c_str(), iNamespace, iBaseClass);
+    fprintf(cpp, "  class %s : public virtual %s::%s\n", className.c_str(), mNamespace.c_str(), mBaseClass.c_str());
     fprintf(cpp, "  {\n");
     fprintf(cpp, "  public:\n");
     fprintf(cpp, "    %s() {}\n", className.c_str());
     fprintf(cpp, "    ~%s() {}\n", className.c_str());
     fprintf(cpp, "    virtual size_t getSize() const { return %d; }\n", fileSize);
-    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", getFilename(iInputFilename).c_str());
+    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", getFilename(mInputFile.c_str()).c_str());
     fprintf(cpp, "    virtual const char * getBuffer() const\n");
     fprintf(cpp, "    {\n");
     fprintf(cpp, "      const char * buffer = ""\n");
 
     //create buffer for each chunks from input buffer
     int numLinePrinted = 0;
-    unsigned char * buffer = new unsigned char[iChunkSize];
+    unsigned char * buffer = new unsigned char[mChunkSize];
     while(!feof(input))
     {
       //read a chunk of the file
-      size_t readSize = fread(buffer, 1, iChunkSize, input);
+      size_t readSize = fread(buffer, 1, mChunkSize, input);
 
-      bool isLastChunk = !(readSize == iChunkSize);
+      bool isLastChunk = !(readSize == mChunkSize);
 
       if (readSize > 0)
       {
@@ -112,10 +112,10 @@ namespace bin2cpp
     //write cpp file footer
     fprintf(cpp, "      return buffer;\n");
     fprintf(cpp, "    }\n");
-    fprintf(cpp, "%s", getSaveMethodImplementation().c_str());
+    fprintf(cpp, "%s", getSaveMethodTemplate().c_str());
     fprintf(cpp, "  };\n");
-    fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", iBaseClass, getterFunctionName.c_str(), className.c_str());
-    fprintf(cpp, "}; //%s\n", iNamespace);
+    fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", mBaseClass.c_str(), getterFunctionName.c_str(), className.c_str());
+    fprintf(cpp, "}; //%s\n", mNamespace.c_str());
 
     fclose(input);
     fclose(cpp);

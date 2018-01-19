@@ -14,15 +14,34 @@ namespace bin2cpp
     BaseGenerator();
     virtual ~BaseGenerator();
 
+    //IGenerator methods
+    virtual void setInputFile(const char * iPath);
+    virtual const char * getInputFile() const;
+    virtual void setFunctionIdentifier(const char * iFunctionIdentifier);
+    virtual const char * getFunctionIdentifier() const;
+    virtual void setChunkSize(size_t iChunkSize);
+    virtual size_t getChunkSize() const;
+    virtual void setNamespace(const char * iName);
+    virtual const char * getNamespace() const;
+    virtual void setBaseClass(const char * iName);
+    virtual const char * getBaseClass() const;
+
     //same header file for all generators
-    virtual bool createCppHeaderFile(const char * iInputFilename, const char * iHeaderFilePath, const char * iFunctionIdentifier, size_t iChunkSize, const char * iNamespace, const char * iBaseClass);
+    virtual bool createCppHeaderFile(const char * iHeaderFilePath);
 
   protected:
-    virtual std::string getGetterFunctionName(const char * iFunctionIdentifier);
+    virtual std::string getGetterFunctionName();
     virtual std::string getHeaderFilePath(const char * iCppFilePath);
     virtual std::string getCppFilePath(const char * iHeaderFilePath);
-    virtual std::string getFileHeading(const char * iInputFilename);
-    virtual std::string getSaveMethodImplementation();
+    virtual std::string getHeaderTemplate();
+    virtual std::string getSaveMethodTemplate();
+
+    //attributes
+    std::string mInputFile;
+    std::string mFunctionIdentifier;
+    size_t mChunkSize;
+    std::string mNamespace;
+    std::string mBaseClass;
   };
 
 }; //bin2cpp

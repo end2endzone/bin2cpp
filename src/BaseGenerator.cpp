@@ -16,10 +16,68 @@ namespace bin2cpp
   {
   }
 
-  std::string BaseGenerator::getGetterFunctionName(const char * iFunctionIdentifier)
+  void BaseGenerator::setInputFile(const char * iPath)
+  {
+    if (iPath)
+      mInputFile = iPath;
+  }
+
+  const char * BaseGenerator::getInputFile() const
+  {
+    return mInputFile.c_str();
+  }
+
+  void BaseGenerator::setFunctionIdentifier(const char * iFunctionIdentifier)
+  {
+    if (iFunctionIdentifier)
+      mFunctionIdentifier = iFunctionIdentifier;
+  }
+
+  const char * BaseGenerator::getFunctionIdentifier() const
+  {
+    return mFunctionIdentifier.c_str();
+  }
+
+  void BaseGenerator::setChunkSize(size_t iChunkSize)
+  {
+    mChunkSize = iChunkSize;
+  }
+
+  size_t BaseGenerator::getChunkSize() const
+  {
+    return mChunkSize;
+  }
+
+  void BaseGenerator::setNamespace(const char * iName)
+  {
+    if (iName)
+      mNamespace = iName;
+  }
+
+  const char * BaseGenerator::getNamespace() const
+  {
+    return mNamespace.c_str();
+  }
+
+  void BaseGenerator::setBaseClass(const char * iName)
+  {
+    if (iName)
+      mBaseClass = iName;
+  }
+
+  const char * BaseGenerator::getBaseClass() const
+  {
+    return mBaseClass.c_str();
+  }
+
+  //-------------------------------
+  //protected methods
+  //-------------------------------
+
+  std::string BaseGenerator::getGetterFunctionName()
   {
     //Uppercase function identifier
-    std::string functionIdentifier = iFunctionIdentifier;
+    std::string functionIdentifier = mFunctionIdentifier;
     functionIdentifier[0] = (char)toupper(functionIdentifier[0]);
 
     std::string getter;
@@ -45,10 +103,10 @@ namespace bin2cpp
     return cppPath;
   }
 
-  std::string BaseGenerator::getFileHeading(const char * iInputFilename)
+  std::string BaseGenerator::getHeaderTemplate()
   {
-    std::string filename = getFilename(iInputFilename);
-    uint64_t lastModifiedDate = getFileModifiedDate(iInputFilename);
+    std::string filename = getFilename(mInputFile.c_str());
+    uint64_t lastModifiedDate = getFileModifiedDate(mInputFile);
 
     std::string header;
     header << 
@@ -62,7 +120,7 @@ namespace bin2cpp
     return header;
   }
 
-  std::string BaseGenerator::getSaveMethodImplementation()
+  std::string BaseGenerator::getSaveMethodTemplate()
   {
     std::string output;
     output << "    virtual bool save(const char * iFilename) const\n";
@@ -78,21 +136,21 @@ namespace bin2cpp
     return output;
   }
 
-  bool BaseGenerator::createCppHeaderFile(const char * iInputFilename, const char * iHeaderFilePath, const char * iFunctionIdentifier, size_t iChunkSize, const char * iNamespace, const char * iBaseClass)
+  bool BaseGenerator::createCppHeaderFile(const char * iHeaderFilePath)
   {
     FILE * header = fopen(iHeaderFilePath, "w");
     if (!header)
       return false;
 
-    std::string headercomments = getFileHeading(iInputFilename);
+    std::string headercomments = getHeaderTemplate();
     fprintf(header, "%s", headercomments.c_str());
     fprintf(header, "#pragma once\n");
     fprintf(header, "#include <stddef.h>\n");
-    fprintf(header, "namespace %s\n", iNamespace);
+    fprintf(header, "namespace %s\n", mNamespace.c_str());
     fprintf(header, "{\n");
     fprintf(header, "  #ifndef BIN2CPP_EMBEDDEDFILE_CLASS\n");
     fprintf(header, "  #define BIN2CPP_EMBEDDEDFILE_CLASS\n");
-    fprintf(header, "  class %s\n", iBaseClass);
+    fprintf(header, "  class %s\n", mBaseClass.c_str());
     fprintf(header, "  {\n");
     fprintf(header, "  public:\n");
     fprintf(header, "    virtual size_t getSize() const = 0;\n");
@@ -101,8 +159,8 @@ namespace bin2cpp
     fprintf(header, "    virtual bool save(const char * iFilename) const = 0;\n");
     fprintf(header, "  };\n");
     fprintf(header, "  #endif\n");
-    fprintf(header, "  const %s & %s();\n", iBaseClass, getGetterFunctionName(iFunctionIdentifier).c_str());
-    fprintf(header, "}; //%s\n", iNamespace);
+    fprintf(header, "  const %s & %s();\n", mBaseClass.c_str(), getGetterFunctionName().c_str());
+    fprintf(header, "}; //%s\n", mNamespace.c_str());
 
     fclose(header);
 
