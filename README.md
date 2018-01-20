@@ -227,7 +227,7 @@ See also the latest test results at the beginning of the document.
 
 # Screenshots
 
-[![bin2cpp v2.0.0 Sample](http://github.com/end2endzone/bin2cpp/raw/master/docs/bin2cpp-v2.0.0-sample.png)](http://github.com/end2endzone/bin2cpp/blob/master/docs/bin2cpp-v2.0.0-sample.png)
+[![bin2cpp v2.0.0 Sample](http://github.com/end2endzone/bin2cpp/raw/master/docs/bin2cpp-v2.0.0-sample.png)](http://github.com/end2endzone/bin2cpp/raw/master/docs/bin2cpp-v2.0.0-sample.png)
 
 bin2cpp v2.0.0 Sample
 
