@@ -86,7 +86,7 @@ void printUsage()
   //usage string in docopt format. See http://docopt.org/
   static const char usage[] = 
     "Usage:\n"
-    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--generator=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<value>] [--override] [--noheader] [--quiet]\n"
+    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<value>] [--override] [--noheader] [--quiet]\n"
     "  bin2cpp --help\n"
     "  bin2cpp --version\n"
     "\n"
@@ -97,6 +97,7 @@ void printUsage()
     "  --output=<path>      Output folder where to create generated code. ie: .\\generated_files\n"
     "  --headerfile=<name>  File name of the generated C++ Header file. ie: SplashScreen.h\n"
     "  --generator=<name>   Name of the generator to use. Possible values are 'segment', 'string' and 'array'. [default: segment].\n"
+    "  --encoding=<name>    Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct].\n"
     "  --identifier=<name>  Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
     "  --chunksize=<value>  Size in bytes of each string segments (bytes per row). [default: 200].\n"
     "  --baseclass=<value>  The name of the interface for embedded files. [default: File].\n"
@@ -194,8 +195,11 @@ int main(int argc, char* argv[])
   bool overrideExisting = false;
   static const char * DEFAULT_NAMESPACE = "bin2cpp";
   static const char * DEFAULT_BASECLASSNAME = "File";
+  static const IGenerator::CppEncoderEnum DEFAULT_ENCODING = IGenerator::CPP_ENCODER_OCT;
   std::string codeNamespace;
   std::string baseClass;
+  IGenerator::CppEncoderEnum encoding;
+  std::string encodingStr;
 
   size_t tmpChunkSize = 0;
   if (bin2cpp::parseArgument("chunksize", tmpChunkSize, argc, argv))
@@ -216,6 +220,25 @@ int main(int argc, char* argv[])
   if (!bin2cpp::parseArgument("baseclass", baseClass, argc, argv))
   {
     baseClass = DEFAULT_BASECLASSNAME;
+  }
+
+  if (bin2cpp::parseArgument("encoding", encodingStr, argc, argv))
+  {
+    if (uppercase(encodingStr) == "OCT")
+      encoding = IGenerator::CPP_ENCODER_OCT;
+    else if (uppercase(encodingStr) == "HEX")
+      encoding = IGenerator::CPP_ENCODER_HEX;
+    else
+    {
+      APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
+      bin2cpp::log(bin2cpp::LOG_ERROR, "%s (encoding)", getErrorCodeDescription(error));
+      printUsage();
+      return error;
+    }
+  }
+  else
+  {
+    encoding = DEFAULT_ENCODING;
   }
 
   //select generator
@@ -285,6 +308,7 @@ int main(int argc, char* argv[])
   generator->setChunkSize(chunkSize);
   generator->setNamespace(codeNamespace.c_str());
   generator->setBaseClass(baseClass.c_str());
+  generator->setCppEncoder(encoding);
 
   //process files
   bool headerResult = processFile(inputFile, outputHeaderPath, generator, overrideExisting);

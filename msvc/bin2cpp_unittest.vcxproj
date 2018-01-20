@@ -110,6 +110,8 @@
     <ClCompile Include="..\test\TestCommon.cpp" />
     <ClCompile Include="..\test\TestExtraction.cpp" />
     <ClCompile Include="generated_files\testBaseClass\_testBaseClass.cpp" />
+    <ClCompile Include="generated_files\testEncodingHex\_testEncodingHex.cpp" />
+    <ClCompile Include="generated_files\testEncodingOct\_testEncodingOct.cpp" />
     <ClCompile Include="generated_files\testGeneratorArray10000\_testGeneratorArray10000.cpp" />
     <ClCompile Include="generated_files\testGeneratorSegment10000\_testGeneratorSegment10000.cpp" />
     <ClCompile Include="generated_files\testGeneratorString10000\_testGeneratorString10000.cpp" />
@@ -153,6 +155,8 @@
     <ClInclude Include="..\test\TestCommon.h" />
     <ClInclude Include="..\test\TestExtraction.h" />
     <ClInclude Include="generated_files\testBaseClass\_testBaseClass.h" />
+    <ClInclude Include="generated_files\testEncodingHex\_testEncodingHex.h" />
+    <ClInclude Include="generated_files\testEncodingOct\_testEncodingOct.h" />
     <ClInclude Include="generated_files\testGeneratorArray10000\_testGeneratorArray10000.h" />
     <ClInclude Include="generated_files\testGeneratorSegment10000\_testGeneratorSegment10000.h" />
     <ClInclude Include="generated_files\testGeneratorString10000\_testGeneratorString10000.h" />

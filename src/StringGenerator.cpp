@@ -30,8 +30,7 @@ namespace bin2cpp
       return false;
 
     //Uppercase function identifier
-    std::string functionIdentifier = mFunctionIdentifier;
-    functionIdentifier[0] = (char)toupper(functionIdentifier[0]);
+    std::string functionIdentifier = capitalizeFirstCharacter(mFunctionIdentifier);
 
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(iCppFilePath);
@@ -95,8 +94,21 @@ namespace bin2cpp
           fprintf(cpp, "\n");
         }
 
+        //convert to cpp string
+        std::string cppEncoder;
+        switch(mCppEncoder)
+        {
+        case IGenerator::CPP_ENCODER_HEX:
+          cppEncoder = cppencoder::toHexString(buffer, readSize);
+          break;
+        case IGenerator::CPP_ENCODER_OCT:
+        default:
+          cppEncoder = cppencoder::toOctString(buffer, readSize, false);
+          break;
+        };
+
         //output
-        fprintf(cpp, "        \"%s\"", cppencoder::toOctString(buffer, readSize, false).c_str());
+        fprintf(cpp, "        \"%s\"", cppEncoder.c_str());
         numLinePrinted++;
       }
 

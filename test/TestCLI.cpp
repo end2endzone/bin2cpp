@@ -545,3 +545,99 @@ TEST_F(TestCLI, testSkipping)
   //look for the expected message
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Skipping file");
 }
+
+TEST_F(TestCLI, testEncoding)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
+  std::string inputFilePath = std::string("generated_files\\") + hlp.getTestCaseName() + ".bin";
+
+  createDummyFile(inputFilePath, 12345);
+
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(inputFilePath);
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(hlp.getTestCaseName().c_str());
+  cmdline.append(" --chuksize=256");
+  cmdline.append(" --override");
+
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+
+  std::string baseCmdLine = cmdline;
+
+  //assert default encoding (OCT)
+  {
+    //delete generated files
+    ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+    ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
+    //run the command
+    int returnCode = system(cmdline.c_str());
+    ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+    //assert generated code
+    ASSERT_TRUE(hlp.fileExists(cppFilePath.c_str()));
+    ASSERT_TEXT_IN_FILE(true, cppFilePath.c_str(), "mBuffer.append(\"CZq\\210\\237\\266\\315\\344\\373\\022)");
+  }
+
+  //assert encoding (hex)
+  {
+    std::string cmdline = baseCmdLine;
+    bin2cpp::strReplace(cmdline, " --override", " --override --encoding=hEx");
+
+    //delete generated files
+    ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+    ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
+    //run the command
+    int returnCode = system(cmdline.c_str());
+    ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+    //assert generated code
+    ASSERT_TRUE(hlp.fileExists(cppFilePath.c_str()));
+    ASSERT_TEXT_IN_FILE(true, cppFilePath.c_str(), "mBuffer.append(\"CZq\\x88\\x9f\\xb6\\xcd\\xe4\\xfb\\x12)");
+  }
+
+  //assert invalid encoding (abc)
+  {
+    std::string cmdline = baseCmdLine;
+    bin2cpp::strReplace(cmdline, " --override", " --override --encoding=abc");
+
+    //delete generated files
+    ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+    ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
+    //run the command
+    int returnCode = system(cmdline.c_str());
+    ASSERT_NE(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+  }
+
+  //assert encoding (oct)
+  {
+    std::string cmdline = baseCmdLine;
+    bin2cpp::strReplace(cmdline, " --override", " --override --encoding=oCt");
+
+    //delete generated files
+    ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+    ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
+    //run the command
+    int returnCode = system(cmdline.c_str());
+    ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+    //assert generated code
+    ASSERT_TRUE(hlp.fileExists(cppFilePath.c_str()));
+    ASSERT_TEXT_IN_FILE(true, cppFilePath.c_str(), "mBuffer.append(\"CZq\\210\\237\\266\\315\\344\\373\\022)");
+  }
+}

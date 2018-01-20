@@ -8,7 +8,8 @@
 
 namespace bin2cpp
 {
-  BaseGenerator::BaseGenerator()
+  BaseGenerator::BaseGenerator() :
+    mCppEncoder(IGenerator::CPP_ENCODER_OCT)
   {
   }
 
@@ -70,6 +71,16 @@ namespace bin2cpp
     return mBaseClass.c_str();
   }
 
+  void BaseGenerator::setCppEncoder(const IGenerator::CppEncoderEnum & iCppEncoder)
+  {
+    mCppEncoder = iCppEncoder;
+  }
+
+  IGenerator::CppEncoderEnum BaseGenerator::getCppEncoder() const
+  {
+    return mCppEncoder;
+  }
+
   //-------------------------------
   //protected methods
   //-------------------------------
@@ -77,8 +88,7 @@ namespace bin2cpp
   std::string BaseGenerator::getGetterFunctionName()
   {
     //Uppercase function identifier
-    std::string functionIdentifier = mFunctionIdentifier;
-    functionIdentifier[0] = (char)toupper(functionIdentifier[0]);
+    std::string functionIdentifier = capitalizeFirstCharacter(mFunctionIdentifier);
 
     std::string getter;
     getter.append("get");

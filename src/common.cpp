@@ -516,4 +516,33 @@ namespace bin2cpp
     Sleep(iTimeMs);
   }
 
+  std::string capitalizeFirstCharacter(const std::string & iValue)
+  {
+    std::string copy = iValue;
+    if (!copy.empty())
+    {
+      copy[0] = toupper(copy[0]);
+    }
+    return copy;
+  }
+
+  std::string uppercase(const std::string & value)
+  {
+    std::string copy = value;
+    for(size_t i=0; i<copy.size(); i++)
+    {
+      copy[i] = (char)toupper(copy[i]);
+    }
+    return copy;
+  }
+
+  std::string lowercase(const std::string & value)
+  {
+    std::string copy = value;
+    for(size_t i=0; i<copy.size(); i++)
+    {
+      copy[i] = (char)tolower(copy[i]);
+    }
+    return copy;
+  }
 }; //bin2cpp

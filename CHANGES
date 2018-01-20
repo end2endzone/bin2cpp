@@ -12,6 +12,7 @@ Changes for 2.0:
 * Fixed issue #20: Modify how 'override' argument is implemented
 * Fixed issue #21: Add a reference to source code location in generated files.
 * Fixed issue #22: Modify IGenerator interface to use setters/getters.
+* Fixed issue #23: Create a new interface for abstracting the string literal encoding format
 
 Changes for 1.4:
 

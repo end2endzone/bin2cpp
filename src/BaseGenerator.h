@@ -25,6 +25,8 @@ namespace bin2cpp
     virtual const char * getNamespace() const;
     virtual void setBaseClass(const char * iName);
     virtual const char * getBaseClass() const;
+    virtual void setCppEncoder(const CppEncoderEnum & iCppEncoder);
+    virtual CppEncoderEnum getCppEncoder() const;
 
     //same header file for all generators
     virtual bool createCppHeaderFile(const char * iHeaderFilePath);
@@ -42,6 +44,7 @@ namespace bin2cpp
     size_t mChunkSize;
     std::string mNamespace;
     std::string mBaseClass;
+    IGenerator::CppEncoderEnum mCppEncoder;
   };
 
 }; //bin2cpp

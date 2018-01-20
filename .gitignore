@@ -27,3 +27,4 @@
 /msvc/TestCLI.testSkipping.actual.txt
 /msvc/TestCLI.testUpdating.actual.txt
 /msvc/TestCLI.testUpdatingFile.actual.txt
+/msvc/TestCLI.testEncoding.actual.txt

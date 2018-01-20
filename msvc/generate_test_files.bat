@@ -126,6 +126,18 @@ mkdir %OUTDIR% 1>NUL 2>NUL
 testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
 bin2cpp.exe --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override --baseclass=Resource
 
+set TEST_NAME=testEncodingOct
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
+bin2cpp.exe --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override --encoding=OcT
+
+set TEST_NAME=testEncodingHex
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
+bin2cpp.exe --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override --encoding=HeX
+
 set TEST_NAME=testIssue12
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL

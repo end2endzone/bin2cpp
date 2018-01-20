@@ -204,4 +204,22 @@ namespace bin2cpp
   ///<param name="iTimeMs">The number of milliseconds to sleep.</param>
   void sleep(const size_t & iTimeMs);
 
+  ///<summary>
+  ///Capitalize the first character of the given string.
+  ///</summary>
+  ///<param name="iValue">The string value to uppercase the first character.</param>
+  std::string capitalizeFirstCharacter(const std::string & iValue);
+
+  ///<summary>
+  ///Upper case all characters of the given string.
+  ///</summary>
+  ///<param name="iValue">The string value to uppercase.</param>
+  std::string uppercase(const std::string & value);
+
+  ///<summary>
+  ///Lower case all characters of the given string.
+  ///</summary>
+  ///<param name="iValue">The string value to lowercase.</param>
+  std::string lowercase(const std::string & value);
+
 }; //bin2cpp

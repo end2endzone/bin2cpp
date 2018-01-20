@@ -75,6 +75,24 @@ namespace bin2cpp
     ///<returns>Returns the name of the base class of the generated code. Returns an empty string if not defined.</returns>
     virtual const char * getBaseClass() const = 0;
 
+    enum CppEncoderEnum
+    {
+       CPP_ENCODER_OCT,
+       CPP_ENCODER_HEX,
+    };
+
+    ///<summary>
+    ///Defines the type of cpp encoder to use. See CppEncoderEnum for details.
+    ///</summary>
+    ///<param name="iCppEncoder">The type of cpp encoder to use</param>
+    virtual void setCppEncoder(const CppEncoderEnum & iCppEncoder) = 0;
+
+    ///<summary>
+    ///Provides the type of cpp encoder to use. See CppEncoderEnum for details.
+    ///</summary>
+    ///<returns>Returns the type of cpp encoder to use.</returns>
+    virtual CppEncoderEnum getCppEncoder() const = 0;
+
     ///<summary>
     ///Creates a header file for embedding a given file into C++ source code.
     ///</summary>

@@ -108,6 +108,12 @@
     <ClCompile Include="generated_files\testNamespace\_testNamespace.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="generated_files\testEncodingHex\_testEncodingHex.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generated_files\testEncodingOct\_testEncodingOct.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin2cppTest.x86.debug.xml">
@@ -198,6 +204,12 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="generated_files\testNamespace\_testNamespace.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testEncodingHex\_testEncodingHex.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generated_files\testEncodingOct\_testEncodingOct.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
