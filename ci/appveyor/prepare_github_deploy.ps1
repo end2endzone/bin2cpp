@@ -14,7 +14,7 @@
 Write-Output "Running prepare_github_deploy.ps1..."
 Write-Output "Current branch: $env:APPVEYOR_REPO_BRANCH"
 Write-Output "Current build version: $env:APPVEYOR_BUILD_VERSION"
-If ("$env:APPVEYOR_REPO_BRANCH" -contains "prerelease") {
+If ("$env:APPVEYOR_REPO_BRANCH".contains("prerelease")) {
   Write-Output "Tagging each commits with a unique version..."
   Write-Output "Deploying each commits to GitHub..."
 
