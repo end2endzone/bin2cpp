@@ -1,6 +1,9 @@
 #include "TestCommon.h"
 #include "gtesthelper.h"
 #include "common.h"
+#include "filesystemfunc.h"
+
+using namespace filesystem;
 
 namespace TestCommonUtils
 {

@@ -2,6 +2,9 @@
 #include "gtesthelper.h"
 #include "application.h"
 #include "common.h"
+#include "stringfunc.h"
+
+using namespace stringfunc;
 
 #define ASSERT_TEXT_IN_FILE(expected, filepath, text) {\
   int line = -1;  int col = -1;  bool textFound = gTestHelper::getInstance().findInFile(filepath, text, line, col);\
@@ -80,7 +83,7 @@ namespace TestCLIUtils
 
     //replace bin2cpp_unittest by bin2cpp
     std::string bin2cppPath = appPath;
-    bin2cpp::strReplace(bin2cppPath, "_unittest", "");
+    stringfunc::strReplace(bin2cppPath, "_unittest", "");
     return bin2cppPath;
   }
 
@@ -180,7 +183,7 @@ TEST_F(TestCLI, testMinimum)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; stringfunc::strReplace(cppFilePath, ".h", ".cpp");
 
   //build command line
   std::string cmdline;
@@ -224,7 +227,7 @@ TEST_F(TestCLI, testQuiet)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; stringfunc::strReplace(cppFilePath, ".h", ".cpp");
 
   //build command line
   std::string cmdline;
@@ -270,7 +273,7 @@ TEST_F(TestCLI, testNoHeader)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; stringfunc::strReplace(cppFilePath, ".h", ".cpp");
 
   //build command line
   std::string cmdline;
@@ -327,7 +330,7 @@ TEST_F(TestCLI, testGenerators)
 
     std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + "." + generatorName + ".h";
     std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-    std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
+    std::string cppFilePath = headerFilePath; stringfunc::strReplace(cppFilePath, ".h", ".cpp");
 
     //build command line
     std::string cmdline;
@@ -385,7 +388,7 @@ TEST_F(TestCLI, testNewFiles)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; stringfunc::strReplace(cppFilePath, ".h", ".cpp");
   std::string inputFilePath = std::string("generated_files\\") + hlp.getTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
@@ -421,7 +424,7 @@ TEST_F(TestCLI, testUpdating)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; stringfunc::strReplace(cppFilePath, ".h", ".cpp");
   std::string inputFilePath = std::string("generated_files\\") + hlp.getTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
@@ -468,7 +471,7 @@ TEST_F(TestCLI, testOverride)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; stringfunc::strReplace(cppFilePath, ".h", ".cpp");
   std::string inputFilePath = std::string("generated_files\\") + hlp.getTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
@@ -496,7 +499,7 @@ TEST_F(TestCLI, testOverride)
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //add the override flag
-  bin2cpp::strReplace(cmdline, "--file", "--override --file");
+  stringfunc::strReplace(cmdline, "--file", "--override --file");
 
   //run the command (again, expecting overriding both files)
   returnCode = system(cmdline.c_str());
@@ -511,7 +514,7 @@ TEST_F(TestCLI, testSkipping)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; stringfunc::strReplace(cppFilePath, ".h", ".cpp");
   std::string inputFilePath = std::string("generated_files\\") + hlp.getTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
@@ -553,7 +556,7 @@ TEST_F(TestCLI, testEncoding)
 
   std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + ".h";
   std::string headerFilePath = std::string("generated_files\\") + headerFileName;
-  std::string cppFilePath = headerFilePath; bin2cpp::strReplace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; stringfunc::strReplace(cppFilePath, ".h", ".cpp");
   std::string inputFilePath = std::string("generated_files\\") + hlp.getTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
@@ -594,7 +597,7 @@ TEST_F(TestCLI, testEncoding)
   //assert encoding (hex)
   {
     std::string cmdline = baseCmdLine;
-    bin2cpp::strReplace(cmdline, " --override", " --override --encoding=hEx");
+    stringfunc::strReplace(cmdline, " --override", " --override --encoding=hEx");
 
     //delete generated files
     ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
@@ -612,7 +615,7 @@ TEST_F(TestCLI, testEncoding)
   //assert invalid encoding (abc)
   {
     std::string cmdline = baseCmdLine;
-    bin2cpp::strReplace(cmdline, " --override", " --override --encoding=abc");
+    stringfunc::strReplace(cmdline, " --override", " --override --encoding=abc");
 
     //delete generated files
     ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
@@ -626,7 +629,7 @@ TEST_F(TestCLI, testEncoding)
   //assert encoding (oct)
   {
     std::string cmdline = baseCmdLine;
-    bin2cpp::strReplace(cmdline, " --override", " --override --encoding=oCt");
+    stringfunc::strReplace(cmdline, " --override", " --override --encoding=oCt");
 
     //delete generated files
     ASSERT_TRUE(deleteFile(headerFilePath.c_str()));

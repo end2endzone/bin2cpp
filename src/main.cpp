@@ -14,7 +14,11 @@
 #include "common.h"
 #include "argumentparser.h"
 #include "logger.h"
+#include "stringfunc.h"
+#include "filesystemfunc.h"
 
+using namespace stringfunc;
+using namespace filesystem;
 using namespace bin2cpp;
 
 enum APP_ERROR_CODES
@@ -295,11 +299,11 @@ int main(int argc, char* argv[])
 
   //prepare output files path
   std::string outputHeaderPath = outputFolder + "\\" + headerFilename;
-  std::string outputCppPath = outputFolder + "\\" + headerFilename;         bin2cpp::strReplace(outputCppPath, ".h", ".cpp");
-  std::string cppFilename = headerFilename;                                 bin2cpp::strReplace(cppFilename, ".h", ".cpp");  
+  std::string outputCppPath = outputFolder + "\\" + headerFilename;         stringfunc::strReplace(outputCppPath, ".h", ".cpp");
+  std::string cppFilename = headerFilename;                                 stringfunc::strReplace(cppFilename, ".h", ".cpp");  
 
   //check if input file exists
-  if (!bin2cpp::fileExists(inputFile.c_str()))
+  if (!filesystem::fileExists(inputFile.c_str()))
     return APP_ERROR_INPUTFILENOTFOUND;
 
   //configure the generator
@@ -325,7 +329,7 @@ int main(int argc, char* argv[])
 
 FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::string & iOutputFilePath, bool overrideExisting)
 {
-  if (!bin2cpp::fileExists(iOutputFilePath.c_str()))
+  if (!filesystem::fileExists(iOutputFilePath.c_str()))
     return WRITING;
   //at this point, we know that the file exists
 

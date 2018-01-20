@@ -9,9 +9,13 @@
 #include "argumentparser.h"
 #include "logger.h"
 #include "common.h"
+#include "stringfunc.h"
+#include "filesystemfunc.h"
 #include "..\version_info.h"
 
 using namespace bin2cpp;
+using namespace stringfunc;
+using namespace filesystem;
 
 const char * getVersionString()
 {

@@ -75,6 +75,10 @@ namespace bin2cpp
     ///<returns>Returns the name of the base class of the generated code. Returns an empty string if not defined.</returns>
     virtual const char * getBaseClass() const = 0;
 
+    ///<summary>
+    ///Defines the different type of cpp encoding.
+    ///See setCppEncoder() and getCppEncoder() functions.
+    ///</summary>
     enum CppEncoderEnum
     {
        CPP_ENCODER_OCT,

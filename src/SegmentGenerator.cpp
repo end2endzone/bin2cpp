@@ -6,6 +6,11 @@
 
 #include "common.h"
 #include "cppencoder.h"
+#include "stringfunc.h"
+#include "filesystemfunc.h"
+
+using namespace stringfunc;
+using namespace filesystem;
 
 namespace bin2cpp
 {
