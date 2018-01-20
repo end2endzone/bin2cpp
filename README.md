@@ -1,4 +1,4 @@
-![bin2cpp logo](http://github.com/end2endzone/bin2cpp/blob/master/docs/bin2cpp-splashscreen.png)](http://github.com/end2endzone/bin2cpp/blob/master/docs/bin2cpp-splashscreen.png)
+![bin2cpp logo](https://github.com/end2endzone/bin2cpp/raw/master/docs/bin2cpp-splashscreen.png)
 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -31,16 +31,13 @@ It is designed to be easy to use by developers and to provide easy call function
 The generated functions that reads and extracts the embedded content does not rely on external libraries so you don't need to setup your projects to use any third party library to start using bin2cpp. All your embedded data can be accessed right away.
 
 # Command Line Usage
+
 ```
-bin2cpp v2.0.0 - Convert binary files into C++ source code.
-Copyright (C) 2013-2018 end2endzone.com. All rights reserved.
-bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
-Usage:
-  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name>
-          [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>]
-          [--baseclass=<value>] [--override] [--noheader] [--quiet]
-  bin2cpp --help
-  bin2cpp --version
+bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name>
+        [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>]
+        [--baseclass=<value>] [--override] [--noheader] [--quiet]
+bin2cpp --help
+bin2cpp --version
 ```
 
 | Argument             | Description                                                                                                |
@@ -230,7 +227,7 @@ See also the latest test results at the beginning of the document.
 
 # Screenshots
 
-[![bin2cpp v2.0.0 Sample](http://github.com/end2endzone/bin2cpp/blob/master/docs/bin2cpp-v2.0.0-sample.png)](http://github.com/end2endzone/bin2cpp/blob/master/docs/bin2cpp-v2.0.0-sample.png)
+[![bin2cpp v2.0.0 Sample](http://github.com/end2endzone/bin2cpp/raw/master/docs/bin2cpp-v2.0.0-sample.png)](http://github.com/end2endzone/bin2cpp/blob/master/docs/bin2cpp-v2.0.0-sample.png)
 
 bin2cpp v2.0.0 Sample
 
