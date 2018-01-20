@@ -1,4 +1,5 @@
-![bin2cpp logo](http://www.end2endzone.com/wp-content/uploads/2015/01/bin2cpp-featured-image.png)
+![bin2cpp logo](http://github.com/end2endzone/bin2cpp/blob/master/docs/bin2cpp-splashscreen.png)](http://github.com/end2endzone/bin2cpp/blob/master/docs/bin2cpp-splashscreen.png)
+
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Github Releases](https://img.shields.io/github/release/end2endzone/bin2cpp.svg)](https://github.com/end2endzone/bin2cpp/releases)
@@ -30,18 +31,34 @@ It is designed to be easy to use by developers and to provide easy call function
 The generated functions that reads and extracts the embedded content does not rely on external libraries so you don't need to setup your projects to use any third party library to start using bin2cpp. All your embedded data can be accessed right away.
 
 # Command Line Usage
+```
+bin2cpp v2.0.0 - Convert binary files into C++ source code.
+Copyright (C) 2013-2018 end2endzone.com. All rights reserved.
+bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
+Usage:
+  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name>
+          [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>]
+          [--baseclass=<value>] [--override] [--noheader] [--quiet]
+  bin2cpp --help
+  bin2cpp --version
+```
 
-**Usage:** bin2cpp --file=/path/to/file --output=/path/to/output/folder --headerfile=name.h --identifier=value --chunksize=value --override.
-
-| Argument            | Description                                                                                    |
-|---------------------|------------------------------------------------------------------------------------------------|
-| --file              | Path of the input file used for embedding as a C++ source code.                                |
-| --output            | Output folder where to create generated code. ie: .\\generated_file                            |
-| --headerfile        | File name of the generated C++ Header file. ie: SplashScreen.h                                 |
-| --identifier        | Identifier of the function name that is used to get an instance of the file. ie: SplashScreen  |
-| --chunksize         | Size in bytes of each string segments (bytes per row). Defaults to 200.                        |
-| --override          | Tells bin2cpp to over write the destination files.                                             |
-
+| Argument             | Description                                                                                                |
+|----------------------|------------------------------------------------------------------------------------------------------------|
+| --help               | Display this help message.                                                                                 |
+| --version            | Display this application version.                                                                          |
+| --file=\<path>       | Path of the input file used for embedding as a C++ source code.                                            |
+| --output=\<path>     | Output folder where to create generated code. ie: .\generated_files                                        |
+| --headerfile=\<name> | File name of the generated C++ Header file. ie: SplashScreen.h                                             |
+| --generator=\<name>  | Name of the generator to use. Possible values are 'segment', 'string' and 'array'. [default: segment].     |
+| --encoding=\<name>   | Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct]. |
+| --identifier=\<name> | Identifier of the function name that is used to get an instance of the file. ie: SplashScreen              |
+| --chunksize=\<value> | Size in bytes of each string segments (bytes per row). [default: 200].                                     |
+| --baseclass=\<value> | The name of the interface for embedded files. [default: File].                                             |
+| --namespace=\<value> | The namespace of the generated source code [default: bin2cpp].                                             |
+| --override           | Tells bin2cpp to overwrite the destination files.                                                          |
+| --noheader           | Do not print program header to standard output.                                                            |
+| --quiet              | Do not log any message to standard output.                                                                 |
 
 # Example
 
@@ -63,42 +80,43 @@ Hello World!
 
 ### Command:
 ```batchfile
-bin2cpp.exe --file=html5skeleton.html --output=.\outdir --headerfile=resourcehtml5skeleton.h --identifier=HtmlSample --chunksize=50 --override
+bin2cpp.exe --file=html5skeleton.html --output=.\outdir --headerfile=resourcehtml5skeleton.h
+            --identifier=HtmlSample --chunksize=50
 ```
 
 ### Console output
 
 ```batchfile
-bin2cpp v2.0
-Copyright (C) 2013-2017 end2endzone.com. All rights reserved.
-Embedding "html5skeleton.html" into "resourcehtml5skeleton.h"...
-Done.
+bin2cpp v2.0.0 - Convert binary files into C++ source code.
+Copyright (C) 2013-2018 end2endzone.com. All rights reserved.
+bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
+Embedding "html5skeleton.html" using chunks of 50 bytes...
+Writing file ".\outdir\resourcehtml5skeleton.h"...
+Writing file ".\outdir\resourcehtml5skeleton.cpp"...
 ```
 
 ### File resourcehtml5skeleton.h
 
 ```cpp
 /**
- * This file was generated by bin2cpp v2.0.
- * Copyright (C) 2013-2017 end2endzone.com. All rights reserved.
+ * This file was generated by bin2cpp v2.0.0
+ * Copyright (C) 2013-2018 end2endzone.com. All rights reserved.
+ * bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
+ * Source code for file 'html5skeleton.html', last modified 1513117337.
  * Do not modify this file.
  */
 #pragma once
 #include <stddef.h>
 namespace bin2cpp
 {
-  #ifndef BIN2CPP_EMBEDEDFILE_CLASS
-  #define BIN2CPP_EMBEDEDFILE_CLASS
+  #ifndef BIN2CPP_EMBEDDEDFILE_CLASS
+  #define BIN2CPP_EMBEDDEDFILE_CLASS
   class File
   {
   public:
     virtual size_t getSize() const = 0;
-    virtual size_t getSegmentSize() const = 0;
-    virtual size_t getNumSegments() const = 0;
     virtual const char * getFilename() const = 0;
-    virtual const char * getSegment(size_t iIndex, size_t & oLength) const = 0;
-    virtual const char * getMd5() const = 0;
-    virtual char * newBuffer() const = 0;
+    virtual const char * getBuffer() const = 0;
     virtual bool save(const char * iFilename) const = 0;
   };
   #endif
@@ -110,8 +128,10 @@ namespace bin2cpp
 
 ```cpp
 /**
- * This file was generated by bin2cpp v2.0.
- * Copyright (C) 2013-2017 end2endzone.com. All rights reserved.
+ * This file was generated by bin2cpp v2.0.0
+ * Copyright (C) 2013-2018 end2endzone.com. All rights reserved.
+ * bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
+ * Source code for file 'html5skeleton.html', last modified 1513117337.
  * Do not modify this file.
  */
 #include "resourcehtml5skeleton.h"
@@ -122,59 +142,33 @@ namespace bin2cpp
   class HtmlSampleFile : public virtual bin2cpp::File
   {
   public:
-    HtmlSampleFile() {}
+    HtmlSampleFile() { build(); }
     ~HtmlSampleFile() {}
     virtual size_t getSize() const { return 238; }
-    virtual size_t getSegmentSize() const { return 200; }
-    virtual size_t getNumSegments() const { return 2; }
     virtual const char * getFilename() const { return "html5skeleton.html"; }
-    virtual const char * getSegment(size_t iIndex, size_t & oLength) const
+    virtual const char * getBuffer() const { return mBuffer.c_str(); }
+    void build()
     {
-      oLength = 0;
-      if (iIndex >= getNumSegments())
-        return NULL;
-      const char * buffer = NULL;
-      size_t index = 0;
-      oLength = getSegmentSize();
-      buffer = "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n  <meta charset=\"utf-8\">\r\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=yes\">\r\n  <title>Hello World!</title>\r\n</head>\r\n"; if (iIndex == index) return buffer; index++;
-      oLength = 38;
-      buffer = "<body>\r\nHello World!\r\n</body>\r\n</html>"; if (iIndex == index) return buffer; index++;
-      oLength = 0;
-      return NULL;
-    }
-    virtual const char * getMd5() const { return "85f80d7db80c1a4392dc32ecb429a8a9"; }
-    virtual char * newBuffer() const
-    {
-      size_t size = getSize();
-      char * buffer = new char[size];
-      if (buffer == NULL)
-        return NULL;
-      size_t numSegments = getNumSegments();
-      size_t segmentLength = 0;
-      size_t index = 0;
-      for(size_t i=0; i<numSegments; i++)
-      {
-        const char * segmentBuffer = getSegment(i, segmentLength);
-        memcpy(&buffer[index], segmentBuffer, segmentLength);
-        index += segmentLength;
-      }
-      return buffer;
+      mBuffer.clear();
+      mBuffer.reserve(getSize()); //allocate all required memory at once to prevent reallocations
+      mBuffer.append("<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n  <meta", 50);
+      mBuffer.append(" charset=\"utf-8\">\r\n  <meta name=\"viewport\" content", 50);
+      mBuffer.append("=\"width=device-width, initial-scale=1, user-scalab", 50);
+      mBuffer.append("le=yes\">\r\n  <title>Hello World!</title>\r\n</head>\r\n", 50);
+      mBuffer.append("<body>\r\nHello World!\r\n</body>\r\n</html>", 38);
     }
     virtual bool save(const char * iFilename) const
     {
       FILE * f = fopen(iFilename, "wb");
       if (!f) return false;
-      size_t numSegments = getNumSegments();
-      size_t segmentLength = 0;
-      const char * buffer = NULL;
-      for(size_t i=0; i<numSegments; i++)
-      {
-        buffer = getSegment(i, segmentLength);
-        fwrite(buffer, 1, segmentLength, f);
-      }
+      size_t fileSize = getSize();
+      const char * buffer = getBuffer();
+      fwrite(buffer, 1, fileSize, f);
       fclose(f);
       return true;
     }
+  private:
+    std::string mBuffer;
   };
   const File & getHtmlSampleFile() { static HtmlSampleFile _instance; return _instance; }
 }; //bin2cpp
@@ -184,7 +178,6 @@ namespace bin2cpp
 ```cpp
 #include <stdio.h>
 #include <string>
-#include "base64.h"
 #include "resourcehtml5skeleton.h" //a single include file is all you need
 
 int main(int argc, char* argv[])
@@ -194,7 +187,6 @@ int main(int argc, char* argv[])
 
   //print information about the file.
   printf("Embedded file '%s' is %d bytes long.\n", resource.getFilename(), resource.getSize());
-  printf("The MD5 of the file is %s.\n", resource.getMd5());
 
   //Saving content back to a file.
   printf("Saving embedded file to 'html5skeleton_copy.html'...\n");
@@ -204,16 +196,11 @@ int main(int argc, char* argv[])
   else
     printf("failed\n");
 
-  //encoding content as base64
-  char * buffer = resource.newBuffer(); //returns a new buffer with a copy of the file. Ownership is transfered to the local function
+  //Get the internal buffer and do something with the binary data
+  const char * buffer = resource.getBuffer();
   size_t bufferSize = resource.getSize();
-  std::string encodedFile = toBase64(buffer, bufferSize); //binary to base64 encoder
-  delete buffer; //delete allocatd buffer from newBuffer()
-  buffer = NULL;
-
-  //do something with the base64 encoded file
   //...
-
+  
   return 0;
 }
 ```
@@ -243,10 +230,9 @@ See also the latest test results at the beginning of the document.
 
 # Screenshots
 
-bin2cpp v1.3 Sample[![bin2cpp v1.3 Sample](http://www.end2endzone.com/wp-content/uploads/2015/01/bin2cpp-v1.3-done.png)](http://www.end2endzone.com/wp-content/uploads/2015/01/bin2cpp-v1.3-done.png)
+[![bin2cpp v2.0.0 Sample](http://github.com/end2endzone/bin2cpp/blob/master/docs/bin2cpp-v2.0.0-sample.png)](http://github.com/end2endzone/bin2cpp/blob/master/docs/bin2cpp-v2.0.0-sample.png)
 
-bin2cpp v1.3 Usage
-[![bin2cpp v1.3 Usage](http://www.end2endzone.com/wp-content/uploads/2015/01/bin2cpp-v1.3-usage.png)](http://www.end2endzone.com/wp-content/uploads/2015/01/bin2cpp-v1.3-usage.png)
+bin2cpp v2.0.0 Sample
 
 # Compatible with
 
