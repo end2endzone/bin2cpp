@@ -101,7 +101,7 @@ deploy:
     secure: BgyLisMc154qWpkyBdh8OD+D9HMM+YnBkh7H4MEUShKO3aCU+Fn/XVGJ07fTsRmH
   artifact: /(.*\.zip|.*\.exe)/
   draft: false           #true means release is private (visible to contributors only), false is public (visible to everyone)
-  prerelease: false      #true for prerelease, false to identify this release as the 'latest release'
+  prerelease: true       #true for prerelease, false to identify this release as the 'latest release'
   force_update: true
 
 #---------------------------------#
