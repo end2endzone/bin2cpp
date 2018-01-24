@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace bin2cpp
+namespace logger
 {
 
   ///<summary>
@@ -34,4 +34,4 @@ namespace bin2cpp
   ///<param name="iFormat">The format of the given argument. Same as printf's format.</param>
   void log(LOGGER_LEVEL iLevel, const char * iFormat, ...);
 
-}; //bin2cpp
+}; //logger

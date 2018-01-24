@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 
   //help
   std::string tmp;
-  if (bin2cpp::parseArgument("help", tmp, argc, argv))
+  if (cmdline::parseArgument("help", tmp, argc, argv))
   {
     printVersion();
     printUsage();
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
   }
 
   //version
-  if (bin2cpp::parseArgument("version", tmp, argc, argv))
+  if (cmdline::parseArgument("version", tmp, argc, argv))
   {
     printVersion();
     return EXIT_NO_ERROR;
@@ -100,58 +100,58 @@ int main(int argc, char **argv)
 
   //quiet
   std::string tmpQuiet;
-  if (bin2cpp::parseArgument("quiet", tmpQuiet, argc, argv))
+  if (cmdline::parseArgument("quiet", tmpQuiet, argc, argv))
   {
-    bin2cpp::setQuietMode(true);
+    logger::setQuietMode(true);
   }
 
   //file
-  if (!bin2cpp::parseArgument("file", file, argc, argv))
+  if (!cmdline::parseArgument("file", file, argc, argv))
   {
-    bin2cpp::log(bin2cpp::LOG_ERROR, "Missing 'file' argument!");
+    logger::log(logger::LOG_ERROR, "Missing 'file' argument!");
     printUsage();
     return MISSING_FILE;
   }
 
   //size
   int tmpSize = 0;
-  if (bin2cpp::parseArgument("size", tmpSize, argc, argv))
+  if (cmdline::parseArgument("size", tmpSize, argc, argv))
   {
     size = tmpSize;
     if (size <= 0)
     {
-      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid file size!");
+      logger::log(logger::LOG_ERROR, "Invalid file size!");
       return INVALID_FILE_SIZE;
     }
   }
 
   //seed
   int tmpSeed = 0;
-  if (bin2cpp::parseArgument("seed", tmpSeed, argc, argv))
+  if (cmdline::parseArgument("seed", tmpSeed, argc, argv))
   {
     seed = tmpSeed;
     if (seed < 0)
     {
-      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid seed value!");
+      logger::log(logger::LOG_ERROR, "Invalid seed value!");
       return INVALID_SEED;
     }
   }
 
   //skip
   int tmpSkip = 0;
-  if (bin2cpp::parseArgument("skip", tmpSkip, argc, argv))
+  if (cmdline::parseArgument("skip", tmpSkip, argc, argv))
   {
     skip = tmpSkip;
     if (skip < 0)
     {
-      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid skip value!");
+      logger::log(logger::LOG_ERROR, "Invalid skip value!");
       return INVALID_SKIP;
     }
   }
 
   //fill
   std::string tmpFill;
-  if (bin2cpp::parseArgument("fill", tmpFill, argc, argv))
+  if (cmdline::parseArgument("fill", tmpFill, argc, argv))
   {
     if (tmpFill == "sequential" ||
         tmpFill == "random" ||
@@ -162,7 +162,7 @@ int main(int argc, char **argv)
     }
     else
     {
-      bin2cpp::log(bin2cpp::LOG_ERROR, "Invalid fill parameter!");
+      logger::log(logger::LOG_ERROR, "Invalid fill parameter!");
       return INVALID_FILL_PARAMETER;
     }
   }
@@ -170,13 +170,13 @@ int main(int argc, char **argv)
   //building info string
   std::string infostr;
   infostr << "Writing " << size << " bytes" << getSizeAdditionalInfo(size) << " of " << fill << " data into \'" << file << "\'.";
-  bin2cpp::log(bin2cpp::LOG_INFO, "%s", infostr.c_str());
+  logger::log(logger::LOG_INFO, "%s", infostr.c_str());
 
   //process with file generation
   FILE * f = fopen(file.c_str(), "wb");
   if (!f)
   {
-    bin2cpp::log(bin2cpp::LOG_ERROR, "Cannot create file '%s'!", file.c_str());
+    logger::log(logger::LOG_ERROR, "Cannot create file '%s'!", file.c_str());
     return 4;
   }
 

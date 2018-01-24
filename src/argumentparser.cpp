@@ -2,7 +2,7 @@
 
 #include "argumentparser.h"
 
-namespace bin2cpp
+namespace cmdline
 {
   bool parseArgument(const std::string & name, std::string & value, int argc, char **argv)
   {
@@ -75,4 +75,4 @@ namespace bin2cpp
     return false;
   }
 
-}; //bin2cpp
+}; //cmdline

@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
 {
   //help
   std::string dummy;
-  if (bin2cpp::parseArgument("help", dummy, argc, argv))
+  if (cmdline::parseArgument("help", dummy, argc, argv))
   {
     printHeader();
     printUsage();
@@ -126,14 +126,14 @@ int main(int argc, char* argv[])
 
   //noheader
   bool noheader = false;
-  if (bin2cpp::parseArgument("noheader", dummy, argc, argv))
+  if (cmdline::parseArgument("noheader", dummy, argc, argv))
   {
     noheader = true;
   }
 
   //quiet
   bool quiet = false;
-  if (bin2cpp::parseArgument("quiet", dummy, argc, argv))
+  if (cmdline::parseArgument("quiet", dummy, argc, argv))
   {
     quiet = true;
   }
@@ -142,10 +142,10 @@ int main(int argc, char* argv[])
   if (quiet)
     noheader = true;
 
-  bin2cpp::setQuietMode(quiet);
+  logger::setQuietMode(quiet);
 
   //version
-  if (bin2cpp::parseArgument("version", dummy, argc, argv))
+  if (cmdline::parseArgument("version", dummy, argc, argv))
   {
     if (!noheader)
       printHeader();
@@ -161,34 +161,34 @@ int main(int argc, char* argv[])
   std::string headerFilename;
   std::string functionIdentifier;
 
-  if (!bin2cpp::parseArgument("file", inputFile, argc, argv))
+  if (!cmdline::parseArgument("file", inputFile, argc, argv))
   {
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    bin2cpp::log(bin2cpp::LOG_ERROR, "%s (file)", getErrorCodeDescription(error));
+    logger::log(logger::LOG_ERROR, "%s (file)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
 
-  if (!bin2cpp::parseArgument("output", outputFolder, argc, argv))
+  if (!cmdline::parseArgument("output", outputFolder, argc, argv))
   {
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    bin2cpp::log(bin2cpp::LOG_ERROR, "%s (output)", getErrorCodeDescription(error));
+    logger::log(logger::LOG_ERROR, "%s (output)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
 
-  if (!bin2cpp::parseArgument("headerfile", headerFilename, argc, argv))
+  if (!cmdline::parseArgument("headerfile", headerFilename, argc, argv))
   {
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    bin2cpp::log(bin2cpp::LOG_ERROR, "%s (headerfile)", getErrorCodeDescription(error));
+    logger::log(logger::LOG_ERROR, "%s (headerfile)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
 
-  if (!bin2cpp::parseArgument("identifier", functionIdentifier, argc, argv))
+  if (!cmdline::parseArgument("identifier", functionIdentifier, argc, argv))
   {
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    bin2cpp::log(bin2cpp::LOG_ERROR, "%s (identifier)", getErrorCodeDescription(error));
+    logger::log(logger::LOG_ERROR, "%s (identifier)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
@@ -206,27 +206,27 @@ int main(int argc, char* argv[])
   std::string encodingStr;
 
   size_t tmpChunkSize = 0;
-  if (bin2cpp::parseArgument("chunksize", tmpChunkSize, argc, argv))
+  if (cmdline::parseArgument("chunksize", tmpChunkSize, argc, argv))
   {
     chunkSize = tmpChunkSize;
   }
 
-  if (bin2cpp::parseArgument("override", dummy, argc, argv))
+  if (cmdline::parseArgument("override", dummy, argc, argv))
   {
     overrideExisting = true;
   }
 
-  if (!bin2cpp::parseArgument("namespace", codeNamespace, argc, argv))
+  if (!cmdline::parseArgument("namespace", codeNamespace, argc, argv))
   {
     codeNamespace = DEFAULT_NAMESPACE;
   }
 
-  if (!bin2cpp::parseArgument("baseclass", baseClass, argc, argv))
+  if (!cmdline::parseArgument("baseclass", baseClass, argc, argv))
   {
     baseClass = DEFAULT_BASECLASSNAME;
   }
 
-  if (bin2cpp::parseArgument("encoding", encodingStr, argc, argv))
+  if (cmdline::parseArgument("encoding", encodingStr, argc, argv))
   {
     if (uppercase(encodingStr) == "OCT")
       encoding = IGenerator::CPP_ENCODER_OCT;
@@ -235,7 +235,7 @@ int main(int argc, char* argv[])
     else
     {
       APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-      bin2cpp::log(bin2cpp::LOG_ERROR, "%s (encoding)", getErrorCodeDescription(error));
+      logger::log(logger::LOG_ERROR, "%s (encoding)", getErrorCodeDescription(error));
       printUsage();
       return error;
     }
@@ -252,7 +252,7 @@ int main(int argc, char* argv[])
   bin2cpp::IGenerator * generator = NULL;
 
   std::string generatorName;
-  if (bin2cpp::parseArgument("generator", generatorName, argc, argv))
+  if (cmdline::parseArgument("generator", generatorName, argc, argv))
   {
     if (generatorName == "segment")
     {
@@ -271,7 +271,7 @@ int main(int argc, char* argv[])
     if (generator == NULL)
     {
       APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-      bin2cpp::log(bin2cpp::LOG_ERROR, "%s, unknown values for 'generator' argument!", getErrorCodeDescription(error));
+      logger::log(logger::LOG_ERROR, "%s, unknown values for 'generator' argument!", getErrorCodeDescription(error));
       printUsage();
       return error;
     }
@@ -295,7 +295,7 @@ int main(int argc, char* argv[])
   if (overrideExisting)
     info << " overriding existing files";
   info << "...";
-  bin2cpp::log(bin2cpp::LOG_INFO, info.c_str());
+  logger::log(logger::LOG_INFO, info.c_str());
 
   //prepare output files path
   std::string outputHeaderPath = outputFolder + "\\" + headerFilename;
@@ -340,7 +340,7 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::str
   uint64_t lastModifiedDate = getFileModifiedDate(inputFile);
   uint64_t outputModifiedDate = getOutputFileModifiedDate(iOutputFilePath);
   if (outputModifiedDate == 0)
-    bin2cpp::log(bin2cpp::LOG_WARNING, "Unable to get last modified date of file \'%s\'", iOutputFilePath.c_str());
+    logger::log(logger::LOG_WARNING, "Unable to get last modified date of file \'%s\'", iOutputFilePath.c_str());
   if (lastModifiedDate == outputModifiedDate)
     return SKIPPING;
 
@@ -353,7 +353,7 @@ bool processFile(const std::string & inputFile, const std::string & iOutputFileP
   FILE_UPDATE_MODE mode = getFileUpdateMode(inputFile, iOutputFilePath, overrideExisting);
 
   //writing message
-  bin2cpp::log(bin2cpp::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
+  logger::log(logger::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
   
   if (mode == SKIPPING)
     return true; //skipping is success
@@ -373,8 +373,8 @@ bool processFile(const std::string & inputFile, const std::string & iOutputFileP
   if (!result)
   {
     //there was an error generating file
-    bin2cpp::log(bin2cpp::LOG_ERROR, "%s", getErrorCodeDescription(APP_ERROR_UNABLETOCREATEOUTPUTFILES));
-    bin2cpp::log(bin2cpp::LOG_ERROR, "Embedding failed!");
+    logger::log(logger::LOG_ERROR, "%s", getErrorCodeDescription(APP_ERROR_UNABLETOCREATEOUTPUTFILES));
+    logger::log(logger::LOG_ERROR, "Embedding failed!");
   }
   return result;
 }

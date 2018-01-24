@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace bin2cpp
+namespace cmdline
 {
   ///<summary>
   ///Parses an argument from the command line parameters (argc, argv)
@@ -37,4 +37,4 @@ namespace bin2cpp
   ///<return>True when an argument named [name] is found. False otherwise.<return>
   bool parseArgument(const std::string & name, size_t & value, int argc, char **argv);
 
-}; //bin2cpp
+}; //cmdline

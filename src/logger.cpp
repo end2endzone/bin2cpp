@@ -6,7 +6,7 @@
 #include <stdarg.h>
 #include <shlobj.h>
 
-namespace bin2cpp
+namespace logger
 {
   bool gQuietMode = false;
 
@@ -52,4 +52,4 @@ namespace bin2cpp
     }
   }
 
-}; //bin2cpp
+}; //logger
