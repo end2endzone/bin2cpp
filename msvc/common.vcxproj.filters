@@ -33,7 +33,7 @@
     <ClInclude Include="..\src\filesystemfunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\envfunc.h">
+    <ClInclude Include="..\src\environmentfunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClCompile Include="..\src\filesystemfunc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\envfunc.cpp">
+    <ClCompile Include="..\src\environmentfunc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

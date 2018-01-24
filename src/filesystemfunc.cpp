@@ -1,7 +1,7 @@
 #pragma once
 
 #include "stringfunc.h"
-#include "envfunc.h"
+#include "environmentfunc.h"
 #include "filesystemfunc.h"
 
 #include <direct.h> //for _getcwd()
