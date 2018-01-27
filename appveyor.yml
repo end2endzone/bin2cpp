@@ -33,9 +33,6 @@ init:
   - git config --global core.autocrlf true
   - ps: $env:GIT_HASH=$env:APPVEYOR_REPO_COMMIT.Substring(0, 10)
 
-# fetch repository as zip archive
-shallow_clone: true                 # default is "false"
-
 # clone directory
 clone_folder: c:\projects\bin2cpp
 
