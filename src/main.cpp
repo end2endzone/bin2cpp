@@ -6,6 +6,7 @@
 #include "SegmentGenerator.h"
 #include "StringGenerator.h"
 #include "ArrayGenerator.h"
+#include "Win32ResourceGenerator.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -100,7 +101,7 @@ void printUsage()
     "  --file=<path>        Path of the input file used for embedding as a C++ source code.\n"
     "  --output=<path>      Output folder where to create generated code. ie: .\\generated_files\n"
     "  --headerfile=<name>  File name of the generated C++ Header file. ie: SplashScreen.h\n"
-    "  --generator=<name>   Name of the generator to use. Possible values are 'segment', 'string' and 'array'. [default: segment].\n"
+    "  --generator=<name>   Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'. [default: segment].\n"
     "  --encoding=<name>    Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct].\n"
     "  --identifier=<name>  Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
     "  --chunksize=<value>  Size in bytes of each string segments (bytes per row). [default: 200].\n"
@@ -249,6 +250,7 @@ int main(int argc, char* argv[])
   bin2cpp::SegmentGenerator segmentGenerator;
   bin2cpp::StringGenerator stringGenerator;
   bin2cpp::ArrayGenerator arrayGenerator;
+  bin2cpp::Win32ResourceGenerator win32Generator;
   bin2cpp::IGenerator * generator = NULL;
 
   std::string generatorName;
@@ -265,6 +267,10 @@ int main(int argc, char* argv[])
     else if (generatorName == "array")
     {
       generator = &arrayGenerator;
+    }
+    else if (generatorName == "win32")
+    {
+      generator = &win32Generator;
     }
 
     //validate generator selection

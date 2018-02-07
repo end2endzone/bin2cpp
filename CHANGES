@@ -1,4 +1,8 @@
-Changes for 2.0:
+Changes for 2.1.0:
+
+* New feature (issue #6): Implement Windows support using resource file and Windows API for getting resources.
+
+Changes for 2.0.0:
 
 * New feature (issue #2): Update command line parameters syntax with the --name=value syntax
 * New feature: Command line --noheader to not display the application header in the console output.

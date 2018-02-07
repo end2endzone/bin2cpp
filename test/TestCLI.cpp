@@ -321,12 +321,15 @@ TEST_F(TestCLI, testGenerators)
   generators.push_back("segment");
   generators.push_back("string");
   generators.push_back("array");
+  generators.push_back("win32");
 
   //generate cpp output for each generators
   std::vector<std::string> files;
   for(size_t genIndex = 0; genIndex<generators.size(); genIndex++)
   {
     const char * generatorName = generators[genIndex].c_str();
+
+    printf("Testing '%s' generator...\n", generatorName);
 
     std::string headerFileName = std::string("_") + hlp.getTestCaseName().c_str() + "." + generatorName + ".h";
     std::string headerFilePath = std::string("generated_files\\") + headerFileName;

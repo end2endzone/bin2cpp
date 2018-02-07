@@ -115,6 +115,7 @@
     <ClCompile Include="generated_files\testGeneratorArray10000\_testGeneratorArray10000.cpp" />
     <ClCompile Include="generated_files\testGeneratorSegment10000\_testGeneratorSegment10000.cpp" />
     <ClCompile Include="generated_files\testGeneratorString10000\_testGeneratorString10000.cpp" />
+    <ClCompile Include="generated_files\testGeneratorWin32\_testGeneratorWin32.cpp" />
     <ClCompile Include="generated_files\testHtml100000\_testHtml100000.cpp" />
     <ClCompile Include="generated_files\testIssue12Mini\_testIssue12Mini.cpp" />
     <ClCompile Include="generated_files\testIssue12\_testIssue12.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="generated_files\testGeneratorArray10000\_testGeneratorArray10000.h" />
     <ClInclude Include="generated_files\testGeneratorSegment10000\_testGeneratorSegment10000.h" />
     <ClInclude Include="generated_files\testGeneratorString10000\_testGeneratorString10000.h" />
+    <ClInclude Include="generated_files\testGeneratorWin32\_testGeneratorWin32.h" />
     <ClInclude Include="generated_files\testHtml100000\_testHtml100000.h" />
     <ClInclude Include="generated_files\testIssue12Mini\_testIssue12Mini.h" />
     <ClInclude Include="generated_files\testIssue12\_testIssue12.h" />
@@ -189,6 +191,9 @@
     <ProjectReference Include="testfilegenerator.vcxproj">
       <Project>{f78fce3c-6b97-4bfb-9f8f-e46e36431cfd}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="generated_files\testGeneratorWin32\_testGeneratorWin32.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

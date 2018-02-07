@@ -114,6 +114,9 @@
     <ClCompile Include="generated_files\testEncodingOct\_testEncodingOct.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="generated_files\testGeneratorWin32\_testGeneratorWin32.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin2cppTest.x86.debug.xml">
@@ -212,8 +215,16 @@
     <ClInclude Include="generated_files\testEncodingOct\_testEncodingOct.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="generated_files\testGeneratorWin32\_testGeneratorWin32.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="generate_test_files.bat" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="generated_files\testGeneratorWin32\_testGeneratorWin32.rc">
+      <Filter>Generated Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

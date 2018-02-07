@@ -15,6 +15,7 @@
 #include "generated_files\testGeneratorArray10000\_testGeneratorArray10000.h"
 #include "generated_files\testGeneratorSegment10000\_testGeneratorSegment10000.h"
 #include "generated_files\testGeneratorString10000\_testGeneratorString10000.h"
+#include "generated_files\testGeneratorWin32\_testGeneratorWin32.h"
 #include "generated_files\testEncodingOct\_testEncodingOct.h"
 #include "generated_files\testEncodingHex\_testEncodingHex.h"
 #include "generated_files\testText10\_testText10.h"
@@ -312,6 +313,21 @@ TEST_F(TestExtraction, testGeneratorString10000)
   static const std::string outputFilePath   = getActualFilePath();
 
   const bin2cpp::File & file = bin2cpp::getTestGeneratorString10000File();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = hlp.isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testGeneratorWin32)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp::File & file = bin2cpp::getTestGeneratorWin32File();
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 

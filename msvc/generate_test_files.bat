@@ -114,6 +114,12 @@ mkdir %OUTDIR% 1>NUL 2>NUL
 testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
 bin2cpp.exe --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override
 
+set TEST_NAME=testGeneratorWin32
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+testfilegenerator.exe --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
+bin2cpp.exe --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=win32 --override
+
 set TEST_NAME=testNamespace
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
