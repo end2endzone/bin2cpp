@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.h"
-#include "..\version_info.h"
+#include "..\..\version_info.h"
 
 #include <stdio.h>
 #include <stdlib.h>

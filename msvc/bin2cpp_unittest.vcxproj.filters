@@ -24,15 +24,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\test\gtesthelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\test\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\test\TestExtraction.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
     <ClCompile Include="generated_files\testHtml100000\_testHtml100000.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
@@ -81,17 +72,8 @@
     <ClCompile Include="generated_files\testIssue12Mini\_testIssue12Mini.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\test\TestCLI.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\test\application.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
     <ClCompile Include="generated_files\testSequential1000\_testSequential1000.cpp">
       <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\test\TestCommon.cpp">
-      <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="generated_files\testGeneratorArray10000\_testGeneratorArray10000.cpp">
       <Filter>Generated Files</Filter>
@@ -117,6 +99,24 @@
     <ClCompile Include="generated_files\testGeneratorWin32\_testGeneratorWin32.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\bin2cpp_unittest\TestCLI.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\bin2cpp_unittest\TestCommon.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\bin2cpp_unittest\TestExtraction.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\bin2cpp_unittest\application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\bin2cpp_unittest\gtesthelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\bin2cpp_unittest\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin2cppTest.x86.debug.xml">
@@ -128,12 +128,6 @@
     <None Include="prebuild.bat" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\test\gtesthelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\test\TestExtraction.h">
-      <Filter>Tests</Filter>
-    </ClInclude>
     <ClInclude Include="generated_files\testHtml100000\_testHtml100000.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
@@ -182,17 +176,8 @@
     <ClInclude Include="generated_files\testIssue12Mini\_testIssue12Mini.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\test\TestCLI.h">
-      <Filter>Tests</Filter>
-    </ClInclude>
-    <ClInclude Include="..\test\application.h">
-      <Filter>Tests</Filter>
-    </ClInclude>
     <ClInclude Include="generated_files\testSequential1000\_testSequential1000.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\test\TestCommon.h">
-      <Filter>Tests</Filter>
     </ClInclude>
     <ClInclude Include="generated_files\testGeneratorArray10000\_testGeneratorArray10000.h">
       <Filter>Generated Files</Filter>
@@ -217,6 +202,21 @@
     </ClInclude>
     <ClInclude Include="generated_files\testGeneratorWin32\_testGeneratorWin32.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bin2cpp_unittest\TestCLI.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bin2cpp_unittest\TestCommon.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bin2cpp_unittest\TestExtraction.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bin2cpp_unittest\application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bin2cpp_unittest\gtesthelper.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

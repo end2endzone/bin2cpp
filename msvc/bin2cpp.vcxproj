@@ -55,6 +55,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\src\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -73,6 +74,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\src\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -88,26 +90,29 @@
     </CustomBuildStep>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\ArrayGenerator.cpp" />
-    <ClCompile Include="..\src\BaseGenerator.cpp" />
-    <ClCompile Include="..\src\main.cpp" />
-    <ClCompile Include="..\src\SegmentGenerator.cpp" />
-    <ClCompile Include="..\src\StringGenerator.cpp" />
-    <ClCompile Include="..\src\Win32ResourceGenerator.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\src\ArrayGenerator.h" />
-    <ClInclude Include="..\src\BaseGenerator.h" />
-    <ClInclude Include="..\src\IGenerator.h" />
-    <ClInclude Include="..\src\SegmentGenerator.h" />
-    <ClInclude Include="..\src\StringGenerator.h" />
-    <ClInclude Include="..\src\targetver.h" />
-    <ClInclude Include="..\src\Win32ResourceGenerator.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="common.vcxproj">
       <Project>{0a65f8bd-6bb4-4a78-a871-25b99b43021a}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\bin2cpp\ArrayGenerator.cpp" />
+    <ClCompile Include="..\src\bin2cpp\BaseGenerator.cpp" />
+    <ClCompile Include="..\src\bin2cpp\main.cpp" />
+    <ClCompile Include="..\src\bin2cpp\SegmentGenerator.cpp" />
+    <ClCompile Include="..\src\bin2cpp\StringGenerator.cpp" />
+    <ClCompile Include="..\src\bin2cpp\Win32ResourceGenerator.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\bin2cpp\ArrayGenerator.h" />
+    <ClInclude Include="..\src\bin2cpp\BaseGenerator.h" />
+    <ClInclude Include="..\src\bin2cpp\IGenerator.h" />
+    <ClInclude Include="..\src\bin2cpp\SegmentGenerator.h" />
+    <ClInclude Include="..\src\bin2cpp\StringGenerator.h" />
+    <ClInclude Include="..\src\bin2cpp\targetver.h" />
+    <ClInclude Include="..\src\bin2cpp\Win32ResourceGenerator.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\bin2cpp\bin2cpp.samples.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

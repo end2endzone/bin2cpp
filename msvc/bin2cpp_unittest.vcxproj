@@ -50,7 +50,7 @@
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(GTEST_INCLUDE);..\msvc;..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GTEST_INCLUDE);..\msvc;..\src\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -79,7 +79,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(GTEST_INCLUDE);..\msvc;..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GTEST_INCLUDE);..\msvc;..\src\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -103,12 +103,12 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\test\application.cpp" />
-    <ClCompile Include="..\test\gtesthelper.cpp" />
-    <ClCompile Include="..\test\main.cpp" />
-    <ClCompile Include="..\test\TestCLI.cpp" />
-    <ClCompile Include="..\test\TestCommon.cpp" />
-    <ClCompile Include="..\test\TestExtraction.cpp" />
+    <ClCompile Include="..\src\bin2cpp_unittest\application.cpp" />
+    <ClCompile Include="..\src\bin2cpp_unittest\gtesthelper.cpp" />
+    <ClCompile Include="..\src\bin2cpp_unittest\main.cpp" />
+    <ClCompile Include="..\src\bin2cpp_unittest\TestCLI.cpp" />
+    <ClCompile Include="..\src\bin2cpp_unittest\TestCommon.cpp" />
+    <ClCompile Include="..\src\bin2cpp_unittest\TestExtraction.cpp" />
     <ClCompile Include="generated_files\testBaseClass\_testBaseClass.cpp" />
     <ClCompile Include="generated_files\testEncodingHex\_testEncodingHex.cpp" />
     <ClCompile Include="generated_files\testEncodingOct\_testEncodingOct.cpp" />
@@ -150,11 +150,11 @@
     <None Include="prebuild.bat" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\test\application.h" />
-    <ClInclude Include="..\test\gtesthelper.h" />
-    <ClInclude Include="..\test\TestCLI.h" />
-    <ClInclude Include="..\test\TestCommon.h" />
-    <ClInclude Include="..\test\TestExtraction.h" />
+    <ClInclude Include="..\src\bin2cpp_unittest\application.h" />
+    <ClInclude Include="..\src\bin2cpp_unittest\gtesthelper.h" />
+    <ClInclude Include="..\src\bin2cpp_unittest\TestCLI.h" />
+    <ClInclude Include="..\src\bin2cpp_unittest\TestCommon.h" />
+    <ClInclude Include="..\src\bin2cpp_unittest\TestExtraction.h" />
     <ClInclude Include="generated_files\testBaseClass\_testBaseClass.h" />
     <ClInclude Include="generated_files\testEncodingHex\_testEncodingHex.h" />
     <ClInclude Include="generated_files\testEncodingOct\_testEncodingOct.h" />

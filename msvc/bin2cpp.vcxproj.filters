@@ -15,46 +15,49 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\main.cpp">
+    <ClCompile Include="..\src\bin2cpp\ArrayGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\SegmentGenerator.cpp">
+    <ClCompile Include="..\src\bin2cpp\BaseGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\StringGenerator.cpp">
+    <ClCompile Include="..\src\bin2cpp\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ArrayGenerator.cpp">
+    <ClCompile Include="..\src\bin2cpp\SegmentGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\BaseGenerator.cpp">
+    <ClCompile Include="..\src\bin2cpp\StringGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Win32ResourceGenerator.cpp">
+    <ClCompile Include="..\src\bin2cpp\Win32ResourceGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\targetver.h">
+    <ClInclude Include="..\src\bin2cpp\ArrayGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\IGenerator.h">
+    <ClInclude Include="..\src\bin2cpp\BaseGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\SegmentGenerator.h">
+    <ClInclude Include="..\src\bin2cpp\IGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\StringGenerator.h">
+    <ClInclude Include="..\src\bin2cpp\SegmentGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ArrayGenerator.h">
+    <ClInclude Include="..\src\bin2cpp\StringGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\BaseGenerator.h">
+    <ClInclude Include="..\src\bin2cpp\targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Win32ResourceGenerator.h">
+    <ClInclude Include="..\src\bin2cpp\Win32ResourceGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\bin2cpp\bin2cpp.samples.txt" />
   </ItemGroup>
 </Project>
