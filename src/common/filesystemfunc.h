@@ -2,16 +2,24 @@
 
 #include <stdint.h>
 #include <string>
+#include <vector>
 
 namespace filesystem
 {
+
+  ///<summary>
+  ///Returns the size of the given file path in bytes.
+  ///</summary>
+  ///<param name="f">An valid file path.</param>
+  ///<return>Returns the size of the given file path in bytes.<return>
+  uint32_t getFileSize(const char * iPath);
 
   ///<summary>
   ///Returns the size of the given FILE* in bytes.
   ///</summary>
   ///<param name="f">An valid FILE pointer.</param>
   ///<return>Returns the size of the given FILE* in bytes.<return>
-  long getFileSize(FILE * f);
+  uint32_t getFileSize(FILE * f);
 
   ///<summary>
   ///Returns the filename of the given path.
@@ -23,9 +31,16 @@ namespace filesystem
   ///<summary>
   ///Determine if a file exists.
   ///</summary>
-  ///<param name="iFilePath">An valid file path.</param>
+  ///<param name="iPath">An valid file path.</param>
   ///<return>Returns true when the file exists. Returns false otherwise.<return>
-  bool fileExists(const char * iFilePath);
+  bool fileExists(const char * iPath);
+
+  ///<summary>
+  ///Determine if a folder exists.
+  ///</summary>
+  ///<param name="iPath">An valid folder path.</param>
+  ///<return>Returns true when the folder exists. Returns false otherwise.<return>
+  bool folderExists(const char * iPath);
 
   ///<summary>
   ///Returns the file name of a tempporary file.
@@ -52,8 +67,14 @@ namespace filesystem
   ///<param name="iPath">The input path to split.</param>
   ///<param name="oFolder">The output folder of the given path.</param>
   ///<param name="oFile">The output file of the given path.</param>
-  ///<return>Returns a the folder and the filename of the given path.<return>
   void splitPath(const std::string & iPath, std::string & oFolder, std::string & oFilename);
+
+  ///<summary>
+  ///Splits a path into each element.
+  ///</summary>
+  ///<param name="iPath">The input path to split.</param>
+  ///<param name="oElements">The output list which contains all path elements.</param>
+  void splitPath(const std::string & iPath, std::vector<std::string> & oElements);
 
   ///<summary>
   ///Gets the character that represents the path separator.

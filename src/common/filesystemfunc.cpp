@@ -18,7 +18,17 @@
 namespace filesystem
 {
 
-  long getFileSize(FILE * f)
+  uint32_t getFileSize(const char * iPath)
+  {
+    FILE * f = fopen(iPath, "rb");
+    if (!f)
+      return 0;
+    uint32_t size = getFileSize(f);
+    fclose(f);
+    return size;
+  }
+
+  uint32_t getFileSize(FILE * f)
   {
     if (f == NULL)
       return 0;
@@ -45,13 +55,22 @@ namespace filesystem
     return filename;
   }
 
-  bool fileExists(const char * iFilePath)
+  bool fileExists(const char * iPath)
   {
-    FILE * f = fopen(iFilePath, "rb");
+    FILE * f = fopen(iPath, "rb");
     if (!f)
       return false;
     fclose(f);
     return true;
+  }
+
+  bool folderExists(const char * iPath)
+  {
+    std::string localFolder = getCurrentFolder();
+    bool success = (_chdir(iPath) == 0);
+    if (success)
+      _chdir(localFolder.c_str());
+    return success;
   }
 
   std::string getTemporaryFileName()
@@ -107,10 +126,35 @@ namespace filesystem
     }
   }
 
+  void splitPath(const std::string & iPath, std::vector<std::string> & oElements)
+  {
+    oElements.clear();
+    std::string s = iPath;
+    std::string accumulator;
+    for(unsigned int i = 0; i<s.size(); i++)
+    {
+      const char & c = s[i];
+      if (c == getPathSeparator() && accumulator.size() > 0)
+      {
+        oElements.push_back(accumulator);
+        accumulator = "";
+      }
+      else
+        accumulator += c;
+    }
+    if (accumulator.size() > 0)
+    {
+      oElements.push_back(accumulator);
+      accumulator = "";
+    }
+  }
+
   char getPathSeparator()
   {
 #ifdef _WIN32
     return '\\';
+#else
+    return '/';
 #endif
   }
 
