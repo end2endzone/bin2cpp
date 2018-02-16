@@ -5,6 +5,7 @@
 #include "filesystemfunc.h"
 
 #include <direct.h> //for _getcwd()
+#include <algorithm> //for std::transform()
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -13,6 +14,7 @@
 #endif
 #ifdef WIN32
 #define stat _stat
+#include <Windows.h> //for GetShortPathName()
 #endif
 
 namespace filesystem
@@ -104,6 +106,74 @@ namespace filesystem
     }
 
     return parent;
+  }
+
+  std::string getShortPathForm(const std::string & iPath)
+  {
+    //ASSERT_TRUE(getShortPathForm("a b c.txt") == "ABC~1.TXT");
+    //ASSERT_TRUE(getShortPathForm("abcdefgh.text") == "ABCDEF~1.TEX");
+    //ASSERT_TRUE(getShortPathForm("abcdefghijklmnopqrstuvwxyz.txt") == "ABCDEF~1.TXT");
+    //ASSERT_TRUE(getShortPathForm("abcde.t x t") == "ABCDE~1.TXT");
+    //ASSERT_TRUE(getShortPathForm("Program Files (x86)") == "PROGRA~1");
+
+    std::string shortPath;
+  #ifdef _WIN32
+    // First obtain the size needed by passing NULL and 0.
+    long length = GetShortPathName(iPath.c_str(), NULL, 0);
+    if (length == 0)
+      return "";
+ 
+    // Dynamically allocate the correct size
+    // (terminating null char was included in length)
+    char * buffer = new char[length];
+ 
+    // Now simply call again using same long path.
+    length = GetShortPathName(iPath.c_str(), buffer, length);
+    if (length == 0)
+      return "";
+ 
+    shortPath = buffer;
+ 
+    delete [] buffer;
+  #else
+    std::vector<std::string> pathElements;
+    splitPath(iPath, pathElements);
+    for(size_t i=0; i<pathElements.size(); i++)
+    {
+      const std::string & element = pathElements[i];
+      if (element.size() > 12 || element.find(' ') != std::string::npos)
+      {
+        std::string element83 = element;
+        std::string ext = getFileExtention(element);
+        stringfunc::strReplace(element83, (std::string(".")+ext).c_str(), ""); //remove extension from filename
+        stringfunc::strReplace(ext, " ", ""); //remove spaces in extension
+        ext = ext.substr(0, 3); //truncate file extension
+        stringfunc::strReplace(element83, " ", ""); //remove spaces
+        element83 = element83.substr(0, 6); //truncate file name
+        element83.append("~1");
+        if (!ext.empty())
+        {
+          element83.append(".");
+          element83.append(ext);
+        }
+ 
+        //uppercase everything
+        std::transform(element83.begin(), element83.end(), element83.begin(), ::toupper);
+ 
+        //add to shortPath
+        if (!shortPath.empty())
+          shortPath.append("\\");
+        shortPath.append(element83);
+      }
+      else
+      {
+        if (!shortPath.empty())
+          shortPath.append("\\");
+        shortPath.append(element);
+      }
+    }
+  #endif
+    return shortPath;
   }
 
   void splitPath(const std::string & iPath, std::string & oFolder, std::string & oFilename)

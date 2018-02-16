@@ -62,6 +62,15 @@ namespace filesystem
   std::string getParentPath(const std::string & iPath);
 
   ///<summary>
+  ///Convert a long file path to the short path form (8.3 format).
+  ///If the system does not support automatic conversion, an estimated
+  ///version is returned.
+  ///</summary>
+  ///<param name="iPath">The input path to convert.</param>
+  ///<return>Returns the short path form of the given path.<return>
+  std::string getShortPathForm(const std::string & iPath);
+ 
+  ///<summary>
   ///Splits a path into a folder and a filename.
   ///</summary>
   ///<param name="iPath">The input path to split.</param>
