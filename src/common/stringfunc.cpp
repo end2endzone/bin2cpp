@@ -93,15 +93,34 @@ namespace stringfunc
 
   bool isNumeric(const char * iValue)
   {
-    int intValue = atoi(iValue);
-  
-    //try to convert the int value back to string and check for equality.
-    static const int BUFFER_SIZE = 1024;
-    char buffer[BUFFER_SIZE];
-    _itoa(intValue, buffer, 10);
-    if (std::string(buffer) == iValue)
-      return true;
-    return false;
+    if (iValue == NULL)
+      return false;
+
+    bool foundDot = false;
+    size_t length = strlen(iValue);
+    for(size_t offset = 0; offset < length; offset++)
+    {
+      const char & c = iValue[offset];
+      if (c >= '0' && c <= '9')
+        continue; //valid
+      if (c == '.' && !foundDot)
+      {
+        //only 1 dot character must be found in the string
+        foundDot = true;
+        continue; //valid
+      }
+      if ((c == '+' || c == '-'))
+      {
+        if (offset == 0)
+        {
+          //+ or - sign are accepted but must be the first character of the value
+          continue; //valid
+        }
+      }
+
+      return false; //invalid
+    }
+    return true;
   }
 
   int strReplace(std::string & iString, const char * iOldValue, const char * iNewValue)
@@ -172,21 +191,78 @@ namespace stringfunc
 
 }; //stringfunc
 
+std::string& operator<<(std::string& str, const void * value)
+{
+  char buffer[1024];
+  if (sizeof(void*) == 4)
+    sprintf(buffer, "0x%08X", value);
+  else if (sizeof(void*) == 8)
+    sprintf(buffer, "0x%016X", value);
+  str.append(buffer);
+  return str;
+}
+
 std::string& operator<<(std::string& str, const std::string & value)
 {
   str.append(value);
   return str;
 }
 
-std::string& operator<<(std::string& str, const int & value)
+std::string& operator<<(std::string& str, const char * value)
 {
-  char buffer[1024];
-  sprintf(buffer, "%d", value);
-  str.append(buffer);
+  str.append(value);
   return str;
 }
 
-std::string& operator<<(std::string& str, const size_t & value)
+std::string& operator<<(std::string& str, const int16_t & value)
+{
+  std::stringstream out;
+  out << value;
+  str.append( out.str() );
+  return str;
+}
+
+std::string& operator<<(std::string& str, const uint16_t & value)
+{
+  std::stringstream out;
+  out << value;
+  str.append( out.str() );
+  return str;
+}
+
+std::string& operator<<(std::string& str, const int8_t & value)
+{
+  std::stringstream out;
+  out << (int16_t)value;
+  str.append( out.str() );
+  return str;
+}
+
+std::string& operator<<(std::string& str, const uint8_t & value)
+{
+  std::stringstream out;
+  out << (uint16_t)value;
+  str.append( out.str() );
+  return str;
+}
+
+std::string& operator<<(std::string& str, const int32_t & value)
+{
+  std::stringstream out;
+  out << value;
+  str.append( out.str() );
+  return str;
+}
+
+std::string& operator<<(std::string& str, const uint32_t & value)
+{
+  std::stringstream out;
+  out << value;
+  str.append( out.str() );
+  return str;
+}
+
+std::string& operator<<(std::string& str, const int64_t & value)
 {
   std::stringstream out;
   out << value;

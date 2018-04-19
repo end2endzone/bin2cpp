@@ -69,7 +69,26 @@ if (WIN32)
   )
 endif()
 
-add_executable(bin2cpp_unittest application.cpp application.h gtesthelper.cpp gtesthelper.h TestCLI.cpp TestCLI.h TestCommon.cpp TestCommon.h TestExtraction.cpp TestExtraction.h main.cpp ${GENERATED_TEST_FILES})
+add_executable(bin2cpp_unittest
+  application.cpp
+  application.h
+  gtesthelper.cpp
+  gtesthelper.h
+  TestCLI.cpp
+  TestCLI.h
+  TestCommon.cpp
+  TestCommon.h
+  TestExtraction.cpp
+  TestExtraction.h
+  TestEnvironmentFunc.cpp
+  TestEnvironmentFunc.h
+  TestFilesystemFunc.cpp
+  TestFilesystemFunc.h
+  TestStringFunc.cpp
+  TestStringFunc.h
+  main.cpp
+  ${GENERATED_TEST_FILES}
+)
 
 if (WIN32)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)

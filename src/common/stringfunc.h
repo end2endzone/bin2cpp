@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STRINGFUNC_H
+#define STRINGFUNC_H
 
 #include <stdint.h>
 #include <string>
@@ -9,6 +10,8 @@ namespace stringfunc
 
   ///<summary>
   ///Defines if a string value is a numeric value.
+  ///A numeric value can be positive or negative.
+  ///A numeric value can be an integer or a floating point value.
   ///</summary>
   ///<return>True when iValue is numeric. False otherwise.<return>
   bool isNumeric(const char * iValue);
@@ -62,6 +65,13 @@ namespace stringfunc
 ///</summary>
 ///<param name="value">The value to append to the given string.</param>
 ///<return>Returns the given string.<return>
+std::string& operator<<(std::string& str, const void * value);
+
+///<summary>
+///Streams a value to an existing string.
+///</summary>
+///<param name="value">The value to append to the given string.</param>
+///<return>Returns the given string.<return>
 std::string& operator<<(std::string& str, const std::string & value);
 
 ///<summary>
@@ -69,14 +79,56 @@ std::string& operator<<(std::string& str, const std::string & value);
 ///</summary>
 ///<param name="value">The value to append to the given string.</param>
 ///<return>Returns the given string.<return>
-std::string& operator<<(std::string& str, const int & value);
+std::string& operator<<(std::string& str, const char * value);
 
 ///<summary>
 ///Streams a value to an existing string.
 ///</summary>
 ///<param name="value">The value to append to the given string.</param>
 ///<return>Returns the given string.<return>
-std::string& operator<<(std::string& str, const size_t & value);
+std::string& operator<<(std::string& str, const int8_t & value);
+
+///<summary>
+///Streams a value to an existing string.
+///</summary>
+///<param name="value">The value to append to the given string.</param>
+///<return>Returns the given string.<return>
+std::string& operator<<(std::string& str, const uint8_t & value);
+
+///<summary>
+///Streams a value to an existing string.
+///</summary>
+///<param name="value">The value to append to the given string.</param>
+///<return>Returns the given string.<return>
+std::string& operator<<(std::string& str, const int16_t & value);
+
+///<summary>
+///Streams a value to an existing string.
+///</summary>
+///<param name="value">The value to append to the given string.</param>
+///<return>Returns the given string.<return>
+std::string& operator<<(std::string& str, const uint16_t & value);
+
+///<summary>
+///Streams a value to an existing string.
+///</summary>
+///<param name="value">The value to append to the given string.</param>
+///<return>Returns the given string.<return>
+std::string& operator<<(std::string& str, const int32_t & value);
+
+///<summary>
+///Streams a value to an existing string.
+///</summary>
+///<param name="value">The value to append to the given string.</param>
+///<return>Returns the given string.<return>
+std::string& operator<<(std::string& str, const uint32_t & value);
+
+///<summary>
+///Streams a value to an existing string.
+///</summary>
+///<param name="value">The value to append to the given string.</param>
+///<return>Returns the given string.<return>
+std::string& operator<<(std::string& str, const int64_t & value);
 
 ///<summary>
 ///Streams a value to an existing string.
@@ -84,3 +136,5 @@ std::string& operator<<(std::string& str, const size_t & value);
 ///<param name="value">The value to append to the given string.</param>
 ///<return>Returns the given string.<return>
 std::string& operator<<(std::string& str, const uint64_t & value);
+
+#endif //STRINGFUNC_H

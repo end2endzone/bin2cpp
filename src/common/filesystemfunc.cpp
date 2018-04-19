@@ -22,6 +22,9 @@ namespace filesystem
 
   uint32_t getFileSize(const char * iPath)
   {
+    if (iPath == NULL || iPath[0] == '\0')
+      return 0;
+
     FILE * f = fopen(iPath, "rb");
     if (!f)
       return 0;
@@ -43,6 +46,9 @@ namespace filesystem
 
   std::string getFilename(const char * iPath)
   {
+    if (iPath == NULL || iPath[0] == '\0')
+      return std::string();
+
     char drive[_MAX_DRIVE];
     char dir[_MAX_DIR];
     char fname[_MAX_FNAME];
@@ -59,6 +65,9 @@ namespace filesystem
 
   bool fileExists(const char * iPath)
   {
+    if (iPath == NULL || iPath[0] == '\0')
+      return false;
+
     FILE * f = fopen(iPath, "rb");
     if (!f)
       return false;
@@ -68,6 +77,9 @@ namespace filesystem
 
   bool folderExists(const char * iPath)
   {
+    if (iPath == NULL || iPath[0] == '\0')
+      return false;
+
     std::string localFolder = getCurrentFolder();
     bool success = (_chdir(iPath) == 0);
     if (success)
@@ -77,18 +89,28 @@ namespace filesystem
 
   std::string getTemporaryFileName()
   {
-    char rndvalue[1024];
-    _itoa(rand(), rndvalue, 10);
+    //get positive random value
+    int value = rand();
+    if (value < 0)
+      value *= -1;
 
-    std::string name = std::string("random") + rndvalue + ".tmp";
-    return name;
+    //RAND_MAX expected to get as high as 32768
+    //5 characters is required for printing the value
+
+    char str[1024];
+    sprintf(str, "random.%05d.tmp", value);
+
+    return std::string(str);
   }
 
   std::string getTemporaryFilePath()
   {
+#ifdef WIN32
     std::string temp = environment::getEnvironmentVariable("TEMP");
-
-    std::string rndpath = temp + "\\" + getTemporaryFileName();
+#elif UNIX
+    std::string temp = "/tmp";
+#endif
+    std::string rndpath = temp + getPathSeparator() + getTemporaryFileName();
     return rndpath;
   }
 
@@ -108,34 +130,10 @@ namespace filesystem
     return parent;
   }
 
-  std::string getShortPathForm(const std::string & iPath)
+  std::string getShortPathFormEstimation(const std::string & iPath)
   {
-    //ASSERT_TRUE(getShortPathForm("a b c.txt") == "ABC~1.TXT");
-    //ASSERT_TRUE(getShortPathForm("abcdefgh.text") == "ABCDEF~1.TEX");
-    //ASSERT_TRUE(getShortPathForm("abcdefghijklmnopqrstuvwxyz.txt") == "ABCDEF~1.TXT");
-    //ASSERT_TRUE(getShortPathForm("abcde.t x t") == "ABCDE~1.TXT");
-    //ASSERT_TRUE(getShortPathForm("Program Files (x86)") == "PROGRA~1");
-
     std::string shortPath;
-  #ifdef _WIN32
-    // First obtain the size needed by passing NULL and 0.
-    long length = GetShortPathName(iPath.c_str(), NULL, 0);
-    if (length == 0)
-      return "";
- 
-    // Dynamically allocate the correct size
-    // (terminating null char was included in length)
-    char * buffer = new char[length];
- 
-    // Now simply call again using same long path.
-    length = GetShortPathName(iPath.c_str(), buffer, length);
-    if (length == 0)
-      return "";
- 
-    shortPath = buffer;
- 
-    delete [] buffer;
-  #else
+
     std::vector<std::string> pathElements;
     splitPath(iPath, pathElements);
     for(size_t i=0; i<pathElements.size(); i++)
@@ -172,8 +170,53 @@ namespace filesystem
         shortPath.append(element);
       }
     }
-  #endif
+
     return shortPath;
+  }
+
+  std::string getShortPathFormWin32(const std::string & iPath)
+  {
+    std::string shortPath;
+
+  #ifdef _WIN32
+    // First obtain the size needed by passing NULL and 0.
+    long length = GetShortPathName(iPath.c_str(), NULL, 0);
+    if (length == 0)
+      return "";
+ 
+    // Dynamically allocate the correct size
+    // (terminating null char was included in length)
+    char * buffer = new char[length];
+ 
+    // Now simply call again using same long path.
+    length = GetShortPathName(iPath.c_str(), buffer, length);
+    if (length == 0)
+      return "";
+ 
+    shortPath = buffer;
+ 
+    delete [] buffer;
+  #endif
+
+    return shortPath;
+  }
+
+  std::string getShortPathForm(const std::string & iPath)
+  {
+#ifdef WIN32
+    if (fileExists(iPath.c_str()) || folderExists(iPath.c_str()))
+    {
+      //file must exist to use WIN32 api
+      return getShortPathFormWin32(iPath);
+    }
+    else
+    {
+      return getShortPathFormEstimation(iPath);
+    }
+#elif UNIX
+    //no such thing as short path form in unix
+    return getShortPathFormEstimation(iPath);
+#endif
   }
 
   void splitPath(const std::string & iPath, std::string & oFolder, std::string & oFilename)
@@ -223,7 +266,7 @@ namespace filesystem
   {
 #ifdef _WIN32
     return '\\';
-#else
+#elif UNIX
     return '/';
 #endif
   }
