@@ -117,6 +117,15 @@
     <ClCompile Include="..\src\bin2cpp_unittest\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\bin2cpp_unittest\TestEnvironmentFunc.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\bin2cpp_unittest\TestFilesystemFunc.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\bin2cpp_unittest\TestStringFunc.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin2cppTest.x86.debug.xml">
@@ -217,6 +226,15 @@
     </ClInclude>
     <ClInclude Include="..\src\bin2cpp_unittest\gtesthelper.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bin2cpp_unittest\TestEnvironmentFunc.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bin2cpp_unittest\TestFilesystemFunc.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bin2cpp_unittest\TestStringFunc.h">
+      <Filter>Tests</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

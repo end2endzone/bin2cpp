@@ -1,8 +1,7 @@
-#pragma once
-
 #include "stringfunc.h"
 
 #include <sstream>  //for std::stringstream
+#include <string.h> //for strlen()
 
 namespace stringfunc
 {

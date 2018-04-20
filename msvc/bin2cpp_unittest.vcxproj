@@ -108,7 +108,10 @@
     <ClCompile Include="..\src\bin2cpp_unittest\main.cpp" />
     <ClCompile Include="..\src\bin2cpp_unittest\TestCLI.cpp" />
     <ClCompile Include="..\src\bin2cpp_unittest\TestCommon.cpp" />
+    <ClCompile Include="..\src\bin2cpp_unittest\TestEnvironmentFunc.cpp" />
     <ClCompile Include="..\src\bin2cpp_unittest\TestExtraction.cpp" />
+    <ClCompile Include="..\src\bin2cpp_unittest\TestFilesystemFunc.cpp" />
+    <ClCompile Include="..\src\bin2cpp_unittest\TestStringFunc.cpp" />
     <ClCompile Include="generated_files\testBaseClass\_testBaseClass.cpp" />
     <ClCompile Include="generated_files\testEncodingHex\_testEncodingHex.cpp" />
     <ClCompile Include="generated_files\testEncodingOct\_testEncodingOct.cpp" />
@@ -154,7 +157,10 @@
     <ClInclude Include="..\src\bin2cpp_unittest\gtesthelper.h" />
     <ClInclude Include="..\src\bin2cpp_unittest\TestCLI.h" />
     <ClInclude Include="..\src\bin2cpp_unittest\TestCommon.h" />
+    <ClInclude Include="..\src\bin2cpp_unittest\TestEnvironmentFunc.h" />
     <ClInclude Include="..\src\bin2cpp_unittest\TestExtraction.h" />
+    <ClInclude Include="..\src\bin2cpp_unittest\TestFilesystemFunc.h" />
+    <ClInclude Include="..\src\bin2cpp_unittest\TestStringFunc.h" />
     <ClInclude Include="generated_files\testBaseClass\_testBaseClass.h" />
     <ClInclude Include="generated_files\testEncodingHex\_testEncodingHex.h" />
     <ClInclude Include="generated_files\testEncodingOct\_testEncodingOct.h" />

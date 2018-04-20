@@ -247,10 +247,13 @@ namespace filesystem
     for(unsigned int i = 0; i<s.size(); i++)
     {
       const char & c = s[i];
-      if (c == getPathSeparator() && accumulator.size() > 0)
+      if ((c == '/' || c == '\\'))
       {
-        oElements.push_back(accumulator);
-        accumulator = "";
+        if (accumulator.size() > 0)
+        {
+          oElements.push_back(accumulator);
+          accumulator = "";
+        }
       }
       else
         accumulator += c;
