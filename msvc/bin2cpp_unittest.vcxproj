@@ -111,6 +111,7 @@
     <ClCompile Include="..\src\bin2cpp_unittest\TestEnvironmentFunc.cpp" />
     <ClCompile Include="..\src\bin2cpp_unittest\TestExtraction.cpp" />
     <ClCompile Include="..\src\bin2cpp_unittest\TestFilesystemFunc.cpp" />
+    <ClCompile Include="..\src\bin2cpp_unittest\TestNativeFunc.cpp" />
     <ClCompile Include="..\src\bin2cpp_unittest\TestStringFunc.cpp" />
     <ClCompile Include="generated_files\testBaseClass\_testBaseClass.cpp" />
     <ClCompile Include="generated_files\testEncodingHex\_testEncodingHex.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="..\src\bin2cpp_unittest\TestEnvironmentFunc.h" />
     <ClInclude Include="..\src\bin2cpp_unittest\TestExtraction.h" />
     <ClInclude Include="..\src\bin2cpp_unittest\TestFilesystemFunc.h" />
+    <ClInclude Include="..\src\bin2cpp_unittest\TestNativeFunc.h" />
     <ClInclude Include="..\src\bin2cpp_unittest\TestStringFunc.h" />
     <ClInclude Include="generated_files\testBaseClass\_testBaseClass.h" />
     <ClInclude Include="generated_files\testEncodingHex\_testEncodingHex.h" />

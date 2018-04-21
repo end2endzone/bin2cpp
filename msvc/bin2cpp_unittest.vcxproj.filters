@@ -126,6 +126,9 @@
     <ClCompile Include="..\src\bin2cpp_unittest\TestStringFunc.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\bin2cpp_unittest\TestNativeFunc.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin2cppTest.x86.debug.xml">
@@ -234,6 +237,9 @@
       <Filter>Tests</Filter>
     </ClInclude>
     <ClInclude Include="..\src\bin2cpp_unittest\TestStringFunc.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\bin2cpp_unittest\TestNativeFunc.h">
       <Filter>Tests</Filter>
     </ClInclude>
   </ItemGroup>

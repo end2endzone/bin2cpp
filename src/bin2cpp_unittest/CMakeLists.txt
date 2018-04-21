@@ -84,6 +84,8 @@ add_executable(bin2cpp_unittest
   TestEnvironmentFunc.h
   TestFilesystemFunc.cpp
   TestFilesystemFunc.h
+  TestNativeFunc.cpp
+  TestNativeFunc.h
   TestStringFunc.cpp
   TestStringFunc.h
   main.cpp

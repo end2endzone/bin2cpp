@@ -31,3 +31,5 @@
 /build
 /msvc/TestFilesystemFunc.testGetFileSize
 /msvc/TestFilesystemFunc.testFileExists
+/msvc/TestFilesystemFunc.testGetFileModifiedDate.1.txt
+/msvc/TestFilesystemFunc.testGetFileModifiedDate.2.txt
