@@ -17,6 +17,7 @@
     <ClCompile Include="..\src\common\environmentfunc.cpp" />
     <ClCompile Include="..\src\common\filesystemfunc.cpp" />
     <ClCompile Include="..\src\common\logger.cpp" />
+    <ClCompile Include="..\src\common\nativefunc.cpp" />
     <ClCompile Include="..\src\common\stringfunc.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -26,6 +27,7 @@
     <ClInclude Include="..\src\common\environmentfunc.h" />
     <ClInclude Include="..\src\common\filesystemfunc.h" />
     <ClInclude Include="..\src\common\logger.h" />
+    <ClInclude Include="..\src\common\nativefunc.h" />
     <ClInclude Include="..\src\common\stringfunc.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
