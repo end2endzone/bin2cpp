@@ -30,6 +30,20 @@ It is designed to be easy to use by developers and to provide easy call function
 
 The generated functions that reads and extracts the embedded content does not rely on external libraries so you don't need to setup your projects to use any third party library to start using bin2cpp. All your embedded data can be accessed right away.
 
+## Use cases ##
+
+The following list shows situations where bin2cpp is useful:
+
+* Embedding default configuration files if none are provided.
+* Embedding GLSL shaders into the executable.
+* Embedding text or XML databases (gui layout, names, language dictionaries
+* A portable alternative to C++11 raw string literals.
+* Prevent stealing copyrighted resources.
+* Embedding images/icons/sounds for a GUI application. The application executable can be shipped/copied as a single file. 
+* Embedding a long PL/SQL code string.
+* Allowing an executable to be downloaded from an intranet server as a single file.
+* Distributing an application without an installer package. All configurations files and resources can be embedded and extracted at first launch of the application.
+
 # Command Line Usage
 
 ```
@@ -171,7 +185,7 @@ namespace bin2cpp
 }; //bin2cpp
 ```
 
-### Code sample
+### Code sample (using embedded code)
 ```cpp
 #include <stdio.h>
 #include <string>
