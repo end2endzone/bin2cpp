@@ -72,7 +72,7 @@ namespace bin2cpp
     fprintf(cpp, "    %s() {}\n", className.c_str());
     fprintf(cpp, "    ~%s() {}\n", className.c_str());
     fprintf(cpp, "    virtual size_t getSize() const { return %d; }\n", fileSize);
-    fprintf(cpp, "    virtual const char * ra::filesystem::getFilename() const { return \"%s\"; }\n", ra::filesystem::getFilename(mInputFile.c_str()).c_str());
+    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::getFilename(mInputFile.c_str()).c_str());
     fprintf(cpp, "    virtual const char * getBuffer() const\n");
     fprintf(cpp, "    {\n");
     fprintf(cpp, "      const char * buffer = ""\n");

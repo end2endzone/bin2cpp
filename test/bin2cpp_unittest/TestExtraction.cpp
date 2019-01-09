@@ -34,8 +34,6 @@
 
 namespace TestExtractionUtils
 {
-  gTestHelper & hlp = gTestHelper::getInstance();
-
   std::string getExpectedFilePath()
   {
     std::string file;
