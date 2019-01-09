@@ -1,11 +1,8 @@
 set(BIN2CPP_HEADER_FILES ""
-#         ${BIN2CPP_INCLUDE_DIR}/bin2cpp/bin2cpp.h
-#         ${BIN2CPP_INCLUDE_DIR}/bin2cpp/notes.h
-#         ${BIN2CPP_INCLUDE_DIR}/bin2cpp/pitches.h
-#         ${BIN2CPP_INCLUDE_DIR}/bin2cpp/instruments.h
+  ${BIN2CPP_INCLUDE_DIR}/bin2cpp/bin2cpp.h
 )
 
-add_library(bin2cpp
+add_executable(bin2cpp
   ${BIN2CPP_HEADER_FILES}
   ${BIN2CPP_EXPORT_HEADER}
   ${BIN2CPP_VERSION_HEADER}
