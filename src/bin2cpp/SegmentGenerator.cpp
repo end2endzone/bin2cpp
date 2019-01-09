@@ -4,13 +4,9 @@
 #include <string>
 #include <stdlib.h>
 
-#include "common.h"
-#include "cppencoder.h"
-#include "stringfunc.h"
-#include "filesystemfunc.h"
-
-using namespace stringfunc;
-using namespace filesystem;
+#include "rapidassist/cppencoder.h"
+#include "rapidassist/strings.h"
+#include "rapidassist/filesystem.h"
 
 namespace bin2cpp
 {
@@ -35,13 +31,13 @@ namespace bin2cpp
       return false;
 
     //Uppercase function identifier
-    std::string functionIdentifier = capitalizeFirstCharacter(mFunctionIdentifier);
+    std::string functionIdentifier = ra::strings::capitalizeFirstCharacter(mFunctionIdentifier);
 
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(iCppFilePath);
     std::string cppPath = iCppFilePath;
-    std::string headerFilename = getFilename(headerPath.c_str());
-    std::string cppFilename = getFilename(iCppFilePath);
+    std::string headerFilename = ra::filesystem::getFilename(headerPath.c_str());
+    std::string cppFilename = ra::filesystem::getFilename(iCppFilePath);
 
     //create cpp file
     FILE * cpp = fopen(cppPath.c_str(), "w");
@@ -52,8 +48,8 @@ namespace bin2cpp
     }
 
     //determine file properties
-    long fileSize = getFileSize(input);
-    std::string filename = getFilename(mInputFile.c_str());
+    long fileSize = ra::filesystem::getFileSize(input);
+    std::string filename = ra::filesystem::getFilename(mInputFile.c_str());
     //long lastSegmentSize = fileSize%iChunkSize;
     //size_t numSegments = fileSize/iChunkSize + (lastSegmentSize == 0 ? 0 : 1);
 
@@ -78,7 +74,7 @@ namespace bin2cpp
     fprintf(cpp, "    %s() { build(); }\n", className.c_str());
     fprintf(cpp, "    ~%s() {}\n", className.c_str());
     fprintf(cpp, "    virtual size_t getSize() const { return %d; }\n", fileSize);
-    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", getFilename(mInputFile.c_str()).c_str());
+    fprintf(cpp, "    virtual const char * ra::filesystem::getFilename() const { return \"%s\"; }\n", ra::filesystem::getFilename(mInputFile.c_str()).c_str());
     fprintf(cpp, "    virtual const char * getBuffer() const { return mBuffer.c_str(); }\n");
     fprintf(cpp, "    void build()\n");
     fprintf(cpp, "    {\n");
@@ -102,11 +98,11 @@ namespace bin2cpp
       switch(mCppEncoder)
       {
       case IGenerator::CPP_ENCODER_HEX:
-        cppEncoder = cppencoder::toHexString(buffer, readSize);
+        cppEncoder = ra::cppencoder::toHexString(buffer, readSize);
         break;
       case IGenerator::CPP_ENCODER_OCT:
       default:
-        cppEncoder = cppencoder::toOctString(buffer, readSize, false);
+        cppEncoder = ra::cppencoder::toOctString(buffer, readSize, false);
         break;
       };
 

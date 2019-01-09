@@ -1,0 +1,15 @@
+@LICENSE@
+#ifndef BIN2CPP_CONFIG_H
+#define BIN2CPP_CONFIG_H
+
+@BIN2CPP_BUILD_TYPE_CPP_DEFINE@
+
+#ifdef BIN2CPP_BUILT_AS_SHARED
+#   include "export.h"
+#endif
+
+#ifndef BIN2CPP_EXPORT
+#   define BIN2CPP_EXPORT
+#endif
+
+#endif //BIN2CPP_CONFIG_H
