@@ -55,12 +55,29 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testText100000/_testText100000.cpp
 )
 
+#  https://stackoverflow.com/questions/18427877/add-custom-build-step-in-cmake
 if (WIN32)
-  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/generate_test_files.bat DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  # Generate test file for 'Debug' configuration.
+  set(TESTFILEGENERATOR_TARGET_PATH testfilegenerator-d.exe)
+  set(BIN2CPP_TARGET_PATH bin2cpp-d.exe)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/generate_test_files.bat.in ${CMAKE_CURRENT_BINARY_DIR}/generate_test_files_Debug.bat @ONLY)
+
+  # Generate test file for 'Release' configuration.
+  set(TESTFILEGENERATOR_TARGET_PATH testfilegenerator.exe)
+  set(BIN2CPP_TARGET_PATH bin2cpp.exe)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/generate_test_files.bat.in ${CMAKE_CURRENT_BINARY_DIR}/generate_test_files_Release.bat @ONLY)
+
   add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
+                      # Copy generator script of the current configuration to the final output file
+                      COMMAND copy /v generate_test_files_$(Configuration).bat generate_test_files.bat
+
+                      # Execute generator script
                       COMMAND set PATH=${CMAKE_BINARY_DIR}/bin/$(Configuration)\;%PATH%
                       COMMAND call generate_test_files.bat
   )
+
+  # Show all generated files in a common folder
+  source_group("Generated Files" FILES ${GENERATED_TEST_FILES})
 endif()
 
 add_executable(bin2cpp_unittest
@@ -70,7 +87,7 @@ add_executable(bin2cpp_unittest
   application.cpp
   application.h
   CMakeLists.txt
-  generate_test_files.bat
+  generate_test_files.bat.in
   main.cpp
   TestCLI.cpp
   TestCLI.h
@@ -105,3 +122,6 @@ install(TARGETS bin2cpp_unittest
         LIBRARY DESTINATION ${BIN2CPP_INSTALL_LIB_DIR}
         RUNTIME DESTINATION ${BIN2CPP_INSTALL_BIN_DIR}
 )
+if (WIN32)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/generate_test_files.bat DESTINATION ${BIN2CPP_INSTALL_BIN_DIR})
+endif()
