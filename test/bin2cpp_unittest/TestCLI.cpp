@@ -121,6 +121,9 @@ TEST_F(TestCLI, testVersion)
   //assert standard output log
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
   ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
 
 TEST_F(TestCLI, testHelp)
@@ -147,6 +150,9 @@ TEST_F(TestCLI, testHelp)
   //assert standard output log
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Usage:");
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
 
 TEST_F(TestCLI, testNoArguments)
@@ -172,6 +178,9 @@ TEST_F(TestCLI, testNoArguments)
   //assert standard output log
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Usage:");
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
 
 TEST_F(TestCLI, testMinimum)
@@ -216,6 +225,9 @@ TEST_F(TestCLI, testMinimum)
 
   //assert generated code
   ASSERT_TRUE(ra::filesystem::fileExists(headerFilePath.c_str()));
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
 
 TEST_F(TestCLI, testQuiet)
@@ -262,6 +274,9 @@ TEST_F(TestCLI, testQuiet)
 
   //assert generated code
   ASSERT_TRUE(ra::filesystem::fileExists(headerFilePath.c_str()));
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
 
 TEST_F(TestCLI, testNoHeader)
@@ -307,6 +322,9 @@ TEST_F(TestCLI, testNoHeader)
 
   //assert generated code
   ASSERT_TRUE(ra::filesystem::fileExists(headerFilePath.c_str()));
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
 
 TEST_F(TestCLI, testGenerators)
@@ -380,6 +398,9 @@ TEST_F(TestCLI, testGenerators)
       }
     }
   }
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
 
 TEST_F(TestCLI, testNewFiles)
@@ -416,6 +437,9 @@ TEST_F(TestCLI, testNewFiles)
   int returnCode = system(cmdline.c_str());
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Writing file");
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
 
 TEST_F(TestCLI, testUpdating)
@@ -463,6 +487,9 @@ TEST_F(TestCLI, testUpdating)
   
   //look for the expected message
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Updating file");
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
 
 TEST_F(TestCLI, testOverride)
@@ -506,6 +533,9 @@ TEST_F(TestCLI, testOverride)
   returnCode = system(cmdline.c_str());
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Overwriting file");
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
 
 TEST_F(TestCLI, testSkipping)
@@ -548,6 +578,9 @@ TEST_F(TestCLI, testSkipping)
   
   //look for the expected message
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Skipping file");
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
 
 TEST_F(TestCLI, testEncoding)
@@ -644,4 +677,7 @@ TEST_F(TestCLI, testEncoding)
     ASSERT_TRUE(ra::filesystem::fileExists(cppFilePath.c_str()));
     ASSERT_TEXT_IN_FILE(true, cppFilePath.c_str(), "mBuffer.append(\"CZq\\210\\237\\266\\315\\344\\373\\022)");
   }
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
