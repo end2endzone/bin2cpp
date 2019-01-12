@@ -68,8 +68,11 @@ if (WIN32)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/generate_test_files.bat.in ${CMAKE_CURRENT_BINARY_DIR}/generate_test_files_Release.bat @ONLY)
 
   add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
-                      # Copy generator script of the current configuration to the final output file
-                      COMMAND copy /v generate_test_files_$(Configuration).bat generate_test_files.bat
+                      # Copy generator script of the current configuration to the final output file. This file will be the one used when installing.
+                      COMMAND ${CMAKE_COMMAND} -E copy generate_test_files_$(Configuration).bat generate_test_files.bat
+
+                      # Copy generator script to $(OutDir) for running unit tests on AppVeyor.
+                      COMMAND ${CMAKE_COMMAND} -E copy generate_test_files.bat ${CMAKE_BINARY_DIR}/bin/$(Configuration)
 
                       # Execute generator script
                       COMMAND set PATH=${CMAKE_BINARY_DIR}/bin/$(Configuration)\;%PATH%
