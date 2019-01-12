@@ -20,16 +20,16 @@ int main(int argc, char **argv)
   if (ra::gtesthelp::isProcessorX86())
   {
     if (ra::gtesthelp::isDebugCode())
-      ::testing::GTEST_FLAG(output) = "xml:bin2cppTest.x86.debug.xml";
+      ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x86.debug.xml";
     else
-      ::testing::GTEST_FLAG(output) = "xml:bin2cppTest.x86.release.xml";
+      ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x86.release.xml";
   }
   else if (ra::gtesthelp::isProcessorX64())
   {
     if (ra::gtesthelp::isDebugCode())
-      ::testing::GTEST_FLAG(output) = "xml:bin2cppTest.x64.debug.xml";
+      ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x64.debug.xml";
     else
-      ::testing::GTEST_FLAG(output) = "xml:bin2cppTest.x64.release.xml";
+      ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x64.release.xml";
   }
 
   ::testing::GTEST_FLAG(filter) = "*";
