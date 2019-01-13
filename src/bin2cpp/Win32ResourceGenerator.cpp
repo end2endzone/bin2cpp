@@ -52,7 +52,7 @@ namespace bin2cpp
     }
 
     //determine file properties
-    //long fileSize = ra::filesystem::getFileSize(input);
+    //uint32_t fileSize = ra::filesystem::getFileSize(input);
     std::string filename = ra::filesystem::getFilename(mInputFile.c_str());
 
     //Build class name

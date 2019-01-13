@@ -48,7 +48,7 @@ namespace bin2cpp
     }
 
     //determine file properties
-    long fileSize = ra::filesystem::getFileSize(input);
+    uint32_t fileSize = ra::filesystem::getFileSize(input);
     std::string filename = ra::filesystem::getFilename(mInputFile.c_str());
     //long lastSegmentSize = fileSize%iChunkSize;
     //size_t numSegments = fileSize/iChunkSize + (lastSegmentSize == 0 ? 0 : 1);
@@ -73,7 +73,7 @@ namespace bin2cpp
     fprintf(cpp, "  public:\n");
     fprintf(cpp, "    %s() { build(); }\n", className.c_str());
     fprintf(cpp, "    ~%s() {}\n", className.c_str());
-    fprintf(cpp, "    virtual size_t getSize() const { return %d; }\n", fileSize);
+    fprintf(cpp, "    virtual size_t getSize() const { return %lu; }\n", fileSize);
     fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::getFilename(mInputFile.c_str()).c_str());
     fprintf(cpp, "    virtual const char * getBuffer() const { return mBuffer.c_str(); }\n");
     fprintf(cpp, "    void build()\n");
