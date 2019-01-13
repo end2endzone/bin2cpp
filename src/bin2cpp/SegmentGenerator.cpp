@@ -107,7 +107,7 @@ namespace bin2cpp
       };
 
       //output
-      fprintf(cpp, "      mBuffer.append(\"%s\", %d);\n", cppEncoder.c_str(), readSize);
+      fprintf(cpp, "      mBuffer.append(\"%s\", %u);\n", cppEncoder.c_str(), readSize);
     }
     delete[] buffer;
     buffer = NULL;
