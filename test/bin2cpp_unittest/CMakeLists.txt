@@ -58,13 +58,13 @@ set(GENERATED_TEST_FILES
 #  https://stackoverflow.com/questions/18427877/add-custom-build-step-in-cmake
 if (WIN32)
   # Generate test file for 'Debug' configuration.
-  set(TESTFILEGENERATOR_TARGET_PATH testfilegenerator-d.exe)
-  set(BIN2CPP_TARGET_PATH bin2cpp-d.exe)
+  set(TESTFILEGENERATOR_TARGET_FILE testfilegenerator-d.exe)
+  set(BIN2CPP_TARGET_FILE bin2cpp-d.exe)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/generate_test_files.bat.in ${CMAKE_CURRENT_BINARY_DIR}/generate_test_files_Debug.bat @ONLY)
 
   # Generate test file for 'Release' configuration.
-  set(TESTFILEGENERATOR_TARGET_PATH testfilegenerator.exe)
-  set(BIN2CPP_TARGET_PATH bin2cpp.exe)
+  set(TESTFILEGENERATOR_TARGET_FILE testfilegenerator.exe)
+  set(BIN2CPP_TARGET_FILE bin2cpp.exe)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/generate_test_files.bat.in ${CMAKE_CURRENT_BINARY_DIR}/generate_test_files_Release.bat @ONLY)
 
   add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
@@ -81,6 +81,24 @@ if (WIN32)
 
   # Show all generated files in a common folder
   source_group("Generated Files" FILES ${GENERATED_TEST_FILES})
+else()
+  # Linux build
+  add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
+                      # Copy generator script to ${CMAKE_BINARY_DIR}/bin for running unit tests on Travis CI.
+                      COMMAND ${CMAKE_COMMAND} -E copy generate_test_files.sh ${CMAKE_BINARY_DIR}/bin
+
+                      # Execute prebuild copy
+                      COMMAND ${CMAKE_COMMAND} 
+                        -DBIN2CPP_TARGET_FILE=$<TARGET_FILE:bin2cpp>
+                        -DTESTFILEGENERATOR_TARGET_FILE=$<TARGET_FILE:testfilegenerator>
+                        -DBIN2CPP_UNITTEST_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+                        -P ${CMAKE_CURRENT_SOURCE_DIR}/prebuild.cmake
+                      
+                      # Execute generator script
+                      COMMAND export PATH=$PATH:${CMAKE_BINARY_DIR}/bin
+                      COMMAND ./generate_test_files.sh
+  )
+  
 endif()
 
 add_executable(bin2cpp_unittest
@@ -127,4 +145,6 @@ install(TARGETS bin2cpp_unittest
 )
 if (WIN32)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/generate_test_files.bat DESTINATION ${BIN2CPP_INSTALL_BIN_DIR})
+else()
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/generate_test_files.sh  DESTINATION ${BIN2CPP_INSTALL_BIN_DIR})
 endif()
