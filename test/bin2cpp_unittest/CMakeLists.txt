@@ -1,6 +1,34 @@
 set(GENERATED_TEST_FILES_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated_files)
-include_directories(${GENERATED_TEST_FILES_DIR})
-include_directories(${GENERATED_TEST_FILES_DIR}/..)
+include_directories(${GENERATED_TEST_FILES_DIR})    # for TestExtraction.cpp
+
+# Include directories for each generated files.
+include_directories(${GENERATED_TEST_FILES_DIR}/testBaseClass)
+include_directories(${GENERATED_TEST_FILES_DIR}/testEncodingHex)
+include_directories(${GENERATED_TEST_FILES_DIR}/testEncodingOct)
+include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorArray10000)
+include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorSegment10000)
+include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorString10000)
+include_directories(${GENERATED_TEST_FILES_DIR}/testHtml100000)
+include_directories(${GENERATED_TEST_FILES_DIR}/testIssue12)
+include_directories(${GENERATED_TEST_FILES_DIR}/testIssue12Mini)
+include_directories(${GENERATED_TEST_FILES_DIR}/testIssue13)
+include_directories(${GENERATED_TEST_FILES_DIR}/testNamespace)
+include_directories(${GENERATED_TEST_FILES_DIR}/testRandom1)
+include_directories(${GENERATED_TEST_FILES_DIR}/testRandom2)
+include_directories(${GENERATED_TEST_FILES_DIR}/testRandom3)
+include_directories(${GENERATED_TEST_FILES_DIR}/testRandom4)
+include_directories(${GENERATED_TEST_FILES_DIR}/testRandom5)
+include_directories(${GENERATED_TEST_FILES_DIR}/testRandom6)
+include_directories(${GENERATED_TEST_FILES_DIR}/testRandom7)
+include_directories(${GENERATED_TEST_FILES_DIR}/testRandom8)
+include_directories(${GENERATED_TEST_FILES_DIR}/testSequential1000)
+include_directories(${GENERATED_TEST_FILES_DIR}/testSequential10MB)
+include_directories(${GENERATED_TEST_FILES_DIR}/testText10)
+include_directories(${GENERATED_TEST_FILES_DIR}/testText1000)
+include_directories(${GENERATED_TEST_FILES_DIR}/testText100000)
+if (WIN32)
+  include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorWin32)
+endif()
 
 set(GENERATED_TEST_FILES 
   ${GENERATED_TEST_FILES_DIR}/testBaseClass/_testBaseClass.h
@@ -15,8 +43,6 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testGeneratorSegment10000/_testGeneratorSegment10000.cpp
   ${GENERATED_TEST_FILES_DIR}/testGeneratorString10000/_testGeneratorString10000.h
   ${GENERATED_TEST_FILES_DIR}/testGeneratorString10000/_testGeneratorString10000.cpp
-  ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32/_testGeneratorWin32.h
-  ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32/_testGeneratorWin32.cpp
   ${GENERATED_TEST_FILES_DIR}/testHtml100000/_testHtml100000.h
   ${GENERATED_TEST_FILES_DIR}/testHtml100000/_testHtml100000.cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue12/_testIssue12.h
@@ -54,6 +80,13 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testText100000/_testText100000.h
   ${GENERATED_TEST_FILES_DIR}/testText100000/_testText100000.cpp
 )
+if (WIN32)
+  # Include win32 generated test files only on Windows platform.
+  set(GENERATED_TEST_FILES ${GENERATED_TEST_FILES} 
+      ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32/_testGeneratorWin32.h
+      ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32/_testGeneratorWin32.cpp
+  )
+endif()
 
 #  https://stackoverflow.com/questions/18427877/add-custom-build-step-in-cmake
 if (WIN32)

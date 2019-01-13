@@ -1,38 +1,42 @@
 #include "TestExtraction.h"
 
 #include "rapidassist/gtesthelp.h"
+#include "rapidassist/filesystem.h"
 
-#include "generated_files\testHtml100000\_testHtml100000.h"
-#include "generated_files\testRandom1\_testRandom1.h"
-#include "generated_files\testRandom2\_testRandom2.h"
-#include "generated_files\testRandom3\_testRandom3.h"
-#include "generated_files\testRandom4\_testRandom4.h"
-#include "generated_files\testRandom5\_testRandom5.h"
-#include "generated_files\testRandom6\_testRandom6.h"
-#include "generated_files\testRandom7\_testRandom7.h"
-#include "generated_files\testRandom8\_testRandom8.h"
-#include "generated_files\testSequential1000\_testSequential1000.h"
-#include "generated_files\testSequential10MB\_testSequential10MB.h"
-#include "generated_files\testGeneratorArray10000\_testGeneratorArray10000.h"
-#include "generated_files\testGeneratorSegment10000\_testGeneratorSegment10000.h"
-#include "generated_files\testGeneratorString10000\_testGeneratorString10000.h"
-#include "generated_files\testGeneratorWin32\_testGeneratorWin32.h"
-#include "generated_files\testEncodingOct\_testEncodingOct.h"
-#include "generated_files\testEncodingHex\_testEncodingHex.h"
-#include "generated_files\testText10\_testText10.h"
-#include "generated_files\testText1000\_testText1000.h"
-#include "generated_files\testText100000\_testText100000.h"
-#include "generated_files\testIssue12\_testIssue12.h"
-#include "generated_files\testIssue12Mini\_testIssue12Mini.h"
-#include "generated_files\testIssue13\_testIssue13.h"
+//generated_files
+#include "testHtml100000/_testHtml100000.h"
+#include "testRandom1/_testRandom1.h"
+#include "testRandom2/_testRandom2.h"
+#include "testRandom3/_testRandom3.h"
+#include "testRandom4/_testRandom4.h"
+#include "testRandom5/_testRandom5.h"
+#include "testRandom6/_testRandom6.h"
+#include "testRandom7/_testRandom7.h"
+#include "testRandom8/_testRandom8.h"
+#include "testSequential1000/_testSequential1000.h"
+#include "testSequential10MB/_testSequential10MB.h"
+#include "testGeneratorArray10000/_testGeneratorArray10000.h"
+#include "testGeneratorSegment10000/_testGeneratorSegment10000.h"
+#include "testGeneratorString10000/_testGeneratorString10000.h"
+#ifdef _WIN32
+#include "testGeneratorWin32/_testGeneratorWin32.h"
+#endif
+#include "testEncodingOct/_testEncodingOct.h"
+#include "testEncodingHex/_testEncodingHex.h"
+#include "testText10/_testText10.h"
+#include "testText1000/_testText1000.h"
+#include "testText100000/_testText100000.h"
+#include "testIssue12/_testIssue12.h"
+#include "testIssue12Mini/_testIssue12Mini.h"
+#include "testIssue13/_testIssue13.h"
 
 #undef BIN2CPP_EMBEDDEDFILE_CLASS
-#include "generated_files\testNamespace\_testNamespace.h"
+#include "testNamespace/_testNamespace.h"
 
 #undef BIN2CPP_EMBEDDEDFILE_CLASS
-#include "generated_files\testBaseClass\_testBaseClass.h"
+#include "testBaseClass/_testBaseClass.h"
 
-extern const std::string gGeneratedFilesDir;
+extern const std::string & gGeneratedFilesDir;
 
 namespace TestExtractionUtils
 {
@@ -41,7 +45,7 @@ namespace TestExtractionUtils
     std::string file;
     file.append(gGeneratedFilesDir);
     file.append(ra::gtesthelp::getTestCaseName());
-    file.append("\\");
+    file.append(ra::filesystem::getPathSeparatorStr());
     file.append(ra::gtesthelp::getTestCaseName());
     file.append(".bin");
     return file;
@@ -52,7 +56,7 @@ namespace TestExtractionUtils
     std::string file;
     file.append(gGeneratedFilesDir);
     file.append(ra::gtesthelp::getTestCaseName());
-    file.append("\\");
+    file.append(ra::filesystem::getPathSeparatorStr());
     file.append(ra::gtesthelp::getTestCaseName());
     file.append(".output");
     return file;
@@ -323,6 +327,7 @@ TEST_F(TestExtraction, testGeneratorString10000)
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
+#ifdef _WIN32
 TEST_F(TestExtraction, testGeneratorWin32)
 {
   static const std::string expectedFilePath = getExpectedFilePath();
@@ -337,6 +342,7 @@ TEST_F(TestExtraction, testGeneratorWin32)
   bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
+#endif
 
 TEST_F(TestExtraction, testEncodingOct)
 {

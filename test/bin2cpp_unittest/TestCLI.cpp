@@ -6,10 +6,11 @@
 #include "rapidassist/strings.h"
 #include "rapidassist/time_.h"
 
+extern const std::string & gGeneratedFilesDir;
 #ifdef _WIN32
-  static const std::string gGeneratedFilesDir = "generated_files\\";
+  const std::string & gGeneratedFilesDir = "generated_files\\";
 #else
-  static const std::string gGeneratedFilesDir = "generated_files/";
+  const std::string & gGeneratedFilesDir = "generated_files/";
 #endif
   
 #define ASSERT_TEXT_IN_FILE(expected, filepath, text) {\
