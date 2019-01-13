@@ -5,7 +5,9 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#include <time.h>       /* time */
+#include <time.h>   // for time()
+#include <cstdlib>  // for rand(), srand()
+#include <ctime>    // for rand(), srand()
 
 #include "rapidassist/cli.h"
 #include "rapidassist/logger.h"
