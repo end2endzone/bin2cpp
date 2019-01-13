@@ -98,7 +98,11 @@ void printUsage()
     "  --help               Display this help message.\n"
     "  --version            Display this application version.\n"
     "  --file=<path>        Path of the input file used for embedding as a C++ source code.\n"
+    #ifdef _WIN32
     "  --output=<path>      Output folder where to create generated code. ie: .\\generated_files\n"
+    #else
+    "  --output=<path>      Output folder where to create generated code. ie: ./generated_files\n"
+    #endif
     "  --headerfile=<name>  File name of the generated C++ Header file. ie: SplashScreen.h\n"
     "  --generator=<name>   Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'. [default: segment].\n"
     "  --encoding=<name>    Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct].\n"
@@ -303,8 +307,8 @@ int main(int argc, char* argv[])
   ra::logger::log(ra::logger::LOG_INFO, info.c_str());
 
   //prepare output files path
-  std::string outputHeaderPath = outputFolder + "\\" + headerFilename;
-  std::string outputCppPath = outputFolder + "\\" + headerFilename;         ra::strings::replace(outputCppPath, ".h", ".cpp");
+  std::string outputHeaderPath = outputFolder + ra::filesystem::getPathSeparatorStr() + headerFilename;
+  std::string outputCppPath = outputFolder + ra::filesystem::getPathSeparatorStr() + headerFilename;         ra::strings::replace(outputCppPath, ".h", ".cpp");
   std::string cppFilename = headerFilename;                                 ra::strings::replace(cppFilename, ".h", ".cpp");  
 
   //check if input file exists

@@ -178,7 +178,7 @@ namespace bin2cpp
 
     std::string filePath = mInputFile;
     ra::strings::replace(filePath, "\\", "\\\\");
-
+  
     //write res file heading
     fprintf(res, "%s", getHeaderTemplate().c_str());
     fprintf(res, "#include <windows.h>\n");

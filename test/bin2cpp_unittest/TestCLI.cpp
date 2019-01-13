@@ -6,6 +6,12 @@
 #include "rapidassist/strings.h"
 #include "rapidassist/time_.h"
 
+#ifdef _WIN32
+  static const std::string gGeneratedFilesDir = "generated_files\\";
+#else
+  static const std::string gGeneratedFilesDir = "generated_files/";
+#endif
+  
 #define ASSERT_TEXT_IN_FILE(expected, filepath, text) {\
   int line = -1;  int col = -1;  bool textFound = ra::gtesthelp::findInFile(filepath, text, line, col);\
   if ((expected)) {\
@@ -189,7 +195,7 @@ TEST_F(TestCLI, testMinimum)
   static const std::string outputFilePath   = getActualFilePath();
 
   std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
-  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
   std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
 
   //build command line
@@ -236,7 +242,7 @@ TEST_F(TestCLI, testQuiet)
   static const std::string outputFilePath   = getActualFilePath();
 
   std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
-  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
   std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
 
   //build command line
@@ -285,7 +291,7 @@ TEST_F(TestCLI, testNoHeader)
   static const std::string outputFilePath   = getActualFilePath();
 
   std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
-  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
   std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
 
   //build command line
@@ -348,7 +354,7 @@ TEST_F(TestCLI, testGenerators)
     printf("Testing '%s' generator...\n", generatorName);
 
     std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + "." + generatorName + ".h";
-    std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+    std::string headerFilePath = gGeneratedFilesDir + headerFileName;
     std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
 
     //build command line
@@ -409,9 +415,9 @@ TEST_F(TestCLI, testNewFiles)
   static const std::string outputFilePath   = getActualFilePath();
 
   std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
-  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
   std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
-  std::string inputFilePath = std::string("generated_files\\") + ra::gtesthelp::getTestCaseName() + ".bin";
+  std::string inputFilePath = gGeneratedFilesDir + ra::gtesthelp::getTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
 
@@ -448,9 +454,9 @@ TEST_F(TestCLI, testUpdating)
   static const std::string outputFilePath   = getActualFilePath();
 
   std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
-  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
   std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
-  std::string inputFilePath = std::string("generated_files\\") + ra::gtesthelp::getTestCaseName() + ".bin";
+  std::string inputFilePath = gGeneratedFilesDir + ra::gtesthelp::getTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
 
@@ -498,9 +504,9 @@ TEST_F(TestCLI, testOverride)
   static const std::string outputFilePath   = getActualFilePath();
 
   std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
-  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
   std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
-  std::string inputFilePath = std::string("generated_files\\") + ra::gtesthelp::getTestCaseName() + ".bin";
+  std::string inputFilePath = gGeneratedFilesDir + ra::gtesthelp::getTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
 
@@ -544,9 +550,9 @@ TEST_F(TestCLI, testSkipping)
   static const std::string outputFilePath   = getActualFilePath();
 
   std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
-  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
   std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
-  std::string inputFilePath = std::string("generated_files\\") + ra::gtesthelp::getTestCaseName() + ".bin";
+  std::string inputFilePath = gGeneratedFilesDir + ra::gtesthelp::getTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
 
@@ -589,9 +595,9 @@ TEST_F(TestCLI, testEncoding)
   static const std::string outputFilePath   = getActualFilePath();
 
   std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
-  std::string headerFilePath = std::string("generated_files\\") + headerFileName;
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
   std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
-  std::string inputFilePath = std::string("generated_files\\") + ra::gtesthelp::getTestCaseName() + ".bin";
+  std::string inputFilePath = gGeneratedFilesDir + ra::gtesthelp::getTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
 

@@ -32,12 +32,14 @@
 #undef BIN2CPP_EMBEDDEDFILE_CLASS
 #include "generated_files\testBaseClass\_testBaseClass.h"
 
+extern const std::string gGeneratedFilesDir;
+
 namespace TestExtractionUtils
 {
   std::string getExpectedFilePath()
   {
     std::string file;
-    file.append("generated_files\\");
+    file.append(gGeneratedFilesDir);
     file.append(ra::gtesthelp::getTestCaseName());
     file.append("\\");
     file.append(ra::gtesthelp::getTestCaseName());
@@ -48,7 +50,7 @@ namespace TestExtractionUtils
   std::string getActualFilePath()
   {
     std::string file;
-    file.append("generated_files\\");
+    file.append(gGeneratedFilesDir);
     file.append(ra::gtesthelp::getTestCaseName());
     file.append("\\");
     file.append(ra::gtesthelp::getTestCaseName());
