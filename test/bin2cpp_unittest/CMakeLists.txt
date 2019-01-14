@@ -117,9 +117,6 @@ if (WIN32)
 else()
   # Linux build
   add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
-                      # Copy generator script to ${CMAKE_BINARY_DIR}/bin for running unit tests on Travis CI.
-                      COMMAND ${CMAKE_COMMAND} -E copy generate_test_files.sh ${CMAKE_BINARY_DIR}/bin
-
                       # Execute prebuild copy
                       COMMAND ${CMAKE_COMMAND} 
                         -DBIN2CPP_TARGET_FILE=$<TARGET_FILE:bin2cpp>
