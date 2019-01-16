@@ -1,3 +1,27 @@
+/**********************************************************************************
+ * MIT License
+ * 
+ * Copyright (c) 2018 Antoine Beauchamp
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *********************************************************************************/
+
 #include "BaseGenerator.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -155,10 +179,16 @@ namespace bin2cpp
     if (!header)
       return false;
 
+    //define macro guard a macro matching the filename
+    std::string macro_guard = getCppIncludeGuardMacroName(iHeaderFilePath);
+
     std::string headercomments = getHeaderTemplate();
     fprintf(header, "%s", headercomments.c_str());
-    fprintf(header, "#pragma once\n");
+    fprintf(header, "#ifndef %s\n", macro_guard.c_str());
+    fprintf(header, "#define %s\n", macro_guard.c_str());
+    fprintf(header, "\n");
     fprintf(header, "#include <stddef.h>\n");
+    fprintf(header, "\n");
     fprintf(header, "namespace %s\n", mNamespace.c_str());
     fprintf(header, "{\n");
     fprintf(header, "  #ifndef BIN2CPP_EMBEDDEDFILE_CLASS\n");
@@ -174,6 +204,8 @@ namespace bin2cpp
     fprintf(header, "  #endif\n");
     fprintf(header, "  const %s & %s();\n", mBaseClass.c_str(), getGetterFunctionName().c_str());
     fprintf(header, "}; //%s\n", mNamespace.c_str());
+    fprintf(header, "\n");
+    fprintf(header, "#endif //%s\n", macro_guard.c_str());
 
     fclose(header);
 

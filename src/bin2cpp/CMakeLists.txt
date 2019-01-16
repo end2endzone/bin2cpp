@@ -20,7 +20,6 @@ add_executable(bin2cpp
   SegmentGenerator.h
   StringGenerator.cpp
   StringGenerator.h
-  targetver.h
   Win32ResourceGenerator.cpp
   Win32ResourceGenerator.h
 )
