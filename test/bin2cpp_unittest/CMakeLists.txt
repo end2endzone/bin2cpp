@@ -90,30 +90,21 @@ endif()
 
 #  https://stackoverflow.com/questions/18427877/add-custom-build-step-in-cmake
 if (WIN32)
-  # Generate test file for 'Debug' configuration.
-  set(TESTFILEGENERATOR_TARGET_FILE testfilegenerator-d.exe)
-  set(BIN2CPP_TARGET_FILE bin2cpp-d.exe)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/generate_test_files.bat.in ${CMAKE_CURRENT_BINARY_DIR}/generate_test_files_Debug.bat @ONLY)
-
-  # Generate test file for 'Release' configuration.
-  set(TESTFILEGENERATOR_TARGET_FILE testfilegenerator.exe)
-  set(BIN2CPP_TARGET_FILE bin2cpp.exe)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/generate_test_files.bat.in ${CMAKE_CURRENT_BINARY_DIR}/generate_test_files_Release.bat @ONLY)
-
   add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
-                      # Copy generator script of the current configuration to the final output file. This file will be the one used when installing.
-                      COMMAND ${CMAKE_COMMAND} -E copy generate_test_files_$(Configuration).bat generate_test_files.bat
-
-                      # Copy generator script to $(OutDir) for running unit tests on AppVeyor.
-                      COMMAND ${CMAKE_COMMAND} -E copy generate_test_files.bat ${CMAKE_BINARY_DIR}/bin/$(Configuration)
+                      # Execute prebuild copy
+                      COMMAND ${CMAKE_COMMAND} 
+                        -DBIN2CPP_TARGET_FILE=$<TARGET_FILE:bin2cpp>
+                        -DTESTFILEGENERATOR_TARGET_FILE=$<TARGET_FILE:testfilegenerator>
+                        -DBIN2CPP_UNITTEST_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+                        -DBIN2CPP_UNITTEST_PROJECT_DIR=${CMAKE_CURRENT_BINARY_DIR}
+                        -DBIN2CPP_UNITTEST_OUTPUT_DIR=${CMAKE_BINARY_DIR}/bin/$(Configuration)
+                        -P ${CMAKE_CURRENT_SOURCE_DIR}/generate_test_files.cmake
 
                       # Execute generator script
+                      COMMAND echo Calling 'generate_test_files.bat' script...
                       COMMAND set PATH=${CMAKE_BINARY_DIR}/bin/$(Configuration)\;%PATH%
                       COMMAND call generate_test_files.bat
   )
-
-  # Show all generated files in a common folder
-  source_group("Generated Files" FILES ${GENERATED_TEST_FILES})
 else()
   # Linux build
   add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
@@ -122,14 +113,20 @@ else()
                         -DBIN2CPP_TARGET_FILE=$<TARGET_FILE:bin2cpp>
                         -DTESTFILEGENERATOR_TARGET_FILE=$<TARGET_FILE:testfilegenerator>
                         -DBIN2CPP_UNITTEST_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
-                        -P ${CMAKE_CURRENT_SOURCE_DIR}/prebuild.cmake
+                        -DBIN2CPP_UNITTEST_PROJECT_DIR=${CMAKE_CURRENT_BINARY_DIR}
+                        -DBIN2CPP_UNITTEST_OUTPUT_DIR=${CMAKE_BINARY_DIR}/bin
+                        -P ${CMAKE_CURRENT_SOURCE_DIR}/generate_test_files.cmake
                       
                       # Execute generator script
+                      COMMAND echo Calling 'generate_test_files.sh' script...
                       COMMAND export PATH=$PATH:${CMAKE_BINARY_DIR}/bin
                       COMMAND ./generate_test_files.sh
   )
   
 endif()
+
+# Show all generated files in a common folder
+source_group("Generated Files" FILES ${GENERATED_TEST_FILES})
 
 add_executable(bin2cpp_unittest
   ${BIN2CPP_EXPORT_HEADER}
@@ -139,6 +136,8 @@ add_executable(bin2cpp_unittest
   application.h
   CMakeLists.txt
   generate_test_files.bat.in
+  generate_test_files.sh.in
+  generate_test_files.cmake
   main.cpp
   TestCLI.cpp
   TestCLI.h
