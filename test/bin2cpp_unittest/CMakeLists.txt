@@ -85,6 +85,7 @@ if (WIN32)
   set(GENERATED_TEST_FILES ${GENERATED_TEST_FILES} 
       ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32/_testGeneratorWin32.h
       ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32/_testGeneratorWin32.cpp
+      ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32/_testGeneratorWin32.rc
   )
 endif()
 
