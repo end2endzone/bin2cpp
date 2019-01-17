@@ -24,6 +24,8 @@
 
 #include "crc32.h"
 
+#include <stdio.h>  //for sprintf()
+
 // CRC-32 polynominal:
 // X^32+X^26+X^23+X^22+X^16+X^12+X^11+X^10+X^8+X^7+X^5+X^4+X^2+X+1
 
