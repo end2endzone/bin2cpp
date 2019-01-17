@@ -14,6 +14,8 @@ add_executable(bin2cpp
   bin2cpp.samples.txt
   common.cpp
   common.h
+  crc32.cpp
+  crc32.h
   IGenerator.h
   main.cpp
   SegmentGenerator.cpp

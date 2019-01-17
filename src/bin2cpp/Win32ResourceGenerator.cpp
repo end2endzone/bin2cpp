@@ -23,6 +23,9 @@
  *********************************************************************************/
 
 #include "Win32ResourceGenerator.h"
+#include "common.h"
+#include "crc32.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -132,7 +135,7 @@ namespace bin2cpp
     fprintf(cpp, "        if ( EnumProcessModules( hProcess, &hModule, sizeof(hModule), &cbNeeded) )\n");
     fprintf(cpp, "        {\n");
     fprintf(cpp, "          //Retrieve the resource\n");
-    fprintf(cpp, "          hResourceInfoBlock = FindResource(hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(iCppFilePath).c_str());
+    fprintf(cpp, "          hResourceInfoBlock = FindResource(hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(mInputFile.c_str()).c_str());
     fprintf(cpp, "          if (hResourceInfoBlock)\n");
     fprintf(cpp, "          {\n");
     fprintf(cpp, "            hResHandle = LoadResource(hModule, hResourceInfoBlock);\n");
@@ -206,16 +209,34 @@ namespace bin2cpp
     //write res file heading
     fprintf(res, "%s", getHeaderTemplate().c_str());
     fprintf(res, "#include <windows.h>\n");
-    fprintf(res, "%s CUSTOM \"%s\"\n", getRandomIdentifier(iCppFilePath).c_str(), filePath.c_str());
+    fprintf(res, "%s CUSTOM \"%s\"\n", getRandomIdentifier(mInputFile.c_str()).c_str(), filePath.c_str());
 
     fclose(res);
 
     return true;
   }
 
-  std::string Win32ResourceGenerator::getRandomIdentifier(const char * /*iCppFilePath*/)
+  std::string Win32ResourceGenerator::getRandomIdentifier(const char * iCppFilePath)
   {
-    return "html5skeletonAGE632H2D7";
+    std::string include_guard = getCppIncludeGuardMacroName(iCppFilePath);
+
+    //append a CRC32 checksum of the file path to allow storing multiple files with the same name in resources
+    uint32_t checksum = 0;
+    crc32Init(&checksum);
+    crc32Update(&checksum, (unsigned char *)iCppFilePath, strlen(iCppFilePath));
+    crc32Finish(&checksum);
+
+    std::string checksumString;
+    crc32String(&checksum, checksumString);
+    checksumString = ra::strings::uppercase(checksumString);
+
+    //build the final identifier
+    std::string id;
+    id.append(include_guard);
+    id.append("_");
+    id.append(checksumString);
+
+    return id;
   }
 
 }; //bin2cpp
