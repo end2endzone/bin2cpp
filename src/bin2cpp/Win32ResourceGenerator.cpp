@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string>
 #include <stdlib.h>
+#include <string.h> //for strlen()
 
 #include "rapidassist/cppencoder.h"
 #include "rapidassist/strings.h"
