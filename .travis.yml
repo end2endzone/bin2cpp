@@ -5,7 +5,7 @@ os:
 - linux
 branches:
   only:
-  - cmake_support
+  - master
 
 install:
 - cd $TRAVIS_BUILD_DIR/ci/travis; ./install_googletest.sh;

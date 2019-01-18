@@ -16,7 +16,7 @@ version: "{branch} (#{build})"
 # branches to build
 branches:
   only:
-    - cmake_support
+    - master
 
 # Do not build on tags (GitHub and BitBucket)
 skip_tags: true
