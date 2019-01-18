@@ -22,27 +22,54 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef SEGMENTGENERATOR_H
-#define SEGMENTGENERATOR_H
+#ifndef APPLICATION_H
+#define APPLICATION_H
 
-#include "BaseGenerator.h"
+#include <string>
+#include <vector>
 
-namespace bin2cpp
+class Application
 {
+  //------------------------
+  // Singleton
+  //------------------------
+private:
+  Application();
+public:
+  ~Application();
+  static Application & getInstance();
+
+public:
+  //------------------------
+  // Inner classes & structures
+  //------------------------
+
+  typedef std::vector<std::string> StringVector;
+
+public:
+  //------------------------
+  // Public Methods
+  //------------------------
 
   ///<summary>
-  ///This generator stores data in segment of a maximum of 65535 bytes.
-  ///Each 'segment' can be accessed separately.
+  ///Initialize the application with command line arguments
   ///</summary>
-  class SegmentGenerator : public BaseGenerator
-  {
-  public:
-    SegmentGenerator();
-    virtual ~SegmentGenerator();
-    virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * iCppFilePath);
-  };
+  ///<param name="argc">Argument count</param>
+  ///<param name="argv">The argument c-string values array.</param>
+  void init(int argc, char * const * argv);
 
-}; //bin2cpp
+  ///<summary>
+  ///Provides the list of arguments.
+  ///</summary>
+  ///<returns>A vector of string which contains the list of all arguments</returns>
+  const StringVector & getArguments() const;
 
-#endif //SEGMENTGENERATOR_H
+private:
+  //------------------------
+  // Private Methods
+  //------------------------
+
+  StringVector mArguments;
+};
+
+#endif //APPLICATION_H

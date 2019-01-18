@@ -22,27 +22,43 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef SEGMENTGENERATOR_H
-#define SEGMENTGENERATOR_H
+// test.cpp : Defines the entry point for the console application.
+//
 
-#include "BaseGenerator.h"
+#include <stdio.h>
+#include <iostream>
+#include <stdio.h>
 
-namespace bin2cpp
+#include <gtest/gtest.h>
+
+#include "rapidassist/gtesthelp.h"
+#include "application.h"
+
+int main(int argc, char **argv)
 {
+  //register command line arguments with the application
+  Application & app = Application::getInstance();
+  app.init(argc, argv);
 
-  ///<summary>
-  ///This generator stores data in segment of a maximum of 65535 bytes.
-  ///Each 'segment' can be accessed separately.
-  ///</summary>
-  class SegmentGenerator : public BaseGenerator
+  //define default values for xml output report
+  if (ra::gtesthelp::isProcessorX86())
   {
-  public:
-    SegmentGenerator();
-    virtual ~SegmentGenerator();
-    virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * iCppFilePath);
-  };
+    if (ra::gtesthelp::isDebugCode())
+      ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x86.debug.xml";
+    else
+      ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x86.release.xml";
+  }
+  else if (ra::gtesthelp::isProcessorX64())
+  {
+    if (ra::gtesthelp::isDebugCode())
+      ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x64.debug.xml";
+    else
+      ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x64.release.xml";
+  }
 
-}; //bin2cpp
+  ::testing::GTEST_FLAG(filter) = "*";
+  ::testing::InitGoogleTest(&argc, argv);
 
-#endif //SEGMENTGENERATOR_H
+  int wResult = RUN_ALL_TESTS(); //Find and run all tests
+  return wResult; // returns 0 if all the tests are successful, or 1 otherwise
+}

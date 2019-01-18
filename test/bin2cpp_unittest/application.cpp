@@ -22,27 +22,38 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef SEGMENTGENERATOR_H
-#define SEGMENTGENERATOR_H
+#include "application.h"
 
-#include "BaseGenerator.h"
-
-namespace bin2cpp
+Application::Application()
 {
+}
 
-  ///<summary>
-  ///This generator stores data in segment of a maximum of 65535 bytes.
-  ///Each 'segment' can be accessed separately.
-  ///</summary>
-  class SegmentGenerator : public BaseGenerator
+Application::~Application()
+{
+}
+
+Application & Application::getInstance()
+{
+  static Application instance;
+  return instance;
+}
+
+//------------------------
+// Public Methods
+//------------------------
+void Application::init(int argc, char * const * argv)
+{
+  mArguments.clear();
+  if (argv == NULL)
+    return;
+  for(int i=0; i<argc; i++)
   {
-  public:
-    SegmentGenerator();
-    virtual ~SegmentGenerator();
-    virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * iCppFilePath);
-  };
+    std::string value = argv[i];
+    mArguments.push_back(value);
+  }
+}
 
-}; //bin2cpp
-
-#endif //SEGMENTGENERATOR_H
+const Application::StringVector & Application::getArguments() const
+{
+  return mArguments;
+}

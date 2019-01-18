@@ -1,7 +1,29 @@
+/**********************************************************************************
+ * MIT License
+ * 
+ * Copyright (c) 2018 Antoine Beauchamp
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *********************************************************************************/
+
 // main.cpp : Defines the entry point for the console application.
 //
-
-#include "targetver.h"
 
 #include "SegmentGenerator.h"
 #include "StringGenerator.h"
@@ -12,14 +34,13 @@
 #include <stdio.h>
 #include <sstream>
 
-#include "common.h"
-#include "argumentparser.h"
-#include "logger.h"
-#include "stringfunc.h"
-#include "filesystemfunc.h"
+#include "rapidassist/cli.h"
+#include "rapidassist/logger.h"
+#include "rapidassist/strings.h"
+#include "rapidassist/filesystem.h"
 
-using namespace stringfunc;
-using namespace filesystem;
+#include "common.h"
+
 using namespace bin2cpp;
 
 enum APP_ERROR_CODES
@@ -81,7 +102,7 @@ bool processFile(const std::string & inputFile, const std::string & iOutputFileP
 
 void printHeader()
 {
-  printf("bin2cpp v%s - Convert binary files into C++ source code.\n", bin2cpp::getVersionString() );
+  printf("bin2cpp v%s - Convert binary files into C++ source code.\n", getVersionString() );
   printf("Copyright (C) 2013-%d end2endzone.com. All rights reserved.\n", bin2cpp::getCopyrightYear());
   printf("bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp \n");
 }
@@ -99,7 +120,11 @@ void printUsage()
     "  --help               Display this help message.\n"
     "  --version            Display this application version.\n"
     "  --file=<path>        Path of the input file used for embedding as a C++ source code.\n"
+    #ifdef _WIN32
     "  --output=<path>      Output folder where to create generated code. ie: .\\generated_files\n"
+    #else
+    "  --output=<path>      Output folder where to create generated code. ie: ./generated_files\n"
+    #endif
     "  --headerfile=<name>  File name of the generated C++ Header file. ie: SplashScreen.h\n"
     "  --generator=<name>   Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'. [default: segment].\n"
     "  --encoding=<name>    Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct].\n"
@@ -118,7 +143,7 @@ int main(int argc, char* argv[])
 {
   //help
   std::string dummy;
-  if (cmdline::parseArgument("help", dummy, argc, argv))
+  if (ra::cli::parseArgument("help", dummy, argc, argv))
   {
     printHeader();
     printUsage();
@@ -127,14 +152,14 @@ int main(int argc, char* argv[])
 
   //noheader
   bool noheader = false;
-  if (cmdline::parseArgument("noheader", dummy, argc, argv))
+  if (ra::cli::parseArgument("noheader", dummy, argc, argv))
   {
     noheader = true;
   }
 
   //quiet
   bool quiet = false;
-  if (cmdline::parseArgument("quiet", dummy, argc, argv))
+  if (ra::cli::parseArgument("quiet", dummy, argc, argv))
   {
     quiet = true;
   }
@@ -143,10 +168,10 @@ int main(int argc, char* argv[])
   if (quiet)
     noheader = true;
 
-  logger::setQuietMode(quiet);
+  ra::logger::setQuietMode(quiet);
 
   //version
-  if (cmdline::parseArgument("version", dummy, argc, argv))
+  if (ra::cli::parseArgument("version", dummy, argc, argv))
   {
     if (!noheader)
       printHeader();
@@ -162,34 +187,34 @@ int main(int argc, char* argv[])
   std::string headerFilename;
   std::string functionIdentifier;
 
-  if (!cmdline::parseArgument("file", inputFile, argc, argv))
+  if (!ra::cli::parseArgument("file", inputFile, argc, argv))
   {
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    logger::log(logger::LOG_ERROR, "%s (file)", getErrorCodeDescription(error));
+    ra::logger::log(ra::logger::LOG_ERROR, "%s (file)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
 
-  if (!cmdline::parseArgument("output", outputFolder, argc, argv))
+  if (!ra::cli::parseArgument("output", outputFolder, argc, argv))
   {
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    logger::log(logger::LOG_ERROR, "%s (output)", getErrorCodeDescription(error));
+    ra::logger::log(ra::logger::LOG_ERROR, "%s (output)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
 
-  if (!cmdline::parseArgument("headerfile", headerFilename, argc, argv))
+  if (!ra::cli::parseArgument("headerfile", headerFilename, argc, argv))
   {
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    logger::log(logger::LOG_ERROR, "%s (headerfile)", getErrorCodeDescription(error));
+    ra::logger::log(ra::logger::LOG_ERROR, "%s (headerfile)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
 
-  if (!cmdline::parseArgument("identifier", functionIdentifier, argc, argv))
+  if (!ra::cli::parseArgument("identifier", functionIdentifier, argc, argv))
   {
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    logger::log(logger::LOG_ERROR, "%s (identifier)", getErrorCodeDescription(error));
+    ra::logger::log(ra::logger::LOG_ERROR, "%s (identifier)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
@@ -207,36 +232,36 @@ int main(int argc, char* argv[])
   std::string encodingStr;
 
   size_t tmpChunkSize = 0;
-  if (cmdline::parseArgument("chunksize", tmpChunkSize, argc, argv))
+  if (ra::cli::parseArgument("chunksize", tmpChunkSize, argc, argv))
   {
     chunkSize = tmpChunkSize;
   }
 
-  if (cmdline::parseArgument("override", dummy, argc, argv))
+  if (ra::cli::parseArgument("override", dummy, argc, argv))
   {
     overrideExisting = true;
   }
 
-  if (!cmdline::parseArgument("namespace", codeNamespace, argc, argv))
+  if (!ra::cli::parseArgument("namespace", codeNamespace, argc, argv))
   {
     codeNamespace = DEFAULT_NAMESPACE;
   }
 
-  if (!cmdline::parseArgument("baseclass", baseClass, argc, argv))
+  if (!ra::cli::parseArgument("baseclass", baseClass, argc, argv))
   {
     baseClass = DEFAULT_BASECLASSNAME;
   }
 
-  if (cmdline::parseArgument("encoding", encodingStr, argc, argv))
+  if (ra::cli::parseArgument("encoding", encodingStr, argc, argv))
   {
-    if (uppercase(encodingStr) == "OCT")
+    if (ra::strings::uppercase(encodingStr) == "OCT")
       encoding = IGenerator::CPP_ENCODER_OCT;
-    else if (uppercase(encodingStr) == "HEX")
+    else if (ra::strings::uppercase(encodingStr) == "HEX")
       encoding = IGenerator::CPP_ENCODER_HEX;
     else
     {
       APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-      logger::log(logger::LOG_ERROR, "%s (encoding)", getErrorCodeDescription(error));
+      ra::logger::log(ra::logger::LOG_ERROR, "%s (encoding)", getErrorCodeDescription(error));
       printUsage();
       return error;
     }
@@ -254,7 +279,7 @@ int main(int argc, char* argv[])
   bin2cpp::IGenerator * generator = NULL;
 
   std::string generatorName;
-  if (cmdline::parseArgument("generator", generatorName, argc, argv))
+  if (ra::cli::parseArgument("generator", generatorName, argc, argv))
   {
     if (generatorName == "segment")
     {
@@ -277,7 +302,7 @@ int main(int argc, char* argv[])
     if (generator == NULL)
     {
       APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-      logger::log(logger::LOG_ERROR, "%s, unknown values for 'generator' argument!", getErrorCodeDescription(error));
+      ra::logger::log(ra::logger::LOG_ERROR, "%s, unknown values for 'generator' argument!", getErrorCodeDescription(error));
       printUsage();
       return error;
     }
@@ -301,15 +326,15 @@ int main(int argc, char* argv[])
   if (overrideExisting)
     info << " overriding existing files";
   info << "...";
-  logger::log(logger::LOG_INFO, info.c_str());
+  ra::logger::log(ra::logger::LOG_INFO, info.c_str());
 
   //prepare output files path
-  std::string outputHeaderPath = outputFolder + "\\" + headerFilename;
-  std::string outputCppPath = outputFolder + "\\" + headerFilename;         stringfunc::strReplace(outputCppPath, ".h", ".cpp");
-  std::string cppFilename = headerFilename;                                 stringfunc::strReplace(cppFilename, ".h", ".cpp");  
+  std::string outputHeaderPath = outputFolder + ra::filesystem::getPathSeparatorStr() + headerFilename;
+  std::string outputCppPath = outputFolder + ra::filesystem::getPathSeparatorStr() + headerFilename;         ra::strings::replace(outputCppPath, ".h", ".cpp");
+  std::string cppFilename = headerFilename;                                 ra::strings::replace(cppFilename, ".h", ".cpp");  
 
   //check if input file exists
-  if (!filesystem::fileExists(inputFile.c_str()))
+  if (!ra::filesystem::fileExists(inputFile.c_str()))
     return APP_ERROR_INPUTFILENOTFOUND;
 
   //configure the generator
@@ -335,7 +360,7 @@ int main(int argc, char* argv[])
 
 FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::string & iOutputFilePath, bool overrideExisting)
 {
-  if (!filesystem::fileExists(iOutputFilePath.c_str()))
+  if (!ra::filesystem::fileExists(iOutputFilePath.c_str()))
     return WRITING;
   //at this point, we know that the file exists
 
@@ -343,10 +368,10 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::str
     return OVERWRITING;
 
   //do not modify the output file if it is not out of date
-  uint64_t lastModifiedDate = getFileModifiedDate(inputFile);
-  uint64_t outputModifiedDate = getOutputFileModifiedDate(iOutputFilePath);
+  uint64_t lastModifiedDate = ra::filesystem::getFileModifiedDate(inputFile);
+  uint64_t outputModifiedDate = bin2cpp::getOutputFileModifiedDate(iOutputFilePath);
   if (outputModifiedDate == 0)
-    logger::log(logger::LOG_WARNING, "Unable to get last modified date of file \'%s\'", iOutputFilePath.c_str());
+    ra::logger::log(ra::logger::LOG_WARNING, "Unable to get last modified date of file \'%s\'", iOutputFilePath.c_str());
   if (lastModifiedDate == outputModifiedDate)
     return SKIPPING;
 
@@ -359,7 +384,7 @@ bool processFile(const std::string & inputFile, const std::string & iOutputFileP
   FILE_UPDATE_MODE mode = getFileUpdateMode(inputFile, iOutputFilePath, overrideExisting);
 
   //writing message
-  logger::log(logger::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
+  ra::logger::log(ra::logger::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
   
   if (mode == SKIPPING)
     return true; //skipping is success
@@ -379,8 +404,8 @@ bool processFile(const std::string & inputFile, const std::string & iOutputFileP
   if (!result)
   {
     //there was an error generating file
-    logger::log(logger::LOG_ERROR, "%s", getErrorCodeDescription(APP_ERROR_UNABLETOCREATEOUTPUTFILES));
-    logger::log(logger::LOG_ERROR, "Embedding failed!");
+    ra::logger::log(ra::logger::LOG_ERROR, "%s", getErrorCodeDescription(APP_ERROR_UNABLETOCREATEOUTPUTFILES));
+    ra::logger::log(ra::logger::LOG_ERROR, "Embedding failed!");
   }
   return result;
 }

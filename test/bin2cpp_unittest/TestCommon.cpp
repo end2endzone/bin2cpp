@@ -22,27 +22,41 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef SEGMENTGENERATOR_H
-#define SEGMENTGENERATOR_H
+#include "TestCommon.h"
 
-#include "BaseGenerator.h"
+#include "rapidassist/gtesthelp.h"
+#include "rapidassist/filesystem.h"
 
-namespace bin2cpp
+namespace TestCommonUtils
 {
-
-  ///<summary>
-  ///This generator stores data in segment of a maximum of 65535 bytes.
-  ///Each 'segment' can be accessed separately.
-  ///</summary>
-  class SegmentGenerator : public BaseGenerator
+  std::string getExpectedFilePath()
   {
-  public:
-    SegmentGenerator();
-    virtual ~SegmentGenerator();
-    virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * iCppFilePath);
-  };
+    std::string file;
+    file.append(ra::gtesthelp::getTestQualifiedName());
+    file.append(".expected.txt");
+    return file;
+  }
 
-}; //bin2cpp
+  std::string getActualFilePath()
+  {
+    std::string file;
+    file.append(ra::gtesthelp::getTestQualifiedName());
+    file.append(".actual.txt");
+    return file;
+  }
 
-#endif //SEGMENTGENERATOR_H
+}
+using namespace TestCommonUtils;
+
+namespace TestCLIUtils
+{
+  extern bool createDummyFile(const char * iPath);
+};
+
+void TestCommon::SetUp()
+{
+}
+
+void TestCommon::TearDown()
+{
+}

@@ -1,16 +1,36 @@
+/**********************************************************************************
+ * MIT License
+ * 
+ * Copyright (c) 2018 Antoine Beauchamp
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *********************************************************************************/
+
 #include "SegmentGenerator.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <stdlib.h>
 
-#include "common.h"
-#include "cppencoder.h"
-#include "stringfunc.h"
-#include "filesystemfunc.h"
-
-using namespace stringfunc;
-using namespace filesystem;
+#include "rapidassist/cppencoder.h"
+#include "rapidassist/strings.h"
+#include "rapidassist/filesystem.h"
 
 namespace bin2cpp
 {
@@ -35,13 +55,13 @@ namespace bin2cpp
       return false;
 
     //Uppercase function identifier
-    std::string functionIdentifier = capitalizeFirstCharacter(mFunctionIdentifier);
+    std::string functionIdentifier = ra::strings::capitalizeFirstCharacter(mFunctionIdentifier);
 
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(iCppFilePath);
     std::string cppPath = iCppFilePath;
-    std::string headerFilename = getFilename(headerPath.c_str());
-    std::string cppFilename = getFilename(iCppFilePath);
+    std::string headerFilename = ra::filesystem::getFilename(headerPath.c_str());
+    std::string cppFilename = ra::filesystem::getFilename(iCppFilePath);
 
     //create cpp file
     FILE * cpp = fopen(cppPath.c_str(), "w");
@@ -52,8 +72,8 @@ namespace bin2cpp
     }
 
     //determine file properties
-    long fileSize = getFileSize(input);
-    std::string filename = getFilename(mInputFile.c_str());
+    uint32_t fileSize = ra::filesystem::getFileSize(input);
+    std::string filename = ra::filesystem::getFilename(mInputFile.c_str());
     //long lastSegmentSize = fileSize%iChunkSize;
     //size_t numSegments = fileSize/iChunkSize + (lastSegmentSize == 0 ? 0 : 1);
 
@@ -76,9 +96,9 @@ namespace bin2cpp
     fprintf(cpp, "  {\n");
     fprintf(cpp, "  public:\n");
     fprintf(cpp, "    %s() { build(); }\n", className.c_str());
-    fprintf(cpp, "    ~%s() {}\n", className.c_str());
-    fprintf(cpp, "    virtual size_t getSize() const { return %d; }\n", fileSize);
-    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", getFilename(mInputFile.c_str()).c_str());
+    fprintf(cpp, "    virtual ~%s() {}\n", className.c_str());
+    fprintf(cpp, "    virtual size_t getSize() const { return %u; }\n", fileSize);
+    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::getFilename(mInputFile.c_str()).c_str());
     fprintf(cpp, "    virtual const char * getBuffer() const { return mBuffer.c_str(); }\n");
     fprintf(cpp, "    void build()\n");
     fprintf(cpp, "    {\n");
@@ -102,16 +122,16 @@ namespace bin2cpp
       switch(mCppEncoder)
       {
       case IGenerator::CPP_ENCODER_HEX:
-        cppEncoder = cppencoder::toHexString(buffer, readSize);
+        cppEncoder = ra::cppencoder::toHexString(buffer, readSize);
         break;
       case IGenerator::CPP_ENCODER_OCT:
       default:
-        cppEncoder = cppencoder::toOctString(buffer, readSize, false);
+        cppEncoder = ra::cppencoder::toOctString(buffer, readSize, false);
         break;
       };
 
       //output
-      fprintf(cpp, "      mBuffer.append(\"%s\", %d);\n", cppEncoder.c_str(), readSize);
+      fprintf(cpp, "      mBuffer.append(\"%s\", %lu);\n", cppEncoder.c_str(), readSize);
     }
     delete[] buffer;
     buffer = NULL;

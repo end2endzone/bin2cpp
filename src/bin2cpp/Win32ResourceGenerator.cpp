@@ -1,16 +1,40 @@
+/**********************************************************************************
+ * MIT License
+ * 
+ * Copyright (c) 2018 Antoine Beauchamp
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *********************************************************************************/
+
 #include "Win32ResourceGenerator.h"
+#include "common.h"
+#include "crc32.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <stdlib.h>
+#include <string.h> //for strlen()
 
-#include "common.h"
-#include "cppencoder.h"
-#include "stringfunc.h"
-#include "filesystemfunc.h"
-
-using namespace stringfunc;
-using namespace filesystem;
+#include "rapidassist/cppencoder.h"
+#include "rapidassist/strings.h"
+#include "rapidassist/filesystem.h"
 
 namespace bin2cpp
 {
@@ -39,13 +63,13 @@ namespace bin2cpp
       return false;
 
     //Uppercase function identifier
-    std::string functionIdentifier = capitalizeFirstCharacter(mFunctionIdentifier);
+    std::string functionIdentifier = ra::strings::capitalizeFirstCharacter(mFunctionIdentifier);
 
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(iCppFilePath);
     std::string cppPath = iCppFilePath;
-    std::string headerFilename = getFilename(headerPath.c_str());
-    std::string cppFilename = getFilename(iCppFilePath);
+    std::string headerFilename = ra::filesystem::getFilename(headerPath.c_str());
+    std::string cppFilename = ra::filesystem::getFilename(iCppFilePath);
 
     //create cpp file
     FILE * cpp = fopen(cppPath.c_str(), "w");
@@ -56,8 +80,8 @@ namespace bin2cpp
     }
 
     //determine file properties
-    //long fileSize = getFileSize(input);
-    std::string filename = getFilename(mInputFile.c_str());
+    //uint32_t fileSize = ra::filesystem::getFileSize(input);
+    std::string filename = ra::filesystem::getFilename(mInputFile.c_str());
 
     //Build class name
     std::string className;
@@ -97,9 +121,9 @@ namespace bin2cpp
     fprintf(cpp, "    {\n");
     fprintf(cpp, "      loadResource();\n");
     fprintf(cpp, "    }\n");
-    fprintf(cpp, "    ~%s() { unloadResource(); }\n", className.c_str());
+    fprintf(cpp, "    virtual ~%s() { unloadResource(); }\n", className.c_str());
     fprintf(cpp, "    virtual size_t getSize() const { return mBufferSize; }\n");
-    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", getFilename(mInputFile.c_str()).c_str());
+    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::getFilename(mInputFile.c_str()).c_str());
     fprintf(cpp, "    virtual const char * getBuffer() const { return mBuffer; }\n");
     fprintf(cpp, "    void loadResource()\n");
     fprintf(cpp, "    {\n");
@@ -112,7 +136,7 @@ namespace bin2cpp
     fprintf(cpp, "        if ( EnumProcessModules( hProcess, &hModule, sizeof(hModule), &cbNeeded) )\n");
     fprintf(cpp, "        {\n");
     fprintf(cpp, "          //Retrieve the resource\n");
-    fprintf(cpp, "          hResourceInfoBlock = FindResource(hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(iCppFilePath).c_str());
+    fprintf(cpp, "          hResourceInfoBlock = FindResource(hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(mInputFile.c_str()).c_str());
     fprintf(cpp, "          if (hResourceInfoBlock)\n");
     fprintf(cpp, "          {\n");
     fprintf(cpp, "            hResHandle = LoadResource(hModule, hResourceInfoBlock);\n");
@@ -164,7 +188,7 @@ namespace bin2cpp
   {
     //Build header file path
     std::string resourcePath = iCppFilePath;
-    strReplace(resourcePath, ".cpp", ".rc");
+    ra::strings::replace(resourcePath, ".cpp", ".rc");
     return resourcePath;
   }
 
@@ -181,21 +205,39 @@ namespace bin2cpp
     }
 
     std::string filePath = mInputFile;
-    strReplace(filePath, "\\", "\\\\");
-
+    ra::strings::replace(filePath, "\\", "\\\\");
+  
     //write res file heading
     fprintf(res, "%s", getHeaderTemplate().c_str());
     fprintf(res, "#include <windows.h>\n");
-    fprintf(res, "%s CUSTOM \"%s\"\n", getRandomIdentifier(iCppFilePath).c_str(), filePath.c_str());
+    fprintf(res, "%s CUSTOM \"%s\"\n", getRandomIdentifier(mInputFile.c_str()).c_str(), filePath.c_str());
 
     fclose(res);
 
     return true;
   }
 
-  std::string Win32ResourceGenerator::getRandomIdentifier(const char * /*iCppFilePath*/)
+  std::string Win32ResourceGenerator::getRandomIdentifier(const char * iCppFilePath)
   {
-    return "html5skeletonAGE632H2D7";
+    std::string include_guard = getCppIncludeGuardMacroName(iCppFilePath);
+
+    //append a CRC32 checksum of the file path to allow storing multiple files with the same name in resources
+    uint32_t checksum = 0;
+    crc32Init(&checksum);
+    crc32Update(&checksum, (unsigned char *)iCppFilePath, strlen(iCppFilePath));
+    crc32Finish(&checksum);
+
+    std::string checksumString;
+    crc32String(&checksum, checksumString);
+    checksumString = ra::strings::uppercase(checksumString);
+
+    //build the final identifier
+    std::string id;
+    id.append(include_guard);
+    id.append("_");
+    id.append(checksumString);
+
+    return id;
   }
 
 }; //bin2cpp

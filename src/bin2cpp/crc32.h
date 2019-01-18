@@ -22,27 +22,15 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef SEGMENTGENERATOR_H
-#define SEGMENTGENERATOR_H
+#ifndef CRC32_H
+#define CRC32_H
 
-#include "BaseGenerator.h"
+#include <string>
+#include <stdint.h>
 
-namespace bin2cpp
-{
+void crc32Init(uint32_t *pCrc32);
+void crc32Update(uint32_t *pCrc32, unsigned char *pData, uint32_t uSize);
+void crc32Finish(uint32_t *pCrc32);
+void crc32String(const uint32_t *pCrc32, std::string & oHexValue);
 
-  ///<summary>
-  ///This generator stores data in segment of a maximum of 65535 bytes.
-  ///Each 'segment' can be accessed separately.
-  ///</summary>
-  class SegmentGenerator : public BaseGenerator
-  {
-  public:
-    SegmentGenerator();
-    virtual ~SegmentGenerator();
-    virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * iCppFilePath);
-  };
-
-}; //bin2cpp
-
-#endif //SEGMENTGENERATOR_H
+#endif //CRC32_H

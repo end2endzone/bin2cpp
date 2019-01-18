@@ -22,27 +22,16 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef SEGMENTGENERATOR_H
-#define SEGMENTGENERATOR_H
+#ifndef TESTCOMMON_H
+#define TESTCOMMON_H
 
-#include "BaseGenerator.h"
+#include <gtest/gtest.h>
 
-namespace bin2cpp
+class TestCommon : public ::testing::Test
 {
+public:
+  virtual void SetUp();
+  virtual void TearDown();
+};
 
-  ///<summary>
-  ///This generator stores data in segment of a maximum of 65535 bytes.
-  ///Each 'segment' can be accessed separately.
-  ///</summary>
-  class SegmentGenerator : public BaseGenerator
-  {
-  public:
-    SegmentGenerator();
-    virtual ~SegmentGenerator();
-    virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * iCppFilePath);
-  };
-
-}; //bin2cpp
-
-#endif //SEGMENTGENERATOR_H
+#endif //TESTCOMMON_H

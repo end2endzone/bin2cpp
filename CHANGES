@@ -1,3 +1,10 @@
+Changes for 2.2.0:
+
+* Fixed issue  #9: bin2cpp on Linux.
+* Fixed issue #24: License copy in all source and include files.
+* Fixed issue #25: Resource identifier for win32 generator.
+* New feature: Generators generate files with appropriate include guard. Removed all `#pragma once` statements in the code.
+
 Changes for 2.1.0:
 
 * New feature (issue #6): Implement Windows support using resource file and Windows API for getting resources.
