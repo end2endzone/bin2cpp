@@ -103,7 +103,7 @@ if (WIN32)
 
                       # Execute generator script
                       COMMAND echo Calling 'generate_test_files.bat' script...
-                      COMMAND cd /d ${CMAKE_BINARY_DIR}/bin/$(Configuration) && call generate_test_files.bat
+                      COMMAND cd /d ${CMAKE_CURRENT_BINARY_DIR} && call generate_test_files.bat
   )
 else()
   # Linux build
