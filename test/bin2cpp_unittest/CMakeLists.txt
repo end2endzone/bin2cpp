@@ -93,7 +93,7 @@ endif()
 if (WIN32)
   add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
                       # Execute prebuild copy
-                      COMMAND ${CMAKE_COMMAND} 
+                      COMMAND ${CMAKE_COMMAND}
                         -DBIN2CPP_TARGET_FILE=$<TARGET_FILE:bin2cpp>
                         -DTESTFILEGENERATOR_TARGET_FILE=$<TARGET_FILE:testfilegenerator>
                         -DBIN2CPP_UNITTEST_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
@@ -103,14 +103,13 @@ if (WIN32)
 
                       # Execute generator script
                       COMMAND echo Calling 'generate_test_files.bat' script...
-                      COMMAND set PATH=${CMAKE_BINARY_DIR}/bin/$(Configuration)\;%PATH%
-                      COMMAND call generate_test_files.bat
+                      COMMAND cd /d ${CMAKE_BINARY_DIR}/bin/$(Configuration) && call generate_test_files.bat
   )
 else()
   # Linux build
   add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
                       # Execute prebuild copy
-                      COMMAND ${CMAKE_COMMAND} 
+                      COMMAND ${CMAKE_COMMAND}
                         -DBIN2CPP_TARGET_FILE=$<TARGET_FILE:bin2cpp>
                         -DTESTFILEGENERATOR_TARGET_FILE=$<TARGET_FILE:testfilegenerator>
                         -DBIN2CPP_UNITTEST_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
@@ -120,8 +119,7 @@ else()
                       
                       # Execute generator script
                       COMMAND echo Calling 'generate_test_files.sh' script...
-                      COMMAND export PATH=$PATH:${CMAKE_BINARY_DIR}/bin
-                      COMMAND ./generate_test_files.sh
+                      COMMAND cd ${CMAKE_CURRENT_BINARY_DIR} && ./generate_test_files.sh
   )
   
 endif()

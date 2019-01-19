@@ -38,10 +38,20 @@ else()
 endif()
 
 # Configure generator script template for the current configuration. This file will be the one used by the install package.
+# Note: use absolute path in BIN2CPP_UNITTEST_PROJECT_DIR.
 message("Configuring prebuild script file '${BIN2CPP_UNITTEST_PROJECT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION}' for compiling unit tests...")
 configure_file(${BIN2CPP_UNITTEST_SOURCE_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION}.in ${BIN2CPP_UNITTEST_PROJECT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION} @ONLY)
 
+# Convert from absolute path to relative path (execute from current directory)
+get_filename_component(TESTFILEGENERATOR_TARGET_FILE ${TESTFILEGENERATOR_TARGET_FILE} NAME)
+get_filename_component(BIN2CPP_TARGET_FILE ${BIN2CPP_TARGET_FILE} NAME)
+if (NOT WIN32)
+  set(TESTFILEGENERATOR_TARGET_FILE "./${TESTFILEGENERATOR_TARGET_FILE}")
+  set(BIN2CPP_TARGET_FILE "./${BIN2CPP_TARGET_FILE}")
+endif()
+
 # Also copy the generator script to $(OutDir).
+# Note: use absolute path in BIN2CPP_UNITTEST_PROJECT_DIR.
 message("Copy prebuild script file to '${BIN2CPP_UNITTEST_OUTPUT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION}' for executing unit tests on AppVeyor/Travis CI build servers.")
 configure_file(${BIN2CPP_UNITTEST_SOURCE_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION}.in ${BIN2CPP_UNITTEST_OUTPUT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION} @ONLY)
 
