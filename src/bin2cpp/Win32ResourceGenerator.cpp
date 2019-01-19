@@ -204,13 +204,12 @@ namespace bin2cpp
       return false;
     }
 
-    std::string filePath = mInputFile;
-    ra::strings::replace(filePath, "\\", "\\\\");
-  
+    std::string filename = ra::filesystem::getFilename(mInputFile.c_str());
+ 
     //write res file heading
     fprintf(res, "%s", getHeaderTemplate().c_str());
     fprintf(res, "#include <windows.h>\n");
-    fprintf(res, "%s CUSTOM \"%s\"\n", getRandomIdentifier(mInputFile.c_str()).c_str(), filePath.c_str());
+    fprintf(res, "%s CUSTOM \"%s\"\n", getRandomIdentifier(mInputFile.c_str()).c_str(), filename.c_str());
 
     fclose(res);
 
