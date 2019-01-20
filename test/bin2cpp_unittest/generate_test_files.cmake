@@ -36,13 +36,18 @@ if (WIN32)
 else()
   set(SCRIPT_FILE_EXTENSION sh)
 endif()
+set(TEMPLATE_SCRIPT_FILE ${BIN2CPP_UNITTEST_SOURCE_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION}.in)
 
-# Configure generator script template for the current configuration. This file will be the one used by the install package.
-# Note: use absolute path in BIN2CPP_UNITTEST_PROJECT_DIR.
-message("Configuring prebuild script file '${BIN2CPP_UNITTEST_PROJECT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION}' for compiling unit tests...")
-configure_file(${BIN2CPP_UNITTEST_SOURCE_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION}.in ${BIN2CPP_UNITTEST_PROJECT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION} @ONLY)
+############################################################################################################################################################
+# Generate scripts for creating the required test files and source code for be able to compile and execute unit tests.
+############################################################################################################################################################
 
-# Convert from absolute path to relative path (execute from current directory)
+# This file is executed as a pre-build step of project bin2cpp_unittest. It uses absolute path to executables.
+set(SCRIPT_DESTINATION_FILE ${BIN2CPP_UNITTEST_PROJECT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION})
+message("Configuring script file '${SCRIPT_DESTINATION_FILE}' as bin2cpp_unittest prebuild for compiling unit tests...")
+configure_file(${TEMPLATE_SCRIPT_FILE} ${SCRIPT_DESTINATION_FILE} @ONLY)
+
+# Convert from absolute path to local path (execute from current directory)
 get_filename_component(TESTFILEGENERATOR_TARGET_FILE ${TESTFILEGENERATOR_TARGET_FILE} NAME)
 get_filename_component(BIN2CPP_TARGET_FILE ${BIN2CPP_TARGET_FILE} NAME)
 if (NOT WIN32)
@@ -50,9 +55,17 @@ if (NOT WIN32)
   set(BIN2CPP_TARGET_FILE "./${BIN2CPP_TARGET_FILE}")
 endif()
 
-# Also copy the generator script to $(OutDir).
-# Note: use absolute path in BIN2CPP_UNITTEST_PROJECT_DIR.
-message("Copy prebuild script file to '${BIN2CPP_UNITTEST_OUTPUT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION}' for executing unit tests on AppVeyor/Travis CI build servers.")
-configure_file(${BIN2CPP_UNITTEST_SOURCE_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION}.in ${BIN2CPP_UNITTEST_OUTPUT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION} @ONLY)
+# Generate script for execution from $(OutDir) aka BIN2CPP_UNITTEST_OUTPUT_DIR. It uses local path to executables.
+set(SCRIPT_DESTINATION_FILE ${BIN2CPP_UNITTEST_OUTPUT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION})
+message("Configure script file '${SCRIPT_DESTINATION_FILE}' for executing unit tests on AppVeyor/Travis CI build servers.")
+configure_file(${TEMPLATE_SCRIPT_FILE} ${SCRIPT_DESTINATION_FILE} @ONLY)
+
+# Create directory for installer package
+file(MAKE_DIRECTORY ${BIN2CPP_UNITTEST_PROJECT_DIR}/package)
+
+# Generate script for installation package.
+set(SCRIPT_DESTINATION_FILE ${BIN2CPP_UNITTEST_PROJECT_DIR}/package/generate_test_files.${SCRIPT_FILE_EXTENSION})
+message("Configure script file '${SCRIPT_DESTINATION_FILE}' for installation package.")
+configure_file(${TEMPLATE_SCRIPT_FILE} ${SCRIPT_DESTINATION_FILE} @ONLY)
 
 message("${CMAKE_CURRENT_LIST_FILE} - END")

@@ -89,6 +89,14 @@ if (WIN32)
   )
 endif()
 
+# Define the file extension for bash/batch files on the target platform
+if (WIN32)
+  set(SCRIPT_FILE_EXTENSION bat)
+else()
+  set(SCRIPT_FILE_EXTENSION sh)
+endif()
+set(TEMPLATE_SCRIPT_FILE ${BIN2CPP_UNITTEST_SOURCE_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION}.in)
+
 #  https://stackoverflow.com/questions/18427877/add-custom-build-step-in-cmake
 if (WIN32)
   add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
@@ -171,8 +179,5 @@ install(TARGETS bin2cpp_unittest
         LIBRARY DESTINATION ${BIN2CPP_INSTALL_LIB_DIR}
         RUNTIME DESTINATION ${BIN2CPP_INSTALL_BIN_DIR}
 )
-if (WIN32)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/generate_test_files.bat DESTINATION ${BIN2CPP_INSTALL_BIN_DIR})
-else()
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/generate_test_files.sh  DESTINATION ${BIN2CPP_INSTALL_BIN_DIR})
-endif()
+# Add the test file generator script created by 'generate_test_files.cmake'.
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/package/generate_test_files.${SCRIPT_FILE_EXTENSION} DESTINATION ${BIN2CPP_INSTALL_BIN_DIR})
