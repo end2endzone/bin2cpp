@@ -44,7 +44,7 @@ set(TEMPLATE_SCRIPT_FILE ${BIN2CPP_UNITTEST_SOURCE_DIR}/generate_test_files.${SC
 
 # This file is executed as a pre-build step of project bin2cpp_unittest. It uses absolute path to executables.
 set(SCRIPT_DESTINATION_FILE ${BIN2CPP_UNITTEST_PROJECT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION})
-message("Configuring script file '${SCRIPT_DESTINATION_FILE}' as bin2cpp_unittest prebuild for compiling unit tests...")
+message("Configure script file '${SCRIPT_DESTINATION_FILE}' as bin2cpp_unittest prebuild for compiling unit tests...")
 configure_file(${TEMPLATE_SCRIPT_FILE} ${SCRIPT_DESTINATION_FILE} @ONLY)
 
 # Convert from absolute path to local path (execute from current directory)
@@ -55,17 +55,17 @@ if (NOT WIN32)
   set(BIN2CPP_TARGET_FILE "./${BIN2CPP_TARGET_FILE}")
 endif()
 
-# Generate script for execution from $(OutDir) aka BIN2CPP_UNITTEST_OUTPUT_DIR. It uses local path to executables.
-set(SCRIPT_DESTINATION_FILE ${BIN2CPP_UNITTEST_OUTPUT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION})
-message("Configure script file '${SCRIPT_DESTINATION_FILE}' for executing unit tests on AppVeyor/Travis CI build servers.")
-configure_file(${TEMPLATE_SCRIPT_FILE} ${SCRIPT_DESTINATION_FILE} @ONLY)
-
 # Create directory for installer package
 file(MAKE_DIRECTORY ${BIN2CPP_UNITTEST_PROJECT_DIR}/package)
 
-# Generate script for installation package.
+# Generate script for installation package. It uses local path to executables.
 set(SCRIPT_DESTINATION_FILE ${BIN2CPP_UNITTEST_PROJECT_DIR}/package/generate_test_files.${SCRIPT_FILE_EXTENSION})
 message("Configure script file '${SCRIPT_DESTINATION_FILE}' for installation package.")
+configure_file(${TEMPLATE_SCRIPT_FILE} ${SCRIPT_DESTINATION_FILE} @ONLY)
+
+# Generate script for execution from $(OutDir) aka BIN2CPP_UNITTEST_OUTPUT_DIR. It uses local path to executables.
+set(SCRIPT_DESTINATION_FILE ${BIN2CPP_UNITTEST_OUTPUT_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION})
+message("Configure script file '${SCRIPT_DESTINATION_FILE}' for executing unit tests on AppVeyor/Travis CI build servers.")
 configure_file(${TEMPLATE_SCRIPT_FILE} ${SCRIPT_DESTINATION_FILE} @ONLY)
 
 message("${CMAKE_CURRENT_LIST_FILE} - END")
