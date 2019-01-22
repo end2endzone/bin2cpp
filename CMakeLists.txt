@@ -166,10 +166,6 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/bin2cpp-config-version.cmake DES
 configure_file(${CMAKE_SOURCE_DIR}/cmake/bin2cpp-config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/bin2cpp-config.cmake @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/bin2cpp-config.cmake DESTINATION ${BIN2CPP_INSTALL_CMAKE_DIR})
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${BIN2CPP_INSTALL_INCLUDE_DIR})
-install(FILES ${BIN2CPP_VERSION_HEADER}
-              ${BIN2CPP_CONFIG_HEADER}
-              DESTINATION ${BIN2CPP_INSTALL_INCLUDE_DIR}/bin2cpp)
 install(EXPORT bin2cpp-targets DESTINATION ${BIN2CPP_INSTALL_CMAKE_DIR})
 
 ##############################################################################################################################################
