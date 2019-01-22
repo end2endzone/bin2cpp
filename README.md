@@ -1,28 +1,32 @@
 ![bin2cpp logo](https://github.com/end2endzone/bin2cpp/raw/master/docs/bin2cpp-splashscreen.png)
 
 
+# bin2cpp #
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Github Releases](https://img.shields.io/github/release/end2endzone/bin2cpp.svg)](https://github.com/end2endzone/bin2cpp/releases)
-[![Build status](https://ci.appveyor.com/api/projects/status/q9k0ebb971o475qi/branch/master?svg=true)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master)
-[![Tests status](https://img.shields.io/appveyor/tests/end2endzone/bin2cpp/master.svg)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master/tests)
-
-AppVeyor build statistics:
-
-[![Build statistics](https://buildstats.info/appveyor/chart/end2endzone/bin2cpp)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master)
-
-
-
-# bin2cpp
 
 bin2cpp is a command line tool for embedding small files (like images, icons or raw data files) into a C++ executable.
 
-It's main features are:
 
-*   Easily converts small files as C++ source code for embedding into a C++ executable.
-*   Content extraction supported by a unique function call for each embedded file.
-*   Supports a multiple embedded files at once.
-*   Makes it harder for resource hacker to modify or steal the embedded files.
-*   No third party libraries required for retrieving the data of the embedded files.
+## Status ##
+
+Build:
+
+| Service | Build | Tests |
+|----|-------|-------|
+| AppVeyor | [![Build status](https://img.shields.io/appveyor/ci/end2endzone/bin2cpp/master.svg?logo=appveyor)](https://ci.appveyor.com/project/end2endzone/bin2cpp) | [![Tests status](https://img.shields.io/appveyor/tests/end2endzone/bin2cpp/master.svg?logo=appveyor)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master/tests) |
+| Travis CI | [![Build Status](https://img.shields.io/travis/end2endzone/bin2cpp/master.svg?logo=travis&style=flat)](https://travis-ci.org/end2endzone/bin2cpp) |  |
+
+Statistics:
+
+| AppVeyor | Travic CI |
+|----------|-----------|
+| [![Statistics](https://buildstats.info/appveyor/chart/end2endzone/bin2cpp)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master) | [![Statistics](https://buildstats.info/travisci/chart/end2endzone/bin2cpp)](https://travis-ci.org/end2endzone/bin2cpp) |
+
+
+
+
+# Purpose #
 
 bin2cpp is not implemented using [executable resources](http://en.wikipedia.org/wiki/Resource_(Windows)). Instead, bin2cpp creates multiple function calls for retrieving the data which makes it harder to steal the executable's content. It also makes it even harder to replace an existing resource of the executable.
 
@@ -30,13 +34,28 @@ It is designed to be easy to use by developers and to provide easy call function
 
 The generated functions that reads and extracts the embedded content does not rely on external libraries so you don't need to setup your projects to use any third party library to start using bin2cpp. All your embedded data can be accessed right away.
 
+
+
+
+# Features #
+
+The main features of the project are:
+
+* Easily converts small files as C++ source code for embedding into a C++ executable.
+* Content extraction supported by a unique function call for each embedded file.
+* Supports a multiple embedded files at once.
+* Makes it harder for resource hacker to modify or steal the embedded files.
+* No third party libraries required for retrieving the data of the embedded files.
+
+
+
 ## Use cases ##
 
 The following list shows situations where bin2cpp is useful:
 
 * Embedding default configuration files if none are provided.
 * Embedding GLSL shaders into the executable.
-* Embedding text or XML databases (gui layout, names, language dictionaries
+* Embedding text or XML databases (gui layout, names, dictionaries or localization strings)
 * A portable alternative to C++11 raw string literals.
 * Prevent stealing copyrighted resources.
 * Embedding images/icons/sounds for a GUI application. The application executable can be shipped/copied as a single file. 
@@ -44,7 +63,16 @@ The following list shows situations where bin2cpp is useful:
 * Allowing an executable to be downloaded from an intranet server as a single file.
 * Distributing an application without an installer package. All configurations files and resources can be embedded and extracted at first launch of the application.
 
-# Command Line Usage
+
+
+
+# Usage #
+
+The following show how to use bin2cpp with code examples:
+
+
+
+## Command Line Usage ##
 
 ```
 bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name>
@@ -71,9 +99,11 @@ bin2cpp --version
 | --noheader           | Do not print program header to standard output.                                                            |
 | --quiet              | Do not log any message to standard output.                                                                 |
 
-# Example
+## Example ##
 
-### Input File:
+
+
+### Input File: ###
 html5skeleton.html
 ```html
 <!DOCTYPE html>
@@ -89,35 +119,44 @@ Hello World!
 </html>
 ```
 
-### Command:
+
+
+### Command: ###
 ```batchfile
 bin2cpp.exe --file=html5skeleton.html --output=.\outdir --headerfile=resourcehtml5skeleton.h
             --identifier=HtmlSample --chunksize=50
 ```
 
-### Console output
+
+
+### Console output ###
 
 ```batchfile
-bin2cpp v2.0.0 - Convert binary files into C++ source code.
-Copyright (C) 2013-2018 end2endzone.com. All rights reserved.
+bin2cpp v2.2.0 - Convert binary files into C++ source code.
+Copyright (C) 2013-2019 end2endzone.com. All rights reserved.
 bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
 Embedding "html5skeleton.html" using chunks of 50 bytes...
 Writing file ".\outdir\resourcehtml5skeleton.h"...
 Writing file ".\outdir\resourcehtml5skeleton.cpp"...
 ```
 
-### File resourcehtml5skeleton.h
+
+
+### File resourcehtml5skeleton.h ###
 
 ```cpp
 /**
- * This file was generated by bin2cpp v2.0.0
- * Copyright (C) 2013-2018 end2endzone.com. All rights reserved.
+ * This file was generated by bin2cpp v2.2.0
+ * Copyright (C) 2013-2019 end2endzone.com. All rights reserved.
  * bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
- * Source code for file 'html5skeleton.html', last modified 1513117337.
+ * Source code for file 'html5skeleton.html', last modified 1547463633.
  * Do not modify this file.
  */
-#pragma once
+#ifndef RESOURCEHTML5SKELETON_H
+#define RESOURCEHTML5SKELETON_H
+
 #include <stddef.h>
+
 namespace bin2cpp
 {
   #ifndef BIN2CPP_EMBEDDEDFILE_CLASS
@@ -133,16 +172,18 @@ namespace bin2cpp
   #endif
   const File & getHtmlSampleFile();
 }; //bin2cpp
+
+#endif //RESOURCEHTML5SKELETON_H
 ```
 
-### File resourcehtml5skeleton.cpp
+### File resourcehtml5skeleton.cpp ###
 
 ```cpp
 /**
- * This file was generated by bin2cpp v2.0.0
- * Copyright (C) 2013-2018 end2endzone.com. All rights reserved.
+ * This file was generated by bin2cpp v2.2.0
+ * Copyright (C) 2013-2019 end2endzone.com. All rights reserved.
  * bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
- * Source code for file 'html5skeleton.html', last modified 1513117337.
+ * Source code for file 'html5skeleton.html', last modified 1547463633.
  * Do not modify this file.
  */
 #include "resourcehtml5skeleton.h"
@@ -154,19 +195,19 @@ namespace bin2cpp
   {
   public:
     HtmlSampleFile() { build(); }
-    ~HtmlSampleFile() {}
-    virtual size_t getSize() const { return 238; }
+    virtual ~HtmlSampleFile() {}
+    virtual size_t getSize() const { return 228; }
     virtual const char * getFilename() const { return "html5skeleton.html"; }
     virtual const char * getBuffer() const { return mBuffer.c_str(); }
     void build()
     {
       mBuffer.clear();
       mBuffer.reserve(getSize()); //allocate all required memory at once to prevent reallocations
-      mBuffer.append("<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n  <meta", 50);
-      mBuffer.append(" charset=\"utf-8\">\r\n  <meta name=\"viewport\" content", 50);
-      mBuffer.append("=\"width=device-width, initial-scale=1, user-scalab", 50);
-      mBuffer.append("le=yes\">\r\n  <title>Hello World!</title>\r\n</head>\r\n", 50);
-      mBuffer.append("<body>\r\nHello World!\r\n</body>\r\n</html>", 38);
+      mBuffer.append("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta ch", 50);
+      mBuffer.append("arset=\"utf-8\">\n  <meta name=\"viewport\" content=\"wi", 50);
+      mBuffer.append("dth=device-width, initial-scale=1, user-scalable=y", 50);
+      mBuffer.append("es\">\n  <title>Hello World!</title>\n</head>\n<body>\n", 50);
+      mBuffer.append("Hello World!\n</body>\n</html>", 28);
     }
     virtual bool save(const char * iFilename) const
     {
@@ -185,7 +226,7 @@ namespace bin2cpp
 }; //bin2cpp
 ```
 
-### Code sample (using embedded code)
+### Code sample (using embedded files) ###
 ```cpp
 #include <stdio.h>
 #include <string>
@@ -216,53 +257,51 @@ int main(int argc, char* argv[])
 }
 ```
 
-# Installing
 
-Please refer to file [INSTALL.md](INSTALL.md) for details on how installing/building the application.
 
-## Testing
-bin2cpp comes with unit tests which tests for multiple combinations to make sure that input files are always encoded without errors.
-
-Test are build using the Google Test v1.6.0 framework. For more information on how googletest is working, see the [google test documentation primer](https://github.com/google/googletest/blob/release-1.8.0/googletest/docs/V1_6_Primer.md).  
-
-Test are automatically build when building the solution. Please see the '*build step*' section for details on how to build the software.
-
-Test can be executed from the following two locations:
-
-1) From the Visual Studio IDE:
-   1) Select the project '*bin2cpp_unittest*' as StartUp project.
-   2) Hit CTRL+F5 (Start Without Debugging)
-2) From the output binaries folder:
-   1) Open a file navigator and browse to the output folder(for example c:\projects\bin2cpp\msvc\Win32\Release)
-   2) Run the '*generate_test_files.bat*' batch script. The script will generate all required input files.
-   3) Run the '*bin2cpp_unittest.exe*' executable.
-
-See also the latest test results at the beginning of the document.
-
-# Screenshots
+## Screenshots ##
 
 [![bin2cpp v2.0.0 Sample](https://raw.githubusercontent.com/end2endzone/bin2cpp/master/docs/bin2cpp-v2.0.0-sample.png)](https://raw.githubusercontent.com/end2endzone/bin2cpp/master/docs/bin2cpp-v2.0.0-sample.png)
 
 bin2cpp v2.0.0 Sample
 
-# Compatible with
 
-bin2cpp is only available for the Windows platform and has been tested with the following version of Windows:
 
-*   Windows XP
-*   Windows Vista
-*   Windows 7
 
-# Versioning
+# Build #
+
+Please refer to file [INSTALL.md](INSTALL.md) for details on how installing/building the application.
+
+
+
+
+# Platform #
+
+bin2cpp has been tested with the following platform:
+
+*   Linux x86/x64
+*   Windows x86/x64
+
+
+
+
+# Versioning #
 
 We use [Semantic Versioning 2.0.0](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/end2endzone/bin2cpp/tags).
 
-# Authors
+
+
+
+# Authors #
 
 * **Antoine Beauchamp** - *Initial work* - [end2endzone](https://github.com/end2endzone)
 
 See also the list of [contributors](https://github.com/end2endzone/bin2cpp/blob/master/AUTHORS) who participated in this project.
 
-# License
+
+
+
+# License #
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
