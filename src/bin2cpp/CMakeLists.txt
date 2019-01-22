@@ -1,10 +1,4 @@
-set(BIN2CPP_HEADER_FILES ""
-  ${BIN2CPP_INCLUDE_DIR}/bin2cpp/bin2cpp.h
-)
-
 add_executable(bin2cpp
-  ${BIN2CPP_HEADER_FILES}
-  ${BIN2CPP_EXPORT_HEADER}
   ${BIN2CPP_VERSION_HEADER}
   ${BIN2CPP_CONFIG_HEADER}
   ArrayGenerator.cpp

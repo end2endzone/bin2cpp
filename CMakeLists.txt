@@ -6,10 +6,6 @@ project(bin2cpp)
 # Standard CMake variables
 ##############################################################################################################################################
 
-# BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to
-# make it prominent in the GUI.
-option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." OFF)
-
 # Set a default build type if none was specified.
 # See https://blog.kitware.com/cmake-and-the-default-build-type/
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -18,14 +14,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   mark_as_advanced(CMAKE_BUILD_TYPE)
   # Set the possible values of build type for cmake-gui
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
-
-# Export no symbols by default (if the compiler supports it). 
-# This makes e.g. GCC's "visibility behavior" consistent with MSVC's.  
-# On Windows/MSVC this is a noop. 
-if (BUILD_SHARED_LIBS)
-  set(CMAKE_C_VISIBILITY_PRESET hidden) 
-  set(CMAKE_CXX_VISIBILITY_PRESET hidden) 
 endif()
 
 # Set the output folder where your program will be created
@@ -98,7 +86,6 @@ set(BIN2CPP_INSTALL_CMAKE_DIR    ${BIN2CPP_INSTALL_LIB_DIR}) # CMake files (*.cm
 # Build options
 option(BIN2CPP_BUILD_TEST "Build all bin2cpp's unit tests" OFF)
 option(BIN2CPP_BUILD_DOC "Build documentation" OFF)
-option(BIN2CPP_BUILD_SAMPLES "Build bin2cpp samples" OFF)
 
 # Force a debug postfix if none specified.
 # This allows publishing both release and debug binaries to the same location
@@ -114,9 +101,7 @@ endif()
 
 # Define include directories for source code.
 # The specified values will not be exported.
-set( BIN2CPP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include )
-include_directories(${BIN2CPP_INCLUDE_DIR}          # public header files, for source code.
-                    ${CMAKE_BINARY_DIR}/include     # for ${BIN2CPP_VERSION_HEADER} and ${BIN2CPP_CONFIG_HEADER} generated files.
+include_directories(${CMAKE_BINARY_DIR}/include     # for ${BIN2CPP_VERSION_HEADER} and ${BIN2CPP_CONFIG_HEADER} generated files.
                     ${CMAKE_SOURCE_DIR}/src/common  # for common files shared by bin2cpp and unit tests.
 )
 
@@ -130,37 +115,12 @@ find_package(rapidassist 0.5.0 REQUIRED)
 # Subprojects
 ##############################################################################################################################################
 
-if (BUILD_SHARED_LIBS)
-  set(BIN2CPP_EXPORT_HEADER_FILENAME "export.h")
-  set(BIN2CPP_EXPORT_HEADER ${CMAKE_BINARY_DIR}/include/bin2cpp/${BIN2CPP_EXPORT_HEADER_FILENAME})
-endif()
-
 add_subdirectory(src/bin2cpp)
 
 # unit tests
 if(BIN2CPP_BUILD_TEST)
   add_subdirectory(test/testfilegenerator)
   add_subdirectory(test/bin2cpp_unittest)
-endif()
-
-# samples
-if(BIN2CPP_BUILD_SAMPLES)
-  add_subdirectory(samples)
-endif()
-
-##############################################################################################################################################
-# Support for static and shared library
-##############################################################################################################################################
-
-if (BUILD_SHARED_LIBS)
-  message("Generating ${BIN2CPP_EXPORT_HEADER_FILENAME} for shared library...")
-  include (GenerateExportHeader) 
-  GENERATE_EXPORT_HEADER(bin2cpp 
-               BASE_NAME bin2cpp 
-               EXPORT_MACRO_NAME BIN2CPP_EXPORT 
-               EXPORT_FILE_NAME ${BIN2CPP_EXPORT_HEADER} 
-               STATIC_DEFINE BIN2CPP_BUILT_AS_STATIC
-  )
 endif()
 
 ##############################################################################################################################################
@@ -207,8 +167,7 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/bin2cpp-config.cmake.in ${CMAKE_CURRENT
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/bin2cpp-config.cmake DESTINATION ${BIN2CPP_INSTALL_CMAKE_DIR})
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${BIN2CPP_INSTALL_INCLUDE_DIR})
-install(FILES ${BIN2CPP_EXPORT_HEADER}
-              ${BIN2CPP_VERSION_HEADER}
+install(FILES ${BIN2CPP_VERSION_HEADER}
               ${BIN2CPP_CONFIG_HEADER}
               DESTINATION ${BIN2CPP_INSTALL_INCLUDE_DIR}/bin2cpp)
 install(EXPORT bin2cpp-targets DESTINATION ${BIN2CPP_INSTALL_CMAKE_DIR})

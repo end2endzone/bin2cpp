@@ -1,5 +1,4 @@
 add_executable(testfilegenerator
-  ${BIN2CPP_EXPORT_HEADER}
   ${BIN2CPP_VERSION_HEADER}
   ${BIN2CPP_CONFIG_HEADER}
   samples.txt

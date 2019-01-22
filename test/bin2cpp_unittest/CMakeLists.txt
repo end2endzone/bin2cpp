@@ -136,7 +136,6 @@ endif()
 source_group("Generated Files" FILES ${GENERATED_TEST_FILES})
 
 add_executable(bin2cpp_unittest
-  ${BIN2CPP_EXPORT_HEADER}
   ${BIN2CPP_VERSION_HEADER}
   ${BIN2CPP_CONFIG_HEADER}
   application.cpp

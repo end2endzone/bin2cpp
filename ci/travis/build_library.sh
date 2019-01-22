@@ -18,7 +18,7 @@ echo ===========================================================================
 cd $TRAVIS_BUILD_DIR
 mkdir -p build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_LOCATION -DBIN2CPP_BUILD_TEST=ON -DBUILD_SHARED_LIBS=OFF -DBIN2CPP_BUILD_SAMPLES=OFF ..
+cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_LOCATION -DBIN2CPP_BUILD_TEST=ON -DBUILD_SHARED_LIBS=OFF ..
 
 echo ============================================================================
 echo Compiling...
