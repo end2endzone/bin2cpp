@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string>
-#include "resourcehtml5skeleton.h" //a single include file is all you need
+#include "file_html5skeleton.h" //a single include file is all you need
 
 int main(int argc, char* argv[])
 {
@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
   const bin2cpp::File & resource = bin2cpp::getHtmlSampleFile();
 
   //print information about the file.
-  printf("Embedded file '%s' is %d bytes long.\n", resource.getFilename(), resource.getSize());
+  printf("Embedded file '%s' is %u bytes long.\n", resource.getFilename(), resource.getSize());
 
   //Saving content back to a file.
   printf("Saving embedded file to 'html5skeleton_copy.html'...\n");

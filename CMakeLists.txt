@@ -86,6 +86,7 @@ set(BIN2CPP_INSTALL_CMAKE_DIR    ${BIN2CPP_INSTALL_LIB_DIR}) # CMake files (*.cm
 # Build options
 option(BIN2CPP_BUILD_TEST "Build all bin2cpp's unit tests" OFF)
 option(BIN2CPP_BUILD_DOC "Build documentation" OFF)
+option(BIN2CPP_BUILD_SAMPLES "Build bin2cpp samples" OFF)
 
 # Force a debug postfix if none specified.
 # This allows publishing both release and debug binaries to the same location
@@ -121,6 +122,11 @@ add_subdirectory(src/bin2cpp)
 if(BIN2CPP_BUILD_TEST)
   add_subdirectory(test/testfilegenerator)
   add_subdirectory(test/bin2cpp_unittest)
+endif()
+
+# samples
+if(BIN2CPP_BUILD_SAMPLES)
+  add_subdirectory(samples)
 endif()
 
 ##############################################################################################################################################
