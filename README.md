@@ -28,7 +28,7 @@ Statistics:
 
 # Purpose #
 
-bin2cpp is not implemented using [executable resources](http://en.wikipedia.org/wiki/Resource_(Windows)). Instead, bin2cpp creates multiple function calls for retrieving the data which makes it harder to steal the executable's content. It also makes it even harder to replace an existing resource of the executable.
+bin2cpp is not implemented using [executable resources](http://en.wikipedia.org/wiki/Resource_(Windows)). Instead, bin2cpp creates a single function call for retrieving the content and the properties of a file which makes it harder to steal the executable's content. It also makes it even harder to replace an existing resource of the executable.
 
 It is designed to be easy to use by developers and to provide easy call functions to get access to the data of the embedded files.
 
@@ -42,11 +42,13 @@ The generated functions that reads and extracts the embedded content does not re
 The main features of the project are:
 
 * Easily converts small files as C++ source code for embedding into a C++ executable.
-* Content extraction supported by a unique function call for each embedded file.
-* Supports a multiple embedded files at once.
+* Access content with a unique function call for each embedded file.
+* Supports multiple embedded files at once.
 * Makes it harder for resource hacker to modify or steal the embedded files.
 * No third party libraries required for retrieving the data of the embedded files.
-
+* Supports different types of code generator: string, segment, array.
+* File's originals `size` and `filename` properties available from generated source code.
+* Source code control: select a custom file interface and namespace
 
 
 ## Use cases ##
@@ -68,7 +70,7 @@ The following list shows situations where bin2cpp is useful:
 
 # Usage #
 
-The following show how to use bin2cpp with code examples:
+The following section shows how to use bin2cpp with code examples:
 
 
 
