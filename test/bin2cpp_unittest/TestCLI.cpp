@@ -131,7 +131,6 @@ using namespace TestCLIUtils;
 
 void TestCLI::SetUp()
 {
-
 }
 
 void TestCLI::TearDown()
@@ -752,6 +751,9 @@ TEST_F(TestCLI, testErrorMissingArgumentFileOrDir)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
@@ -796,6 +798,9 @@ TEST_F(TestCLI, testErrorMissingArgumentOutput)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
@@ -840,6 +845,9 @@ TEST_F(TestCLI, testErrorMissingArgumentHeaderfile)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
@@ -884,6 +892,9 @@ TEST_F(TestCLI, testErrorMissingArgumentIdentifier)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
@@ -929,6 +940,9 @@ TEST_F(TestCLI, testErrorMissingArgumentEncoding)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
@@ -974,6 +988,9 @@ TEST_F(TestCLI, testErrorMissingArgumentGenerator)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
@@ -1019,6 +1036,9 @@ TEST_F(TestCLI, testErrorInputFileNotFound)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(APP_ERROR_INPUTFILENOTFOUND, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
@@ -1048,7 +1068,11 @@ TEST_F(TestCLI, testErrorOutputFile)
   cmdline.append(" --file=");
   cmdline.append(getBin2cppPath()); //itself
   cmdline.append(" --output=generated_files");
+#ifdef _WIN32
   cmdline.append(" --headerfile=:?.h");
+#else
+  cmdline.append(" --headerfile=.");
+#endif
   //cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
   cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
@@ -1063,6 +1087,9 @@ TEST_F(TestCLI, testErrorOutputFile)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(APP_ERROR_UNABLETOCREATEOUTPUTFILES, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
@@ -1108,6 +1135,9 @@ TEST_F(TestCLI, testErrorTooManyArgumentsFileAndDir)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(APP_ERROR_TOOMANYARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
@@ -1153,6 +1183,9 @@ TEST_F(TestCLI, testErrorTooManyArgumentsHeaderfile)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(APP_ERROR_TOOMANYARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
@@ -1198,6 +1231,9 @@ TEST_F(TestCLI, testErrorTooManyArgumentsIdentifier)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(APP_ERROR_TOOMANYARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
@@ -1243,6 +1279,9 @@ TEST_F(TestCLI, testErrorInputDirNotFound)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(APP_ERROR_INPUTDIRNOTFOUND, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
