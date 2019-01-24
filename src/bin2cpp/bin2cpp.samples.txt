@@ -2,3 +2,4 @@
 --file=.\generated_files\testSequential1000\testSequential1000.bin --output=.\generated_files\testSequential1000 --headerfile=_testSequential1000.h --identifier=testSequential1000  --chunksize=180 --override
 --file=C:\Temp\foobar.bin --output=C:\Temp --headerfile=_testFoo.h --identifier=testFoo --override
 --file=C:\Temp\foobar.bin --output=C:\Temp --headerfile=_testFoo.h --identifier=testFoo --override --noheader
+--dir=D:\Temp\foobar --output=C:\Temp\foobar --override –noheader
