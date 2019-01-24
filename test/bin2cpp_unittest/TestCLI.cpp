@@ -46,6 +46,16 @@ extern const std::string & gGeneratedFilesDir;
   }\
 }
 
+enum APP_ERROR_CODES
+{
+  APP_ERROR_SUCCESS,
+  APP_ERROR_MISSINGARGUMENTS,
+  APP_ERROR_INPUTFILENOTFOUND,
+  APP_ERROR_UNABLETOCREATEOUTPUTFILES,
+  APP_ERROR_TOOMANYARGUMENTS,
+  APP_ERROR_INPUTDIRNOTFOUND
+};
+
 namespace TestCLIUtils
 {
   std::string getExpectedFilePath()
@@ -709,6 +719,540 @@ TEST_F(TestCLI, testEncoding)
     ASSERT_TEXT_IN_FILE(true, cppFilePath.c_str(), "mBuffer.append(\"CZq\\210\\237\\266\\315\\344\\373\\022)");
   }
 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+TEST_F(TestCLI, testErrorMissingArgumentFileOrDir)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  //cmdline.append(" --file=");
+  //cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //load output file
+  ra::strings::StringVector lines;
+  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Missing arguments (file");
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testErrorMissingArgumentOutput)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  //cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //load output file
+  ra::strings::StringVector lines;
+  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Missing arguments (output)");
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testErrorMissingArgumentHeaderfile)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --output=generated_files");
+  //cmdline.append(" --headerfile=");
+  //cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //load output file
+  ra::strings::StringVector lines;
+  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Missing arguments (headerfile)");
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testErrorMissingArgumentIdentifier)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  //cmdline.append(" --identifier=");
+  //cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //load output file
+  ra::strings::StringVector lines;
+  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Missing arguments (identifier)");
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testErrorMissingArgumentEncoding)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+ static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(" --encoding=123456789");
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //load output file
+  ra::strings::StringVector lines;
+  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Missing arguments (encoding)");
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testErrorMissingArgumentGenerator)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(" --generator=123456789");
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //load output file
+  ra::strings::StringVector lines;
+  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Missing arguments");
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "'generator' argument");
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testErrorInputFileNotFound)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=123456789");
+  //cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(APP_ERROR_INPUTFILENOTFOUND, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //load output file
+  ra::strings::StringVector lines;
+  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Unable to open input file");
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testErrorOutputFile)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=:?.h");
+  //cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(APP_ERROR_UNABLETOCREATEOUTPUTFILES, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //load output file
+  ra::strings::StringVector lines;
+  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Unable to create output files");
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testErrorTooManyArgumentsFileAndDir)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --dir=.");
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(APP_ERROR_TOOMANYARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //load output file
+  ra::strings::StringVector lines;
+  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Too many arguments (file");
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testErrorTooManyArgumentsHeaderfile)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  //cmdline.append(" --file=");
+  //cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --dir=.");
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  //cmdline.append(" --identifier=");
+  //cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(APP_ERROR_TOOMANYARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //load output file
+  ra::strings::StringVector lines;
+  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Too many arguments (headerfile)");
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testErrorTooManyArgumentsIdentifier)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  //cmdline.append(" --file=");
+  //cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --dir=.");
+  cmdline.append(" --output=generated_files");
+  //cmdline.append(" --headerfile=");
+  //cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(APP_ERROR_TOOMANYARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //load output file
+  ra::strings::StringVector lines;
+  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Too many arguments (identifier)");
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testErrorInputDirNotFound)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  //cmdline.append(" --file=");
+  //cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --dir=123456789");
+  cmdline.append(" --output=generated_files");
+  //cmdline.append(" --headerfile=");
+  //cmdline.append(headerFileName);
+  //cmdline.append(" --identifier=");
+  //cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(APP_ERROR_INPUTDIRNOTFOUND, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //load output file
+  ra::strings::StringVector lines;
+  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  ASSERT_TRUE(loaded);
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Input directory not found");
+ 
   //cleanup
   ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
