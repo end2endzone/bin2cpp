@@ -1,6 +1,13 @@
+# Set an icon for the application when viewed from File Explorer on Windows
+if (WIN32)
+  set(ICON_RESOURCE_FILE ${CMAKE_CURRENT_BINARY_DIR}/icon.rc)
+  file(WRITE ${ICON_RESOURCE_FILE} "main ICON \"${CMAKE_SOURCE_DIR}/docs/icon.ico\"\n" )
+endif()
+ 
 add_executable(bin2cpp
   ${BIN2CPP_VERSION_HEADER}
   ${BIN2CPP_CONFIG_HEADER}
+  ${ICON_RESOURCE_FILE}
   ArrayGenerator.cpp
   ArrayGenerator.h
   BaseGenerator.cpp
