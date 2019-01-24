@@ -201,7 +201,7 @@ namespace bin2cpp
     fprintf(header, "    virtual const char * getBuffer() const = 0;\n");
     fprintf(header, "    virtual bool save(const char * iFilename) const = 0;\n");
     fprintf(header, "  };\n");
-    fprintf(header, "  #endif\n");
+    fprintf(header, "  #endif //BIN2CPP_EMBEDDEDFILE_CLASS\n");
     fprintf(header, "  const %s & %s();\n", mBaseClass.c_str(), getGetterFunctionName().c_str());
     fprintf(header, "}; //%s\n", mNamespace.c_str());
     fprintf(header, "\n");
