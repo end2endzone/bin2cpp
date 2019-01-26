@@ -5,162 +5,189 @@ set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10 --fill=text
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testText1000
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=text
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testText100000
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=text
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testRandom1
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=random --seed=1
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testRandom2
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=random --seed=2
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testRandom3
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=random --seed=3
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testRandom4
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=random --seed=4
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --chunksize=200 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testRandom5
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=random --seed=5
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --chunksize=200 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testRandom6
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=random --seed=6
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --chunksize=200 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testRandom7
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=random --seed=7
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --chunksize=200 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testRandom8
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=random --seed=8
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --chunksize=200 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testHtml100000
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=html
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testSequential1000
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=180 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testSequential10MB
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10485760 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM   set TEST_NAME=testSequential20MB
 REM   set OUTDIR=.\generated_files\%TEST_NAME%
 REM   mkdir %OUTDIR% 1>NUL 2>NUL
 REM   @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=20971520 --fill=sequential
 REM   @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --override
+REM   if %errorlevel% neq 0 exit /b %errorlevel%
 REM   
 REM   set TEST_NAME=testSequential30MB
 REM   set OUTDIR=.\generated_files\%TEST_NAME%
 REM   mkdir %OUTDIR% 1>NUL 2>NUL
 REM   @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=31457280 --fill=sequential
 REM   @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --override
+REM   if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testGeneratorArray10000
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=array --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testGeneratorString10000
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=string --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testGeneratorSegment10000
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testGeneratorWin32
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=win32 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testNamespace
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override --namespace=foobar
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testBaseClass
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override --baseclass=Resource
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testEncodingOct
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=300 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=40 --generator=segment --override --encoding=OcT
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testEncodingHex
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=300 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=40 --generator=segment --override --encoding=HeX
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testIssue12
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=100000 --fill=random --seed=3
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testIssue12Mini
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=100 --fill=random --seed=3 --skip=47240
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --chunksize=10 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testIssue13
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=random --seed=1
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --chunksize=100 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testDir01
 set OUTDIR=.\generated_files\%TEST_NAME%
@@ -173,9 +200,14 @@ mkdir %OUTDIR%\sources 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0004.jpg --size=1040 --fill=random --seed=4
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0005.jpg --size=1050 --fill=random --seed=5
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\images\IMG_0001.jpg --output=%OUTDIR%\sources --headerfile=_img0001.h --identifier=Img0001 --chunksize=200 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\images\IMG_0002.jpg --output=%OUTDIR%\sources --headerfile=_img0002.h --identifier=Img0002 --chunksize=200 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\images\IMG_0003.jpg --output=%OUTDIR%\sources --headerfile=_img0003.h --identifier=Img0003 --chunksize=200 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\images\IMG_0004.jpg --output=%OUTDIR%\sources --headerfile=_img0004.h --identifier=Img0004 --chunksize=200 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\images\IMG_0005.jpg --output=%OUTDIR%\sources --headerfile=_img0005.h --identifier=Img0005 --chunksize=200 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 dir >NUL

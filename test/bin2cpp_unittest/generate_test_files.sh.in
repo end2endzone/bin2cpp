@@ -1,3 +1,6 @@
+# Any commands which fail will cause the shell script to exit immediately
+set -e
+
 export TEST_NAME=testText10
 export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p ${OUTDIR}
