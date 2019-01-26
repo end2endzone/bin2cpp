@@ -159,3 +159,17 @@ export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p ${OUTDIR}
 @TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=1000 --fill=random --seed=1
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME --chunksize=100 --override
+
+export TEST_NAME=testDir01
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0001.jpg --size=1010 --fill=random --seed=1
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0002.jpg --size=1020 --fill=random --seed=2
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0003.jpg --size=1030 --fill=random --seed=3
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0004.jpg --size=1040 --fill=random --seed=4
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0005.jpg --size=1050 --fill=random --seed=5
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/images/IMG_0001.jpg --output=$OUTDIR/sources --headerfile=_img0001.h --identifier=Img0001 --chunksize=200 --override
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/images/IMG_0002.jpg --output=$OUTDIR/sources --headerfile=_img0002.h --identifier=Img0002 --chunksize=200 --override
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/images/IMG_0003.jpg --output=$OUTDIR/sources --headerfile=_img0003.h --identifier=Img0003 --chunksize=200 --override
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/images/IMG_0004.jpg --output=$OUTDIR/sources --headerfile=_img0004.h --identifier=Img0004 --chunksize=200 --override
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/images/IMG_0005.jpg --output=$OUTDIR/sources --headerfile=_img0005.h --identifier=Img0005 --chunksize=200 --override

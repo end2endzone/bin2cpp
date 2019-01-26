@@ -721,6 +721,76 @@ TEST_F(TestCLI, testEncoding)
   //cleanup
   ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
+
+TEST_F(TestCLI, testDir)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --dir=generated_files\\testDir01\\images");      //use windows path separator
+  cmdline.append(" --output=generated_files\\testDir01\\sources");
+  cmdline.append(" --noheader");
+ 
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+#ifdef __linux__
+  //fix path separator
+  ra::strings::replace(cmdline, "\\", "/");
+#endif
+
+  //build the list of generated files
+  const char * generated_files_tmp[] = {
+    "generated_files\\testDir01\\sources\\IMG_0001.h"  ,
+    "generated_files\\testDir01\\sources\\IMG_0002.h"  ,
+    "generated_files\\testDir01\\sources\\IMG_0003.h"  ,
+    "generated_files\\testDir01\\sources\\IMG_0004.h"  ,
+    "generated_files\\testDir01\\sources\\IMG_0005.h"  ,
+    "generated_files\\testDir01\\sources\\IMG_0001.cpp",
+    "generated_files\\testDir01\\sources\\IMG_0002.cpp",
+    "generated_files\\testDir01\\sources\\IMG_0003.cpp",
+    "generated_files\\testDir01\\sources\\IMG_0004.cpp",
+    "generated_files\\testDir01\\sources\\IMG_0005.cpp",
+  };
+  const size_t num_generated_files = sizeof(generated_files_tmp)/sizeof(generated_files_tmp[0]);
+  ra::strings::StringVector generated_files;
+  for(size_t i=0; i<num_generated_files; i++)
+  {
+    generated_files.push_back(generated_files_tmp[i]);
+#ifdef __linux__
+    ra::strings::replace(generated_files[i], "\\", "/"); //fix path separator
+#endif
+  }
+
+  //delete generated files
+  for(size_t i=0; i<generated_files.size(); i++)
+  {
+    const std::string & generated_file = generated_files[i];
+    ASSERT_TRUE(deleteFile(generated_file.c_str()));
+  }
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+  ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //assert that expected files were generated
+  for(size_t i=0; i<generated_files.size(); i++)
+  {
+    const std::string & generates_file = generated_files[i];
+    ASSERT_TRUE(ra::filesystem::fileExists(generates_file.c_str())) << "File not found: '" << generates_file.c_str() << "'.";
+  }
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+
 TEST_F(TestCLI, testErrorMissingArgumentFileOrDir)
 {
   static const std::string expectedFilePath = getExpectedFilePath();

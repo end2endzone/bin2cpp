@@ -26,6 +26,7 @@ include_directories(${GENERATED_TEST_FILES_DIR}/testSequential10MB)
 include_directories(${GENERATED_TEST_FILES_DIR}/testText10)
 include_directories(${GENERATED_TEST_FILES_DIR}/testText1000)
 include_directories(${GENERATED_TEST_FILES_DIR}/testText100000)
+include_directories(${GENERATED_TEST_FILES_DIR}/testDir01/sources)
 if (WIN32)
   include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorWin32)
 endif()
@@ -79,6 +80,16 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testText1000/_testText1000.cpp
   ${GENERATED_TEST_FILES_DIR}/testText100000/_testText100000.h
   ${GENERATED_TEST_FILES_DIR}/testText100000/_testText100000.cpp
+  ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0001.h
+  ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0002.h
+  ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0003.h
+  ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0004.h
+  ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0005.h
+  ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0001.cpp
+  ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0002.cpp
+  ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0003.cpp
+  ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0004.cpp
+  ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0005.cpp
 )
 if (WIN32)
   # Include win32 generated test files only on Windows platform.
