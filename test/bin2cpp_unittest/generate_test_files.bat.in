@@ -165,6 +165,8 @@ mkdir %OUTDIR% 1>NUL 2>NUL
 set TEST_NAME=testDir01
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
+mkdir %OUTDIR%\images 1>NUL 2>NUL
+mkdir %OUTDIR%\sources 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0001.jpg --size=1010 --fill=random --seed=1
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0002.jpg --size=1020 --fill=random --seed=2
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0003.jpg --size=1030 --fill=random --seed=3
