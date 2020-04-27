@@ -31,7 +31,7 @@
 
 #include <gtest/gtest.h>
 
-#include "rapidassist/gtesthelp.h"
+#include "rapidassist/environment.h"
 #include "application.h"
 
 int main(int argc, char **argv)
@@ -41,16 +41,16 @@ int main(int argc, char **argv)
   app.init(argc, argv);
 
   //define default values for xml output report
-  if (ra::gtesthelp::isProcessorX86())
+  if (ra::environment::IsProcess32Bit())
   {
-    if (ra::gtesthelp::isDebugCode())
+    if (ra::environment::IsConfigurationDebug())
       ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x86.debug.xml";
     else
       ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x86.release.xml";
   }
-  else if (ra::gtesthelp::isProcessorX64())
+  else if (ra::environment::IsProcess64Bit())
   {
-    if (ra::gtesthelp::isDebugCode())
+    if (ra::environment::IsConfigurationDebug())
       ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x64.debug.xml";
     else
       ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x64.release.xml";

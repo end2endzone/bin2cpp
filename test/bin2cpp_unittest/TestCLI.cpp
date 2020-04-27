@@ -25,10 +25,10 @@
 #include "TestCLI.h"
 #include "application.h"
 
-#include "rapidassist/gtesthelp.h"
+#include "rapidassist/testing.h"
 #include "rapidassist/filesystem.h"
 #include "rapidassist/strings.h"
-#include "rapidassist/time_.h"
+#include "rapidassist/timing.h"
 
 extern const std::string & gGeneratedFilesDir;
 #ifdef _WIN32
@@ -38,7 +38,7 @@ extern const std::string & gGeneratedFilesDir;
 #endif
   
 #define ASSERT_TEXT_IN_FILE(expected, filepath, text) {\
-  int line = -1;  int col = -1;  bool textFound = ra::gtesthelp::findInFile(filepath, text, line, col);\
+  int line = -1;  int col = -1;  bool textFound = ra::testing::FindInFile(filepath, text, line, col);\
   if ((expected)) {\
     ASSERT_TRUE(textFound) << "The token '" << text << "' was NOT found in file '" << filepath << "'.";\
   } else {\
@@ -61,7 +61,7 @@ namespace TestCLIUtils
   std::string getExpectedFilePath()
   {
     std::string file;
-    file.append(ra::gtesthelp::getTestQualifiedName());
+    file.append(ra::testing::GetTestQualifiedName());
     file.append(".expected.txt");
     return file;
   }
@@ -69,7 +69,7 @@ namespace TestCLIUtils
   std::string getActualFilePath()
   {
     std::string file;
-    file.append(ra::gtesthelp::getTestQualifiedName());
+    file.append(ra::testing::GetTestQualifiedName());
     file.append(".actual.txt");
     return file;
   }
@@ -106,7 +106,7 @@ namespace TestCLIUtils
 
   bool deleteFile(const char * iPath)
   {
-    if (ra::filesystem::fileExists(iPath))
+    if (ra::filesystem::FileExists(iPath))
     {
       bool deleted = remove(iPath) == 0;
       return deleted;
@@ -122,7 +122,7 @@ namespace TestCLIUtils
 
     //replace bin2cpp_unittest by bin2cpp
     std::string bin2cppPath = appPath;
-    ra::strings::replace(bin2cppPath, "_unittest", "");
+    ra::strings::Replace(bin2cppPath, "_unittest", "");
     return bin2cppPath;
   }
 
@@ -155,7 +155,7 @@ TEST_F(TestCLI, testVersion)
 
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
 
   //assert standard output log
@@ -184,7 +184,7 @@ TEST_F(TestCLI, testHelp)
 
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
 
   //assert standard output log
@@ -212,7 +212,7 @@ TEST_F(TestCLI, testNoArguments)
 
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
 
   //assert standard output log
@@ -228,9 +228,9 @@ TEST_F(TestCLI, testMinimum)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
 
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
 
   //build command line
   std::string cmdline;
@@ -241,7 +241,7 @@ TEST_F(TestCLI, testMinimum)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
 
   cmdline.append(" >");
   cmdline.append(outputFilePath.c_str());
@@ -256,7 +256,7 @@ TEST_F(TestCLI, testMinimum)
 
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
 
   //assert standard output log
@@ -264,7 +264,7 @@ TEST_F(TestCLI, testMinimum)
   ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
 
   //assert generated code
-  ASSERT_TRUE(ra::filesystem::fileExists(headerFilePath.c_str()));
+  ASSERT_TRUE(ra::filesystem::FileExists(headerFilePath.c_str()));
 
   //cleanup
   ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
@@ -275,9 +275,9 @@ TEST_F(TestCLI, testQuiet)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
 
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
 
   //build command line
   std::string cmdline;
@@ -288,7 +288,7 @@ TEST_F(TestCLI, testQuiet)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --quiet");
 
   cmdline.append(" >");
@@ -304,16 +304,16 @@ TEST_F(TestCLI, testQuiet)
 
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
 
   //assert standard output log
   ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Copyright (C)");
   ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
-  ASSERT_EQ(0, ra::filesystem::getFileSize(outputFilePath.c_str()));
+  ASSERT_EQ(0, ra::filesystem::GetFileSize(outputFilePath.c_str()));
 
   //assert generated code
-  ASSERT_TRUE(ra::filesystem::fileExists(headerFilePath.c_str()));
+  ASSERT_TRUE(ra::filesystem::FileExists(headerFilePath.c_str()));
 
   //cleanup
   ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
@@ -324,9 +324,9 @@ TEST_F(TestCLI, testNoHeader)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
 
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
 
   //build command line
   std::string cmdline;
@@ -337,7 +337,7 @@ TEST_F(TestCLI, testNoHeader)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --noheader");
 
   cmdline.append(" >");
@@ -353,7 +353,7 @@ TEST_F(TestCLI, testNoHeader)
 
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
 
   //assert standard output log
@@ -361,7 +361,7 @@ TEST_F(TestCLI, testNoHeader)
   ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
 
   //assert generated code
-  ASSERT_TRUE(ra::filesystem::fileExists(headerFilePath.c_str()));
+  ASSERT_TRUE(ra::filesystem::FileExists(headerFilePath.c_str()));
 
   //cleanup
   ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
@@ -387,9 +387,9 @@ TEST_F(TestCLI, testGenerators)
 
     printf("Testing '%s' generator...\n", generatorName);
 
-    std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + "." + generatorName + ".h";
+    std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + "." + generatorName + ".h";
     std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-    std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+    std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
 
     //build command line
     std::string cmdline;
@@ -400,7 +400,7 @@ TEST_F(TestCLI, testGenerators)
     cmdline.append(" --headerfile=");
     cmdline.append(headerFileName);
     cmdline.append(" --identifier=");
-    cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+    cmdline.append(ra::testing::GetTestCaseName().c_str());
     cmdline.append(" --generator=");
     cmdline.append(generatorName);
 
@@ -432,7 +432,7 @@ TEST_F(TestCLI, testGenerators)
         if (fileA != fileB)
         {
           std::string reason;
-          bool isSourceCodeIdentical = ra::gtesthelp::isFileEquals(fileA.c_str(), fileB.c_str(), reason);
+          bool isSourceCodeIdentical = ra::testing::IsFileEquals(fileA.c_str(), fileB.c_str(), reason);
           ASSERT_FALSE( isSourceCodeIdentical ) << reason.c_str();
         }
       }
@@ -448,10 +448,10 @@ TEST_F(TestCLI, testNewFiles)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
 
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
-  std::string inputFilePath = gGeneratedFilesDir + ra::gtesthelp::getTestCaseName() + ".bin";
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
+  std::string inputFilePath = gGeneratedFilesDir + ra::testing::GetTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
 
@@ -464,7 +464,7 @@ TEST_F(TestCLI, testNewFiles)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
 
   cmdline.append(" >");
   cmdline.append(outputFilePath.c_str());
@@ -487,10 +487,10 @@ TEST_F(TestCLI, testUpdating)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
 
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
-  std::string inputFilePath = gGeneratedFilesDir + ra::gtesthelp::getTestCaseName() + ".bin";
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
+  std::string inputFilePath = gGeneratedFilesDir + ra::testing::GetTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
 
@@ -503,7 +503,7 @@ TEST_F(TestCLI, testUpdating)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
 
   cmdline.append(" >");
   cmdline.append(outputFilePath.c_str());
@@ -518,7 +518,7 @@ TEST_F(TestCLI, testUpdating)
 
   //force a change in the input file
   //which makes the generated files outdated
-  ra::time::millisleep(1200);
+  ra::timing::Millisleep(1200);
   createDummyFile(inputFilePath, 1111);
 
   //run the command (again)
@@ -537,10 +537,10 @@ TEST_F(TestCLI, testOverride)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
 
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
-  std::string inputFilePath = gGeneratedFilesDir + ra::gtesthelp::getTestCaseName() + ".bin";
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
+  std::string inputFilePath = gGeneratedFilesDir + ra::testing::GetTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
 
@@ -553,7 +553,7 @@ TEST_F(TestCLI, testOverride)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
 
   cmdline.append(" >");
   cmdline.append(outputFilePath.c_str());
@@ -567,7 +567,7 @@ TEST_F(TestCLI, testOverride)
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //add the override flag
-  ra::strings::replace(cmdline, "--file", "--override --file");
+  ra::strings::Replace(cmdline, "--file", "--override --file");
 
   //run the command (again, expecting overriding both files)
   returnCode = system(cmdline.c_str());
@@ -583,10 +583,10 @@ TEST_F(TestCLI, testSkipping)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
 
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
-  std::string inputFilePath = gGeneratedFilesDir + ra::gtesthelp::getTestCaseName() + ".bin";
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
+  std::string inputFilePath = gGeneratedFilesDir + ra::testing::GetTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
 
@@ -599,7 +599,7 @@ TEST_F(TestCLI, testSkipping)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
 
   cmdline.append(" >");
   cmdline.append(outputFilePath.c_str());
@@ -628,10 +628,10 @@ TEST_F(TestCLI, testEncoding)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
 
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
-  std::string inputFilePath = gGeneratedFilesDir + ra::gtesthelp::getTestCaseName() + ".bin";
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
+  std::string inputFilePath = gGeneratedFilesDir + ra::testing::GetTestCaseName() + ".bin";
 
   createDummyFile(inputFilePath, 12345);
 
@@ -644,7 +644,7 @@ TEST_F(TestCLI, testEncoding)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --chuksize=256");
   cmdline.append(" --override");
 
@@ -664,14 +664,14 @@ TEST_F(TestCLI, testEncoding)
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
     //assert generated code
-    ASSERT_TRUE(ra::filesystem::fileExists(cppFilePath.c_str()));
+    ASSERT_TRUE(ra::filesystem::FileExists(cppFilePath.c_str()));
     ASSERT_TEXT_IN_FILE(true, cppFilePath.c_str(), "mBuffer.append(\"CZq\\210\\237\\266\\315\\344\\373\\022)");
   }
 
   //assert encoding (hex)
   {
     std::string cmdline = baseCmdLine;
-    ra::strings::replace(cmdline, " --override", " --override --encoding=hEx");
+    ra::strings::Replace(cmdline, " --override", " --override --encoding=hEx");
 
     //delete generated files
     ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
@@ -682,14 +682,14 @@ TEST_F(TestCLI, testEncoding)
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
     //assert generated code
-    ASSERT_TRUE(ra::filesystem::fileExists(cppFilePath.c_str()));
+    ASSERT_TRUE(ra::filesystem::FileExists(cppFilePath.c_str()));
     ASSERT_TEXT_IN_FILE(true, cppFilePath.c_str(), "mBuffer.append(\"CZq\\x88\\x9f\\xb6\\xcd\\xe4\\xfb\\x12)");
   }
 
   //assert invalid encoding (abc)
   {
     std::string cmdline = baseCmdLine;
-    ra::strings::replace(cmdline, " --override", " --override --encoding=abc");
+    ra::strings::Replace(cmdline, " --override", " --override --encoding=abc");
 
     //delete generated files
     ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
@@ -703,7 +703,7 @@ TEST_F(TestCLI, testEncoding)
   //assert encoding (oct)
   {
     std::string cmdline = baseCmdLine;
-    ra::strings::replace(cmdline, " --override", " --override --encoding=oCt");
+    ra::strings::Replace(cmdline, " --override", " --override --encoding=oCt");
 
     //delete generated files
     ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
@@ -714,7 +714,7 @@ TEST_F(TestCLI, testEncoding)
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
     //assert generated code
-    ASSERT_TRUE(ra::filesystem::fileExists(cppFilePath.c_str()));
+    ASSERT_TRUE(ra::filesystem::FileExists(cppFilePath.c_str()));
     ASSERT_TEXT_IN_FILE(true, cppFilePath.c_str(), "mBuffer.append(\"CZq\\210\\237\\266\\315\\344\\373\\022)");
   }
 
@@ -727,9 +727,9 @@ TEST_F(TestCLI, testDir)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -743,7 +743,7 @@ TEST_F(TestCLI, testDir)
  
 #ifdef __linux__
   //fix path separator
-  ra::strings::replace(cmdline, "\\", "/");
+  ra::strings::Replace(cmdline, "\\", "/");
 #endif
 
   //build the list of generated files
@@ -765,7 +765,7 @@ TEST_F(TestCLI, testDir)
   {
     generated_files.push_back(generated_files_tmp[i]);
 #ifdef __linux__
-    ra::strings::replace(generated_files[i], "\\", "/"); //fix path separator
+    ra::strings::Replace(generated_files[i], "\\", "/"); //fix path separator
 #endif
   }
 
@@ -784,7 +784,7 @@ TEST_F(TestCLI, testDir)
   for(size_t i=0; i<generated_files.size(); i++)
   {
     const std::string & generates_file = generated_files[i];
-    ASSERT_TRUE(ra::filesystem::fileExists(generates_file.c_str())) << "File not found: '" << generates_file.c_str() << "'.";
+    ASSERT_TRUE(ra::filesystem::FileExists(generates_file.c_str())) << "File not found: '" << generates_file.c_str() << "'.";
   }
  
   //cleanup
@@ -796,9 +796,9 @@ TEST_F(TestCLI, testErrorMissingArgumentFileOrDir)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -809,7 +809,7 @@ TEST_F(TestCLI, testErrorMissingArgumentFileOrDir)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --noheader");
  
   cmdline.append(" >");
@@ -828,7 +828,7 @@ TEST_F(TestCLI, testErrorMissingArgumentFileOrDir)
  
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
  
   //assert standard output log
@@ -843,9 +843,9 @@ TEST_F(TestCLI, testErrorMissingArgumentOutput)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -856,7 +856,7 @@ TEST_F(TestCLI, testErrorMissingArgumentOutput)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --noheader");
  
   cmdline.append(" >");
@@ -875,7 +875,7 @@ TEST_F(TestCLI, testErrorMissingArgumentOutput)
  
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
  
   //assert standard output log
@@ -890,9 +890,9 @@ TEST_F(TestCLI, testErrorMissingArgumentHeaderfile)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -903,7 +903,7 @@ TEST_F(TestCLI, testErrorMissingArgumentHeaderfile)
   //cmdline.append(" --headerfile=");
   //cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --noheader");
  
   cmdline.append(" >");
@@ -922,7 +922,7 @@ TEST_F(TestCLI, testErrorMissingArgumentHeaderfile)
  
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
  
   //assert standard output log
@@ -937,9 +937,9 @@ TEST_F(TestCLI, testErrorMissingArgumentIdentifier)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -950,7 +950,7 @@ TEST_F(TestCLI, testErrorMissingArgumentIdentifier)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   //cmdline.append(" --identifier=");
-  //cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  //cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --noheader");
  
   cmdline.append(" >");
@@ -969,7 +969,7 @@ TEST_F(TestCLI, testErrorMissingArgumentIdentifier)
  
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
  
   //assert standard output log
@@ -984,9 +984,9 @@ TEST_F(TestCLI, testErrorMissingArgumentEncoding)
   static const std::string expectedFilePath = getExpectedFilePath();
  static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -997,7 +997,7 @@ TEST_F(TestCLI, testErrorMissingArgumentEncoding)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --encoding=123456789");
   cmdline.append(" --noheader");
  
@@ -1017,7 +1017,7 @@ TEST_F(TestCLI, testErrorMissingArgumentEncoding)
  
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
  
   //assert standard output log
@@ -1032,9 +1032,9 @@ TEST_F(TestCLI, testErrorMissingArgumentGenerator)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -1045,7 +1045,7 @@ TEST_F(TestCLI, testErrorMissingArgumentGenerator)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --generator=123456789");
   cmdline.append(" --noheader");
  
@@ -1065,7 +1065,7 @@ TEST_F(TestCLI, testErrorMissingArgumentGenerator)
  
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
  
   //assert standard output log
@@ -1081,9 +1081,9 @@ TEST_F(TestCLI, testErrorInputFileNotFound)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -1094,7 +1094,7 @@ TEST_F(TestCLI, testErrorInputFileNotFound)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --noheader");
  
   cmdline.append(" >");
@@ -1113,7 +1113,7 @@ TEST_F(TestCLI, testErrorInputFileNotFound)
  
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
  
   //assert standard output log
@@ -1128,9 +1128,9 @@ TEST_F(TestCLI, testErrorOutputFile)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -1145,7 +1145,7 @@ TEST_F(TestCLI, testErrorOutputFile)
 #endif
   //cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --noheader");
  
   cmdline.append(" >");
@@ -1164,7 +1164,7 @@ TEST_F(TestCLI, testErrorOutputFile)
  
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
  
   //assert standard output log
@@ -1179,9 +1179,9 @@ TEST_F(TestCLI, testErrorTooManyArgumentsFileAndDir)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -1193,7 +1193,7 @@ TEST_F(TestCLI, testErrorTooManyArgumentsFileAndDir)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --noheader");
  
   cmdline.append(" >");
@@ -1212,7 +1212,7 @@ TEST_F(TestCLI, testErrorTooManyArgumentsFileAndDir)
  
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
  
   //assert standard output log
@@ -1227,9 +1227,9 @@ TEST_F(TestCLI, testErrorTooManyArgumentsHeaderfile)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -1241,7 +1241,7 @@ TEST_F(TestCLI, testErrorTooManyArgumentsHeaderfile)
   cmdline.append(" --headerfile=");
   cmdline.append(headerFileName);
   //cmdline.append(" --identifier=");
-  //cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  //cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --noheader");
  
   cmdline.append(" >");
@@ -1260,7 +1260,7 @@ TEST_F(TestCLI, testErrorTooManyArgumentsHeaderfile)
  
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
  
   //assert standard output log
@@ -1275,9 +1275,9 @@ TEST_F(TestCLI, testErrorTooManyArgumentsIdentifier)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -1289,7 +1289,7 @@ TEST_F(TestCLI, testErrorTooManyArgumentsIdentifier)
   //cmdline.append(" --headerfile=");
   //cmdline.append(headerFileName);
   cmdline.append(" --identifier=");
-  cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --noheader");
  
   cmdline.append(" >");
@@ -1308,7 +1308,7 @@ TEST_F(TestCLI, testErrorTooManyArgumentsIdentifier)
  
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
  
   //assert standard output log
@@ -1323,9 +1323,9 @@ TEST_F(TestCLI, testErrorInputDirNotFound)
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::gtesthelp::getTestCaseName().c_str() + ".h";
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::replace(cppFilePath, ".h", ".cpp");
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
   //build command line
   std::string cmdline;
@@ -1337,7 +1337,7 @@ TEST_F(TestCLI, testErrorInputDirNotFound)
   //cmdline.append(" --headerfile=");
   //cmdline.append(headerFileName);
   //cmdline.append(" --identifier=");
-  //cmdline.append(ra::gtesthelp::getTestCaseName().c_str());
+  //cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --noheader");
  
   cmdline.append(" >");
@@ -1356,7 +1356,7 @@ TEST_F(TestCLI, testErrorInputDirNotFound)
  
   //load output file
   ra::strings::StringVector lines;
-  bool loaded = ra::gtesthelp::getTextFileContent(outputFilePath.c_str(), lines);
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
   ASSERT_TRUE(loaded);
  
   //assert standard output log

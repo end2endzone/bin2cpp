@@ -24,7 +24,7 @@
 
 #include "TestExtraction.h"
 
-#include "rapidassist/gtesthelp.h"
+#include "rapidassist/testing.h"
 #include "rapidassist/filesystem.h"
 
 //generated_files
@@ -68,9 +68,9 @@ namespace TestExtractionUtils
   {
     std::string file;
     file.append(gGeneratedFilesDir);
-    file.append(ra::gtesthelp::getTestCaseName());
-    file.append(ra::filesystem::getPathSeparatorStr());
-    file.append(ra::gtesthelp::getTestCaseName());
+    file.append(ra::testing::GetTestCaseName());
+    file.append(ra::filesystem::GetPathSeparatorStr());
+    file.append(ra::testing::GetTestCaseName());
     file.append(".bin");
     return file;
   }
@@ -79,9 +79,9 @@ namespace TestExtractionUtils
   {
     std::string file;
     file.append(gGeneratedFilesDir);
-    file.append(ra::gtesthelp::getTestCaseName());
-    file.append(ra::filesystem::getPathSeparatorStr());
-    file.append(ra::gtesthelp::getTestCaseName());
+    file.append(ra::testing::GetTestCaseName());
+    file.append(ra::filesystem::GetPathSeparatorStr());
+    file.append(ra::testing::GetTestCaseName());
     file.append(".output");
     return file;
   }
@@ -107,7 +107,7 @@ TEST_F(TestExtraction, testText10)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -122,7 +122,7 @@ TEST_F(TestExtraction, testText1000)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -137,7 +137,7 @@ TEST_F(TestExtraction, testText100000)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -152,7 +152,7 @@ TEST_F(TestExtraction, testHtml100000)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -167,7 +167,7 @@ TEST_F(TestExtraction, testRandom1)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -182,7 +182,7 @@ TEST_F(TestExtraction, testRandom2)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -197,7 +197,7 @@ TEST_F(TestExtraction, testRandom3)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -212,7 +212,7 @@ TEST_F(TestExtraction, testRandom4)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -227,7 +227,7 @@ TEST_F(TestExtraction, testRandom5)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -242,7 +242,7 @@ TEST_F(TestExtraction, testRandom6)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -257,7 +257,7 @@ TEST_F(TestExtraction, testRandom7)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -272,7 +272,7 @@ TEST_F(TestExtraction, testRandom8)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -287,7 +287,7 @@ TEST_F(TestExtraction, testSequential1000)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -302,7 +302,7 @@ TEST_F(TestExtraction, testSequential10MB)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -317,7 +317,7 @@ TEST_F(TestExtraction, testGeneratorArray10000)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -332,7 +332,7 @@ TEST_F(TestExtraction, testGeneratorSegment10000)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -347,7 +347,7 @@ TEST_F(TestExtraction, testGeneratorString10000)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -363,7 +363,7 @@ TEST_F(TestExtraction, testGeneratorWin32)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 #endif
@@ -379,7 +379,7 @@ TEST_F(TestExtraction, testEncodingOct)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -394,7 +394,7 @@ TEST_F(TestExtraction, testEncodingHex)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -409,7 +409,7 @@ TEST_F(TestExtraction, testNamespace)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -424,7 +424,7 @@ TEST_F(TestExtraction, testBaseClass)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -439,7 +439,7 @@ TEST_F(TestExtraction, testIssue12)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -454,7 +454,7 @@ TEST_F(TestExtraction, testIssue12Mini)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
@@ -469,6 +469,6 @@ TEST_F(TestExtraction, testIssue13)
 
   //assert content is the same
   std::string reason;
-  bool equal = ra::gtesthelp::isFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
 }

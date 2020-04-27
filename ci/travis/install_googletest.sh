@@ -17,7 +17,7 @@ cd googletest
 echo
 
 echo Checking out version 1.8.0...
-git checkout release-1.8.0
+git -c advice.detachedHead=false checkout release-1.8.0
 echo
 
 echo ============================================================================

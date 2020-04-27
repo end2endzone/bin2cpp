@@ -28,7 +28,7 @@
 #include <string>
 #include <stdlib.h>
 
-#include "rapidassist/cppencoder.h"
+#include "rapidassist/code_cpp.h"
 #include "rapidassist/strings.h"
 #include "rapidassist/filesystem.h"
 
@@ -55,13 +55,13 @@ namespace bin2cpp
       return false;
 
     //Uppercase function identifier
-    std::string functionIdentifier = ra::strings::capitalizeFirstCharacter(mFunctionIdentifier);
+    std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mFunctionIdentifier);
 
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(iCppFilePath);
     std::string cppPath = iCppFilePath;
-    std::string headerFilename = ra::filesystem::getFilename(headerPath.c_str());
-    std::string cppFilename = ra::filesystem::getFilename(iCppFilePath);
+    std::string headerFilename = ra::filesystem::GetFilename(headerPath.c_str());
+    std::string cppFilename = ra::filesystem::GetFilename(iCppFilePath);
 
     //create cpp file
     FILE * cpp = fopen(cppPath.c_str(), "w");
@@ -72,8 +72,8 @@ namespace bin2cpp
     }
 
     //determine file properties
-    uint32_t fileSize = ra::filesystem::getFileSize(input);
-    std::string filename = ra::filesystem::getFilename(mInputFile.c_str());
+    uint32_t fileSize = ra::filesystem::GetFileSize(input);
+    std::string filename = ra::filesystem::GetFilename(mInputFile.c_str());
 
     //Build class name
     std::string className;
@@ -96,7 +96,7 @@ namespace bin2cpp
     fprintf(cpp, "    %s() {}\n", className.c_str());
     fprintf(cpp, "    virtual ~%s() {}\n", className.c_str());
     fprintf(cpp, "    virtual size_t getSize() const { return %u; }\n", fileSize);
-    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::getFilename(mInputFile.c_str()).c_str());
+    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::GetFilename(mInputFile.c_str()).c_str());
     fprintf(cpp, "    virtual const char * getBuffer() const\n");
     fprintf(cpp, "    {\n");
     fprintf(cpp, "      static const unsigned char buffer[] = {\n");
@@ -120,7 +120,7 @@ namespace bin2cpp
         }
 
         //output
-        fprintf(cpp, "        %s", ra::cppencoder::toCppCharactersArray(buffer, readSize).c_str());
+        fprintf(cpp, "        %s", ra::code::cpp::ToCppCharactersArray(buffer, readSize).c_str());
         numLinePrinted++;
       }
 

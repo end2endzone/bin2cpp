@@ -73,12 +73,12 @@ namespace bin2cpp
       if (lastModifiedIndex != std::string::npos)
       {
         std::string date = text.substr(lastModifiedIndex);
-        ra::strings::replace(date, lastModifiedTag, "");
-        ra::strings::replace(date, " ", "");
-        ra::strings::replace(date, ".", "");
+        ra::strings::Replace(date, lastModifiedTag, "");
+        ra::strings::Replace(date, " ", "");
+        ra::strings::Replace(date, ".", "");
 
         //parse date into mod_time
-        bool parseOK = ra::strings::parse(date, mod_time);
+        bool parseOK = ra::strings::Parse(date, mod_time);
         if (parseOK)
           fclose(f); //force existing while loop
       }
@@ -91,7 +91,7 @@ namespace bin2cpp
 
   bool isCppHeaderFile(const std::string & iPath)
   {
-    std::string extension = ra::strings::uppercase(ra::filesystem::getFileExtention(iPath));
+    std::string extension = ra::strings::Uppercase(ra::filesystem::GetFileExtention(iPath));
     if (extension == "H" || extension == "HPP")
       return true;
     return false;
@@ -99,7 +99,7 @@ namespace bin2cpp
 
   bool isCppSourceFile(const std::string & iPath)
   {
-    std::string extension = ra::strings::uppercase(ra::filesystem::getFileExtention(iPath));
+    std::string extension = ra::strings::Uppercase(ra::filesystem::GetFileExtention(iPath));
     if (extension == "CPP" || extension == "CXX")
       return true;
     return false;
@@ -111,13 +111,13 @@ namespace bin2cpp
     if (iPath.empty())
       return EMPTY_STRING;
 
-    std::string filename = ra::filesystem::getFilename(iPath.c_str());
+    std::string filename = ra::filesystem::GetFilename(iPath.c_str());
 
     //replace
-    int numDots = ra::strings::replace(filename, ".", "_");
+    int numDots = ra::strings::Replace(filename, ".", "_");
     
     //uppercase
-    filename = ra::strings::uppercase(filename);
+    filename = ra::strings::Uppercase(filename);
 
     return filename;
   }

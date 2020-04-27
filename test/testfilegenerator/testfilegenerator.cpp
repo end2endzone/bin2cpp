@@ -34,7 +34,7 @@
 #include <ctime>    // for rand(), srand()
 
 #include "rapidassist/cli.h"
-#include "rapidassist/logger.h"
+#include "rapidassist/logging.h"
 #include "rapidassist/strings.h"
 #include "rapidassist/filesystem.h"
 
@@ -50,7 +50,7 @@ std::string getSizeAdditionalInfo(int size)
   std::string output;
   if (size > 1024)
   {
-    output << " (" << ra::filesystem::getUserFriendlySize(size) << ")";
+    output << " (" << ra::filesystem::GetUserFriendlySize(size) << ")";
   }
   return output;
 }
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
 
   //help
   std::string tmp;
-  if (ra::cli::parseArgument("help", tmp, argc, argv))
+  if (ra::cli::ParseArgument("help", tmp, argc, argv))
   {
     printVersion();
     printUsage();
@@ -115,7 +115,7 @@ int main(int argc, char **argv)
   }
 
   //version
-  if (ra::cli::parseArgument("version", tmp, argc, argv))
+  if (ra::cli::ParseArgument("version", tmp, argc, argv))
   {
     printVersion();
     return EXIT_NO_ERROR;
@@ -123,58 +123,58 @@ int main(int argc, char **argv)
 
   //quiet
   std::string tmpQuiet;
-  if (ra::cli::parseArgument("quiet", tmpQuiet, argc, argv))
+  if (ra::cli::ParseArgument("quiet", tmpQuiet, argc, argv))
   {
-    ra::logger::setQuietMode(true);
+    ra::logging::SetQuietMode(true);
   }
 
   //file
-  if (!ra::cli::parseArgument("file", file, argc, argv))
+  if (!ra::cli::ParseArgument("file", file, argc, argv))
   {
-    ra::logger::log(ra::logger::LOG_ERROR, "Missing 'file' argument!");
+    ra::logging::Log(ra::logging::LOG_ERROR, "Missing 'file' argument!");
     printUsage();
     return MISSING_FILE;
   }
 
   //size
   int tmpSize = 0;
-  if (ra::cli::parseArgument("size", tmpSize, argc, argv))
+  if (ra::cli::ParseArgument("size", tmpSize, argc, argv))
   {
     size = tmpSize;
     if (size <= 0)
     {
-      ra::logger::log(ra::logger::LOG_ERROR, "Invalid file size!");
+      ra::logging::Log(ra::logging::LOG_ERROR, "Invalid file size!");
       return INVALID_FILE_SIZE;
     }
   }
 
   //seed
   int tmpSeed = 0;
-  if (ra::cli::parseArgument("seed", tmpSeed, argc, argv))
+  if (ra::cli::ParseArgument("seed", tmpSeed, argc, argv))
   {
     seed = tmpSeed;
     if (seed < 0)
     {
-      ra::logger::log(ra::logger::LOG_ERROR, "Invalid seed value!");
+      ra::logging::Log(ra::logging::LOG_ERROR, "Invalid seed value!");
       return INVALID_SEED;
     }
   }
 
   //skip
   int tmpSkip = 0;
-  if (ra::cli::parseArgument("skip", tmpSkip, argc, argv))
+  if (ra::cli::ParseArgument("skip", tmpSkip, argc, argv))
   {
     skip = tmpSkip;
     if (skip < 0)
     {
-      ra::logger::log(ra::logger::LOG_ERROR, "Invalid skip value!");
+      ra::logging::Log(ra::logging::LOG_ERROR, "Invalid skip value!");
       return INVALID_SKIP;
     }
   }
 
   //fill
   std::string tmpFill;
-  if (ra::cli::parseArgument("fill", tmpFill, argc, argv))
+  if (ra::cli::ParseArgument("fill", tmpFill, argc, argv))
   {
     if (tmpFill == "sequential" ||
         tmpFill == "random" ||
@@ -185,7 +185,7 @@ int main(int argc, char **argv)
     }
     else
     {
-      ra::logger::log(ra::logger::LOG_ERROR, "Invalid fill parameter!");
+      ra::logging::Log(ra::logging::LOG_ERROR, "Invalid fill parameter!");
       return INVALID_FILL_PARAMETER;
     }
   }
@@ -193,13 +193,13 @@ int main(int argc, char **argv)
   //building info string
   std::string infostr;
   infostr << "Writing " << size << " bytes" << getSizeAdditionalInfo(size) << " of " << fill << " data into \'" << file << "\'.";
-  ra::logger::log(ra::logger::LOG_INFO, "%s", infostr.c_str());
+  ra::logging::Log(ra::logging::LOG_INFO, "%s", infostr.c_str());
 
   //process with file generation
   FILE * f = fopen(file.c_str(), "wb");
   if (!f)
   {
-    ra::logger::log(ra::logger::LOG_ERROR, "Cannot create file '%s'!", file.c_str());
+    ra::logging::Log(ra::logging::LOG_ERROR, "Cannot create file '%s'!", file.c_str());
     return 4;
   }
 

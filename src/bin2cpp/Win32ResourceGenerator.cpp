@@ -32,7 +32,7 @@
 #include <stdlib.h>
 #include <string.h> //for strlen()
 
-#include "rapidassist/cppencoder.h"
+#include "rapidassist/code_cpp.h"
 #include "rapidassist/strings.h"
 #include "rapidassist/filesystem.h"
 
@@ -63,13 +63,13 @@ namespace bin2cpp
       return false;
 
     //Uppercase function identifier
-    std::string functionIdentifier = ra::strings::capitalizeFirstCharacter(mFunctionIdentifier);
+    std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mFunctionIdentifier);
 
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(iCppFilePath);
     std::string cppPath = iCppFilePath;
-    std::string headerFilename = ra::filesystem::getFilename(headerPath.c_str());
-    std::string cppFilename = ra::filesystem::getFilename(iCppFilePath);
+    std::string headerFilename = ra::filesystem::GetFilename(headerPath.c_str());
+    std::string cppFilename = ra::filesystem::GetFilename(iCppFilePath);
 
     //create cpp file
     FILE * cpp = fopen(cppPath.c_str(), "w");
@@ -80,8 +80,8 @@ namespace bin2cpp
     }
 
     //determine file properties
-    //uint32_t fileSize = ra::filesystem::getFileSize(input);
-    std::string filename = ra::filesystem::getFilename(mInputFile.c_str());
+    //uint32_t fileSize = ra::filesystem::GetFileSize(input);
+    std::string filename = ra::filesystem::GetFilename(mInputFile.c_str());
 
     //Build class name
     std::string className;
@@ -123,7 +123,7 @@ namespace bin2cpp
     fprintf(cpp, "    }\n");
     fprintf(cpp, "    virtual ~%s() { unloadResource(); }\n", className.c_str());
     fprintf(cpp, "    virtual size_t getSize() const { return mBufferSize; }\n");
-    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::getFilename(mInputFile.c_str()).c_str());
+    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::GetFilename(mInputFile.c_str()).c_str());
     fprintf(cpp, "    virtual const char * getBuffer() const { return mBuffer; }\n");
     fprintf(cpp, "    void loadResource()\n");
     fprintf(cpp, "    {\n");
@@ -188,7 +188,7 @@ namespace bin2cpp
   {
     //Build header file path
     std::string resourcePath = iCppFilePath;
-    ra::strings::replace(resourcePath, ".cpp", ".rc");
+    ra::strings::Replace(resourcePath, ".cpp", ".rc");
     return resourcePath;
   }
 
@@ -204,7 +204,7 @@ namespace bin2cpp
       return false;
     }
 
-    std::string filename = ra::filesystem::getFilename(mInputFile.c_str());
+    std::string filename = ra::filesystem::GetFilename(mInputFile.c_str());
  
     //write res file heading
     fprintf(res, "%s", getHeaderTemplate().c_str());
@@ -228,7 +228,7 @@ namespace bin2cpp
 
     std::string checksumString;
     crc32String(&checksum, checksumString);
-    checksumString = ra::strings::uppercase(checksumString);
+    checksumString = ra::strings::Uppercase(checksumString);
 
     //build the final identifier
     std::string id;

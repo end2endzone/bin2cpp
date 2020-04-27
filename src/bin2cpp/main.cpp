@@ -35,7 +35,7 @@
 #include <sstream>
 
 #include "rapidassist/cli.h"
-#include "rapidassist/logger.h"
+#include "rapidassist/logging.h"
 #include "rapidassist/strings.h"
 #include "rapidassist/filesystem.h"
 
@@ -118,10 +118,10 @@ std::string getIdentifier(const std::string & value)
   int numReplaced = -1;
 
   //no space character
-  numReplaced = ra::strings::replace(id, " ", "");
+  numReplaced = ra::strings::Replace(id, " ", "");
 
   //no space character
-  numReplaced = ra::strings::replace(id, " ", "");
+  numReplaced = ra::strings::Replace(id, " ", "");
 
   return id;
 }
@@ -131,14 +131,14 @@ std::string getFilenameWithoutExtension(const char * iPath)
   if (iPath == NULL)
     return "";
 
-  std::string filename = ra::filesystem::getFilename(iPath);
-  std::string extension = ra::filesystem::getFileExtention(iPath);
+  std::string filename = ra::filesystem::GetFilename(iPath);
+  std::string extension = ra::filesystem::GetFileExtention(iPath);
   
   //extract filename without extension
   std::string filenameWE = filename.substr(0, filename.size() - extension.size());
   
   //remove last dot of the filename if required
-  filenameWE = ra::strings::trimRight(filenameWE, '.');
+  filenameWE = ra::strings::TrimRight(filenameWE, '.');
 
   return filenameWE;
 }
@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
   std::string dummy;
 
   //help
-  args.help = ra::cli::parseArgument("help", dummy, argc, argv);
+  args.help = ra::cli::ParseArgument("help", dummy, argc, argv);
   if (args.help)
   {
     printHeader();
@@ -232,19 +232,19 @@ int main(int argc, char* argv[])
   }
 
   //noheader
-  args.noheader = ra::cli::parseArgument("noheader", dummy, argc, argv);
+  args.noheader = ra::cli::ParseArgument("noheader", dummy, argc, argv);
 
   //quiet
-  args.quiet = ra::cli::parseArgument("quiet", dummy, argc, argv);
+  args.quiet = ra::cli::ParseArgument("quiet", dummy, argc, argv);
 
   //force noheader if quiet
   if (args.quiet)
     args.noheader = true;
 
-  ra::logger::setQuietMode(args.quiet);
+  ra::logging::SetQuietMode(args.quiet);
 
   //version
-  args.version = ra::cli::parseArgument("version", dummy, argc, argv);
+  args.version = ra::cli::ParseArgument("version", dummy, argc, argv);
   if (args.version)
   {
     if (!args.noheader)
@@ -256,13 +256,13 @@ int main(int argc, char* argv[])
     printHeader();
 
   //mandatory arguments
-  args.hasFile = ra::cli::parseArgument("file", args.inputFile, argc, argv);
-  args.hasDir  = ra::cli::parseArgument("dir",  args.inputDir,  argc, argv);
+  args.hasFile = ra::cli::ParseArgument("file", args.inputFile, argc, argv);
+  args.hasDir  = ra::cli::ParseArgument("dir",  args.inputDir,  argc, argv);
   if (!args.hasFile && !args.hasDir)
   {
     //file or dir must be specified
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    ra::logger::log(ra::logger::LOG_ERROR, "%s (file, dir)", getErrorCodeDescription(error));
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s (file, dir)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
@@ -270,36 +270,36 @@ int main(int argc, char* argv[])
   {
     //file OR dir must be specified, not both
     APP_ERROR_CODES error = APP_ERROR_TOOMANYARGUMENTS;
-    ra::logger::log(ra::logger::LOG_ERROR, "%s (file, dir)", getErrorCodeDescription(error));
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s (file, dir)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
 
-  if (!ra::cli::parseArgument("output", args.outputFolder, argc, argv))
+  if (!ra::cli::ParseArgument("output", args.outputFolder, argc, argv))
   {
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    ra::logger::log(ra::logger::LOG_ERROR, "%s (output)", getErrorCodeDescription(error));
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s (output)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
 
   if (args.hasDir)
   {
-    if (ra::cli::parseArgument("headerfile", args.headerFilename, argc, argv))
+    if (ra::cli::ParseArgument("headerfile", args.headerFilename, argc, argv))
     {
       //headerfile not supported with dir argument
       APP_ERROR_CODES error = APP_ERROR_TOOMANYARGUMENTS;
-      ra::logger::log(ra::logger::LOG_ERROR, "%s (headerfile)", getErrorCodeDescription(error));
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s (headerfile)", getErrorCodeDescription(error));
       printUsage();
       return error;
     }
   }
   else if (args.hasFile)
   {
-    if (!ra::cli::parseArgument("headerfile", args.headerFilename, argc, argv))
+    if (!ra::cli::ParseArgument("headerfile", args.headerFilename, argc, argv))
     {
       APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-      ra::logger::log(ra::logger::LOG_ERROR, "%s (headerfile)", getErrorCodeDescription(error));
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s (headerfile)", getErrorCodeDescription(error));
       printUsage();
       return error;
     }
@@ -307,21 +307,21 @@ int main(int argc, char* argv[])
 
   if (args.hasDir)
   {
-    if (ra::cli::parseArgument("identifier", args.functionIdentifier, argc, argv))
+    if (ra::cli::ParseArgument("identifier", args.functionIdentifier, argc, argv))
     {
       //identifier not supported with dir argument
       APP_ERROR_CODES error = APP_ERROR_TOOMANYARGUMENTS;
-      ra::logger::log(ra::logger::LOG_ERROR, "%s (identifier)", getErrorCodeDescription(error));
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s (identifier)", getErrorCodeDescription(error));
       printUsage();
       return error;
     }
   }
   else if (args.hasFile)
   {
-    if (!ra::cli::parseArgument("identifier", args.functionIdentifier, argc, argv))
+    if (!ra::cli::ParseArgument("identifier", args.functionIdentifier, argc, argv))
     {
       APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-      ra::logger::log(ra::logger::LOG_ERROR, "%s (identifier)", getErrorCodeDescription(error));
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s (identifier)", getErrorCodeDescription(error));
       printUsage();
       return error;
     }
@@ -331,34 +331,34 @@ int main(int argc, char* argv[])
 
   size_t tmpChunkSize = 0;
   args.chunkSize = DEFAULT_CHUNK_SIZE;
-  if (ra::cli::parseArgument("chunksize", tmpChunkSize, argc, argv))
+  if (ra::cli::ParseArgument("chunksize", tmpChunkSize, argc, argv))
   {
     args.chunkSize = tmpChunkSize;
   }
 
-  args.overrideExisting = ra::cli::parseArgument("override", dummy, argc, argv);
+  args.overrideExisting = ra::cli::ParseArgument("override", dummy, argc, argv);
 
-  if (!ra::cli::parseArgument("namespace", args.codeNamespace, argc, argv))
+  if (!ra::cli::ParseArgument("namespace", args.codeNamespace, argc, argv))
   {
     args.codeNamespace = DEFAULT_NAMESPACE;
   }
 
-  if (!ra::cli::parseArgument("baseclass", args.baseClass, argc, argv))
+  if (!ra::cli::ParseArgument("baseclass", args.baseClass, argc, argv))
   {
     args.baseClass = DEFAULT_BASECLASSNAME;
   }
 
   std::string encodingStr;
-  if (ra::cli::parseArgument("encoding", encodingStr, argc, argv))
+  if (ra::cli::ParseArgument("encoding", encodingStr, argc, argv))
   {
-    if (ra::strings::uppercase(encodingStr) == "OCT")
+    if (ra::strings::Uppercase(encodingStr) == "OCT")
       args.encoding = IGenerator::CPP_ENCODER_OCT;
-    else if (ra::strings::uppercase(encodingStr) == "HEX")
+    else if (ra::strings::Uppercase(encodingStr) == "HEX")
       args.encoding = IGenerator::CPP_ENCODER_HEX;
     else
     {
       APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-      ra::logger::log(ra::logger::LOG_ERROR, "%s (encoding)", getErrorCodeDescription(error));
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s (encoding)", getErrorCodeDescription(error));
       printUsage();
       return error;
     }
@@ -375,7 +375,7 @@ int main(int argc, char* argv[])
   bin2cpp::Win32ResourceGenerator win32Generator;
   bin2cpp::IGenerator * generator = NULL;
 
-  if (ra::cli::parseArgument("generator", args.generatorName, argc, argv))
+  if (ra::cli::ParseArgument("generator", args.generatorName, argc, argv))
   {
     if (args.generatorName == "segment")
     {
@@ -398,7 +398,7 @@ int main(int argc, char* argv[])
     if (generator == NULL)
     {
       APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-      ra::logger::log(ra::logger::LOG_ERROR, "%s, unknown values for 'generator' argument!", getErrorCodeDescription(error));
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s, unknown values for 'generator' argument!", getErrorCodeDescription(error));
       printUsage();
       return error;
     }
@@ -416,27 +416,27 @@ int main(int argc, char* argv[])
     APP_ERROR_CODES error = processSingleFile(args, generator);
     if (error != APP_ERROR_SUCCESS)
     {
-      ra::logger::log(ra::logger::LOG_ERROR, "%s", getErrorCodeDescription(error));
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
     }
     return error;
   }
   else if (args.hasDir)
   {
     //check if input dir exists
-    if (!ra::filesystem::folderExists(args.inputDir.c_str()))
+    if (!ra::filesystem::DirectoryExists(args.inputDir.c_str()))
     {
       APP_ERROR_CODES error = APP_ERROR_INPUTDIRNOTFOUND;
-      ra::logger::log(ra::logger::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDir.c_str());
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDir.c_str());
       return error;
     }
 
     //search all files in the directory
     ra::strings::StringVector files;
-    bool found = ra::filesystem::findFiles(files, args.inputDir.c_str());
+    bool found = ra::filesystem::FindFiles(files, args.inputDir.c_str());
     if (!found)
     {
       APP_ERROR_CODES error = APP_ERROR_INPUTDIRNOTFOUND;
-      ra::logger::log(ra::logger::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDir.c_str());
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDir.c_str());
       return error;
     }
 
@@ -445,7 +445,7 @@ int main(int argc, char* argv[])
     for(size_t i=0; i<files.size(); i++)
     {
       const std::string & file = files[i];
-      if (ra::filesystem::fileExists(file.c_str()))
+      if (ra::filesystem::FileExists(file.c_str()))
         tmp.push_back(file);
     }
     files = tmp;
@@ -474,13 +474,13 @@ int main(int argc, char* argv[])
 
       //use the file name without extension as 'identifier'.
       argsCopy.functionIdentifier = getIdentifier(getFilenameWithoutExtension(file.c_str()));
-      argsCopy.functionIdentifier = ra::strings::capitalizeFirstCharacter(argsCopy.functionIdentifier);
+      argsCopy.functionIdentifier = ra::strings::CapitalizeFirstCharacter(argsCopy.functionIdentifier);
 
       //process this file...
       APP_ERROR_CODES error = processSingleFile(argsCopy, generator);
       if (error != APP_ERROR_SUCCESS)
       {
-        ra::logger::log(ra::logger::LOG_ERROR, "%s", getErrorCodeDescription(error));
+        ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
         return error;
       }
 
@@ -508,17 +508,17 @@ APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * 
   if (args.overrideExisting)
     info << " overriding existing files";
   info << "...";
-  ra::logger::log(ra::logger::LOG_INFO, info.c_str());
+  ra::logging::Log(ra::logging::LOG_INFO, info.c_str());
 
   //prepare output files path
-  std::string outputHeaderPath = args.outputFolder + ra::filesystem::getPathSeparatorStr() + args.headerFilename;
-  std::string outputCppPath = args.outputFolder + ra::filesystem::getPathSeparatorStr() + args.headerFilename;
+  std::string outputHeaderPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + args.headerFilename;
+  std::string outputCppPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + args.headerFilename;
   std::string cppFilename = args.headerFilename;
-  ra::strings::replace(outputCppPath, ".h", ".cpp");
-  ra::strings::replace(cppFilename, ".h", ".cpp");  
+  ra::strings::Replace(outputCppPath, ".h", ".cpp");
+  ra::strings::Replace(cppFilename, ".h", ".cpp");  
 
   //check if input file exists
-  if (!ra::filesystem::fileExists(args.inputFile.c_str()))
+  if (!ra::filesystem::FileExists(args.inputFile.c_str()))
     return APP_ERROR_INPUTFILENOTFOUND;
 
   //configure the generator
@@ -544,7 +544,7 @@ APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * 
 
 FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::string & iOutputFilePath, bool overrideExisting)
 {
-  if (!ra::filesystem::fileExists(iOutputFilePath.c_str()))
+  if (!ra::filesystem::FileExists(iOutputFilePath.c_str()))
     return WRITING;
   //at this point, we know that the file exists
 
@@ -552,10 +552,10 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::str
     return OVERWRITING;
 
   //do not modify the output file if it is not out of date
-  uint64_t lastModifiedDate = ra::filesystem::getFileModifiedDate(inputFile);
+  uint64_t lastModifiedDate = ra::filesystem::GetFileModifiedDate(inputFile);
   uint64_t outputModifiedDate = bin2cpp::getOutputFileModifiedDate(iOutputFilePath);
   if (outputModifiedDate == 0)
-    ra::logger::log(ra::logger::LOG_WARNING, "Unable to get last modified date of file \'%s\'", iOutputFilePath.c_str());
+    ra::logging::Log(ra::logging::LOG_WARNING, "Unable to get last modified date of file \'%s\'", iOutputFilePath.c_str());
   if (lastModifiedDate == outputModifiedDate)
     return SKIPPING;
 
@@ -568,7 +568,7 @@ bool generateFile(const std::string & inputFile, const std::string & iOutputFile
   FILE_UPDATE_MODE mode = getFileUpdateMode(inputFile, iOutputFilePath, overrideExisting);
 
   //writing message
-  ra::logger::log(ra::logger::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
+  ra::logging::Log(ra::logging::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
   
   if (mode == SKIPPING)
     return true; //skipping is success
@@ -588,8 +588,8 @@ bool generateFile(const std::string & inputFile, const std::string & iOutputFile
   if (!result)
   {
     //there was an error generating file
-    ra::logger::log(ra::logger::LOG_ERROR, "%s", getErrorCodeDescription(APP_ERROR_UNABLETOCREATEOUTPUTFILES));
-    ra::logger::log(ra::logger::LOG_ERROR, "Embedding failed!");
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(APP_ERROR_UNABLETOCREATEOUTPUTFILES));
+    ra::logging::Log(ra::logging::LOG_ERROR, "Embedding failed!");
   }
   return result;
 }

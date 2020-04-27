@@ -115,7 +115,7 @@ namespace bin2cpp
   std::string BaseGenerator::getGetterFunctionName()
   {
     //Uppercase function identifier
-    std::string functionIdentifier = ra::strings::capitalizeFirstCharacter(mFunctionIdentifier);
+    std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mFunctionIdentifier);
 
     std::string getter;
     getter.append("get");
@@ -128,7 +128,7 @@ namespace bin2cpp
   {
     //Build header file path
     std::string headerPath = iCppFilePath;
-    ra::strings::replace(headerPath, ".cpp", ".h");
+    ra::strings::Replace(headerPath, ".cpp", ".h");
     return headerPath;
   }
 
@@ -136,14 +136,14 @@ namespace bin2cpp
   {
     //Build header file path
     std::string cppPath = iHeaderFilePath;
-    ra::strings::replace(cppPath, ".cpp", ".h");
+    ra::strings::Replace(cppPath, ".cpp", ".h");
     return cppPath;
   }
 
   std::string BaseGenerator::getHeaderTemplate()
   {
-    std::string filename = ra::filesystem::getFilename(mInputFile.c_str());
-    uint64_t lastModifiedDate = ra::filesystem::getFileModifiedDate(mInputFile);
+    std::string filename = ra::filesystem::GetFilename(mInputFile.c_str());
+    uint64_t lastModifiedDate = ra::filesystem::GetFileModifiedDate(mInputFile);
 
     std::string header;
     header << 

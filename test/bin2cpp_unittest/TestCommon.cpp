@@ -24,7 +24,7 @@
 
 #include "TestCommon.h"
 
-#include "rapidassist/gtesthelp.h"
+#include "rapidassist/testing.h"
 #include "rapidassist/filesystem.h"
 
 namespace TestCommonUtils
@@ -32,7 +32,7 @@ namespace TestCommonUtils
   std::string getExpectedFilePath()
   {
     std::string file;
-    file.append(ra::gtesthelp::getTestQualifiedName());
+    file.append(ra::testing::GetTestQualifiedName());
     file.append(".expected.txt");
     return file;
   }
@@ -40,7 +40,7 @@ namespace TestCommonUtils
   std::string getActualFilePath()
   {
     std::string file;
-    file.append(ra::gtesthelp::getTestQualifiedName());
+    file.append(ra::testing::GetTestQualifiedName());
     file.append(".actual.txt");
     return file;
   }
