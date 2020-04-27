@@ -84,9 +84,7 @@ namespace bin2cpp
     std::string filename = ra::filesystem::GetFilename(mInputFile.c_str());
 
     //Build class name
-    std::string className;
-    className.append(functionIdentifier.c_str());
-    className.append("File");
+    std::string className = getClassName();
 
     //Build function 
     std::string getterFunctionName = getGetterFunctionName();

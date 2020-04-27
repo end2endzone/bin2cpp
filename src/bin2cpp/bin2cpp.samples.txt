@@ -3,3 +3,5 @@
 --file=C:\Temp\foobar.bin --output=C:\Temp --headerfile=_testFoo.h --identifier=testFoo --override
 --file=C:\Temp\foobar.bin --output=C:\Temp --headerfile=_testFoo.h --identifier=testFoo --override --noheader
 --dir=D:\Temp\foobar --output=C:\Temp\foobar --override –noheader
+--file=..\..\test\bin2cpp_unittest\generated_files\testIssue28\testIssue28.bin --output=..\..\test\bin2cpp_unittest\generated_files\testIssue28 --headerfile=_testIssue28.h --identifier=testIssue28 --managerfile=FileManager.h --override
+--file=..\..\test\bin2cpp_unittest\generated_files\testIssue28\testIssue28.bin --output=..\..\test\bin2cpp_unittest\generated_files\testIssue28 --headerfile=_testIssue28.h --identifier=testIssue28 --managerfile=FileManager.h --override

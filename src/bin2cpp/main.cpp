@@ -38,6 +38,7 @@
 #include "rapidassist/logging.h"
 #include "rapidassist/strings.h"
 #include "rapidassist/filesystem.h"
+#include "rapidassist/process.h"
 
 #include "common.h"
 
@@ -160,13 +161,17 @@ struct ARGUMENTS
   bool overrideExisting;
   std::string codeNamespace;
   std::string baseClass;
+  std::string managerHeaderFilename;
+  bool usefilemanager;
   IGenerator::CppEncoderEnum encoding;
   std::string generatorName;
 };
 
 //pre-declarations
 bool generateFile(const std::string & inputFile, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator, bool overrideExisting);
+bool generateManagerFile(const std::string & iOutputFilePath, bin2cpp::IGenerator * generator, bool overrideExisting);
 APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 
 void printHeader()
 {
@@ -180,7 +185,7 @@ void printUsage()
   //usage string in docopt format. See http://docopt.org/
   static const char usage[] = 
     "Usage:\n"
-    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<value>] [--override] [--noheader] [--quiet]\n"
+    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<value>] [--managerfile=<name>] [--override] [--noheader] [--quiet]\n"
     "  bin2cpp --help\n"
     "  bin2cpp --version\n"
     "\n"
@@ -188,7 +193,7 @@ void printUsage()
     "  --help               Display this help message.\n"
     "  --version            Display this application version.\n"
     "  --file=<path>        Path of the input file used for embedding as a C++ source code.\n"
-    "  --dir=<path>         Path of the input directory used for embedding all files of the rirectory as a C++ source code.\n"
+    "  --dir=<path>         Path of the input directory used for embedding all files of the directory as a C++ source code.\n"
     #ifdef _WIN32
     "  --output=<path>      Output folder where to create generated code. ie: .\\generated_files\n"
     #else
@@ -200,7 +205,9 @@ void printUsage()
     "  --identifier=<name>  Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
     "  --chunksize=<value>  Size in bytes of each string segments (bytes per row). [default: 200].\n"
     "  --baseclass=<value>  The name of the interface for embedded files. [default: File].\n"
+    "  --managerfile=<name> File name of the generated C++ Header file for the FileManager class. ie: FileManager.h\n"
     "  --namespace=<value>  The namespace of the generated source code [default: bin2cpp].\n"
+    "  --usefilemanager     Register the generated file to the FileManager class. [default: false].\n"
     "  --override           Tells bin2cpp to overwrite the destination files.\n"
     "  --noheader           Do not print program header to standard output.\n"
     "  --quiet              Do not log any message to standard output.\n"
@@ -219,6 +226,7 @@ int main(int argc, char* argv[])
   args.hasDir = false;
   args.chunkSize = 0;
   args.overrideExisting;
+  args.usefilemanager = false;
 
   std::string dummy;
 
@@ -348,6 +356,18 @@ int main(int argc, char* argv[])
     args.baseClass = DEFAULT_BASECLASSNAME;
   }
 
+  ra::cli::ParseArgument("managerfile", args.managerHeaderFilename, argc, argv);
+
+  args.usefilemanager = ra::cli::ParseArgument("usefilemanager", dummy, argc, argv);
+  
+  if (args.usefilemanager && args.managerHeaderFilename.empty())
+  {
+    APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s (managerfile)", getErrorCodeDescription(error));
+    printUsage();
+    return error;
+  }
+
   std::string encodingStr;
   if (ra::cli::ParseArgument("encoding", encodingStr, argc, argv))
   {
@@ -418,6 +438,17 @@ int main(int argc, char* argv[])
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
     }
+
+    //should we also generate the FileManager class?
+    if (!args.managerHeaderFilename.empty())
+    {
+      error = processManagerFiles(args, generator);
+      if (error != APP_ERROR_SUCCESS)
+      {
+        ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
+      }
+    }
+
     return error;
   }
   else if (args.hasDir)
@@ -528,6 +559,8 @@ APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * 
   generator->setNamespace(args.codeNamespace.c_str());
   generator->setBaseClass(args.baseClass.c_str());
   generator->setCppEncoder(args.encoding);
+  generator->setManagerHeaderFile(args.managerHeaderFilename.c_str());
+  generator->setManagerEnabled(args.usefilemanager);
 
   //process files
   bool headerResult = generateFile(args.inputFile, outputHeaderPath, generator, args.overrideExisting);
@@ -592,4 +625,66 @@ bool generateFile(const std::string & inputFile, const std::string & iOutputFile
     ra::logging::Log(ra::logging::LOG_ERROR, "Embedding failed!");
   }
   return result;
+}
+
+bool generateManagerFile(const std::string & iOutputFilePath, bin2cpp::IGenerator * generator, bool overrideExisting)
+{
+  std::string processPath = ra::process::GetCurrentProcessPath();
+  FILE_UPDATE_MODE mode = getFileUpdateMode(processPath, iOutputFilePath, overrideExisting);
+
+  //writing message
+  ra::logging::Log(ra::logging::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
+  
+  if (mode == SKIPPING)
+    return true; //skipping is success
+
+  //generate file
+  bool result = false;
+  if (isCppHeaderFile(iOutputFilePath))
+  {
+    //generate header
+    result = generator->createManagerHeaderFile(iOutputFilePath.c_str());
+  }
+  else
+  {
+    //generate cpp
+    result = generator->createManagerSourceFile(iOutputFilePath.c_str());
+  }
+  if (!result)
+  {
+    //there was an error generating file
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(APP_ERROR_UNABLETOCREATEOUTPUTFILES));
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s failed!", getUpdateModeText(mode));
+  }
+  return result;
+}
+
+APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator * generator)
+{
+  // printing info
+  std::string info;
+  info << "Generating \"" << args.managerHeaderFilename << "\"";
+  if (args.overrideExisting)
+    info << " overriding existing files";
+  info << "...";
+  ra::logging::Log(ra::logging::LOG_INFO, info.c_str());
+
+  //prepare output files path
+  std::string outputHeaderPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + args.managerHeaderFilename;
+  std::string outputCppPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + args.managerHeaderFilename;
+  std::string cppFilename = args.headerFilename;
+  ra::strings::Replace(outputCppPath, ".h", ".cpp");
+  ra::strings::Replace(cppFilename, ".h", ".cpp");  
+
+  //process files
+  bool headerResult = generateManagerFile(outputHeaderPath, generator, args.overrideExisting);
+  if (!headerResult)
+    return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
+  
+  bool cppResult =    generateManagerFile(outputCppPath,    generator, args.overrideExisting);
+  if (!cppResult)
+    return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
+
+  //success
+  return APP_ERROR_SUCCESS;
 }

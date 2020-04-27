@@ -189,6 +189,16 @@ mkdir %OUTDIR% 1>NUL 2>NUL
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --chunksize=100 --override
 if %errorlevel% neq 0 exit /b %errorlevel%
 
+:: Issue #28
+set TEST_NAME=testFileManager
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.1.bin --size=1000 --fill=random --seed=1
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.2.bin --size=1000 --fill=random --seed=2
+@BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.1.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --managerfile=_FileManager.h --override
+@BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.2.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --managerfile=_FileManager.h --override
+if %errorlevel% neq 0 exit /b %errorlevel%
+
 set TEST_NAME=testDir01
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
