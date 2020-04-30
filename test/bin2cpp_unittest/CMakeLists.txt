@@ -81,10 +81,12 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testText1000/_testText1000.cpp
   ${GENERATED_TEST_FILES_DIR}/testText100000/_testText100000.h
   ${GENERATED_TEST_FILES_DIR}/testText100000/_testText100000.cpp
-  ${GENERATED_TEST_FILES_DIR}/testFileManager/_testFileManager.h
-  ${GENERATED_TEST_FILES_DIR}/testFileManager/_testFileManager.cpp
-  ${GENERATED_TEST_FILES_DIR}/testFileManager/_FileManager.h
-  ${GENERATED_TEST_FILES_DIR}/testFileManager/_FileManager.cpp
+  ${GENERATED_TEST_FILES_DIR}/testFileManager/_testFileManager.1.h
+  ${GENERATED_TEST_FILES_DIR}/testFileManager/_testFileManager.1.cpp
+  ${GENERATED_TEST_FILES_DIR}/testFileManager/_testFileManager.2.h
+  ${GENERATED_TEST_FILES_DIR}/testFileManager/_testFileManager.2.cpp
+  ${GENERATED_TEST_FILES_DIR}/testFileManager/FileManager.h
+  ${GENERATED_TEST_FILES_DIR}/testFileManager/FileManager.cpp
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0001.h
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0002.h
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0003.h

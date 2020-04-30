@@ -68,7 +68,7 @@ namespace bin2cpp
     virtual std::string getCppFilePath(const char * iHeaderFilePath);
     virtual std::string getHeaderTemplate();
     virtual std::string getSaveMethodTemplate();
-    virtual std::string getFileManagerTemplate();
+    virtual std::string getFileManagerRegistrationTemplate();
     virtual std::string getClassName();
 
     //attributes

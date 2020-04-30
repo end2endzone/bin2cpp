@@ -169,8 +169,8 @@ export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p ${OUTDIR}
 @TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.1.bin --size=1000 --fill=random --seed=1
 @TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.2.bin --size=1000 --fill=random --seed=2
-@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.1.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME --managerfile=_FileManager.h --override
-@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.2.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME --managerfile=_FileManager.h --usefilemanager --override
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.1.bin --output=$OUTDIR --headerfile=_$TEST_NAME.1.h --identifier=testFileManager1 --managerfile=FileManager.h --override
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.2.bin --output=$OUTDIR --headerfile=_$TEST_NAME.2.h --identifier=testFileManager2 --usefilemanager --override
 
 export TEST_NAME=testDir01
 export OUTDIR=./generated_files/$TEST_NAME

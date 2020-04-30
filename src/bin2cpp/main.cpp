@@ -360,12 +360,10 @@ int main(int argc, char* argv[])
 
   args.usefilemanager = ra::cli::ParseArgument("usefilemanager", dummy, argc, argv);
   
-  if (args.usefilemanager && args.managerHeaderFilename.empty())
+  //force usefilemanager if managerfile is specified
+  if (!args.managerHeaderFilename.empty())
   {
-    APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    ra::logging::Log(ra::logging::LOG_ERROR, "%s (managerfile)", getErrorCodeDescription(error));
-    printUsage();
-    return error;
+    args.usefilemanager = true;
   }
 
   std::string encodingStr;

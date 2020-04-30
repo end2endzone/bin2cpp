@@ -195,7 +195,7 @@ namespace bin2cpp
     return output;
   }
 
-  std::string BaseGenerator::getFileManagerTemplate()
+  std::string BaseGenerator::getFileManagerRegistrationTemplate()
   {
     if (!this->isManagerEnabled())
       return std::string();
@@ -204,8 +204,9 @@ namespace bin2cpp
     std::string className = getClassName();
 
     std::string output;
-    output << "  bool " << className << "Initializer() { bin2cpp::FileManager::getInstance().registerFile(&" << getGetterFunctionName() << "); return true; }\n";
-    output << "  static bool k" << className << "Initialized = " << className << "Initializer();\n";
+    output << "  typedef const " << mBaseClass << " & (*t_func)();\n";
+    output << "  extern bool RegisterFile(t_func iFunctionPointer);\n";
+    output << "  static bool k" << className << "Registered = " << mNamespace << "::RegisterFile(&" << getGetterFunctionName() << ");\n";
     return output;
   }
 
@@ -334,6 +335,13 @@ namespace bin2cpp
     fprintf(cpp, "\n");
     fprintf(cpp, "namespace %s\n", mNamespace.c_str());
     fprintf(cpp, "{\n");
+    fprintf(cpp, "  bool RegisterFile(FileManager::t_func iFunctionPointer)\n");
+    fprintf(cpp, "  {\n");
+    fprintf(cpp, "    if (iFunctionPointer == NULL)\n");
+    fprintf(cpp, "      return false;\n");
+    fprintf(cpp, "    FileManager::getInstance().registerFile(iFunctionPointer);\n");
+    fprintf(cpp, "    return true;\n");
+    fprintf(cpp, "  }\n");
     fprintf(cpp, "  FileManager::FileManager() {}\n");
     fprintf(cpp, "  FileManager::~FileManager() {}\n");
     fprintf(cpp, "  FileManager & FileManager::getInstance() { static FileManager _mgr; return _mgr; }\n");
@@ -372,7 +380,6 @@ namespace bin2cpp
     fprintf(cpp, "    return true;\n");
     fprintf(cpp, "  }\n");
     fprintf(cpp, "}; //%s\n", mNamespace.c_str());
-    fprintf(cpp, "\n");
 
     fclose(cpp);
 

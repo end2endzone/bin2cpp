@@ -89,10 +89,6 @@ namespace bin2cpp
     //write cpp file heading
     fprintf(cpp, "%s", getHeaderTemplate().c_str());
     fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str() );
-    if (isManagerEnabled())
-    {
-      fprintf(cpp, "#include \"%s\"\n", manager.c_str() );
-    }
     fprintf(cpp, "#include <stdio.h> //for FILE\n");
     fprintf(cpp, "#include <string> //for memcpy\n");
     fprintf(cpp, "namespace %s\n", mNamespace.c_str());
@@ -150,7 +146,7 @@ namespace bin2cpp
     fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", mBaseClass.c_str(), getterFunctionName.c_str(), className.c_str());
     if (isManagerEnabled())
     {
-      std::string fileManagerTemplate = getFileManagerTemplate();
+      std::string fileManagerTemplate = getFileManagerRegistrationTemplate();
       fprintf(cpp, "%s", fileManagerTemplate.c_str());
     }
     fprintf(cpp, "}; //%s\n", mNamespace.c_str());
