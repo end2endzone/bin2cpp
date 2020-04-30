@@ -84,22 +84,24 @@ bin2cpp --help
 bin2cpp --version
 ```
 
-| Argument             | Description                                                                                                |
-|----------------------|------------------------------------------------------------------------------------------------------------|
-| --help               | Display this help message.                                                                                 |
-| --version            | Display this application version.                                                                          |
-| --file=\<path>       | Path of the input file used for embedding as a C++ source code.                                            |
-| --output=\<path>     | Output folder where to create generated code. ie: .\generated_files                                        |
-| --headerfile=\<name> | File name of the generated C++ Header file. ie: SplashScreen.h                                             |
-| --generator=\<name>  | Name of the generator to use. Possible values are 'segment', 'string' and 'array'. [default: segment].     |
-| --encoding=\<name>   | Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct]. |
-| --identifier=\<name> | Identifier of the function name that is used to get an instance of the file. ie: SplashScreen              |
-| --chunksize=\<value> | Size in bytes of each string segments (bytes per row). [default: 200].                                     |
-| --baseclass=\<value> | The name of the interface for embedded files. [default: File].                                             |
-| --namespace=\<value> | The namespace of the generated source code [default: bin2cpp].                                             |
-| --override           | Tells bin2cpp to overwrite the destination files.                                                          |
-| --noheader           | Do not print program header to standard output.                                                            |
-| --quiet              | Do not log any message to standard output.                                                                 |
+| Argument              | Description                                                                                                |
+|-----------------------|------------------------------------------------------------------------------------------------------------|
+| --help                | Display this help message.                                                                                 |
+| --version             | Display this application version.                                                                          |
+| --file=\<path>        | Path of the input file used for embedding as a C++ source code.                                            |
+| --output=\<path>      | Output folder where to create generated code. ie: .\generated_files                                        |
+| --headerfile=\<name>  | File name of the generated C++ Header file. ie: SplashScreen.h                                             |
+| --generator=\<name>   | Name of the generator to use. Possible values are 'segment', 'string' and 'array'. [default: segment].     |
+| --encoding=\<name>    | Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct]. |
+| --identifier=\<name>  | Identifier of the function name that is used to get an instance of the file. ie: SplashScreen              |
+| --chunksize=\<value>  | Size in bytes of each string segments (bytes per row). [default: 200].                                     |
+| --baseclass=\<value>  | The name of the interface for embedded files. [default: File].                                             |
+| --namespace=\<value>  | The namespace of the generated source code [default: bin2cpp].                                             |
+| --managerfile=\<name> | File name of the generated C++ Header file for the FileManager class. ie: FileManager.h.                   |
+| --registerfile        | Register the generated file to the FileManager class. [default: false].                                    |
+| --override            | Tells bin2cpp to overwrite the destination files.                                                          |
+| --noheader            | Do not print program header to standard output.                                                            |
+| --quiet               | Do not log any message to standard output.                                                                 |
 
 ## Example ##
 

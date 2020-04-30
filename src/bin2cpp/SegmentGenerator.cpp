@@ -78,12 +78,13 @@ namespace bin2cpp
     //size_t numSegments = fileSize/iChunkSize + (lastSegmentSize == 0 ? 0 : 1);
 
     //Build class name
-    std::string className;
-    className.append(functionIdentifier.c_str());
-    className.append("File");
+    std::string className = getClassName();
 
     //Build function 
     std::string getterFunctionName = getGetterFunctionName();
+
+    //Build FileManager class template
+    std::string manager = getManagerHeaderFile();
 
     //write cpp file heading
     fprintf(cpp, "%s", getHeaderTemplate().c_str());
@@ -143,6 +144,11 @@ namespace bin2cpp
     fprintf(cpp, "    std::string mBuffer;\n");
     fprintf(cpp, "  };\n");
     fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", mBaseClass.c_str(), getterFunctionName.c_str(), className.c_str());
+    if (isRegisterFileEnabled())
+    {
+      std::string fileManagerTemplate = getFileManagerRegistrationTemplate();
+      fprintf(cpp, "%s", fileManagerTemplate.c_str());
+    }
     fprintf(cpp, "}; //%s\n", mNamespace.c_str());
 
     fclose(input);

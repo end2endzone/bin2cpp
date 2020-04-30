@@ -52,9 +52,15 @@ namespace bin2cpp
     virtual const char * getBaseClass() const;
     virtual void setCppEncoder(const CppEncoderEnum & iCppEncoder);
     virtual CppEncoderEnum getCppEncoder() const;
+    virtual void setManagerHeaderFile(const char * iManagerFile);
+    virtual const char * getManagerHeaderFile() const;
+    virtual void setRegisterFileEnabled(bool iRegisterFileEnabled);
+    virtual bool isRegisterFileEnabled() const;
 
     //same header file for all generators
     virtual bool createCppHeaderFile(const char * iHeaderFilePath);
+    virtual bool createManagerHeaderFile(const char * iHeaderFilePath);
+    virtual bool createManagerSourceFile(const char * iCppFilePath);
 
   protected:
     virtual std::string getGetterFunctionName();
@@ -62,6 +68,8 @@ namespace bin2cpp
     virtual std::string getCppFilePath(const char * iHeaderFilePath);
     virtual std::string getHeaderTemplate();
     virtual std::string getSaveMethodTemplate();
+    virtual std::string getFileManagerRegistrationTemplate();
+    virtual std::string getClassName();
 
     //attributes
     std::string mInputFile;
@@ -69,7 +77,9 @@ namespace bin2cpp
     size_t mChunkSize;
     std::string mNamespace;
     std::string mBaseClass;
+    std::string mManagerFile;
     IGenerator::CppEncoderEnum mCppEncoder;
+    bool mManagerEnabled;
   };
 
 }; //bin2cpp

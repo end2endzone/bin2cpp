@@ -36,7 +36,8 @@
 namespace bin2cpp
 {
   BaseGenerator::BaseGenerator() :
-    mCppEncoder(IGenerator::CPP_ENCODER_OCT)
+    mCppEncoder(IGenerator::CPP_ENCODER_OCT),
+    mManagerEnabled(false)
   {
   }
 
@@ -108,6 +109,27 @@ namespace bin2cpp
     return mCppEncoder;
   }
 
+  void BaseGenerator::setManagerHeaderFile(const char * iManagerFile)
+  {
+    if (iManagerFile)
+      mManagerFile = iManagerFile;
+  }
+
+  const char * BaseGenerator::getManagerHeaderFile() const
+  {
+    return mManagerFile.c_str();
+  }
+
+  void BaseGenerator::setRegisterFileEnabled(bool iRegisterFileEnabled)
+  {
+    mManagerEnabled = iRegisterFileEnabled;
+  }
+
+  bool BaseGenerator::isRegisterFileEnabled() const
+  {
+    return mManagerEnabled;
+  }
+
   //-------------------------------
   //protected methods
   //-------------------------------
@@ -173,6 +195,30 @@ namespace bin2cpp
     return output;
   }
 
+  std::string BaseGenerator::getFileManagerRegistrationTemplate()
+  {
+    if (!this->isRegisterFileEnabled())
+      return std::string();
+
+    //Build class name
+    std::string className = getClassName();
+
+    std::string output;
+    output << "  typedef const " << mBaseClass << " & (*t_func)();\n";
+    output << "  extern bool RegisterFile(t_func iFunctionPointer);\n";
+    output << "  static bool k" << className << "Registered = " << mNamespace << "::RegisterFile(&" << getGetterFunctionName() << ");\n";
+    return output;
+  }
+
+  std::string BaseGenerator::getClassName()
+  {
+    std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mFunctionIdentifier);
+    std::string className;
+    className.append(functionIdentifier.c_str());
+    className.append("File");
+    return className;
+  }
+
   bool BaseGenerator::createCppHeaderFile(const char * iHeaderFilePath)
   {
     FILE * header = fopen(iHeaderFilePath, "w");
@@ -208,6 +254,134 @@ namespace bin2cpp
     fprintf(header, "#endif //%s\n", macro_guard.c_str());
 
     fclose(header);
+
+    return true;
+  }
+
+  bool BaseGenerator::createManagerHeaderFile(const char * iHeaderFilePath)
+  {
+    FILE * header = fopen(iHeaderFilePath, "w");
+    if (!header)
+      return false;
+
+    //define macro guard a macro matching the filename
+    std::string macro_guard = getCppIncludeGuardMacroName(iHeaderFilePath);
+
+    std::string headercomments = getHeaderTemplate();
+    fprintf(header, "%s", headercomments.c_str());
+    fprintf(header, "#ifndef %s\n", macro_guard.c_str());
+    fprintf(header, "#define %s\n", macro_guard.c_str());
+    fprintf(header, "\n");
+    fprintf(header, "#include <stddef.h>\n");
+    fprintf(header, "#include <vector>\n");
+    fprintf(header, "\n");
+    fprintf(header, "namespace %s\n", mNamespace.c_str());
+    fprintf(header, "{\n");
+    fprintf(header, "  #ifndef BIN2CPP_EMBEDDEDFILE_CLASS\n");
+    fprintf(header, "  #define BIN2CPP_EMBEDDEDFILE_CLASS\n");
+    fprintf(header, "  class %s\n", mBaseClass.c_str());
+    fprintf(header, "  {\n");
+    fprintf(header, "  public:\n");
+    fprintf(header, "    virtual size_t getSize() const = 0;\n");
+    fprintf(header, "    virtual const char * getFilename() const = 0;\n");
+    fprintf(header, "    virtual const char * getBuffer() const = 0;\n");
+    fprintf(header, "    virtual bool save(const char * iFilename) const = 0;\n");
+    fprintf(header, "  };\n");
+    fprintf(header, "  #endif //BIN2CPP_EMBEDDEDFILE_CLASS\n");
+    fprintf(header, "\n");
+    fprintf(header, "  #ifndef BIN2CPP_FILEMANAGER_CLASS\n");
+    fprintf(header, "  #define BIN2CPP_FILEMANAGER_CLASS\n");
+    fprintf(header, "  class FileManager\n");
+    fprintf(header, "  {\n");
+    fprintf(header, "  private:\n");
+    fprintf(header, "    FileManager();\n");
+    fprintf(header, "    ~FileManager();\n");
+    fprintf(header, "  public:\n");
+    fprintf(header, "    typedef const %s & (*t_func)();\n", mBaseClass.c_str());
+    fprintf(header, "    static FileManager & getInstance();\n");
+    fprintf(header, "    void registerFile(t_func iFunctionPtr);\n");
+    fprintf(header, "    size_t getFileCount() const;\n");
+    fprintf(header, "    const %s * getFile(const size_t & index) const;\n", mBaseClass.c_str());
+    fprintf(header, "    bool saveFiles(const char * iDirectory) const;\n");
+    fprintf(header, "  private:\n");
+    fprintf(header, "    std::vector<t_func> functions_;\n");
+    fprintf(header, "  };\n");
+    fprintf(header, "  #endif //BIN2CPP_FILEMANAGER_CLASS\n");
+    fprintf(header, "}; //%s\n", mNamespace.c_str());
+    fprintf(header, "\n");
+    fprintf(header, "#endif //%s\n", macro_guard.c_str());
+
+    fclose(header);
+
+    return true;
+  }
+
+  bool BaseGenerator::createManagerSourceFile(const char * iCppFilePath)
+  {
+    FILE * cpp = fopen(iCppFilePath, "w");
+    if (!cpp)
+      return false;
+
+    //Build header and cpp file path
+    std::string headerPath = getHeaderFilePath(iCppFilePath);
+    std::string cppPath = iCppFilePath;
+    std::string headerFilename = ra::filesystem::GetFilename(headerPath.c_str());
+    std::string cppFilename = ra::filesystem::GetFilename(iCppFilePath);
+
+    std::string headercomments = getHeaderTemplate();
+    fprintf(cpp, "%s", headercomments.c_str());
+    fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str());
+    fprintf(cpp, "#include <string>\n");
+    fprintf(cpp, "\n");
+    fprintf(cpp, "namespace %s\n", mNamespace.c_str());
+    fprintf(cpp, "{\n");
+    fprintf(cpp, "  bool RegisterFile(FileManager::t_func iFunctionPointer)\n");
+    fprintf(cpp, "  {\n");
+    fprintf(cpp, "    if (iFunctionPointer == NULL)\n");
+    fprintf(cpp, "      return false;\n");
+    fprintf(cpp, "    FileManager::getInstance().registerFile(iFunctionPointer);\n");
+    fprintf(cpp, "    return true;\n");
+    fprintf(cpp, "  }\n");
+    fprintf(cpp, "  FileManager::FileManager() {}\n");
+    fprintf(cpp, "  FileManager::~FileManager() {}\n");
+    fprintf(cpp, "  FileManager & FileManager::getInstance() { static FileManager _mgr; return _mgr; }\n");
+    fprintf(cpp, "  void FileManager::registerFile(t_func iFunctionPtr) { functions_.push_back(iFunctionPtr); }\n");
+    fprintf(cpp, "  size_t FileManager::getFileCount() const { return functions_.size(); }\n");
+    fprintf(cpp, "  const File * FileManager::getFile(const size_t & index) const\n");
+    fprintf(cpp, "  {\n");
+    fprintf(cpp, "    if (index >= functions_.size())\n");
+    fprintf(cpp, "      return NULL;\n");
+    fprintf(cpp, "    t_func ressource_getter_function = functions_[index];\n");
+    fprintf(cpp, "    const bin2cpp::File & resource = ressource_getter_function();\n");
+    fprintf(cpp, "    return &resource;\n");
+    fprintf(cpp, "  }\n");
+    fprintf(cpp, "  bool FileManager::saveFiles(const char * iDirectory) const\n");
+    fprintf(cpp, "  {\n");
+    fprintf(cpp, "    if (iDirectory == NULL)\n");
+    fprintf(cpp, "      return false;\n");
+    fprintf(cpp, "    size_t count = getFileCount();\n");
+    fprintf(cpp, "    for(size_t i=0; i<count; i++)\n");
+    fprintf(cpp, "    {\n");
+    fprintf(cpp, "      const File * f = getFile(i);\n");
+    fprintf(cpp, "      if (!f)\n");
+    fprintf(cpp, "        return false;\n");
+    fprintf(cpp, "      std::string path;\n");
+    fprintf(cpp, "      path.append(iDirectory);\n");
+    fprintf(cpp, "      #ifdef _WIN32\n");
+    fprintf(cpp, "      path.append(1, '\\\\');\n");
+    fprintf(cpp, "      #else\n");
+    fprintf(cpp, "      path.append(1, '/');\n");
+    fprintf(cpp, "      #endif\n");
+    fprintf(cpp, "      path.append(f->getFilename());\n");
+    fprintf(cpp, "      bool saved = f->save(path.c_str());\n");
+    fprintf(cpp, "      if (!saved)\n");
+    fprintf(cpp, "        return false;\n");
+    fprintf(cpp, "    }\n");
+    fprintf(cpp, "    return true;\n");
+    fprintf(cpp, "  }\n");
+    fprintf(cpp, "}; //%s\n", mNamespace.c_str());
+
+    fclose(cpp);
 
     return true;
   }

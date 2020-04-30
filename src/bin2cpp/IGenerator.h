@@ -101,6 +101,30 @@ namespace bin2cpp
     virtual const char * getBaseClass() const = 0;
 
     ///<summary>
+    ///Defines the path of the FileManager output file.
+    ///</summary>
+    ///<param name="iPath">The path of the FileManager output file.</param>
+    virtual void setManagerHeaderFile(const char * iPath) = 0;
+
+    ///<summary>
+    ///Provides the path of the FileManager output file.
+    ///</summary>
+    ///<returns>Returns the path of the FileManager output file. Returns an empty string if not defined.</returns>
+    virtual const char * getManagerHeaderFile() const = 0;
+
+    ///<summary>
+    ///Enable or disable the registration of the generated file to the FileManager.
+    ///</summary>
+    ///<param name="iFileManagerEnabled">The new value of the flag.</param>
+    virtual void setRegisterFileEnabled(bool iRegisterFileEnabled) = 0;
+
+    ///<summary>
+    ///Returns true if the generated file should be registated FileManager should be used in generated code.
+    ///</summary>
+    ///<returns>Returns true if the FileManager should be used in generated code. Returns false otherwise.</returns>
+    virtual bool isRegisterFileEnabled() const = 0;
+
+    ///<summary>
     ///Defines the different type of cpp encoding.
     ///See setCppEncoder() and getCppEncoder() functions.
     ///</summary>
@@ -135,6 +159,20 @@ namespace bin2cpp
     ///<param name="iCppFilePath">The path of the source file (*.cpp) that is used for getting access to the functions.</param>
     ///<returns>Returns true when the file was created. Returns false otherwise.</returns>
     virtual bool createCppSourceFile(const char * iCppFilePath) = 0;
+
+    ///<summary>
+    ///Creates a FileManager header file.
+    ///</summary>
+    ///<param name="iHeaderFilePath">The path of the header file (*.h).</param>
+    ///<returns>Returns true when the file was created. Returns false otherwise.</returns>
+    virtual bool createManagerHeaderFile(const char * iHeaderFilePath) = 0;
+
+    ///<summary>
+    ///Creates a FileManager cpp file.
+    ///</summary>
+    ///<param name="iHeaderFilePath">The path of the cpp file (*.h).</param>
+    ///<returns>Returns true when the file was created. Returns false otherwise.</returns>
+    virtual bool createManagerSourceFile(const char * iCppFilePath) = 0;
 
   };
   
