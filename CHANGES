@@ -1,6 +1,7 @@
 Changes for 2.3.0:
 
 * New feature: Using RapidAssist version 0.8.1
+* Fixed issue #28: FileManager class for iterating through all embeded files.
 
 
 Changes for 2.2.0:
