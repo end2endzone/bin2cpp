@@ -96,9 +96,9 @@ bin2cpp --version
 | --identifier=\<name>  | Identifier of the function name that is used to get an instance of the file. ie: SplashScreen              |
 | --chunksize=\<value>  | Size in bytes of each string segments (bytes per row). [default: 200].                                     |
 | --baseclass=\<value>  | The name of the interface for embedded files. [default: File].                                             |
-| --managerfile=\<name> | File name of the generated C++ Header file for the FileManager class. ie: FileManager.h.                   |
 | --namespace=\<value>  | The namespace of the generated source code [default: bin2cpp].                                             |
-| --usefilemanager      | Register the generated file to the FileManager class. [default: false].                                    |
+| --managerfile=\<name> | File name of the generated C++ Header file for the FileManager class. ie: FileManager.h.                   |
+| --registerfile        | Register the generated file to the FileManager class. [default: false].                                    |
 | --override            | Tells bin2cpp to overwrite the destination files.                                                          |
 | --noheader            | Do not print program header to standard output.                                                            |
 | --quiet               | Do not log any message to standard output.                                                                 |

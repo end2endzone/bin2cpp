@@ -113,16 +113,16 @@ namespace bin2cpp
     virtual const char * getManagerHeaderFile() const = 0;
 
     ///<summary>
-    ///Enable or disable the usage of the FileManager in generated code.
+    ///Enable or disable the registration of the generated file to the FileManager.
     ///</summary>
     ///<param name="iFileManagerEnabled">The new value of the flag.</param>
-    virtual void setManagerEnabled(bool iManagerEnabled) = 0;
+    virtual void setRegisterFileEnabled(bool iRegisterFileEnabled) = 0;
 
     ///<summary>
-    ///Returns true if the FileManager should be used in generated code.
+    ///Returns true if the generated file should be registated FileManager should be used in generated code.
     ///</summary>
     ///<returns>Returns true if the FileManager should be used in generated code. Returns false otherwise.</returns>
-    virtual bool isManagerEnabled() const = 0;
+    virtual bool isRegisterFileEnabled() const = 0;
 
     ///<summary>
     ///Defines the different type of cpp encoding.

@@ -54,8 +54,8 @@ namespace bin2cpp
     virtual CppEncoderEnum getCppEncoder() const;
     virtual void setManagerHeaderFile(const char * iManagerFile);
     virtual const char * getManagerHeaderFile() const;
-    virtual void setManagerEnabled(bool iManagerEnabled);
-    virtual bool isManagerEnabled() const;
+    virtual void setRegisterFileEnabled(bool iRegisterFileEnabled);
+    virtual bool isRegisterFileEnabled() const;
 
     //same header file for all generators
     virtual bool createCppHeaderFile(const char * iHeaderFilePath);

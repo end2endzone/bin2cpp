@@ -46,7 +46,7 @@ using namespace bin2cpp;
 
 enum APP_ERROR_CODES
 {
-  APP_ERROR_SUCCESS,
+  APP_ERROR_SUCCESS = 0,
   APP_ERROR_MISSINGARGUMENTS,
   APP_ERROR_INPUTFILENOTFOUND,
   APP_ERROR_UNABLETOCREATEOUTPUTFILES,
@@ -152,6 +152,7 @@ struct ARGUMENTS
   bool version;
   bool hasFile;
   bool hasDir;
+  bool hasManagerFile;
   std::string inputFile;
   std::string inputDir;
   std::string outputFolder;
@@ -162,7 +163,7 @@ struct ARGUMENTS
   std::string codeNamespace;
   std::string baseClass;
   std::string managerHeaderFilename;
-  bool usefilemanager;
+  bool registerfile;
   IGenerator::CppEncoderEnum encoding;
   std::string generatorName;
 };
@@ -185,7 +186,7 @@ void printUsage()
   //usage string in docopt format. See http://docopt.org/
   static const char usage[] = 
     "Usage:\n"
-    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<value>] [--managerfile=<name>] [--override] [--noheader] [--quiet]\n"
+    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<value>] [--managerfile=<name>] [--registerfile] [--override] [--noheader] [--quiet]\n"
     "  bin2cpp --help\n"
     "  bin2cpp --version\n"
     "\n"
@@ -205,9 +206,9 @@ void printUsage()
     "  --identifier=<name>  Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
     "  --chunksize=<value>  Size in bytes of each string segments (bytes per row). [default: 200].\n"
     "  --baseclass=<value>  The name of the interface for embedded files. [default: File].\n"
-    "  --managerfile=<name> File name of the generated C++ Header file for the FileManager class. ie: FileManager.h\n"
     "  --namespace=<value>  The namespace of the generated source code [default: bin2cpp].\n"
-    "  --usefilemanager     Register the generated file to the FileManager class. [default: false].\n"
+    "  --managerfile=<name> File name of the generated C++ Header file for the FileManager class. ie: FileManager.h\n"
+    "  --registerfile     Register the generated file to the FileManager class. [default: false].\n"
     "  --override           Tells bin2cpp to overwrite the destination files.\n"
     "  --noheader           Do not print program header to standard output.\n"
     "  --quiet              Do not log any message to standard output.\n"
@@ -224,9 +225,10 @@ int main(int argc, char* argv[])
   args.version = false;
   args.hasFile = false;
   args.hasDir = false;
+  args.hasManagerFile = false;
   args.chunkSize = 0;
   args.overrideExisting;
-  args.usefilemanager = false;
+  args.registerfile = false;
 
   std::string dummy;
 
@@ -266,11 +268,12 @@ int main(int argc, char* argv[])
   //mandatory arguments
   args.hasFile = ra::cli::ParseArgument("file", args.inputFile, argc, argv);
   args.hasDir  = ra::cli::ParseArgument("dir",  args.inputDir,  argc, argv);
-  if (!args.hasFile && !args.hasDir)
+  args.hasManagerFile = ra::cli::ParseArgument("managerfile", args.managerHeaderFilename, argc, argv);
+  if (!args.hasFile && !args.hasDir && !args.hasManagerFile)
   {
-    //file or dir must be specified
+    //file, dir or managerfile must be specified
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    ra::logging::Log(ra::logging::LOG_ERROR, "%s (file, dir)", getErrorCodeDescription(error));
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s (file, dir, managerfile)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
@@ -356,14 +359,12 @@ int main(int argc, char* argv[])
     args.baseClass = DEFAULT_BASECLASSNAME;
   }
 
-  ra::cli::ParseArgument("managerfile", args.managerHeaderFilename, argc, argv);
-
-  args.usefilemanager = ra::cli::ParseArgument("usefilemanager", dummy, argc, argv);
+  args.registerfile = ra::cli::ParseArgument("registerfile", dummy, argc, argv);
   
-  //force usefilemanager if managerfile is specified
-  if (!args.managerHeaderFilename.empty())
+  //force registerfile if managerfile is specified
+  if (args.hasManagerFile)
   {
-    args.usefilemanager = true;
+    args.registerfile = true;
   }
 
   std::string encodingStr;
@@ -435,19 +436,8 @@ int main(int argc, char* argv[])
     if (error != APP_ERROR_SUCCESS)
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
+      return error;
     }
-
-    //should we also generate the FileManager class?
-    if (!args.managerHeaderFilename.empty())
-    {
-      error = processManagerFiles(args, generator);
-      if (error != APP_ERROR_SUCCESS)
-      {
-        ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
-      }
-    }
-
-    return error;
   }
   else if (args.hasDir)
   {
@@ -517,10 +507,20 @@ int main(int argc, char* argv[])
     }
 
     //all files processed
-    return APP_ERROR_SUCCESS;
   }
 
-  return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
+  //should we also generate the FileManager class?
+  if (args.hasManagerFile)
+  {
+    APP_ERROR_CODES error = processManagerFiles(args, generator);
+    if (error != APP_ERROR_SUCCESS)
+    {
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
+      return error;
+    }
+  }
+
+  return APP_ERROR_SUCCESS;
 }
 
 APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator)
@@ -558,7 +558,7 @@ APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * 
   generator->setBaseClass(args.baseClass.c_str());
   generator->setCppEncoder(args.encoding);
   generator->setManagerHeaderFile(args.managerHeaderFilename.c_str());
-  generator->setManagerEnabled(args.usefilemanager);
+  generator->setRegisterFileEnabled(args.registerfile);
 
   //process files
   bool headerResult = generateFile(args.inputFile, outputHeaderPath, generator, args.overrideExisting);
@@ -651,7 +651,6 @@ bool generateManagerFile(const std::string & iOutputFilePath, bin2cpp::IGenerato
   if (!result)
   {
     //there was an error generating file
-    ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(APP_ERROR_UNABLETOCREATEOUTPUTFILES));
     ra::logging::Log(ra::logging::LOG_ERROR, "%s failed!", getUpdateModeText(mode));
   }
   return result;

@@ -131,6 +131,9 @@ using namespace TestCLIUtils;
 
 void TestCLI::SetUp()
 {
+  //assert main executable is found
+  static const std::string bin2cppFilePath = getBin2cppPath();
+  ASSERT_TRUE( ra::filesystem::FileExists(getBin2cppPath().c_str()) );
 }
 
 void TestCLI::TearDown()
@@ -151,6 +154,9 @@ TEST_F(TestCLI, testVersion)
 
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //load output file
@@ -180,6 +186,9 @@ TEST_F(TestCLI, testHelp)
 
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //load output file
@@ -208,6 +217,9 @@ TEST_F(TestCLI, testNoArguments)
 
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_NE(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //load output file
@@ -252,6 +264,9 @@ TEST_F(TestCLI, testMinimum)
 
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //load output file
@@ -300,6 +315,9 @@ TEST_F(TestCLI, testQuiet)
 
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //load output file
@@ -349,6 +367,9 @@ TEST_F(TestCLI, testNoHeader)
 
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //load output file
@@ -413,6 +434,9 @@ TEST_F(TestCLI, testGenerators)
 
     //run the command
     int returnCode = system(cmdline.c_str());
+    #ifdef __linux__
+      returnCode = WEXITSTATUS(returnCode);
+    #endif
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
     //remember this source file
@@ -475,6 +499,9 @@ TEST_F(TestCLI, testNewFiles)
 
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Writing file");
 
@@ -514,6 +541,9 @@ TEST_F(TestCLI, testUpdating)
 
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //force a change in the input file
@@ -564,6 +594,9 @@ TEST_F(TestCLI, testOverride)
 
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //add the override flag
@@ -571,6 +604,9 @@ TEST_F(TestCLI, testOverride)
 
   //run the command (again, expecting overriding both files)
   returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
   ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Overwriting file");
 
@@ -610,10 +646,16 @@ TEST_F(TestCLI, testSkipping)
 
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //run the command (again)
   returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
   
   //look for the expected message
@@ -661,6 +703,9 @@ TEST_F(TestCLI, testEncoding)
 
     //run the command
     int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+    returnCode = WEXITSTATUS(returnCode);
+#endif
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
     //assert generated code
@@ -679,6 +724,9 @@ TEST_F(TestCLI, testEncoding)
 
     //run the command
     int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+    returnCode = WEXITSTATUS(returnCode);
+#endif
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
     //assert generated code
@@ -697,6 +745,9 @@ TEST_F(TestCLI, testEncoding)
 
     //run the command
     int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+    returnCode = WEXITSTATUS(returnCode);
+#endif
     ASSERT_NE(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
   }
 
@@ -711,6 +762,9 @@ TEST_F(TestCLI, testEncoding)
 
     //run the command
     int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+    returnCode = WEXITSTATUS(returnCode);
+#endif
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
     //assert generated code
@@ -778,6 +832,9 @@ TEST_F(TestCLI, testDir)
  
   //run the command
   int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //assert that expected files were generated
@@ -982,7 +1039,7 @@ TEST_F(TestCLI, testErrorMissingArgumentIdentifier)
 TEST_F(TestCLI, testErrorMissingArgumentEncoding)
 {
   static const std::string expectedFilePath = getExpectedFilePath();
- static const std::string outputFilePath   = getActualFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
  
   std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
@@ -1364,4 +1421,163 @@ TEST_F(TestCLI, testErrorInputDirNotFound)
  
   //cleanup
   ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testFileManager)
+{
+  static const std::string outputFilePath = getActualFilePath();
+ 
+  std::string headerFilePath = gGeneratedFilesDir + "MyManager.h";
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --managerfile=MyManager.h");
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --override");
+
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+  //delete generated files
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+ 
+  //run the command
+  int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+  returnCode = WEXITSTATUS(returnCode);
+#endif
+  ASSERT_EQ(APP_ERROR_SUCCESS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //assert standard output log
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
+  ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
+ 
+  //assert the FileManager files are created in output directory
+  ASSERT_TRUE( ra::filesystem::FileExists(headerFilePath.c_str()) );
+  ASSERT_TRUE( ra::filesystem::FileExists(cppFilePath.c_str()) );
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+}
+ 
+TEST_F(TestCLI, testRegisterFile)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
+
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --output=generated_files");
+  cmdline.append(" --headerfile=");
+  cmdline.append(headerFileName);
+  cmdline.append(" --identifier=");
+  cmdline.append(ra::testing::GetTestCaseName().c_str());
+
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+
+  //prepare execution of first command line
+  {
+    //delete generated files
+    ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+    ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
+    //run the command
+    int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+    returnCode = WEXITSTATUS(returnCode);
+#endif
+    ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+    //load output file
+    ra::strings::StringVector lines;
+    bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
+    ASSERT_TRUE(loaded);
+
+    //assert standard output log
+    ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
+    ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
+
+    //assert generated code
+    ASSERT_TRUE(ra::filesystem::FileExists(headerFilePath.c_str()));
+
+    //cleanup
+    ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+  }
+
+  //backup the generated files
+  std::string backupHeaderFile1 = headerFilePath;
+  std::string backupCppFile1 = cppFilePath;
+  ra::strings::Replace(backupHeaderFile1, ".h", ".1.h");
+  ra::strings::Replace(backupCppFile1, ".cpp", ".1.cpp");
+  ASSERT_TRUE( ra::filesystem::CopyFile(headerFilePath, backupHeaderFile1) );
+  ASSERT_TRUE( ra::filesystem::CopyFile(cppFilePath, backupCppFile1) );
+
+  //buid same command again but with --registerfile argument
+  ra::strings::Replace(cmdline, " >", "--registerfile >");
+
+  //prepare execution of second command line
+  {
+    //delete generated files
+    ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+    ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
+    //run the command
+    int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+    returnCode = WEXITSTATUS(returnCode);
+#endif
+    ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+    //load output file
+    ra::strings::StringVector lines;
+    bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
+    ASSERT_TRUE(loaded);
+
+    //assert standard output log
+    ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
+    ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
+
+    //assert generated code
+    ASSERT_TRUE(ra::filesystem::FileExists(headerFilePath.c_str()));
+
+    //cleanup
+    ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+  }
+
+  //backup the generated files (again)
+  std::string backupHeaderFile2 = headerFilePath;
+  std::string backupCppFile2 = cppFilePath;
+  ra::strings::Replace(backupHeaderFile2, ".h", ".2.h");
+  ra::strings::Replace(backupCppFile2, ".cpp", ".2.cpp");
+  ASSERT_TRUE( ra::filesystem::CopyFile(headerFilePath, backupHeaderFile2) );
+  ASSERT_TRUE( ra::filesystem::CopyFile(cppFilePath, backupCppFile2) );
+
+  //assert the generated source files are different
+  bool identical = ra::testing::IsFileEquals(backupCppFile1.c_str(), backupCppFile2.c_str());
+  ASSERT_FALSE(identical);
+
+  //assert second file register itself
+  ASSERT_TEXT_IN_FILE(true, backupCppFile2.c_str(), "RegisterFile(&");
+  
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+  ASSERT_TRUE(deleteFile(backupHeaderFile1.c_str()));
+  ASSERT_TRUE(deleteFile(backupCppFile1.c_str()));
+  ASSERT_TRUE(deleteFile(backupHeaderFile2.c_str()));
+  ASSERT_TRUE(deleteFile(backupCppFile2.c_str()));
 }

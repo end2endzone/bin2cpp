@@ -120,12 +120,12 @@ namespace bin2cpp
     return mManagerFile.c_str();
   }
 
-  void BaseGenerator::setManagerEnabled(bool iManagerEnabled)
+  void BaseGenerator::setRegisterFileEnabled(bool iRegisterFileEnabled)
   {
-    mManagerEnabled = iManagerEnabled;
+    mManagerEnabled = iRegisterFileEnabled;
   }
 
-  bool BaseGenerator::isManagerEnabled() const
+  bool BaseGenerator::isRegisterFileEnabled() const
   {
     return mManagerEnabled;
   }
@@ -197,7 +197,7 @@ namespace bin2cpp
 
   std::string BaseGenerator::getFileManagerRegistrationTemplate()
   {
-    if (!this->isManagerEnabled())
+    if (!this->isRegisterFileEnabled())
       return std::string();
 
     //Build class name
