@@ -331,7 +331,7 @@ namespace bin2cpp
     std::string headercomments = getHeaderTemplate();
     fprintf(cpp, "%s", headercomments.c_str());
     fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str());
-    fprintf(cpp, "#include <string>\n", headerFilename.c_str());
+    fprintf(cpp, "#include <string>\n");
     fprintf(cpp, "\n");
     fprintf(cpp, "namespace %s\n", mNamespace.c_str());
     fprintf(cpp, "{\n");
