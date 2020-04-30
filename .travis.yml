@@ -6,7 +6,6 @@ os:
 branches:
   only:
   - master
-  - issue28
 
 install:
 - cd $TRAVIS_BUILD_DIR/ci/travis; ./install_googletest.sh;
