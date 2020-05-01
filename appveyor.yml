@@ -72,7 +72,5 @@ test_script:
 #---------------------------------#
 
 artifacts:
-- path: .\build\bin\Release\bin2cpptest.x86.release.xml
-  name: bin2cpptest..x86.release.xml
-- path: .\build\bin2cpp-*-win32.exe
-  name: bin2cpp-win32.exe
+- path: .\build\bin\Release\bin2cpptest.*.release.xml
+- path: .\build\bin2cpp-*-win*.*
