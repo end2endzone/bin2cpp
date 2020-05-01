@@ -1526,7 +1526,7 @@ TEST_F(TestCLI, testRegisterFile)
   ASSERT_TRUE( ra::filesystem::CopyFile(cppFilePath, backupCppFile1) );
 
   //buid same command again but with --registerfile argument
-  ra::strings::Replace(cmdline, " >", "--registerfile >");
+  ra::strings::Replace(cmdline, " >", " --registerfile >");
 
   //prepare execution of second command line
   {
@@ -1589,4 +1589,146 @@ TEST_F(TestCLI, testRegisterFile)
   ASSERT_TRUE(deleteFile(backupCppFile1.c_str()));
   ASSERT_TRUE(deleteFile(backupHeaderFile2.c_str()));
   ASSERT_TRUE(deleteFile(backupCppFile2.c_str()));
+}
+ 
+TEST_F(TestCLI, testRegisterFileAllGenerators)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
+  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
+  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
+
+  const char * generators[] = {
+    "segment",
+    "string",
+    "array",
+    "win32",
+  };
+  const size_t num_generators = sizeof(generators)/sizeof(generators[0]);
+
+  for(size_t i=0; i<num_generators; i++)
+  {
+    const char * generator = generators[i];
+    printf("Testing generator '%s'\n", generator);
+
+    //build command line
+    std::string cmdline;
+    cmdline.append(getBin2cppPath());
+    cmdline.append(" --file=");
+    cmdline.append(getBin2cppPath()); //itself
+    cmdline.append(" --output=generated_files");
+    cmdline.append(" --headerfile=");
+    cmdline.append(headerFileName);
+    cmdline.append(" --identifier=");
+    cmdline.append(ra::testing::GetTestCaseName().c_str());
+    cmdline.append(" --generator=");
+    cmdline.append(generator);
+
+    cmdline.append(" >");
+    cmdline.append(outputFilePath.c_str());
+
+    //prepare execution of first command line
+    {
+      //delete generated files
+      ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+      ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
+      //run the command
+      int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+      returnCode = WEXITSTATUS(returnCode);
+#endif
+      ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+      //load output file
+      ra::strings::StringVector lines;
+      bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
+      ASSERT_TRUE(loaded);
+
+      //assert standard output log
+      ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
+      ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
+
+      //assert generated code
+      ASSERT_TRUE(ra::filesystem::FileExists(headerFilePath.c_str()));
+
+      //cleanup
+      ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+    }
+
+    //backup the generated files
+    std::string backupHeaderFile1 = headerFilePath;
+    std::string backupCppFile1 = cppFilePath;
+    ra::strings::Replace(backupHeaderFile1, ".h", ".1.h");
+    ra::strings::Replace(backupCppFile1, ".cpp", ".1.cpp");
+    ASSERT_TRUE( ra::filesystem::CopyFile(headerFilePath, backupHeaderFile1) );
+    ASSERT_TRUE( ra::filesystem::CopyFile(cppFilePath, backupCppFile1) );
+
+    //buid same command again but with --registerfile argument
+    ra::strings::Replace(cmdline, " >", " --registerfile >");
+
+    //prepare execution of second command line
+    {
+      //delete generated files
+      ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+      ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+
+      //run the command
+      int returnCode = system(cmdline.c_str());
+#ifdef __linux__
+      returnCode = WEXITSTATUS(returnCode);
+#endif
+      ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+      //load output file
+      ra::strings::StringVector lines;
+      bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
+      ASSERT_TRUE(loaded);
+
+      //assert standard output log
+      ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Copyright (C)");
+      ASSERT_TEXT_IN_FILE(false, outputFilePath.c_str(), "Usage:");
+
+      //assert generated code
+      ASSERT_TRUE(ra::filesystem::FileExists(headerFilePath.c_str()));
+
+      //cleanup
+      ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+    }
+
+    //backup the generated files (again)
+    std::string backupHeaderFile2 = headerFilePath;
+    std::string backupCppFile2 = cppFilePath;
+    ra::strings::Replace(backupHeaderFile2, ".h", ".2.h");
+    ra::strings::Replace(backupCppFile2, ".cpp", ".2.cpp");
+    ASSERT_TRUE( ra::filesystem::CopyFile(headerFilePath, backupHeaderFile2) );
+    ASSERT_TRUE( ra::filesystem::CopyFile(cppFilePath, backupCppFile2) );
+
+    //assert the generated source files are different
+    bool identical = ra::testing::IsFileEquals(backupCppFile1.c_str(), backupCppFile2.c_str());
+    ASSERT_FALSE(identical);
+
+    //assert second file register itself
+    {
+      const char * token = "RegisterFile(&";
+      int line = -1;
+      int col = -1;
+      std::string content;
+      bool readed = ra::filesystem::ReadTextFile(backupCppFile2.c_str(), content);
+      ASSERT_TRUE( readed );
+      bool textFound = ra::testing::FindInFile(backupCppFile2.c_str(), token, line, col);
+      ASSERT_TRUE(textFound) << "The token '" << token << "' was NOT found in file '" << backupCppFile2.c_str() << "'.\n\n" << content;
+    }
+
+    //cleanup
+    ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+    ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
+    ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
+    ASSERT_TRUE(deleteFile(backupHeaderFile1.c_str()));
+    ASSERT_TRUE(deleteFile(backupCppFile1.c_str()));
+    ASSERT_TRUE(deleteFile(backupHeaderFile2.c_str()));
+    ASSERT_TRUE(deleteFile(backupCppFile2.c_str()));
+  }
 }

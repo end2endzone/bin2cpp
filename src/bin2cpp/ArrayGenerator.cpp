@@ -138,6 +138,11 @@ namespace bin2cpp
     fprintf(cpp, "%s", getSaveMethodTemplate().c_str());
     fprintf(cpp, "  };\n");
     fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", mBaseClass.c_str(), getterFunctionName.c_str(), className.c_str());
+    if (isRegisterFileEnabled())
+    {
+      std::string fileManagerTemplate = getFileManagerRegistrationTemplate();
+      fprintf(cpp, "%s", fileManagerTemplate.c_str());
+    }
     fprintf(cpp, "}; //%s\n", mNamespace.c_str());
 
     fclose(input);
