@@ -30,7 +30,7 @@ mkdir build >NUL 2>NUL
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=%rapidassist_DIR% ..
 if %errorlevel% neq 0 exit /b %errorlevel%
-cmake --build . --config %Configuration%
+cmake --build . --config %Configuration% -- -maxcpucount /m
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo.
 

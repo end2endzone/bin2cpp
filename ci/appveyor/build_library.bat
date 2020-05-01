@@ -22,7 +22,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 echo ============================================================================
 echo Compiling...
 echo ============================================================================
-cmake --build . --config %Configuration%
+cmake --build . --config %Configuration% -- -maxcpucount /m
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo.
 

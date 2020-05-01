@@ -30,7 +30,7 @@ echo ===========================================================================
 mkdir -p build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=$rapidassist_DIR ..
-cmake --build .
+cmake --build . -- -j4
 echo
 
 echo ============================================================================
