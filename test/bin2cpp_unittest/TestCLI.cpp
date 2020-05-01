@@ -1570,8 +1570,17 @@ TEST_F(TestCLI, testRegisterFile)
   ASSERT_FALSE(identical);
 
   //assert second file register itself
-  ASSERT_TEXT_IN_FILE(true, backupCppFile2.c_str(), "RegisterFile(&");
-  
+  {
+    const char * token = "RegisterFile(&";
+    int line = -1;
+    int col = -1;
+    std::string content;
+    bool readed = ra::filesystem::ReadTextFile(backupCppFile2.c_str(), content);
+    ASSERT_TRUE( readed );
+    bool textFound = ra::testing::FindInFile(backupCppFile2.c_str(), token, line, col);
+    ASSERT_TRUE(textFound) << "The token '" << token << "' was NOT found in file '" << backupCppFile2.c_str() << "'.\n\n" << content;
+  }
+
   //cleanup
   ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
   ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
