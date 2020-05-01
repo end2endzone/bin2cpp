@@ -2,6 +2,7 @@ Changes for 2.3.0:
 
 * New feature: Using RapidAssist version 0.8.1
 * Fixed issue #28: FileManager class for iterating through all embeded files.
+* Fixed issue #30: Visual Studio: warning C4996: 'fopen': This function or variable may be unsafe.
 
 
 Changes for 2.2.0:

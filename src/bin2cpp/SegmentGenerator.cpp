@@ -88,6 +88,9 @@ namespace bin2cpp
 
     //write cpp file heading
     fprintf(cpp, "%s", getHeaderTemplate().c_str());
+    fprintf(cpp, "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n");
+    fprintf(cpp, "#define _CRT_SECURE_NO_WARNINGS\n");
+    fprintf(cpp, "#endif\n");
     fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str() );
     fprintf(cpp, "#include <stdio.h> //for FILE\n");
     fprintf(cpp, "#include <string> //for memcpy\n");
