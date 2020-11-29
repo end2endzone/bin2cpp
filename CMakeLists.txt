@@ -110,7 +110,7 @@ include_directories(${CMAKE_BINARY_DIR}/include     # for ${BIN2CPP_VERSION_HEAD
 # Dependencies
 ##############################################################################################################################################
 find_package(GTest REQUIRED) #rapidassist requires GTest
-find_package(rapidassist 0.5.0 REQUIRED)
+find_package(rapidassist 0.8.1 REQUIRED)
 
 ##############################################################################################################################################
 # Subprojects
