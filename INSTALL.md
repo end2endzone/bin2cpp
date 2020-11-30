@@ -1,3 +1,4 @@
+
 # Install #
 
 This project provides pre-build binaries or an installation package. See the [tags](http://github.com/end2endzone/bin2cpp/tags) section for details.
@@ -23,7 +24,7 @@ This section explains how to compile and build the software and how to get a dev
 
 
 ### Software Requirements ###
-The following software must be installed on the system for compiling source code:
+The following software must be compiled and installed on the system before for compiling source code:
 
 * [Google C++ Testing Framework v1.8.0](https://github.com/google/googletest/tree/release-1.8.0)
 * [RapidAssist v0.5.0](https://github.com/end2endzone/RapidAssist/tree/0.5.0)
@@ -53,23 +54,57 @@ The project uses the CMake build system to generate a platform-specific build en
 
 To build the software, execute the following steps:
 
-1) Get a copy of the source code by using one of the following methods:
+1) Build and install all software prerequisites before building this software.
+
+2) Get a copy of the source code by using one of the following methods:
    * Download the source code of the project from an existing [tags](http://github.com/end2endzone/bin2cpp) and extract the downloaded zip file to a local directory (for example `c:\projects\bin2cpp` or `~/dev/bin2cpp`).
    * Clone the github repository by running `git clone "http://github.com/end2endzone/bin2cpp"`.
 
-2) Generate the project files for your build system. From your source code directory, enter the following commands:
+3) Generate the project files for your build system. From your source code directory, enter the following commands:
 ```
 mkdir build
 cd build
 cmake ..
 ```
 
-Note:
+Note: 
 See [CMake Quick Tips](#cmake-quick-tips) section for more details on building the library.
 
-3) Build the source code:
+4) Build the source code:
    1) On Windows, run `cmake --build . --config Release` or open the generated `.sln` file with Visual Studio.
    2) On Linux, run `make` command.
+
+
+
+### Building scripts for Linux ###
+
+The project provides scripts to facilitate the build process. The scripts can be found in [ci/travis](http://github.com/end2endzone/bin2cpp/blob/master/ci/travis) directory. There are 3 scripts, one for each dependencies and a final script for building the application. The scripts are named
+
+1) install_googletest.sh
+2) install_rapidassist.sh
+3) build_library.sh
+
+They are designed to be executed on [Travis CI](https://travis-ci.org/github/end2endzone/bin2cpp) and requires the environment variable `TRAVIS_BUILD_DIR` to be set to the location where you cloned the bin2cpp repository or extracted the source code. Once the environment variable is set, you should be able to execute each script one by one. 
+
+During the compilation process, project dependencies will be cloned in `third_parties` directory (for example, `$TRAVIS_BUILD_DIR/third_parties/googletest`. At the end of the build process, bin2cpp executable will be located in directory `$TRAVIS_BUILD_DIR/build/bin`.
+
+You can see the latest build log example on [Travis CI bin2cpp page](https://travis-ci.org/github/end2endzone/bin2cpp).
+
+
+
+### Building scripts for Windows ###
+
+The project provides scripts to facilitate the build process. The scripts can be found in [ci/appveyor](http://github.com/end2endzone/bin2cpp/blob/master/ci/appveyor) directory. There are 3 scripts, one for each dependencies and a final script for building the application. The scripts are named
+
+1) install_googletest.bat
+2) install_rapidassist.bat
+3) build_library.bat
+
+They are designed to be executed on [AppVeyor](https://ci.appveyor.com/project/end2endzone/bin2cpp) and requires the environment variable `APPVEYOR_BUILD_FOLDER` to be set to the location where you cloned the bin2cpp repository or extracted the source code. The environment variable `CONFIGURATION` must also be set to the value `Release`. Once the environment variables are set, you should be able to execute each script one by one. 
+
+During the compilation process, project dependencies will be cloned in `third_parties` directory (for example, `%APPVEYOR_BUILD_FOLDER%\third_parties\googletest`). At the end of the build process, bin2cpp executable will be located in directory `%APPVEYOR_BUILD_FOLDER%\build\bin\%CONFIGURATION%`.
+
+You can see the latest build log example on [AppVeyor bin2cpp page](https://ci.appveyor.com/project/end2endzone/bin2cpp).
 
 
 
