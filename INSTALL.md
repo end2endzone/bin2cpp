@@ -24,7 +24,7 @@ This section explains how to compile and build the software and how to get a dev
 
 
 ### Software Requirements ###
-The following software must be compiled and installed on the system before for compiling source code:
+The following software must be installed on the system for compiling source code:
 
 * [Google C++ Testing Framework v1.8.0](https://github.com/google/googletest/tree/release-1.8.0)
 * [RapidAssist v0.5.0](https://github.com/end2endzone/RapidAssist/tree/0.5.0)
