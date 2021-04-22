@@ -17,6 +17,7 @@ version: "{branch} (#{build})"
 branches:
   only:
     - master
+    - feature-issue35
 
 # Do not build on tags (GitHub and BitBucket)
 skip_tags: true
@@ -45,11 +46,19 @@ install:
 #       build configuration       #
 #---------------------------------#
 
-# build platform, i.e. x86, x64, Any CPU. This setting is optional.
-#platform: x86
+environment:
+  PlatformToolset: v140
+  
+  # build platform, i.e. x86, x64, Any CPU. This setting is optional.
+  Platform: Win32
 
-# build Configuration, i.e. Debug, Release, etc.
-configuration: Release
+  # build Configuration, i.e. Debug, Release, etc.
+  Configuration: Release
+
+  # to add several configurations to build matrix:
+  #Configuration:
+  #  - Debug
+  #  - Release
 
 before_build:
 - cmd: call %APPVEYOR_BUILD_FOLDER%\ci\appveyor\install_googletest.bat

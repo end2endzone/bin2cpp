@@ -7,9 +7,6 @@ if [ "$TRAVIS_BUILD_DIR" = "" ]; then
   exit 1;
 fi
 
-echo ============================================================================
-echo Testing project
-echo ============================================================================
-cd $TRAVIS_BUILD_DIR/build/bin
-./generate_test_files.sh
-./bin2cpp_unittest || true; #do not fail build even if a test fails.
+# Call matching script for linux
+this_filename=`basename "$0"`
+$TRAVIS_BUILD_DIR/ci/linux/$this_filename

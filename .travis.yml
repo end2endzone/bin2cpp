@@ -6,6 +6,10 @@ os:
 branches:
   only:
   - master
+  - feature-issue35
+env:
+  global:
+    - BIN2CPP_BUILD_TYPE=Release
 
 install:
 - cd $TRAVIS_BUILD_DIR/ci/travis; ./install_googletest.sh;
