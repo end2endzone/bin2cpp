@@ -86,7 +86,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: bash
       run: |
-        UNITTEST_REPORT_PATH=$(find . -name 'bin2cpptest.*.xml')
+        UNITTEST_REPORT_PATH=$(find . -name 'bin2cpp_unittest.*.xml')
         echo UNITTEST_REPORT_PATH=$UNITTEST_REPORT_PATH
         echo UNITTEST_REPORT_PATH=$UNITTEST_REPORT_PATH >> $GITHUB_ENV
       
@@ -106,4 +106,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: unit-test-results
-        path: build/bin/bin2cpptest.*.xml
+        path: build/bin/bin2cpp_unittest.*.xml

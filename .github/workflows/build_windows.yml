@@ -81,7 +81,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: cmd
       run: |
-        for /f "tokens=* usebackq" %%f in (`dir/b/s build\bin\${{env.configuration}}\bin2cpptest.*.xml`) do (set UNITTEST_REPORT_PATH=%%f)
+        for /f "tokens=* usebackq" %%f in (`dir/b/s build\bin\${{env.configuration}}\bin2cpp_unittest.*.xml`) do (set UNITTEST_REPORT_PATH=%%f)
         echo UNITTEST_REPORT_PATH=%UNITTEST_REPORT_PATH%
         echo UNITTEST_REPORT_PATH=%UNITTEST_REPORT_PATH% >> %GITHUB_ENV%
       
@@ -101,4 +101,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: unit-test-results
-        path: build\bin\${{env.Configuration}}\bin2cpptest.*.xml
+        path: build\bin\${{env.Configuration}}\bin2cpp_unittest.*.xml

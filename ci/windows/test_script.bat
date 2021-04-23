@@ -27,9 +27,9 @@ echo Testing RapidAssist library...
 echo =======================================================================
 cd /d "%BIN2CPP_SOURCE_DIR%\build\bin\%Configuration%"
 if "%Configuration%"=="Debug" (
-  rapidassist_unittest-d.exe
+  bin2cpp_unittest-d.exe
 ) else (
-  rapidassist_unittest.exe
+  bin2cpp_unittest.exe
 )
 
 :: Note:

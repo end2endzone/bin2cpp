@@ -81,5 +81,5 @@ test_script:
 #---------------------------------#
 
 artifacts:
-- path: .\build\bin\Release\bin2cpptest.*.release.xml
+- path: .\build\bin\Release\bin2cpp_unittest.*.release.xml
 - path: .\build\bin2cpp-*-win*.*

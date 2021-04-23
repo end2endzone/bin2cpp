@@ -44,16 +44,16 @@ int main(int argc, char **argv)
   if (ra::environment::IsProcess32Bit())
   {
     if (ra::environment::IsConfigurationDebug())
-      ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x86.debug.xml";
+      ::testing::GTEST_FLAG(output) = "xml:bin2cpp_unittest.x86.debug.xml";
     else
-      ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x86.release.xml";
+      ::testing::GTEST_FLAG(output) = "xml:bin2cpp_unittest.x86.release.xml";
   }
   else if (ra::environment::IsProcess64Bit())
   {
     if (ra::environment::IsConfigurationDebug())
-      ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x64.debug.xml";
+      ::testing::GTEST_FLAG(output) = "xml:bin2cpp_unittest.x64.debug.xml";
     else
-      ::testing::GTEST_FLAG(output) = "xml:bin2cpptest.x64.release.xml";
+      ::testing::GTEST_FLAG(output) = "xml:bin2cpp_unittest.x64.release.xml";
   }
 
   ::testing::GTEST_FLAG(filter) = "*";

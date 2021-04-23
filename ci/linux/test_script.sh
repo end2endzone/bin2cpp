@@ -23,9 +23,9 @@ echo Testing RapidAssist library...
 echo ============================================================================
 cd "$BIN2CPP_SOURCE_DIR/build/bin"
 if [ "$BIN2CPP_BUILD_TYPE" = "Debug" ]; then
-  ./rapidassist_unittest-d || true; #do not fail build even if a test fails.
+  ./bin2cpp_unittest-d || true; #do not fail build even if a test fails.
 else
-  ./rapidassist_unittest   || true; #do not fail build even if a test fails.
+  ./bin2cpp_unittest   || true; #do not fail build even if a test fails.
 fi
 
 # Note:
@@ -33,5 +33,5 @@ fi
 #  Do not reset the error returned by unit test execution. This will actually fail the build and will indicate in GitHub that a test has failed.
 
 #Debug TestProcess filters:
-#./rapidassist_unittest --gtest_filter=TestFilesystem.testNormalizePath:TestProcess.testIsRunning:TestProcess.testProcesses*:TestProcess.testGetExitCode*:TestProcess.testWaitExit:TestString.testIsNumeric
-#./rapidassist_unittest --gtest_filter=TestProcess.testGetExitCode*:TestProcess.testWaitExit
+#./bin2cpp_unittest --gtest_filter=TestFilesystem.testNormalizePath:TestProcess.testIsRunning:TestProcess.testProcesses*:TestProcess.testGetExitCode*:TestProcess.testWaitExit:TestString.testIsNumeric
+#./bin2cpp_unittest --gtest_filter=TestProcess.testGetExitCode*:TestProcess.testWaitExit
