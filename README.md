@@ -12,16 +12,18 @@ bin2cpp is a command line tool for embedding small files (like images, icons or 
 
 Build:
 
-| Service | Build | Tests |
-|----|-------|-------|
-| AppVeyor | [![Build status](https://img.shields.io/appveyor/ci/end2endzone/bin2cpp/master.svg?logo=appveyor)](https://ci.appveyor.com/project/end2endzone/bin2cpp) | [![Tests status](https://img.shields.io/appveyor/tests/end2endzone/bin2cpp/master.svg?logo=appveyor)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master/tests) |
-| Travis CI | [![Build Status](https://img.shields.io/travis/end2endzone/bin2cpp/master.svg?logo=travis&style=flat)](https://travis-ci.org/end2endzone/bin2cpp) |  |
+| Service/Platform    | Build                                                                                                                                                                                   | Tests                                                                                                                                                                                                                                                  |
+|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| AppVeyor            | [![Build status](https://img.shields.io/appveyor/ci/end2endzone/bin2cpp/master.svg?logo=AppVeyor&logoColor=white)](https://ci.appveyor.com/project/end2endzone/bin2cpp)                 | [![Tests status](https://img.shields.io/appveyor/tests/end2endzone/bin2cpp/master.svg?logo=AppVeyor&logoColor=white)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master/tests)                                                         |
+| Travis CI           | [![Build Status](https://img.shields.io/travis/end2endzone/bin2cpp/master.svg?logo=Travis-CI&style=flat&logoColor=white)](https://travis-ci.org/end2endzone/bin2cpp)                    |                                                                                                                                                                                                                                                        |
+| Windows Server 2019 | [![Build on Windows](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml/badge.svg)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml) | [![Tests on Windows](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/end2endzone/58cf6c72c08e706335337d5ef9ca48e8/raw/bin2cpp.master.Windows.json)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml) |
+| Ubuntu 20.04        | [![Build on Linux](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml/badge.svg)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml)       | [![Tests on Linux](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/end2endzone/58cf6c72c08e706335337d5ef9ca48e8/raw/bin2cpp.master.Linux.json)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml)       |
 
 Statistics:
 
-| AppVeyor | Travic CI |
-|----------|-----------|
-| [![Statistics](https://buildstats.info/appveyor/chart/end2endzone/bin2cpp)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master) | [![Statistics](https://buildstats.info/travisci/chart/end2endzone/bin2cpp)](https://travis-ci.org/end2endzone/bin2cpp) |
+| AppVeyor                                                                                                                                       | Travic CI                                                                                                              | GitHub                                                                                                                     |
+|------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| [![Statistics](https://buildstats.info/appveyor/chart/end2endzone/bin2cpp)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master) | [![Statistics](https://buildstats.info/travisci/chart/end2endzone/bin2cpp)](https://travis-ci.org/end2endzone/bin2cpp) | [![Statistics](https://buildstats.info/github/chart/end2endzone/bin2cpp)](https://github.com/end2endzone/bin2cpp/actions/) |
 
 
 
@@ -48,12 +50,12 @@ The main features of the project are:
 * No third party libraries required for retrieving the data of the embedded files.
 * Supports different types of code generator: string, segment, array.
 * File's originals `size` and `filename` properties available from generated source code.
-* Source code control: select a custom file interface and namespace
+* Source code control: select a custom file interface and namespace.
 
 
 ## Use cases ##
 
-The following list shows situations where bin2cpp is useful:
+The following list show situations where bin2cpp is useful:
 
 * Embedding default configuration files if none are provided.
 * Embedding GLSL shaders into the executable.
@@ -283,9 +285,8 @@ Please refer to file [INSTALL.md](INSTALL.md) for details on how installing/buil
 
 bin2cpp has been tested with the following platform:
 
-*   Linux x86/x64
-*   Windows x86/x64
-
+* Linux, 32 and 64 bit
+* Windows, 32 and 64 bit
 
 
 
