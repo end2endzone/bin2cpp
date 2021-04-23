@@ -7,32 +7,6 @@ if [ "$TRAVIS_BUILD_DIR" = "" ]; then
   exit 1;
 fi
 
-export GTEST_ROOT=$TRAVIS_BUILD_DIR/third_parties/googletest/install
-export rapidassist_DIR=$TRAVIS_BUILD_DIR/third_parties/RapidAssist/install
-echo rapidassist_DIR=$rapidassist_DIR
-export INSTALL_LOCATION=$TRAVIS_BUILD_DIR/install
-
-echo ============================================================================
-echo Generating...
-echo ============================================================================
-cd $TRAVIS_BUILD_DIR
-mkdir -p build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_LOCATION -DBIN2CPP_BUILD_TEST=ON -DBUILD_SHARED_LIBS=OFF -DBIN2CPP_BUILD_SAMPLES=ON ..
-
-echo ============================================================================
-echo Compiling...
-echo ============================================================================
-cmake --build . -- -j4
-echo
-
-echo ============================================================================
-echo Installing into $INSTALL_LOCATION
-echo ============================================================================
-make install
-echo
-
-# Delete all temporary environment variable created
-unset GTEST_ROOT
-unset rapidassist_DIR
-unset INSTALL_LOCATION
+# Call matching script for linux
+this_filename=`basename "$0"`
+$TRAVIS_BUILD_DIR/ci/linux/$this_filename
