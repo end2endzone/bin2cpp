@@ -531,7 +531,7 @@ APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * 
   if (args.chunkSize != DEFAULT_CHUNK_SIZE)
   {
     info << " using chunks of ";
-    info << args.chunkSize;
+    info << ra::strings::ToString(args.chunkSize);
     info << " bytes";
   }
   if (args.overrideExisting)
