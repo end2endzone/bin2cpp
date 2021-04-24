@@ -18,6 +18,6 @@ echo "BIN2CPP_BUILD_TYPE set to '$BIN2CPP_BUILD_TYPE'."
 
 # Call all build scripts one by one.
 cd "$BIN2CPP_SOURCE_DIR/ci/linux" && ./install_googletest.sh;
+cd "$BIN2CPP_SOURCE_DIR/ci/linux" && ./install_rapidassist.sh;
 cd "$BIN2CPP_SOURCE_DIR/ci/linux" && ./build_library.sh;
-cd "$BIN2CPP_SOURCE_DIR/ci/linux" && ./build_client.sh;
 cd "$BIN2CPP_SOURCE_DIR/ci/linux" && ./test_script.sh;
