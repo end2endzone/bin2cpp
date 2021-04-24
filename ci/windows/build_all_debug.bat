@@ -25,9 +25,9 @@ cd /d "%~dp0"
 :: Call windows scripts one by one.
 call "%BIN2CPP_SOURCE_DIR%\ci\windows\install_googletest.bat"
 if %errorlevel% neq 0 pause && exit /b %errorlevel%
-call "%BIN2CPP_SOURCE_DIR%\ci\windows\build_library.bat"
+call "%BIN2CPP_SOURCE_DIR%\ci\windows\install_rapidassist.bat"
 if %errorlevel% neq 0 pause && exit /b %errorlevel%
-call "%BIN2CPP_SOURCE_DIR%\ci\windows\build_client.bat"
+call "%BIN2CPP_SOURCE_DIR%\ci\windows\build_library.bat"
 if %errorlevel% neq 0 pause && exit /b %errorlevel%
 call "%BIN2CPP_SOURCE_DIR%\ci\windows\test_script.bat"
 if %errorlevel% neq 0 pause && exit /b %errorlevel%

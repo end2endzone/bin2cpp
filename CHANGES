@@ -1,5 +1,7 @@
 Changes for 2.4.0:
 
+* New feature: Using RapidAssist version 0.10.0
+* Fixed issue #34: Support for macOS.
 * Fixed issue #35: Migrate CI/CD services to GitHub Actions.
 
 

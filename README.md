@@ -18,6 +18,7 @@ Build:
 | Travis CI           | [![Build Status](https://img.shields.io/travis/end2endzone/bin2cpp/master.svg?logo=Travis-CI&style=flat&logoColor=white)](https://travis-ci.org/end2endzone/bin2cpp)                    |                                                                                                                                                                                                                                                        |
 | Windows Server 2019 | [![Build on Windows](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml/badge.svg)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml) | [![Tests on Windows](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/end2endzone/58cf6c72c08e706335337d5ef9ca48e8/raw/bin2cpp.master.Windows.json)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml) |
 | Ubuntu 20.04        | [![Build on Linux](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml/badge.svg)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml)       | [![Tests on Linux](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/end2endzone/58cf6c72c08e706335337d5ef9ca48e8/raw/bin2cpp.master.Linux.json)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml)       |
+| macOS 10.15         | [![Build on macOS](https://github.com/end2endzone/bin2cpp/actions/workflows/build_macos.yml/badge.svg)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_macos.yml)       | [![Tests on macOS](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/end2endzone/58cf6c72c08e706335337d5ef9ca48e8/raw/bin2cpp.master.macOS.json)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_macos.yml)       |
 
 Statistics:
 
@@ -287,6 +288,7 @@ bin2cpp has been tested with the following platform:
 
 * Linux, 32 and 64 bit
 * Windows, 32 and 64 bit
+* macOS, 32 and 64 bit
 
 
 

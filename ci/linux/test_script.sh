@@ -22,6 +22,7 @@ echo ===========================================================================
 echo Testing RapidAssist library...
 echo ============================================================================
 cd "$BIN2CPP_SOURCE_DIR/build/bin"
+./generate_test_files.sh
 if [ "$BIN2CPP_BUILD_TYPE" = "Debug" ]; then
   ./bin2cpp_unittest-d || true; #do not fail build even if a test fails.
 else

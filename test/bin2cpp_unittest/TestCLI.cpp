@@ -154,7 +154,7 @@ TEST_F(TestCLI, testVersion)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -186,7 +186,7 @@ TEST_F(TestCLI, testHelp)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -217,7 +217,7 @@ TEST_F(TestCLI, testNoArguments)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_NE(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -264,7 +264,7 @@ TEST_F(TestCLI, testMinimum)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -315,7 +315,7 @@ TEST_F(TestCLI, testQuiet)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -367,7 +367,7 @@ TEST_F(TestCLI, testNoHeader)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -434,9 +434,9 @@ TEST_F(TestCLI, testGenerators)
 
     //run the command
     int returnCode = system(cmdline.c_str());
-    #ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
       returnCode = WEXITSTATUS(returnCode);
-    #endif
+#endif
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
     //remember this source file
@@ -499,7 +499,7 @@ TEST_F(TestCLI, testNewFiles)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -541,7 +541,7 @@ TEST_F(TestCLI, testUpdating)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -594,7 +594,7 @@ TEST_F(TestCLI, testOverride)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -604,7 +604,7 @@ TEST_F(TestCLI, testOverride)
 
   //run the command (again, expecting overriding both files)
   returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -646,14 +646,14 @@ TEST_F(TestCLI, testSkipping)
 
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
 
   //run the command (again)
   returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -703,7 +703,7 @@ TEST_F(TestCLI, testEncoding)
 
     //run the command
     int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
     returnCode = WEXITSTATUS(returnCode);
 #endif
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -724,7 +724,7 @@ TEST_F(TestCLI, testEncoding)
 
     //run the command
     int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
     returnCode = WEXITSTATUS(returnCode);
 #endif
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -745,7 +745,7 @@ TEST_F(TestCLI, testEncoding)
 
     //run the command
     int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
     returnCode = WEXITSTATUS(returnCode);
 #endif
     ASSERT_NE(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -762,7 +762,7 @@ TEST_F(TestCLI, testEncoding)
 
     //run the command
     int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
     returnCode = WEXITSTATUS(returnCode);
 #endif
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -795,7 +795,7 @@ TEST_F(TestCLI, testDir)
   cmdline.append(" >");
   cmdline.append(outputFilePath.c_str());
  
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   //fix path separator
   ra::strings::Replace(cmdline, "\\", "/");
 #endif
@@ -818,7 +818,7 @@ TEST_F(TestCLI, testDir)
   for(size_t i=0; i<num_generated_files; i++)
   {
     generated_files.push_back(generated_files_tmp[i]);
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
     ra::strings::Replace(generated_files[i], "\\", "/"); //fix path separator
 #endif
   }
@@ -832,7 +832,7 @@ TEST_F(TestCLI, testDir)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -878,7 +878,7 @@ TEST_F(TestCLI, testErrorMissingArgumentFileOrDir)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -925,7 +925,7 @@ TEST_F(TestCLI, testErrorMissingArgumentOutput)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -972,7 +972,7 @@ TEST_F(TestCLI, testErrorMissingArgumentHeaderfile)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1019,7 +1019,7 @@ TEST_F(TestCLI, testErrorMissingArgumentIdentifier)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1067,7 +1067,7 @@ TEST_F(TestCLI, testErrorMissingArgumentEncoding)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1115,7 +1115,7 @@ TEST_F(TestCLI, testErrorMissingArgumentGenerator)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1163,7 +1163,7 @@ TEST_F(TestCLI, testErrorInputFileNotFound)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_INPUTFILENOTFOUND, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1214,7 +1214,7 @@ TEST_F(TestCLI, testErrorOutputFile)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_UNABLETOCREATEOUTPUTFILES, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1262,7 +1262,7 @@ TEST_F(TestCLI, testErrorTooManyArgumentsFileAndDir)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_TOOMANYARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1310,7 +1310,7 @@ TEST_F(TestCLI, testErrorTooManyArgumentsHeaderfile)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_TOOMANYARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1358,7 +1358,7 @@ TEST_F(TestCLI, testErrorTooManyArgumentsIdentifier)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_TOOMANYARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1406,7 +1406,7 @@ TEST_F(TestCLI, testErrorInputDirNotFound)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_INPUTDIRNOTFOUND, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1446,7 +1446,7 @@ TEST_F(TestCLI, testFileManager)
  
   //run the command
   int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
   ASSERT_EQ(APP_ERROR_SUCCESS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1496,7 +1496,7 @@ TEST_F(TestCLI, testRegisterFile)
 
     //run the command
     int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
     returnCode = WEXITSTATUS(returnCode);
 #endif
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1536,7 +1536,7 @@ TEST_F(TestCLI, testRegisterFile)
 
     //run the command
     int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
     returnCode = WEXITSTATUS(returnCode);
 #endif
     ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1637,7 +1637,7 @@ TEST_F(TestCLI, testRegisterFileAllGenerators)
 
       //run the command
       int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
       returnCode = WEXITSTATUS(returnCode);
 #endif
       ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
@@ -1677,7 +1677,7 @@ TEST_F(TestCLI, testRegisterFileAllGenerators)
 
       //run the command
       int returnCode = system(cmdline.c_str());
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
       returnCode = WEXITSTATUS(returnCode);
 #endif
       ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
