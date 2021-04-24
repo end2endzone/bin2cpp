@@ -26,6 +26,7 @@ echo =======================================================================
 echo Testing RapidAssist library...
 echo =======================================================================
 cd /d "%BIN2CPP_SOURCE_DIR%\build\bin\%Configuration%"
+call generate_test_files.bat
 if "%Configuration%"=="Debug" (
   bin2cpp_unittest-d.exe
 ) else (
