@@ -6,7 +6,6 @@ os:
 branches:
   only:
   - master
-  - feature-issue35
 env:
   global:
     - BIN2CPP_BUILD_TYPE=Release
