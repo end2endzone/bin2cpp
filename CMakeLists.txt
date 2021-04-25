@@ -2,6 +2,9 @@
 cmake_minimum_required(VERSION 3.4.3 FATAL_ERROR)
 project(bin2cpp)
 
+#Find optional packages.
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 ##############################################################################################################################################
 # Standard CMake variables
 ##############################################################################################################################################
@@ -54,8 +57,10 @@ SET(BIN2CPP_VERSION_MINOR 4)
 SET(BIN2CPP_VERSION_PATCH 0)
 set(BIN2CPP_VERSION ${BIN2CPP_VERSION_MAJOR}.${BIN2CPP_VERSION_MINOR}.${BIN2CPP_VERSION_PATCH})
 
-# read license file
-file(READ ${CMAKE_SOURCE_DIR}/LICENSE.h LICENSE)
+# Create a c++ file header from the project LICENSE file.
+# The c++ header will be added to all generated files.
+include(MakeCplusplusHeader)
+MakeCplusplusHeader(${CMAKE_SOURCE_DIR}/LICENSE LICENSE_CPLUSPLUS_HEADER)
 
 # version.h file
 set(BIN2CPP_VERSION_HEADER ${CMAKE_BINARY_DIR}/include/bin2cpp/version.h)
