@@ -1,7 +1,7 @@
 @echo off
 
 :: Validate mandatory environment variables
-if "%Configuration%"=="" (
+if "%CONFIGURATION%"=="" (
   echo Please define 'Configuration' environment variable.
   exit /B 1
 )
@@ -47,14 +47,14 @@ mkdir build >NUL 2>NUL
 cd build
 cmake -DCMAKE_GENERATOR_PLATFORM=%Platform% -T %PlatformToolset% -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="%CMAKE_INSTALL_PREFIX%" -DCMAKE_PREFIX_PATH="%CMAKE_PREFIX_PATH%" ..
 if %errorlevel% neq 0 exit /b %errorlevel%
-cmake --build . --config %Configuration% -- -maxcpucount /m
+cmake --build . --config %CONFIGURATION% -- -maxcpucount /m
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo.
 
 echo ============================================================================
 echo Installing RapidAssist into %BIN2CPP_SOURCE_DIR%\third_parties\RapidAssist\install
 echo ============================================================================
-cmake --build . --config %Configuration% --target INSTALL
+cmake --build . --config %CONFIGURATION% --target INSTALL
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo.
 

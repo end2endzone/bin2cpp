@@ -1,7 +1,7 @@
 @echo off
 
 :: Validate mandatory environment variables
-if "%Configuration%"=="" (
+if "%CONFIGURATION%"=="" (
   echo Please define 'Configuration' environment variable.
   exit /B 1
 )
@@ -40,14 +40,14 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 echo ============================================================================
 echo Compiling bin2cpp library...
 echo ============================================================================
-cmake --build . --config %Configuration% -- -maxcpucount /m
+cmake --build . --config %CONFIGURATION% -- -maxcpucount /m
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo.
 
 echo ============================================================================
 echo Installing bin2cpp library into %BIN2CPP_SOURCE_DIR%\install
 echo ============================================================================
-cmake --build . --config %Configuration% --target INSTALL
+cmake --build . --config %CONFIGURATION% --target INSTALL
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo.
 

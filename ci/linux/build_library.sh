@@ -25,7 +25,7 @@ export CMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH;$BIN2CPP_SOURCE_DIR/third_parties/g
 export CMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH;$BIN2CPP_SOURCE_DIR/third_parties/RapidAssist/install"
 
 echo ============================================================================
-echo Generating bin2cpp library...
+echo Generating bin2cpp...
 echo ============================================================================
 cd "$BIN2CPP_SOURCE_DIR"
 mkdir -p build
@@ -33,13 +33,13 @@ cd build
 cmake -DCMAKE_BUILD_TYPE=$BIN2CPP_BUILD_TYPE -DBIN2CPP_BUILD_TEST=ON -DBIN2CPP_BUILD_SAMPLES=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_PREFIX" -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH" ..
 
 echo ============================================================================
-echo Compiling bin2cpp library...
+echo Compiling bin2cpp...
 echo ============================================================================
 cmake --build . -- -j4
 echo
 
 echo ============================================================================
-echo Installing bin2cpp library into $BIN2CPP_SOURCE_DIR/install
+echo Installing bin2cpp into $BIN2CPP_SOURCE_DIR/install
 echo ============================================================================
 make install
 echo

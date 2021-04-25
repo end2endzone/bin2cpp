@@ -13,10 +13,10 @@ if "%BIN2CPP_SOURCE_DIR%"=="" (
 endlocal & set BIN2CPP_SOURCE_DIR=%BIN2CPP_SOURCE_DIR%
 
 :: Set build configuration parameters
-set Configuration=Release
-set Platform=x64
-set PlatformToolset=""
-echo Building RapidAssist for Windows in %Configuration%, %Platform% configuration...
+set CONFIGURATION=Release
+set PLATFORM=x64
+set PLATFORMTOOLSET=""
+echo Building RapidAssist for Windows in %CONFIGURATION%, %Platform% configuration...
 echo.
 
 :: Return back to scripts folder

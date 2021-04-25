@@ -19,7 +19,7 @@ if [ "$BIN2CPP_SOURCE_DIR" = "" ]; then
 fi
 
 echo ============================================================================
-echo Testing RapidAssist library...
+echo Testing bin2cpp...
 echo ============================================================================
 cd "$BIN2CPP_SOURCE_DIR/build/bin"
 ./generate_test_files.sh

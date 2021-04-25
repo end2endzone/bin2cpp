@@ -12,7 +12,7 @@ The following steps show how to install the library:
 
 3) Navigate to the `build` directory and execute the 'install' command for your platform:
    1) On Windows, enter `cmake --build . --config Release --target INSTALL`.
-   2) On Linux, enter `sudo make install`.
+   2) On Linux or macOS, enter `sudo make install`.
 
 # Build #
 
@@ -32,7 +32,7 @@ The following software must be installed on the system for compiling source code
 
 
 
-### Linux Requirements ###
+### Linux & macOS Requirements ###
 
 These are the base requirements to build and use bin2cpp:
 
@@ -54,7 +54,7 @@ The project uses the CMake build system to generate a platform-specific build en
 
 To build the software, execute the following steps:
 
-1) Build and install all software prerequisites before building this software.
+1) Build and install all [software prerequisites](#prerequisites) before building this software.
 
 2) Get a copy of the source code by using one of the following methods:
    * Download the source code of the project from an existing [tags](http://github.com/end2endzone/bin2cpp) and extract the downloaded zip file to a local directory (for example `c:\projects\bin2cpp` or `~/dev/bin2cpp`).
@@ -76,35 +76,72 @@ See [CMake Quick Tips](#cmake-quick-tips) section for more details on building t
 
 
 
-### Building scripts for Linux ###
+### Building scripts for Linux & macOS ###
 
-The project provides scripts to facilitate the build process. The scripts can be found in [ci/travis](http://github.com/end2endzone/bin2cpp/blob/master/ci/travis) directory. There are 3 scripts, one for each dependencies and a final script for building the application. The scripts are named
+The project provides scripts to facilitate the build process. The scripts can be found in [ci/linux](https://github.com/end2endzone/bin2cpp/tree/master/ci/linux) directory and can be used on **Linux** and **macOS** platforms. There are 2 master scripts, one for building in debug and another for building in release. The scripts are named
 
-1) install_googletest.sh
-2) install_rapidassist.sh
-3) build_library.sh
+* build_all_debug.sh
+* build_all_release.sh
 
-They are designed to be executed on [Travis CI](https://travis-ci.org/github/end2endzone/bin2cpp) and requires the environment variable `TRAVIS_BUILD_DIR` to be set to the location where you cloned the bin2cpp repository or extracted the source code. Once the environment variable is set, you should be able to execute each script one by one. 
+If you do not know about *debug* and *release* configurations, then you probably need to build in *release* mode. If you plan to contribute to the project or a project that requires this library, you should be building in *debug*.
 
-During the compilation process, project dependencies will be cloned in `third_parties` directory (for example, `$TRAVIS_BUILD_DIR/third_parties/googletest`. At the end of the build process, bin2cpp executable will be located in directory `$TRAVIS_BUILD_DIR/build/bin`.
+**Launch one of the 2 scripts to fully build bin2cpp with all dependencies using default options.**
 
-You can see the latest build log example on [Travis CI bin2cpp page](https://travis-ci.org/github/end2endzone/bin2cpp).
+Also, there are other scripts which are designed to be called by the 2 master scripts:
+* build_library.sh
+* install_googletest.sh
+* install_rapidassist.sh
+* test_script.sh
+
+They can be called individually but they require the following environment variables to be set:
+
+| Name               | Value                                                                   |
+|--------------------|-------------------------------------------------------------------------|
+| BIN2CPP_SOURCE_DIR | Directory where you cloned the repository or extracted the source code. |
+| BIN2CPP_BUILD_TYPE | `Release` or `Debug`                                                    |
+
+Once the environment variables are set, you should be able to execute each script one by one.
+
+During the compilation process, project dependencies will be cloned in `third_parties` directory (for example, `$BIN2CPP_SOURCE_DIR/third_parties/googletest`. At the end of the build process, the project's binaries will be located in directory `$BIN2CPP_SOURCE_DIR/build/bin`.
+
+You can see the latest build log example at the following locations:
+* [Linux builds](https://travis-ci.org/github/end2endzone/bin2cpp) on Travis CI.
+* [Linux builds](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml) on GitHub Actions.
+* [macOS builds](https://github.com/end2endzone/bin2cpp/actions/workflows/build_macos.yml) on GitHub Actions.
 
 
 
 ### Building scripts for Windows ###
 
-The project provides scripts to facilitate the build process. The scripts can be found in [ci/appveyor](http://github.com/end2endzone/bin2cpp/blob/master/ci/appveyor) directory. There are 3 scripts, one for each dependencies and a final script for building the application. The scripts are named
+The project provides scripts to facilitate the build process. The scripts can be found in [ci/windows](https://github.com/end2endzone/bin2cpp/tree/master/ci/windows) directory. There are 2 master scripts, one for building in debug and another for building in release. The scripts are named
 
-1) install_googletest.bat
-2) install_rapidassist.bat
-3) build_library.bat
+* build_all_debug.bat
+* build_all_release.bat
 
-They are designed to be executed on [AppVeyor](https://ci.appveyor.com/project/end2endzone/bin2cpp) and requires the environment variable `APPVEYOR_BUILD_FOLDER` to be set to the location where you cloned the bin2cpp repository or extracted the source code. The environment variable `CONFIGURATION` must also be set to the value `Release`. Once the environment variables are set, you should be able to execute each script one by one. 
+If you do not know about *debug* and *release* configurations, then you probably need to build in *release* mode. If you plan to contribute to the project or a project that requires this library, you should be building in *debug*.
 
-During the compilation process, project dependencies will be cloned in `third_parties` directory (for example, `%APPVEYOR_BUILD_FOLDER%\third_parties\googletest`). At the end of the build process, bin2cpp executable will be located in directory `%APPVEYOR_BUILD_FOLDER%\build\bin\%CONFIGURATION%`.
+**Double click on one of the 2 scripts to fully build RapidAssist with all dependencies using default options.**
+ 
+Also, there are other scripts which are designed to be called by the 2 master scripts:
+* build_library.bat
+* install_googletest.bat
+* install_rapidassist.bat
+* test_script.bat
 
-You can see the latest build log example on [AppVeyor bin2cpp page](https://ci.appveyor.com/project/end2endzone/bin2cpp).
+They can be called individually but they require the following environment variables to be set:
+
+| Name               | Value                                                                                      |
+|--------------------|--------------------------------------------------------------------------------------------|
+| BIN2CPP_SOURCE_DIR | Directory where you cloned the repository or extracted the source code.                    |
+| CONFIGURATION      | `Release` or `Debug`                                                                       |
+| PLATFORM           | `x64` or `Win32`                                                                           |
+| PLATFORMTOOLSET    | An empty value or a valid platform toolset like `Windows7.1SDK`, `v140`, `v141` or `v142`. |
+
+Once the environment variables are set, you should be able to execute each script one by one.
+
+During the compilation process, project dependencies will be cloned in `third_parties` directory (for example, `%BIN2CPP_SOURCE_DIR%\third_parties\googletest`). At the end of the build process, the project's binaries will be located in directory `%BIN2CPP_SOURCE_DIR%\build\bin\%CONFIGURATION%`.
+
+You can see the latest build log example on [AppVeyor bin2cpp page](https://ci.appveyor.com/project/end2endzone/bin2cpp) or [GitHub Actions page](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml).
 
 
 

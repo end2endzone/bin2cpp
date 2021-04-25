@@ -1,11 +1,11 @@
 @echo off
 
 :: Validate mandatory environment variables
-if "%Configuration%"=="" (
+if "%CONFIGURATION%"=="" (
   echo Please define 'Configuration' environment variable.
   exit /B 1
 )
-if "%Platform%"=="" (
+if "%PLATFORM%"=="" (
   echo Please define 'Platform' environment variable.
   exit /B 1
 )
@@ -23,11 +23,11 @@ if "%BIN2CPP_SOURCE_DIR%"=="" (
 endlocal & set BIN2CPP_SOURCE_DIR=%BIN2CPP_SOURCE_DIR%
 
 echo =======================================================================
-echo Testing RapidAssist library...
+echo Testing bin2cpp...
 echo =======================================================================
-cd /d "%BIN2CPP_SOURCE_DIR%\build\bin\%Configuration%"
+cd /d "%BIN2CPP_SOURCE_DIR%\build\bin\%CONFIGURATION%"
 call generate_test_files.bat
-if "%Configuration%"=="Debug" (
+if "%CONFIGURATION%"=="Debug" (
   bin2cpp_unittest-d.exe
 ) else (
   bin2cpp_unittest.exe
