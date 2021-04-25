@@ -43,7 +43,7 @@ namespace bin2cpp
     ///<summary>
     ///Defines the path of the binary input file.
     ///</summary>
-    ///<param name="iPath">The path of the input file (resource) to embeded as a C++ source code.</param>
+    ///<param name="iPath">The path of the input file (resource) to embeded as C++ source code.</param>
     virtual void setInputFile(const char * iPath) = 0;
 
     ///<summary>

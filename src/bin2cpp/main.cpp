@@ -193,8 +193,8 @@ void printUsage()
     "Options:\n"
     "  --help               Display this help message.\n"
     "  --version            Display this application version.\n"
-    "  --file=<path>        Path of the input file used for embedding as a C++ source code.\n"
-    "  --dir=<path>         Path of the input directory used for embedding all files of the directory as a C++ source code.\n"
+    "  --file=<path>        Path of the input file used for embedding as C++ source code.\n"
+    "  --dir=<path>         Path of the input directory used for embedding all files of the directory as C++ source code.\n"
     #ifdef _WIN32
     "  --output=<path>      Output folder where to create generated code. ie: .\\generated_files\n"
     #else
@@ -208,7 +208,7 @@ void printUsage()
     "  --baseclass=<value>  The name of the interface for embedded files. [default: File].\n"
     "  --namespace=<value>  The namespace of the generated source code [default: bin2cpp].\n"
     "  --managerfile=<name> File name of the generated C++ Header file for the FileManager class. ie: FileManager.h\n"
-    "  --registerfile     Register the generated file to the FileManager class. [default: false].\n"
+    "  --registerfile       Register the generated file to the FileManager class. [default: false].\n"
     "  --override           Tells bin2cpp to overwrite the destination files.\n"
     "  --noheader           Do not print program header to standard output.\n"
     "  --quiet              Do not log any message to standard output.\n"
