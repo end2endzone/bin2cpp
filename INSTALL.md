@@ -88,7 +88,7 @@ If you do not know about *debug* and *release* configurations, then you probably
 **Launch one of the 2 scripts to fully build bin2cpp with all dependencies using default options.**
 
 Also, there are other scripts which are designed to be called by the 2 master scripts:
-* build_library.sh
+* install_bin2cpp.sh
 * install_googletest.sh
 * install_rapidassist.sh
 * test_script.sh
@@ -123,7 +123,7 @@ If you do not know about *debug* and *release* configurations, then you probably
 **Double click on one of the 2 scripts to fully build RapidAssist with all dependencies using default options.**
  
 Also, there are other scripts which are designed to be called by the 2 master scripts:
-* build_library.bat
+* install_bin2cpp.bat
 * install_googletest.bat
 * install_rapidassist.bat
 * test_script.bat

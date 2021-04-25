@@ -70,7 +70,7 @@ jobs:
     - name: Build bin2cpp
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: cmd
-      run: call ci\github\build_library.bat
+      run: call ci\github\install_bin2cpp.bat
 
     - name: Run unit tests
       working-directory: ${{env.GITHUB_WORKSPACE}}

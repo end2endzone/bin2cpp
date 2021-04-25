@@ -68,7 +68,7 @@ jobs:
     - name: Build bin2cpp
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: bash
-      run: ./ci/github/build_library.sh
+      run: ./ci/github/install_bin2cpp.sh
 
     - name: Run unit tests
       working-directory: ${{env.GITHUB_WORKSPACE}}

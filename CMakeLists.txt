@@ -77,7 +77,7 @@ set(BIN2CPP_BUILD_TYPE_CPP_DEFINE)
 set(BIN2CPP_INSTALL_BIN_DIR      "bin")
 set(BIN2CPP_INSTALL_LIB_DIR      "lib/bin2cpp-${BIN2CPP_VERSION}")
 set(BIN2CPP_INSTALL_INCLUDE_DIR  "include/bin2cpp-${BIN2CPP_VERSION}")
-set(BIN2CPP_INSTALL_CMAKE_DIR    ${BIN2CPP_INSTALL_LIB_DIR}) # CMake files (*.cmake) should have the same destination as the library files. Some also prefers to use "cmake".
+set(BIN2CPP_INSTALL_CMAKE_DIR    "cmake/bin2cpp-${BIN2CPP_VERSION}") # CMake files (*.cmake) should have the same destination as the library files. Some also prefers to use "cmake".
 
 ##############################################################################################################################################
 # Project settings

@@ -15,7 +15,7 @@ install:
 - cd $TRAVIS_BUILD_DIR/ci/travis; ./install_rapidassist.sh;
 
 script:
-- cd $TRAVIS_BUILD_DIR/ci/travis; ./build_library.sh;
+- cd $TRAVIS_BUILD_DIR/ci/travis; ./install_bin2cpp.sh;
 
 after_success:
 - cd $TRAVIS_BUILD_DIR/ci/travis; ./test_script.sh;
