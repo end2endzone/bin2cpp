@@ -43,8 +43,8 @@ namespace bin2cpp
     ///<summary>
     ///Defines the path of the binary input file.
     ///</summary>
-    ///<param name="iPath">The path of the input file (resource) to embeded as C++ source code.</param>
-    virtual void setInputFile(const char * iPath) = 0;
+    ///<param name="path">The path of the input file (resource) to embeded as C++ source code.</param>
+    virtual void setInputFile(const char * path) = 0;
 
     ///<summary>
     ///Provides the path of the binary input file.
@@ -55,8 +55,8 @@ namespace bin2cpp
     ///<summary>
     ///Defines the unique identifier name for the File class getter function.
     ///</summary>
-    ///<param name="iFunctionIdentifier">The unique identifier name for the File class getter function.</param>
-    virtual void setFunctionIdentifier(const char * iFunctionIdentifier) = 0;
+    ///<param name="function_identifier">The unique identifier name for the File class getter function.</param>
+    virtual void setFunctionIdentifier(const char * function_identifier) = 0;
 
     ///<summary>
     ///Provides the unique identifier name for the File class getter function.
@@ -67,8 +67,8 @@ namespace bin2cpp
     ///<summary>
     ///Defines the size in bytes of each chunk of data.
     ///</summary>
-    ///<param name="iChunkSize">The size in bytes of each chunk of data.</param>
-    virtual void setChunkSize(size_t iChunkSize) = 0;
+    ///<param name="chunk_size">The size in bytes of each chunk of data.</param>
+    virtual void setChunkSize(size_t chunk_size) = 0;
 
     ///<summary>
     ///Provides the size in bytes of each chunk of data.
@@ -79,8 +79,8 @@ namespace bin2cpp
     ///<summary>
     ///Defines the namespace of the generated code.
     ///</summary>
-    ///<param name="iName">The name of the namespace of the generated code.</param>
-    virtual void setNamespace(const char * iName) = 0;
+    ///<param name="name">The name of the namespace of the generated code.</param>
+    virtual void setNamespace(const char * name) = 0;
 
     ///<summary>
     ///Provides the namespace of the generated code.
@@ -91,8 +91,8 @@ namespace bin2cpp
     ///<summary>
     ///Defines the base class of the generated code.
     ///</summary>
-    ///<param name="iName">The name of the base class of the generated code.</param>
-    virtual void setBaseClass(const char * iName) = 0;
+    ///<param name="name">The name of the base class of the generated code.</param>
+    virtual void setBaseClass(const char * name) = 0;
 
     ///<summary>
     ///Provides the base class of the generated code.
@@ -103,8 +103,8 @@ namespace bin2cpp
     ///<summary>
     ///Defines the path of the FileManager output file.
     ///</summary>
-    ///<param name="iPath">The path of the FileManager output file.</param>
-    virtual void setManagerHeaderFile(const char * iPath) = 0;
+    ///<param name="path">The path of the FileManager output file.</param>
+    virtual void setManagerHeaderFile(const char * path) = 0;
 
     ///<summary>
     ///Provides the path of the FileManager output file.
@@ -115,8 +115,8 @@ namespace bin2cpp
     ///<summary>
     ///Enable or disable the registration of the generated file to the FileManager.
     ///</summary>
-    ///<param name="iFileManagerEnabled">The new value of the flag.</param>
-    virtual void setRegisterFileEnabled(bool iRegisterFileEnabled) = 0;
+    ///<param name="register_file_enabled">The new value of the flag.</param>
+    virtual void setRegisterFileEnabled(bool register_file_enabled) = 0;
 
     ///<summary>
     ///Returns true if the generated file should be registated FileManager should be used in generated code.
@@ -137,8 +137,8 @@ namespace bin2cpp
     ///<summary>
     ///Defines the type of cpp encoder to use. See CppEncoderEnum for details.
     ///</summary>
-    ///<param name="iCppEncoder">The type of cpp encoder to use</param>
-    virtual void setCppEncoder(const CppEncoderEnum & iCppEncoder) = 0;
+    ///<param name="cpp_encoder">The type of cpp encoder to use</param>
+    virtual void setCppEncoder(const CppEncoderEnum & cpp_encoder) = 0;
 
     ///<summary>
     ///Provides the type of cpp encoder to use. See CppEncoderEnum for details.
@@ -149,30 +149,30 @@ namespace bin2cpp
     ///<summary>
     ///Creates a header file for embedding a given file into C++ source code.
     ///</summary>
-    ///<param name="iHeaderFilePath">The path of the header file (*.h) that is used for getting access to the functions.</param>
+    ///<param name="header_file_path">The path of the header file (*.h) that is used for getting access to the functions.</param>
     ///<returns>Returns true when the file was created. Returns false otherwise.</returns>
-    virtual bool createCppHeaderFile(const char * iHeaderFilePath) = 0;
+    virtual bool createCppHeaderFile(const char * header_file_path) = 0;
 
     ///<summary>
     ///Creates a cpp source file for embedding a given file into C++ source code.
     ///</summary>
-    ///<param name="iCppFilePath">The path of the source file (*.cpp) that is used for getting access to the functions.</param>
+    ///<param name="cpp_file_path">The path of the source file (*.cpp) that is used for getting access to the functions.</param>
     ///<returns>Returns true when the file was created. Returns false otherwise.</returns>
-    virtual bool createCppSourceFile(const char * iCppFilePath) = 0;
+    virtual bool createCppSourceFile(const char * cpp_file_path) = 0;
 
     ///<summary>
     ///Creates a FileManager header file.
     ///</summary>
-    ///<param name="iHeaderFilePath">The path of the header file (*.h).</param>
+    ///<param name="header_file_path">The path of the header file (*.h).</param>
     ///<returns>Returns true when the file was created. Returns false otherwise.</returns>
-    virtual bool createManagerHeaderFile(const char * iHeaderFilePath) = 0;
+    virtual bool createManagerHeaderFile(const char * header_file_path) = 0;
 
     ///<summary>
     ///Creates a FileManager cpp file.
     ///</summary>
-    ///<param name="iHeaderFilePath">The path of the cpp file (*.h).</param>
+    ///<param name="header_file_path">The path of the cpp file (*.h).</param>
     ///<returns>Returns true when the file was created. Returns false otherwise.</returns>
-    virtual bool createManagerSourceFile(const char * iCppFilePath) = 0;
+    virtual bool createManagerSourceFile(const char * cpp_file_path) = 0;
 
   };
   

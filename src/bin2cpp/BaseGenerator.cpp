@@ -45,10 +45,10 @@ namespace bin2cpp
   {
   }
 
-  void BaseGenerator::setInputFile(const char * iPath)
+  void BaseGenerator::setInputFile(const char * path)
   {
-    if (iPath)
-      mInputFile = iPath;
+    if (path)
+      mInputFile = path;
   }
 
   const char * BaseGenerator::getInputFile() const
@@ -56,10 +56,10 @@ namespace bin2cpp
     return mInputFile.c_str();
   }
 
-  void BaseGenerator::setFunctionIdentifier(const char * iFunctionIdentifier)
+  void BaseGenerator::setFunctionIdentifier(const char * function_identifier)
   {
-    if (iFunctionIdentifier)
-      mFunctionIdentifier = iFunctionIdentifier;
+    if (function_identifier)
+      mFunctionIdentifier = function_identifier;
   }
 
   const char * BaseGenerator::getFunctionIdentifier() const
@@ -67,9 +67,9 @@ namespace bin2cpp
     return mFunctionIdentifier.c_str();
   }
 
-  void BaseGenerator::setChunkSize(size_t iChunkSize)
+  void BaseGenerator::setChunkSize(size_t chunk_size)
   {
-    mChunkSize = iChunkSize;
+    mChunkSize = chunk_size;
   }
 
   size_t BaseGenerator::getChunkSize() const
@@ -77,10 +77,10 @@ namespace bin2cpp
     return mChunkSize;
   }
 
-  void BaseGenerator::setNamespace(const char * iName)
+  void BaseGenerator::setNamespace(const char * name)
   {
-    if (iName)
-      mNamespace = iName;
+    if (name)
+      mNamespace = name;
   }
 
   const char * BaseGenerator::getNamespace() const
@@ -88,10 +88,10 @@ namespace bin2cpp
     return mNamespace.c_str();
   }
 
-  void BaseGenerator::setBaseClass(const char * iName)
+  void BaseGenerator::setBaseClass(const char * name)
   {
-    if (iName)
-      mBaseClass = iName;
+    if (name)
+      mBaseClass = name;
   }
 
   const char * BaseGenerator::getBaseClass() const
@@ -109,10 +109,10 @@ namespace bin2cpp
     return mCppEncoder;
   }
 
-  void BaseGenerator::setManagerHeaderFile(const char * iManagerFile)
+  void BaseGenerator::setManagerHeaderFile(const char * manager_file)
   {
-    if (iManagerFile)
-      mManagerFile = iManagerFile;
+    if (manager_file)
+      mManagerFile = manager_file;
   }
 
   const char * BaseGenerator::getManagerHeaderFile() const
@@ -120,9 +120,9 @@ namespace bin2cpp
     return mManagerFile.c_str();
   }
 
-  void BaseGenerator::setRegisterFileEnabled(bool iRegisterFileEnabled)
+  void BaseGenerator::setRegisterFileEnabled(bool register_file_enabled)
   {
-    mManagerEnabled = iRegisterFileEnabled;
+    mManagerEnabled = register_file_enabled;
   }
 
   bool BaseGenerator::isRegisterFileEnabled() const
@@ -146,18 +146,18 @@ namespace bin2cpp
     return getter;
   }
 
-  std::string BaseGenerator::getHeaderFilePath(const char * iCppFilePath)
+  std::string BaseGenerator::getHeaderFilePath(const char * cpp_file_path)
   {
     //Build header file path
-    std::string headerPath = iCppFilePath;
+    std::string headerPath = cpp_file_path;
     ra::strings::Replace(headerPath, ".cpp", ".h");
     return headerPath;
   }
 
-  std::string BaseGenerator::getCppFilePath(const char * iHeaderFilePath)
+  std::string BaseGenerator::getCppFilePath(const char * header_file_path)
   {
     //Build header file path
-    std::string cppPath = iHeaderFilePath;
+    std::string cppPath = header_file_path;
     ra::strings::Replace(cppPath, ".cpp", ".h");
     return cppPath;
   }
@@ -219,14 +219,14 @@ namespace bin2cpp
     return className;
   }
 
-  bool BaseGenerator::createCppHeaderFile(const char * iHeaderFilePath)
+  bool BaseGenerator::createCppHeaderFile(const char * header_file_path)
   {
-    FILE * header = fopen(iHeaderFilePath, "w");
+    FILE * header = fopen(header_file_path, "w");
     if (!header)
       return false;
 
     //define macro guard a macro matching the filename
-    std::string macro_guard = getCppIncludeGuardMacroName(iHeaderFilePath);
+    std::string macro_guard = getCppIncludeGuardMacroName(header_file_path);
 
     std::string headercomments = getHeaderTemplate();
     fprintf(header, "%s", headercomments.c_str());
@@ -258,14 +258,14 @@ namespace bin2cpp
     return true;
   }
 
-  bool BaseGenerator::createManagerHeaderFile(const char * iHeaderFilePath)
+  bool BaseGenerator::createManagerHeaderFile(const char * header_file_path)
   {
-    FILE * header = fopen(iHeaderFilePath, "w");
+    FILE * header = fopen(header_file_path, "w");
     if (!header)
       return false;
 
     //define macro guard a macro matching the filename
-    std::string macro_guard = getCppIncludeGuardMacroName(iHeaderFilePath);
+    std::string macro_guard = getCppIncludeGuardMacroName(header_file_path);
 
     std::string headercomments = getHeaderTemplate();
     fprintf(header, "%s", headercomments.c_str());
@@ -316,17 +316,17 @@ namespace bin2cpp
     return true;
   }
 
-  bool BaseGenerator::createManagerSourceFile(const char * iCppFilePath)
+  bool BaseGenerator::createManagerSourceFile(const char * cpp_file_path)
   {
-    FILE * cpp = fopen(iCppFilePath, "w");
+    FILE * cpp = fopen(cpp_file_path, "w");
     if (!cpp)
       return false;
 
     //Build header and cpp file path
-    std::string headerPath = getHeaderFilePath(iCppFilePath);
-    std::string cppPath = iCppFilePath;
+    std::string headerPath = getHeaderFilePath(cpp_file_path);
+    std::string cppPath = cpp_file_path;
     std::string headerFilename = ra::filesystem::GetFilename(headerPath.c_str());
-    std::string cppFilename = ra::filesystem::GetFilename(iCppFilePath);
+    std::string cppFilename = ra::filesystem::GetFilename(cpp_file_path);
 
     std::string headercomments = getHeaderTemplate();
     fprintf(cpp, "%s", headercomments.c_str());

@@ -50,7 +50,7 @@ using namespace TestCommonUtils;
 
 namespace TestCLIUtils
 {
-  extern bool createDummyFile(const char * iPath);
+  extern bool createDummyFile(const char * path);
 };
 
 void TestCommon::SetUp()

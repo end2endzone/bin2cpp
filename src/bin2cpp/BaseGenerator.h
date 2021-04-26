@@ -40,32 +40,32 @@ namespace bin2cpp
     virtual ~BaseGenerator();
 
     //IGenerator methods
-    virtual void setInputFile(const char * iPath);
+    virtual void setInputFile(const char * path);
     virtual const char * getInputFile() const;
-    virtual void setFunctionIdentifier(const char * iFunctionIdentifier);
+    virtual void setFunctionIdentifier(const char * function_identifier);
     virtual const char * getFunctionIdentifier() const;
-    virtual void setChunkSize(size_t iChunkSize);
+    virtual void setChunkSize(size_t chunk_size);
     virtual size_t getChunkSize() const;
-    virtual void setNamespace(const char * iName);
+    virtual void setNamespace(const char * name);
     virtual const char * getNamespace() const;
-    virtual void setBaseClass(const char * iName);
+    virtual void setBaseClass(const char * name);
     virtual const char * getBaseClass() const;
-    virtual void setCppEncoder(const CppEncoderEnum & iCppEncoder);
+    virtual void setCppEncoder(const CppEncoderEnum & cpp_encoder);
     virtual CppEncoderEnum getCppEncoder() const;
-    virtual void setManagerHeaderFile(const char * iManagerFile);
+    virtual void setManagerHeaderFile(const char * manager_file);
     virtual const char * getManagerHeaderFile() const;
-    virtual void setRegisterFileEnabled(bool iRegisterFileEnabled);
+    virtual void setRegisterFileEnabled(bool register_file_enabled);
     virtual bool isRegisterFileEnabled() const;
 
     //same header file for all generators
-    virtual bool createCppHeaderFile(const char * iHeaderFilePath);
-    virtual bool createManagerHeaderFile(const char * iHeaderFilePath);
-    virtual bool createManagerSourceFile(const char * iCppFilePath);
+    virtual bool createCppHeaderFile(const char * header_file_path);
+    virtual bool createManagerHeaderFile(const char * header_file_path);
+    virtual bool createManagerSourceFile(const char * cpp_file_path);
 
   protected:
     virtual std::string getGetterFunctionName();
-    virtual std::string getHeaderFilePath(const char * iCppFilePath);
-    virtual std::string getCppFilePath(const char * iHeaderFilePath);
+    virtual std::string getHeaderFilePath(const char * cpp_file_path);
+    virtual std::string getCppFilePath(const char * header_file_path);
     virtual std::string getHeaderTemplate();
     virtual std::string getSaveMethodTemplate();
     virtual std::string getFileManagerRegistrationTemplate();
