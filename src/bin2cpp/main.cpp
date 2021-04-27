@@ -39,6 +39,7 @@
 #include "rapidassist/strings.h"
 #include "rapidassist/filesystem.h"
 #include "rapidassist/process.h"
+#include "rapidassist/timing.h"
 
 #include "common.h"
 
@@ -127,23 +128,6 @@ std::string getIdentifier(const std::string & value)
   return id;
 }
 
-std::string getFilenameWithoutExtension(const char * path)
-{
-  if (path == NULL)
-    return "";
-
-  std::string filename = ra::filesystem::GetFilename(path);
-  std::string extension = ra::filesystem::GetFileExtention(path);
-  
-  //extract filename without extension
-  std::string filenameWE = filename.substr(0, filename.size() - extension.size());
-  
-  //remove last dot of the filename if required
-  filenameWE = ra::strings::TrimRight(filenameWE, '.');
-
-  return filenameWE;
-}
-
 struct ARGUMENTS
 {
   bool help;
@@ -177,7 +161,7 @@ APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator 
 void printHeader()
 {
   printf("bin2cpp v%s - Convert binary files into C++ source code.\n", getVersionString() );
-  printf("Copyright (C) 2013-%d end2endzone.com. All rights reserved.\n", bin2cpp::getCopyrightYear());
+  printf("Copyright (C) 2013-%d end2endzone.com. All rights reserved.\n", ra::timing::GetCopyrightYear());
   printf("bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp \n");
 }
 
@@ -488,11 +472,11 @@ int main(int argc, char* argv[])
       argsCopy.inputFile = file;
 
       //use the file name without extension as 'headerfile'.
-      argsCopy.headerFilename = getIdentifier(getFilenameWithoutExtension(file.c_str()));
+      argsCopy.headerFilename = getIdentifier(ra::filesystem::GetFilenameWithoutExtension(file.c_str()));
       argsCopy.headerFilename.append(".h");
 
       //use the file name without extension as 'identifier'.
-      argsCopy.functionIdentifier = getIdentifier(getFilenameWithoutExtension(file.c_str()));
+      argsCopy.functionIdentifier = getIdentifier(ra::filesystem::GetFilenameWithoutExtension(file.c_str()));
       argsCopy.functionIdentifier = ra::strings::CapitalizeFirstCharacter(argsCopy.functionIdentifier);
 
       //process this file...

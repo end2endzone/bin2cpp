@@ -6,6 +6,7 @@ Changes for 2.4.0:
 * Fixed issue #36: Simplify building process with scripts and INSTALL documentation.
 * Fixed issue #38: Github don't identify the repository LICENSE as MIT.
 * Fixed issue #39: Uniformalize function argument names. Remove i and o prefix from argument names.
+* Fixed issue #40: Remove duplicated code that is now available in RapidAssit.
 
 
 Changes for 2.3.0:

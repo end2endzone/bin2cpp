@@ -35,18 +35,6 @@
 
 namespace bin2cpp
 {
-  int getCopyrightYear()
-  {
-    static const int DEFAULT_YEAR = 2016;
-    std::string compilationDate = __DATE__;
-    size_t lastSpace = compilationDate.find_last_of(" ");
-    if (lastSpace == std::string::npos)
-      return DEFAULT_YEAR;
-    const char * yearStr = &compilationDate[lastSpace+1];
-    int year = atoi(yearStr);
-    return year;
-  }
-
   const char * getVersionString()
   {
     return BIN2CPP_VERSION;

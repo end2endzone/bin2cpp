@@ -31,13 +31,6 @@
 
 namespace bin2cpp
 {
-  ///<summary>
-  ///Returns the year when the code was build.
-  ///Usefull for copyright messages.
-  ///</summary>
-  ///<return>The year when the function was compiled.<return>
-  int getCopyrightYear();
-
   /*
   Description:
     Returns the application version number.
