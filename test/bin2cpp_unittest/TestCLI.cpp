@@ -74,9 +74,9 @@ namespace TestCLIUtils
     return file;
   }
 
-  bool createDummyFile(const char * iPath)
+  bool createDummyFile(const char * path)
   {
-    FILE * f = fopen(iPath, "w");
+    FILE * f = fopen(path, "w");
     if (!f)
       return false;
     fputs("foobar", f);
@@ -84,9 +84,9 @@ namespace TestCLIUtils
     return true;
   }
 
-  bool createDummyFile(const std::string & iPath, int size)
+  bool createDummyFile(const std::string & path, int size)
   {
-    FILE * f = fopen(iPath.c_str(), "w");
+    FILE * f = fopen(path.c_str(), "w");
     if (!f)
       return false;
     static const int BUFFER_SIZE = 255;
@@ -104,11 +104,11 @@ namespace TestCLIUtils
     return true;
   }
 
-  bool deleteFile(const char * iPath)
+  bool deleteFile(const char * path)
   {
-    if (ra::filesystem::FileExists(iPath))
+    if (ra::filesystem::FileExists(path))
     {
-      bool deleted = remove(iPath) == 0;
+      bool deleted = remove(path) == 0;
       return deleted;
     }
     return true; //file does not exists. Success.

@@ -127,13 +127,13 @@ std::string getIdentifier(const std::string & value)
   return id;
 }
 
-std::string getFilenameWithoutExtension(const char * iPath)
+std::string getFilenameWithoutExtension(const char * path)
 {
-  if (iPath == NULL)
+  if (path == NULL)
     return "";
 
-  std::string filename = ra::filesystem::GetFilename(iPath);
-  std::string extension = ra::filesystem::GetFileExtention(iPath);
+  std::string filename = ra::filesystem::GetFilename(path);
+  std::string extension = ra::filesystem::GetFileExtention(path);
   
   //extract filename without extension
   std::string filenameWE = filename.substr(0, filename.size() - extension.size());

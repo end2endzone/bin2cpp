@@ -52,11 +52,11 @@ namespace bin2cpp
     return BIN2CPP_VERSION;
   }
 
-  uint64_t getOutputFileModifiedDate(const std::string & iPath)
+  uint64_t getOutputFileModifiedDate(const std::string & path)
   {
     uint64_t mod_time = 0;
 
-    FILE * f = fopen(iPath.c_str(), "r");
+    FILE * f = fopen(path.c_str(), "r");
     if (!f)
       return mod_time;
 
@@ -89,29 +89,29 @@ namespace bin2cpp
     return mod_time;
   }
 
-  bool isCppHeaderFile(const std::string & iPath)
+  bool isCppHeaderFile(const std::string & path)
   {
-    std::string extension = ra::strings::Uppercase(ra::filesystem::GetFileExtention(iPath));
+    std::string extension = ra::strings::Uppercase(ra::filesystem::GetFileExtention(path));
     if (extension == "H" || extension == "HPP")
       return true;
     return false;
   }
 
-  bool isCppSourceFile(const std::string & iPath)
+  bool isCppSourceFile(const std::string & path)
   {
-    std::string extension = ra::strings::Uppercase(ra::filesystem::GetFileExtention(iPath));
+    std::string extension = ra::strings::Uppercase(ra::filesystem::GetFileExtention(path));
     if (extension == "CPP" || extension == "CXX")
       return true;
     return false;
   }
 
-  std::string getCppIncludeGuardMacroName(const std::string & iPath)
+  std::string getCppIncludeGuardMacroName(const std::string & path)
   {
     static const std::string EMPTY_STRING;
-    if (iPath.empty())
+    if (path.empty())
       return EMPTY_STRING;
 
-    std::string filename = ra::filesystem::GetFilename(iPath.c_str());
+    std::string filename = ra::filesystem::GetFilename(path.c_str());
 
     //replace
     int numDots = ra::strings::Replace(filename, ".", "_");

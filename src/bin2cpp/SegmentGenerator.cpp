@@ -47,7 +47,7 @@ namespace bin2cpp
     return "segment";
   }
 
-  bool SegmentGenerator::createCppSourceFile(const char * iCppFilePath)
+  bool SegmentGenerator::createCppSourceFile(const char * cpp_file_path)
   {
     //check if input file exists
     FILE * input = fopen(mInputFile.c_str(), "rb");
@@ -58,10 +58,10 @@ namespace bin2cpp
     std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mFunctionIdentifier);
 
     //Build header and cpp file path
-    std::string headerPath = getHeaderFilePath(iCppFilePath);
-    std::string cppPath = iCppFilePath;
+    std::string headerPath = getHeaderFilePath(cpp_file_path);
+    std::string cppPath = cpp_file_path;
     std::string headerFilename = ra::filesystem::GetFilename(headerPath.c_str());
-    std::string cppFilename = ra::filesystem::GetFilename(iCppFilePath);
+    std::string cppFilename = ra::filesystem::GetFilename(cpp_file_path);
 
     //create cpp file
     FILE * cpp = fopen(cppPath.c_str(), "w");
@@ -74,8 +74,8 @@ namespace bin2cpp
     //determine file properties
     uint32_t fileSize = ra::filesystem::GetFileSize(input);
     std::string filename = ra::filesystem::GetFilename(mInputFile.c_str());
-    //long lastSegmentSize = fileSize%iChunkSize;
-    //size_t numSegments = fileSize/iChunkSize + (lastSegmentSize == 0 ? 0 : 1);
+    //long lastSegmentSize = fileSize%chunk_size;
+    //size_t numSegments = fileSize/chunk_size + (lastSegmentSize == 0 ? 0 : 1);
 
     //Build class name
     std::string className = getClassName();
@@ -116,7 +116,7 @@ namespace bin2cpp
       //read a chunk of the file
       size_t readSize = fread(buffer, 1, mChunkSize, input);
 
-      //bool isLastChunk = !(readSize == iChunkSize);
+      //bool isLastChunk = !(readSize == chunk_size);
 
       if (readSize == 0)
         continue; //nothing to output if nothing was read

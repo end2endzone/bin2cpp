@@ -48,31 +48,31 @@ namespace bin2cpp
   ///Returns the modified date from an embedded file's c++ header/source file.
   ///Note that the function returns the number of seconds elapsed since epoch since Jan 1st 1970.
   ///</summary>
-  ///<param name="iPath">The valid path to a c++ header/source file.</param>
+  ///<param name="path">The valid path to a c++ header/source file.</param>
   ///<return>Returns the modified date from an embedded file's c++ header/source file.<return>
-  uint64_t getOutputFileModifiedDate(const std::string & iPath);
+  uint64_t getOutputFileModifiedDate(const std::string & path);
 
   ///<summary>
   ///Determine if a given path is a c++ header file.
   ///</summary>
-  ///<param name="iPath">An valid file path.</param>
-  ///<return>Returns true if iPath is a c++ header file. Returns false otherwise.<return>
-  bool isCppHeaderFile(const std::string & iPath);
+  ///<param name="path">An valid file path.</param>
+  ///<return>Returns true if path is a c++ header file. Returns false otherwise.<return>
+  bool isCppHeaderFile(const std::string & path);
 
   ///<summary>
   ///Determine if a given path is a c++ source file.
   ///</summary>
-  ///<param name="iPath">An valid file path.</param>
-  ///<return>Returns true if iPath is a c++ source file. Returns false otherwise.<return>
-  bool isCppSourceFile(const std::string & iPath);
+  ///<param name="path">An valid file path.</param>
+  ///<return>Returns true if path is a c++ source file. Returns false otherwise.<return>
+  bool isCppSourceFile(const std::string & path);
 
   ///<summary>
   ///Determine the appropriate macro name for the include guard of the given c++ header file.
   ///See also https://en.wikipedia.org/wiki/Include_guard
   ///</summary>
-  ///<param name="iPath">An valid file path.</param>
+  ///<param name="path">An valid file path.</param>
   ///<return>Returns the macro name for the given c++ header file.<return>
-  std::string getCppIncludeGuardMacroName(const std::string & iPath);
+  std::string getCppIncludeGuardMacroName(const std::string & path);
 
 }; //bin2cpp
 

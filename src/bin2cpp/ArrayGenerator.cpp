@@ -47,7 +47,7 @@ namespace bin2cpp
     return "array";
   }
 
-  bool ArrayGenerator::createCppSourceFile(const char * iCppFilePath)
+  bool ArrayGenerator::createCppSourceFile(const char * cpp_file_path)
   {
     //check if input file exists
     FILE * input = fopen(mInputFile.c_str(), "rb");
@@ -58,10 +58,10 @@ namespace bin2cpp
     std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mFunctionIdentifier);
 
     //Build header and cpp file path
-    std::string headerPath = getHeaderFilePath(iCppFilePath);
-    std::string cppPath = iCppFilePath;
+    std::string headerPath = getHeaderFilePath(cpp_file_path);
+    std::string cppPath = cpp_file_path;
     std::string headerFilename = ra::filesystem::GetFilename(headerPath.c_str());
-    std::string cppFilename = ra::filesystem::GetFilename(iCppFilePath);
+    std::string cppFilename = ra::filesystem::GetFilename(cpp_file_path);
 
     //create cpp file
     FILE * cpp = fopen(cppPath.c_str(), "w");

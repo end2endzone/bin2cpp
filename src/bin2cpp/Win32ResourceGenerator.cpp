@@ -51,9 +51,9 @@ namespace bin2cpp
     return "win32";
   }
 
-  bool Win32ResourceGenerator::createCppSourceFile(const char * iCppFilePath)
+  bool Win32ResourceGenerator::createCppSourceFile(const char * cpp_file_path)
   {
-    bool resourceFileSuccess = createResourceFile(iCppFilePath);
+    bool resourceFileSuccess = createResourceFile(cpp_file_path);
     if (!resourceFileSuccess)
       return false;
 
@@ -66,10 +66,10 @@ namespace bin2cpp
     std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mFunctionIdentifier);
 
     //Build header and cpp file path
-    std::string headerPath = getHeaderFilePath(iCppFilePath);
-    std::string cppPath = iCppFilePath;
+    std::string headerPath = getHeaderFilePath(cpp_file_path);
+    std::string cppPath = cpp_file_path;
     std::string headerFilename = ra::filesystem::GetFilename(headerPath.c_str());
-    std::string cppFilename = ra::filesystem::GetFilename(iCppFilePath);
+    std::string cppFilename = ra::filesystem::GetFilename(cpp_file_path);
 
     //create cpp file
     FILE * cpp = fopen(cppPath.c_str(), "w");
@@ -187,18 +187,18 @@ namespace bin2cpp
     return true;
   }
 
-  std::string Win32ResourceGenerator::getResourceFilePath(const char * iCppFilePath)
+  std::string Win32ResourceGenerator::getResourceFilePath(const char * cpp_file_path)
   {
     //Build header file path
-    std::string resourcePath = iCppFilePath;
+    std::string resourcePath = cpp_file_path;
     ra::strings::Replace(resourcePath, ".cpp", ".rc");
     return resourcePath;
   }
 
-  bool Win32ResourceGenerator::createResourceFile(const char * iCppFilePath)
+  bool Win32ResourceGenerator::createResourceFile(const char * cpp_file_path)
   {
     //Build resource file path
-    std::string resourceFilePath = getResourceFilePath(iCppFilePath);
+    std::string resourceFilePath = getResourceFilePath(cpp_file_path);
 
     //create resource file
     FILE * res = fopen(resourceFilePath.c_str(), "w");
@@ -219,14 +219,14 @@ namespace bin2cpp
     return true;
   }
 
-  std::string Win32ResourceGenerator::getRandomIdentifier(const char * iCppFilePath)
+  std::string Win32ResourceGenerator::getRandomIdentifier(const char * cpp_file_path)
   {
-    std::string include_guard = getCppIncludeGuardMacroName(iCppFilePath);
+    std::string include_guard = getCppIncludeGuardMacroName(cpp_file_path);
 
     //append a CRC32 checksum of the file path to allow storing multiple files with the same name in resources
     uint32_t checksum = 0;
     crc32Init(&checksum);
-    crc32Update(&checksum, (unsigned char *)iCppFilePath, strlen(iCppFilePath));
+    crc32Update(&checksum, (unsigned char *)cpp_file_path, strlen(cpp_file_path));
     crc32Finish(&checksum);
 
     std::string checksumString;
