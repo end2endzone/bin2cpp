@@ -192,7 +192,7 @@ void printUsage()
     "  --chunksize=<value>  Size in bytes of each string segments (bytes per row). [default: 200].\n"
     "  --baseclass=<value>  The name of the interface for embedded files. [default: File].\n"
     "  --namespace=<value>  The namespace of the generated source code [default: bin2cpp].\n"
-    "  --managerfile=<name> File name of the generated C++ Header file for the FileManager class. ie: FileManager.h\n"
+    "  --managerfile=<name> File name of the generated C++ header file for the FileManager class. ie: FileManager.h\n"
     "  --registerfile       Register the generated file to the FileManager class. [default: false].\n"
     "                       This flags is automatically set when parameter 'managerfile' is specified.\n"
     "  --override           Tells bin2cpp to overwrite the destination files.\n"

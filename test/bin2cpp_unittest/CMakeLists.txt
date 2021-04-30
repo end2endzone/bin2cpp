@@ -165,8 +165,6 @@ add_executable(bin2cpp_unittest
   main.cpp
   TestCLI.cpp
   TestCLI.h
-  TestCommon.cpp
-  TestCommon.h
   TestExtraction.cpp
   TestExtraction.h
   ${GENERATED_TEST_FILES}
