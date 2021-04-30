@@ -63,10 +63,12 @@ namespace bin2cpp
     virtual bool createManagerSourceFile(const char * cpp_file_path);
 
   protected:
+
     virtual std::string getGetterFunctionName();
     virtual std::string getHeaderFilePath(const char * cpp_file_path);
     virtual std::string getCppFilePath(const char * header_file_path);
     virtual std::string getHeaderTemplate();
+    virtual std::string getHeaderTemplate(bool includeSourceFile);
     virtual std::string getSaveMethodTemplate();
     virtual std::string getFileManagerRegistrationTemplate();
     virtual std::string getClassName();

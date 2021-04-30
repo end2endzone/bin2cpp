@@ -101,7 +101,23 @@ namespace bin2cpp
 
     std::string filename = ra::filesystem::GetFilename(path.c_str());
 
+    //remove consecutive spaces
+    std::string pattern = "  ";
+    while(filename.find(pattern) != std::string::npos)
+    {
+      ra::strings::Replace(filename, pattern, pattern.substr(0, 1));
+    }
+
+    //remove consecutive colon (for handling namespaces)
+    pattern = "::";
+    while(filename.find(pattern) != std::string::npos)
+    {
+      ra::strings::Replace(filename, pattern, pattern.substr(0, 1));
+    }
+
     //replace
+    int numSpaces = ra::strings::Replace(filename, " ", "_");
+    int numColon = ra::strings::Replace(filename, ":", "_");
     int numDots = ra::strings::Replace(filename, ".", "_");
     
     //uppercase
