@@ -7,6 +7,8 @@
 
 bin2cpp is a command line tool for embedding small files (like images, icons or raw data files) into a C++ executable.
 
+When executed, bin2cpp takes binary file as input and outputs c++ code (a function) that when called allows a c++ program to retrieve the content of the input binary file.
+
 ## Status
 
 Build:
@@ -95,7 +97,7 @@ bin2cpp --version
 | --noheader           | Do not print program header to standard output.                                                                                                                                                                           |
 | --quiet              | Do not log any message to standard output.                                                                                                                                                                                |
 
-## Example 1
+## Example 1 - single file
 
 This examples shows how to use bin2cpp to convert a single html file to c++ source code.
 
@@ -220,7 +222,7 @@ namespace bin2cpp
 }; //bin2cpp
 ```
 
-### Code sample (using embedded files)
+### Code sample (querying the generated code)
 
 At runtime, show file properties and save/export data back to a file.
 
@@ -254,7 +256,7 @@ int main(int argc, char* argv[])
 }
 ```
 
-## Examples 2
+## Examples 2 - directory
 
 This examples shows how to use bin2cpp to convert multiple files of the same directory to c++ source code.
 
@@ -298,7 +300,7 @@ Writing file ".\outdir\IconsFileManager.cpp"...
 
 Notice that additional files `IconsFileManager.h` and `IconsFileManager.cpp` were also generated and will allow retreiving all files at once.
 
-### Code sample (using embedded files)
+### Code sample (querying the generated code)
 
 At runtime, show a file listing and save/export the icons files in users temporary directory.
 
@@ -333,7 +335,7 @@ int main(int argc, char* argv[])
 }
 ```
 
-## Console output
+### Console output
 
 ```
 Found 16 embedded icons...
@@ -353,7 +355,7 @@ Found 16 embedded icons...
   File 'otter-solid.png', 1327 bytes
   File 'paw-solid.png', 1393 bytes
   File 'spider-solid.png', 1973 bytes
-Saving embedded icons to directory 'C:\Users\antoine\AppData\Local\Temp'...
+Saving embedded icons to directory 'C:\Users\foobar\AppData\Local\Temp'...
 saved
 ```
 
