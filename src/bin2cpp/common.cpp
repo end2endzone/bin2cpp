@@ -115,10 +115,18 @@ namespace bin2cpp
       ra::strings::Replace(filename, pattern, pattern.substr(0, 1));
     }
 
+    //remove consecutive dash
+    pattern = "--";
+    while(filename.find(pattern) != std::string::npos)
+    {
+      ra::strings::Replace(filename, pattern, pattern.substr(0, 1));
+    }
+
     //replace
     int numSpaces = ra::strings::Replace(filename, " ", "_");
     int numColon = ra::strings::Replace(filename, ":", "_");
     int numDots = ra::strings::Replace(filename, ".", "_");
+    int numDash = ra::strings::Replace(filename, "-", "_");
     
     //uppercase
     filename = ra::strings::Uppercase(filename);

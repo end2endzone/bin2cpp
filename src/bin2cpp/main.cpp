@@ -113,17 +113,35 @@ const char * getUpdateModeText(const FILE_UPDATE_MODE & iMode)
   };
 }
 
-std::string getIdentifier(const std::string & value)
+inline std::string filter(std::string str, const std::string & valid_characters)
 {
-  std::string id = value;
+  std::string output;
+  
+  //reserve as many characters as in input string
+  output.reserve(str.size());
 
-  int numReplaced = -1;
+  //for each characters in input string
+  for(size_t i=0; i < str.size(); i++)
+  {
+    //is the current character is found in valid characters?
+    size_t pos = valid_characters.find(str[i], 0);
+    if (pos != std::string::npos)
+      output.append(1, str[i]);
+  }
 
-  //no space character
-  numReplaced = ra::strings::Replace(id, " ", "");
+  return output;
+}
 
-  //no space character
-  numReplaced = ra::strings::Replace(id, " ", "");
+std::string getFunctionIdentifierFromPath(const std::string & path)
+{
+  std::string id;
+
+  //get filename of the given path
+  id = ra::filesystem::GetFilenameWithoutExtension(path.c_str());
+
+  // filter out characters which are not alphanumeric characters or '_'.
+  static const std::string validCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+  id = filter(id, validCharacters);
 
   return id;
 }
@@ -474,11 +492,11 @@ int main(int argc, char* argv[])
       argsCopy.inputFile = file;
 
       //use the file name without extension as 'headerfile'.
-      argsCopy.headerFilename = getIdentifier(ra::filesystem::GetFilenameWithoutExtension(file.c_str()));
+      argsCopy.headerFilename = ra::filesystem::GetFilenameWithoutExtension(file.c_str());
       argsCopy.headerFilename.append(".h");
 
       //use the file name without extension as 'identifier'.
-      argsCopy.functionIdentifier = getIdentifier(ra::filesystem::GetFilenameWithoutExtension(file.c_str()));
+      argsCopy.functionIdentifier = getFunctionIdentifierFromPath(ra::filesystem::GetFilenameWithoutExtension(file.c_str()));
       argsCopy.functionIdentifier = ra::strings::CapitalizeFirstCharacter(argsCopy.functionIdentifier);
 
       //process this file...

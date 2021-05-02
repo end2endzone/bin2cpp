@@ -131,7 +131,8 @@ endif()
 
 # samples
 if(BIN2CPP_BUILD_SAMPLES)
-  add_subdirectory(samples)
+  add_subdirectory(samples/demo_helloworld)
+  add_subdirectory(samples/demo_icons)
 endif()
 
 ##############################################################################################################################################

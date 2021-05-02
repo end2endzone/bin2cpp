@@ -1,18 +1,18 @@
 #include <stdio.h>
 #include <string>
-#include "file_html5skeleton.h" //a single include file is all you need
+#include "generated_helloworld.h" //a single include file is all you need
 
 int main(int argc, char* argv[])
 {
   //get a reference to the embedded file
-  const bin2cpp::File & resource = bin2cpp::getHtmlSampleFile();
+  const bin2cpp::File & resource = bin2cpp::getHelloWorldHtmlFile();
 
   //print information about the file.
   printf("Embedded file '%s' is %lu bytes long.\n", resource.getFilename(), resource.getSize());
 
   //Saving content back to a file.
-  printf("Saving embedded file to 'html5skeleton_copy.html'...\n");
-  bool saved = resource.save("html5skeleton_copy.html");
+  printf("Saving embedded file to 'helloworld_copy.html'...\n");
+  bool saved = resource.save("helloworld_copy.html");
   if (saved)
     printf("saved\n");
   else
