@@ -1,3 +1,6 @@
+#include <stdio.h>  // printf
+#include <stdlib.h> // getenv
+
 #include "IconsFileManager.h"
 
 int main(int argc, char* argv[])
