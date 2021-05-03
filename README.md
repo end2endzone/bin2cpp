@@ -305,6 +305,9 @@ Notice that additional files `IconsFileManager.h` and `IconsFileManager.cpp` wer
 At runtime, show a file listing and save/export the icons files in users temporary directory.
 
 ```cpp
+#include <stdio.h>  // printf
+#include <stdlib.h> // getenv
+
 #include "IconsFileManager.h"
 
 int main(int argc, char* argv[])
