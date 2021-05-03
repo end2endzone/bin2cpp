@@ -119,14 +119,14 @@ Hello World!
 
 ### Command:
 
-```batchfile
+```
 bin2cpp.exe --file=helloworld.html --output=.\outdir --headerfile=generated_helloworld.h
             --identifier=HelloWorldHtml --chunksize=50
 ```
 
 ### Console output
 
-```batchfile
+```
 bin2cpp v2.4.0 - Convert binary files into C++ source code.
 Copyright (C) 2013-2021 end2endzone.com. All rights reserved.
 bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
@@ -260,23 +260,23 @@ int main(int argc, char* argv[])
 
 This examples shows how to use bin2cpp to convert multiple files of the same directory to c++ source code.
 
-### Input directory: [docs/icons](https://github.com/end2endzone/bin2cpp/tree/master/docs/icons).
+### Input directory: [samples/demo_icons/icons](samples/demo_icons/icons).
 
-The [docs/icons](https://github.com/end2endzone/bin2cpp/tree/master/docs/icons) directory contains the following 16 icons :
+The [samples/demo_icons/icons](samples/demo_icons/icons) directory contains the following 16 icons :
 
-![](F:\Projets\Programmation\Cpp\bin2cpp\github\master\docs\Font%20Awesome%205%20animal%20icons.png)
+![Font Awesome 5 animal icons](docs/Font%20Awesome%205%20animal%20icons.png)
 
 These icons are created by [Font Awesome](https://fontawesome.com/icons) and are licensed under the [Creative Commons Attribution 4.0](https://fontawesome.com/license) International license.
 
 ### Command:
 
-```batchfile
+```
 bin2cpp.exe --dir=icons --managerfile=IconsFileManager.h --output=.\outdir --chunksize=50
 ```
 
 ### Console output
 
-```batchfile
+```
 bin2cpp v2.4.0 - Convert binary files into C++ source code.
 Copyright (C) 2013-2021 end2endzone.com. All rights reserved.
 bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
