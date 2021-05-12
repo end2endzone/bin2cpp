@@ -4,6 +4,8 @@ project(bin2cpp)
 
 #Find optional packages.
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package(WIX)
+find_package(NSIS)
 
 ##############################################################################################################################################
 # Standard CMake variables
@@ -79,6 +81,8 @@ configure_file( ${CMAKE_SOURCE_DIR}/src/bin2cpp/config.h.in ${BIN2CPP_CONFIG_HEA
 set(BIN2CPP_BUILD_TYPE_CPP_DEFINE)
 
 # Define installation directories
+set(BIN2CPP_INSTALL_ROOT_DIR     ".")
+set(BIN2CPP_INSTALL_DOC_DIR      "docs")
 set(BIN2CPP_INSTALL_BIN_DIR      "bin")
 set(BIN2CPP_INSTALL_LIB_DIR      "lib/bin2cpp-${BIN2CPP_VERSION}")
 set(BIN2CPP_INSTALL_INCLUDE_DIR  "include/bin2cpp-${BIN2CPP_VERSION}")
@@ -110,6 +114,13 @@ endif()
 include_directories(${CMAKE_BINARY_DIR}/include     # for ${BIN2CPP_VERSION_HEADER} and ${BIN2CPP_CONFIG_HEADER} generated files.
                     ${CMAKE_SOURCE_DIR}/src/common  # for common files shared by bin2cpp and unit tests.
 )
+
+# Define the file extension for bash/batch files on the target platform
+if (WIN32)
+  set(SCRIPT_FILE_EXTENSION bat)
+else()
+  set(SCRIPT_FILE_EXTENSION sh)
+endif()
 
 ##############################################################################################################################################
 # Dependencies
@@ -170,15 +181,20 @@ endif()
 #   On UNIX, installs to "/usr/local".
 #   On Windows, installs to "C:\Program Files (x86)\${PROJECT_NAME}" or to "C:\Program Files\${PROJECT_NAME}" for 64 bit binaries
 
-# Target config version verification file
-configure_file(${CMAKE_SOURCE_DIR}/cmake/bin2cpp-config-version.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/bin2cpp-config-version.cmake @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/bin2cpp-config-version.cmake DESTINATION ${BIN2CPP_INSTALL_CMAKE_DIR})
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/licenses DESTINATION ${BIN2CPP_INSTALL_ROOT_DIR})
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/samples DESTINATION ${BIN2CPP_INSTALL_ROOT_DIR})
 
-# Target config file
-configure_file(${CMAKE_SOURCE_DIR}/cmake/bin2cpp-config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/bin2cpp-config.cmake @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/bin2cpp-config.cmake DESTINATION ${BIN2CPP_INSTALL_CMAKE_DIR})
+install(FILES ${CMAKE_SOURCE_DIR}/README.md
+              ${CMAKE_SOURCE_DIR}/CONTRIBUTING.md
+              ${CMAKE_SOURCE_DIR}/AUTHORS
+              ${CMAKE_SOURCE_DIR}/CHANGES
+              ${CMAKE_SOURCE_DIR}/LICENSE
+              DESTINATION ${BIN2CPP_INSTALL_ROOT_DIR})
 
-install(EXPORT bin2cpp-targets DESTINATION ${BIN2CPP_INSTALL_CMAKE_DIR})
+install(FILES ${CMAKE_SOURCE_DIR}/docs/bin2cpp-splashscreen.png
+              ${CMAKE_SOURCE_DIR}/docs/bin2cpp-v2.4.0-sample.png
+              ${CMAKE_SOURCE_DIR}/docs/icon.ico
+              DESTINATION ${BIN2CPP_INSTALL_DOC_DIR})
 
 ##############################################################################################################################################
 # Packaging
@@ -192,7 +208,101 @@ set(CPACK_PACKAGE_VERSION_PATCH "${BIN2CPP_VERSION_PATCH}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "bin2cpp: The easiest way to embed small files into a c++ executable. bin2cpp converts text or binary files to C++ files (*.h, *.cpp) for easy access within the code.")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
-set(CPACK_GENERATOR "ZIP;NSIS")
+set(CPACK_GENERATOR "ZIP")
+if (NSIS_FOUND)
+  list(APPEND CPACK_GENERATOR "NSIS")
+endif (NSIS_FOUND)
+if (WIX_FOUND)
+  list(APPEND CPACK_GENERATOR "WIX")
+endif (WIX_FOUND)
+
+#######################
+# NSIS specific stuff #
+#######################
+
+# NSIS default installation path is :
+# x86, "C:\Program Files (x86)\${CPACK_PACKAGE_NAME} ${BIN2CPP_VERSION}"
+# x64, "C:\Program Files\${CPACK_PACKAGE_NAME} ${BIN2CPP_VERSION}"
+
+set(CPACK_NSIS_CONTACT "https://github.com/end2endzone")
+set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/end2endzone/bin2cpp")
+set(CPACK_NSIS_HELP_LINK "https://github.com/end2endzone/bin2cpp")
+set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+
+# Icon in the add/remove control panel. Must be an .exe file.
+# Use the main dll as we do not have main exe.
+# The filename will be wrong in debug builds.
+set(CPACK_NSIS_INSTALLED_ICON_NAME docs\\\\icon.ico)
+
+# Define our secondaries start menu shortcuts (for files that are not direct target executables).
+# See the following for details:
+# https://stackoverflow.com/questions/14831739/how-do-i-add-a-start-menu-entry-for-a-text-file-in-cpack-ans-nsis
+# https://stackoverflow.com/questions/2640760/creating-windows-desktop-icon-in-cmake-cpack-nsis
+# Note: As found with issue #60, the shortcuts created here have the 'Start in' property set to the installation directory. 
+#       If a shortcut is pointing to a executable/document that is not stored in the installation root directory,
+#       the created shortcut will not work.
+set(CPACK_NSIS_MENU_LINKS
+  "README.md"       "README.md"
+  "CONTRIBUTING.md" "CONTRIBUTING.md"
+  "AUTHORS"         "AUTHORS"
+  "CHANGES"         "CHANGES"
+  "LICENSE"         "LICENSE"
+  "licenses"        "Third party licenses"
+  "https://github.com/end2endzone/bin2cpp" "Bin2cpp Web Site"
+)
+
+# Define more anchor points for NSIS installer.
+# SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS   "; CPACK_NSIS_EXTRA_INSTALL_COMMANDS INSERT LOCATION"    )
+# SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "; CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS INSERT LOCATION"  )
+
+# Shortcuts that must start in 'bin' directory must be created manually...
+# NSIS CreateShortCut documentation: https://nsis.sourceforge.io/Reference/CreateShortCut
+# Note: CMake escaping mechanism is complicated. In short, to insert a backslash, use the literal string \\\\ and to insert a double-quote character, use the literal string \\\" .
+#       Also, generator expression variable such as `$<TARGET_FILE_NAME:bin2cpp_unittest>` does not work with CPACK_NSIS_CREATE_ICONS_EXTRA.
+SET(CPACK_NSIS_CREATE_ICONS_EXTRA "
+  SetOutPath \\\"$INSTDIR\\\\bin\\\"
+  CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\Run Unit Tests.lnk\\\"                 \\\"$INSTDIR\\\\bin\\\\bin2cpp_unittest${CMAKE_DEBUG_POSTFIX}.exe\\\"
+  CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\Generate test files.lnk\\\"            \\\"$INSTDIR\\\\bin\\\\generate_test_files.${SCRIPT_FILE_EXTENSION}\\\"
+  SetOutPath \\\"$INSTDIR\\\"
+  ")
+SET(CPACK_NSIS_DELETE_ICONS_EXTRA "
+  Delete \\\"$SMPROGRAMS\\\\$MUI_TEMP\\\\Run Unit Tests.lnk\\\"
+  Delete \\\"$SMPROGRAMS\\\\$MUI_TEMP\\\\Generate test files.lnk\\\"
+  ")
+
+#######################
+# WIX specific stuff #
+#######################
+
+# WIX default installation path is :
+# x86, "C:\Program Files (x86)\${CPACK_PACKAGE_NAME} ${BIN2CPP_VERSION}"
+# x64, "C:\Program Files\${CPACK_PACKAGE_NAME} ${BIN2CPP_VERSION}"
+
+# Set variables for WIX installer
+set(CPACK_WIX_UPGRADE_GUID "2EFE95CD-2DBF-466B-AE5A-8A802328A2F8")
+set(CPACK_WIX_LICENSE_RTF  "${CMAKE_SOURCE_DIR}/docs/wix_license_template.rtf")
+set(CPACK_WIX_PRODUCT_ICON "${CMAKE_SOURCE_DIR}/docs/icon.ico")
+set(CPACK_WIX_HELP_LINK "https://github.com/end2endzone/bin2cpp")
+set(CPACK_WIX_PROGRAM_MENU_FOLDER "bin2cpp ${bin2cpp_VERSION}")
+
+# Do not set 'CPACK_WIX_PRODUCT_GUID' to a valid GUID (ie "C532D05F-E319-4A0E-BD41-14B0B26F245B")
+# Set CPACK_WIX_UPGRADE_GUID to something fixed while leaving CPACK_WIX_PRODUCT_GUID unset
+# (so that you get a unique new product GUID for every package you create).
+# This would cause an existing installation (with the same upgrade GUID) to be replaced 
+# (files of the old package are removed)
+# rather than installed in parallel.
+# See https://gitlab.kitware.com/cmake/cmake/-/issues/18081 for details.
+
+# Define start menu shortcuts for WIX
+set_property(INSTALL "bin/$<TARGET_FILE_NAME:bin2cpp_unittest>"           PROPERTY CPACK_START_MENU_SHORTCUTS "Run Unit Tests"          )
+set_property(INSTALL "bin/generate_test_files.${SCRIPT_FILE_EXTENSION}"   PROPERTY CPACK_START_MENU_SHORTCUTS "Generate test files"     )
+set_property(INSTALL "README.md"                                          PROPERTY CPACK_START_MENU_SHORTCUTS "README.md"               )
+set_property(INSTALL "CONTRIBUTING.md"                                    PROPERTY CPACK_START_MENU_SHORTCUTS "CONTRIBUTING.md"         )
+set_property(INSTALL "AUTHOR"                                             PROPERTY CPACK_START_MENU_SHORTCUTS "AUTHOR"                  )
+set_property(INSTALL "CHANGES"                                            PROPERTY CPACK_START_MENU_SHORTCUTS "CHANGES"                 )
+set_property(INSTALL "LICENSE"                                            PROPERTY CPACK_START_MENU_SHORTCUTS "LICENSE"                 )
+set_property(INSTALL "./licenses"                                         PROPERTY CPACK_START_MENU_SHORTCUTS "Third party licenses"    ) # This one does not work!
+set_property(INSTALL "https://github.com/end2endzone/bin2cpp"             PROPERTY CPACK_START_MENU_SHORTCUTS "bin2cpp Web Site"        )
 
 # we don't want to split our program up into several things
 set(CPACK_MONOLITHIC_INSTALL 1)
