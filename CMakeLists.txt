@@ -28,26 +28,35 @@ set(   LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 ##############################################################################################################################################
 # CMake properties
 ##############################################################################################################################################
-MESSAGE( STATUS "PROJECT_NAME:             " ${PROJECT_NAME} )
-MESSAGE( STATUS "CMAKE_BINARY_DIR:         " ${CMAKE_BINARY_DIR} )
-MESSAGE( STATUS "CMAKE_CURRENT_BINARY_DIR: " ${CMAKE_CURRENT_BINARY_DIR} )
-MESSAGE( STATUS "CMAKE_SOURCE_DIR:         " ${CMAKE_SOURCE_DIR} )
-MESSAGE( STATUS "CMAKE_CURRENT_SOURCE_DIR: " ${CMAKE_CURRENT_SOURCE_DIR} )
-MESSAGE( STATUS "PROJECT_BINARY_DIR:       " ${PROJECT_BINARY_DIR} )
-MESSAGE( STATUS "PROJECT_SOURCE_DIR:       " ${PROJECT_SOURCE_DIR} )
-MESSAGE( STATUS "EXECUTABLE_OUTPUT_PATH:   " ${EXECUTABLE_OUTPUT_PATH} )
-MESSAGE( STATUS "LIBRARY_OUTPUT_PATH:      " ${LIBRARY_OUTPUT_PATH} )
-MESSAGE( STATUS "CMAKE_MODULE_PATH:        " ${CMAKE_MODULE_PATH} )
-MESSAGE( STATUS "CMAKE_COMMAND:            " ${CMAKE_COMMAND} )
-MESSAGE( STATUS "CMAKE_ROOT:               " ${CMAKE_ROOT} )
-MESSAGE( STATUS "CMAKE_CURRENT_LIST_FILE:  " ${CMAKE_CURRENT_LIST_FILE} )
-MESSAGE( STATUS "CMAKE_CURRENT_LIST_LINE:  " ${CMAKE_CURRENT_LIST_LINE} )
-MESSAGE( STATUS "CMAKE_INCLUDE_PATH:       " ${CMAKE_INCLUDE_PATH} )
-MESSAGE( STATUS "CMAKE_LIBRARY_PATH:       " ${CMAKE_LIBRARY_PATH} )
-MESSAGE( STATUS "CMAKE_SYSTEM:             " ${CMAKE_SYSTEM} )
-MESSAGE( STATUS "CMAKE_SYSTEM_NAME:        " ${CMAKE_SYSTEM_NAME} )
-MESSAGE( STATUS "CMAKE_SYSTEM_VERSION:     " ${CMAKE_SYSTEM_VERSION} )
-MESSAGE( STATUS "CMAKE_SYSTEM_PROCESSOR:   " ${CMAKE_SYSTEM_PROCESSOR} )
+MESSAGE( STATUS "PROJECT_NAME:                " ${PROJECT_NAME} )
+MESSAGE( STATUS "CMAKE_BINARY_DIR:            " ${CMAKE_BINARY_DIR} )
+MESSAGE( STATUS "CMAKE_CURRENT_BINARY_DIR:    " ${CMAKE_CURRENT_BINARY_DIR} )
+MESSAGE( STATUS "CMAKE_SOURCE_DIR:            " ${CMAKE_SOURCE_DIR} )
+MESSAGE( STATUS "CMAKE_CURRENT_SOURCE_DIR:    " ${CMAKE_CURRENT_SOURCE_DIR} )
+MESSAGE( STATUS "PROJECT_BINARY_DIR:          " ${PROJECT_BINARY_DIR} )
+MESSAGE( STATUS "PROJECT_SOURCE_DIR:          " ${PROJECT_SOURCE_DIR} )
+MESSAGE( STATUS "EXECUTABLE_OUTPUT_PATH:      " ${EXECUTABLE_OUTPUT_PATH} )
+MESSAGE( STATUS "LIBRARY_OUTPUT_PATH:         " ${LIBRARY_OUTPUT_PATH} )
+MESSAGE( STATUS "CMAKE_MODULE_PATH:           " ${CMAKE_MODULE_PATH} )
+MESSAGE( STATUS "CMAKE_COMMAND:               " ${CMAKE_COMMAND} )
+MESSAGE( STATUS "CMAKE_ROOT:                  " ${CMAKE_ROOT} )
+MESSAGE( STATUS "CMAKE_CURRENT_LIST_FILE:     " ${CMAKE_CURRENT_LIST_FILE} )
+MESSAGE( STATUS "CMAKE_CURRENT_LIST_LINE:     " ${CMAKE_CURRENT_LIST_LINE} )
+MESSAGE( STATUS "CMAKE_INCLUDE_PATH:          " ${CMAKE_INCLUDE_PATH} )
+MESSAGE( STATUS "CMAKE_LIBRARY_PATH:          " ${CMAKE_LIBRARY_PATH} )
+MESSAGE( STATUS "CMAKE_SYSTEM:                " ${CMAKE_SYSTEM} )
+MESSAGE( STATUS "CMAKE_SYSTEM_NAME:           " ${CMAKE_SYSTEM_NAME} )
+MESSAGE( STATUS "CMAKE_SYSTEM_VERSION:        " ${CMAKE_SYSTEM_VERSION} )
+MESSAGE( STATUS "CMAKE_SYSTEM_PROCESSOR:      " ${CMAKE_SYSTEM_PROCESSOR} )
+MESSAGE( STATUS "CMAKE_HOST_SYSTEM_PROCESSOR: " ${CMAKE_HOST_SYSTEM_PROCESSOR} )
+MESSAGE( STATUS "CMAKE_SYSTEM_INFO_FILE:      " ${CMAKE_SYSTEM_INFO_FILE} )
+
+# Get OS name and version.
+include(GetOsNameAndVersion)
+GetOsNameAndVersion()
+MESSAGE( STATUS "OS_FRIENDLY_NAME:            " ${OS_FRIENDLY_NAME} )
+MESSAGE( STATUS "OS_VERSION:                  " ${OS_VERSION} )
+
 
 ##############################################################################################################################################
 # Global settings
@@ -208,13 +217,99 @@ set(CPACK_PACKAGE_VERSION_PATCH "${BIN2CPP_VERSION_PATCH}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "bin2cpp: The easiest way to embed small files into a c++ executable. bin2cpp converts text or binary files to C++ files (*.h, *.cpp) for easy access within the code.")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
-set(CPACK_GENERATOR "ZIP")
-if (NSIS_FOUND)
-  list(APPEND CPACK_GENERATOR "NSIS")
-endif (NSIS_FOUND)
-if (WIX_FOUND)
-  list(APPEND CPACK_GENERATOR "WIX")
-endif (WIX_FOUND)
+set(CPACK_GENERATOR "")
+
+if (WIN32 OR MINGW)
+  ######################
+  # Windows packacking
+  ######################
+  list(APPEND CPACK_GENERATOR "ZIP")
+  if (NSIS_FOUND)
+    list(APPEND CPACK_GENERATOR "NSIS")
+  endif (NSIS_FOUND)
+  if (WIX_FOUND)
+    list(APPEND CPACK_GENERATOR "WIX")
+  endif (WIX_FOUND)
+elseif(APPLE)
+  ######################
+  # macOS packacking
+  ######################
+  list(APPEND CPACK_GENERATOR "TGZ")
+ 
+  # PackageMaker (Mac OSX) packaging.
+  find_program(PACKAGE_MAKER "PackageMaker")
+  if(PACKAGE_MAKER)
+    list(APPEND CPACK_GENERATOR "PackageMaker")
+  endif()
+elseif(UNIX)
+  ######################
+  # Linux packacking
+  ######################
+  list(APPEND CPACK_GENERATOR "TGZ")
+ 
+  # DEB (Debian, Ubuntu) packaging.
+  find_program(DPKG "dpkg")
+  if(DPKG)
+   list(APPEND CPACK_GENERATOR "DEB")
+    if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i686")
+     set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "i386")
+    elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
+     set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
+    endif()
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER " https://github.com/end2endzone")
+    set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE " https://github.com/end2endzone/bin2cpp")
+  endif()
+ 
+  # RPM (Red Hat, CentOS) packaging.
+  find_program(RPMBUILD "rpmbuild")
+  if(RPMBUILD)
+    set(CPACK_GENERATOR "RPM")
+    if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i686")
+      set(CPACK_RPM_PACKAGE_ARCHITECTURE "i686")
+    elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
+      set(CPACK_RPM_PACKAGE_ARCHITECTURE "x86_64")
+    endif()
+    set(CPACK_RPM_PACKAGE_GROUP " Development/Tools/Other")
+    set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+  endif()
+endif()
+
+# On linux and macOS, change the default package filename to something like includes the system name, 
+if (UNIX)
+  # uname command outputs for ubuntu 18.04 :
+  #   uname -a --> Linux myubuntu 5.4.0-73-generic #82~18.04.1-Ubuntu SMP Fri Apr 16 15:10:02 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+  #   CMAKE_SYSTEM_NAME,            uname -s --> Linux
+  #   CMAKE_HOST_SYSTEM_PROCESSOR,  uname -m --> x86_64
+  #   CMAKE_SYSTEM_PROCESSOR,       uname -p --> x86_64
+  # cat /etc/os-release:
+  #   NAME="Ubuntu"
+  #   VERSION="18.04.2 LTS (Bionic Beaver)"
+  #   ID=ubuntu
+  #   ID_LIKE=debian
+  #   PRETTY_NAME="Ubuntu 18.04.2 LTS"
+  #   VERSION_ID="18.04"
+  #   HOME_URL="https://www.ubuntu.com/"
+  #   SUPPORT_URL="https://help.ubuntu.com/"
+  #   BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+  #   PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+  #   VERSION_CODENAME=bionic
+  #   UBUNTU_CODENAME=bionic
+  
+  string(REPLACE " " "" OS_FRIENDLY_NAME ${OS_FRIENDLY_NAME})
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${OS_FRIENDLY_NAME}.${CMAKE_HOST_SYSTEM_PROCESSOR}")
+elseif(APPLE)
+  # uname command outputs for macOS Catalina 10.15 :
+  #   uname -a --> Darwin mymac 19.6.0 Darwin Kernel Version 19.6.0: Mon Aug 31 22:12:52 PDT 2020; root:xnu-6153.141.2~1/RELEASE_X86_64 x86_64
+  #   CMAKE_SYSTEM_NAME,            uname -s --> Darwin
+  #   CMAKE_HOST_SYSTEM_PROCESSOR,  uname -m --> x86_64
+  #   CMAKE_SYSTEM_PROCESSOR,       uname -p --> i386
+  # cat /etc/os-release: No such file or directory
+  
+  string(REPLACE " " "." OS_FRIENDLY_NAME ${OS_FRIENDLY_NAME})
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${OS_FRIENDLY_NAME}.${CMAKE_HOST_SYSTEM_PROCESSOR}")
+endif()
+
 
 #######################
 # NSIS specific stuff #

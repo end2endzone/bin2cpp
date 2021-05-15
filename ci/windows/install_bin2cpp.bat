@@ -51,5 +51,12 @@ cmake --build . --config %CONFIGURATION% --target INSTALL
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo.
 
+echo ============================================================================
+echo Creating bin2cpp install package
+echo ============================================================================
+cmake --build . --config %Configuration% --target PACKAGE
+if %errorlevel% neq 0 exit /b %errorlevel%
+echo.
+
 ::Return to launch folder
 cd /d "%~dp0"
