@@ -264,7 +264,7 @@ elseif(UNIX)
   # RPM (Red Hat, CentOS) packaging.
   find_program(RPMBUILD "rpmbuild")
   if(RPMBUILD)
-    set(CPACK_GENERATOR "RPM")
+   list(APPEND CPACK_GENERATOR "RPM")
     if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i686")
       set(CPACK_RPM_PACKAGE_ARCHITECTURE "i686")
     elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
@@ -296,7 +296,6 @@ if (UNIX)
   #   VERSION_CODENAME=bionic
   #   UBUNTU_CODENAME=bionic
   
-  string(REPLACE " " "" OS_FRIENDLY_NAME ${OS_FRIENDLY_NAME})
   set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${OS_FRIENDLY_NAME}.${CMAKE_HOST_SYSTEM_PROCESSOR}")
 elseif(APPLE)
   # uname command outputs for macOS Catalina 10.15 :
@@ -306,7 +305,6 @@ elseif(APPLE)
   #   CMAKE_SYSTEM_PROCESSOR,       uname -p --> i386
   # cat /etc/os-release: No such file or directory
   
-  string(REPLACE " " "." OS_FRIENDLY_NAME ${OS_FRIENDLY_NAME})
   set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${OS_FRIENDLY_NAME}.${CMAKE_HOST_SYSTEM_PROCESSOR}")
 endif()
 
