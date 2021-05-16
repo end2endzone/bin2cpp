@@ -107,11 +107,11 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: bash
       run: |
-        set /p BIN2CPP_VERSION=<build\version
+        set /p BIN2CPP_VERSION=<"build\version"
         echo BIN2CPP_VERSION=%BIN2CPP_VERSION%
-        echo BIN2CPP_VERSION=%BIN2CPP_VERSION%>> $GITHUB_ENV
+        echo BIN2CPP_VERSION=%BIN2CPP_VERSION% >> %GITHUB_ENV%
     
     - name: Archive installation packages
       uses: actions/upload-artifact@v2
       with:
-        path: build/bin2cpp-${{env.BIN2CPP_VERSION}}-*.xml
+        path: build/bin2cpp-${{env.BIN2CPP_VERSION}}-*.*
