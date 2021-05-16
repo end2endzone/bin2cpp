@@ -111,4 +111,5 @@ jobs:
     - name: Archive installation packages
       uses: actions/upload-artifact@v2
       with:
+        name: Installation packages.
         path: build/bin2cpp-${{env.BIN2CPP_VERSION}}-*.*
