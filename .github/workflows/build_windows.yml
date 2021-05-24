@@ -107,7 +107,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: bash
       run: |
-        set /p BIN2CPP_VERSION=<"build\version"
+        set /p BIN2CPP_VERSION=<build\\version
         echo BIN2CPP_VERSION=%BIN2CPP_VERSION%
         echo BIN2CPP_VERSION=%BIN2CPP_VERSION% >> %GITHUB_ENV%
     
