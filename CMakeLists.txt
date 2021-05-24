@@ -220,7 +220,7 @@ set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
 set(CPACK_GENERATOR "")
 
-if (WIN32 OR MINGW)
+if (WIN32 AND NOT UNIX)
   ######################
   # Windows packacking
   ######################
@@ -242,6 +242,31 @@ elseif(APPLE)
   if(PACKAGE_MAKER)
     list(APPEND CPACK_GENERATOR "PackageMaker")
   endif()
+  
+  # Build Info.plist file required for Bundle generator
+  #
+  # Documentation about Info.plist:
+  #   https://cmake.org/cmake/help/v3.4/prop_tgt/MACOSX_BUNDLE_INFO_PLIST.html
+  #   https://stackoverflow.com/questions/1792632/how-to-add-an-extra-plist-property-using-cmake
+  #   https://stackoverflow.com/questions/6323445/create-an-application-plist/6323462#6323462
+  # Info.plist examples:
+  #   https://github.com/biochem-fan/NDKmol/blob/master/MolecularViewer-Info.plist
+  #   https://github.com/f4exb/sdrangel/blob/master/cmake/cpack/CMakeLists.txt#L33
+  #   https://github.com/lzubiaur/woot/blob/master/src/CMakeLists.txt#L123
+  #   https://github.com/mozart/mozart2/blob/master/CMakeLists.txt#L128
+  #   
+  set(APPLICATION_ICON_NAME "bin2cpp.icon.256x256")
+  set(COPYRIGHT "Copyright (c) 2018 Antoine Beauchamp")
+  set(IDENTIFIER "com.com.github.end2endzone.${PROJECT_NAME}")
+  configure_file("${CMAKE_SOURCE_DIR}/docs/MacOSXBundleInfo.plist.in" "${CMAKE_BINARY_DIR}/Info.plist" @ONLY)
+    
+  list(APPEND CPACK_GENERATOR "Bundle")
+  set(CPACK_BINARY_DRAGNDROP ON)
+  set(CPACK_BUNDLE_NAME ${PROJECT_NAME})
+  set(CPACK_BUNDLE_ICON  "${CMAKE_SOURCE_DIR}/docs/bin2cpp.icon.256x256.icns")
+  set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/docs/bin2cpp.icon.256x256.icns")
+  set(CPACK_BUNDLE_PLIST "${CMAKE_BINARY_DIR}/Info.plist")
+    
 elseif(UNIX)
   ######################
   # Linux packacking
@@ -400,6 +425,7 @@ set_property(INSTALL "https://github.com/end2endzone/bin2cpp"             PROPER
 
 # we don't want to split our program up into several things
 set(CPACK_MONOLITHIC_INSTALL 1)
+set (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE ON)
 
 # This must be last
 include(CPack)

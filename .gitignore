@@ -3,3 +3,4 @@
 /third_parties
 /samples/demo_helloworld/outdir
 /samples/demo_icons/outdir
+.DS_Store
