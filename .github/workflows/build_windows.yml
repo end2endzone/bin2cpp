@@ -105,9 +105,9 @@ jobs:
 
     - name: Get bin2cpp version
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      shell: bash
+      shell: cmd
       run: |
-        set /p BIN2CPP_VERSION=<build\\version
+        set /p BIN2CPP_VERSION=<"build\version"
         echo BIN2CPP_VERSION=%BIN2CPP_VERSION%
         echo BIN2CPP_VERSION=%BIN2CPP_VERSION% >> %GITHUB_ENV%
     
