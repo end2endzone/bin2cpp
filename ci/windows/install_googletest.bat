@@ -45,7 +45,7 @@ echo Compiling googletest...
 echo ============================================================================
 mkdir build >NUL 2>NUL
 cd build
-cmake -DCMAKE_GENERATOR_PLATFORM=%Platform% -T %PlatformToolset% -Dgtest_force_shared_crt=ON -DBUILD_GMOCK=OFF -DBUILD_GTEST=ON -DCMAKE_INSTALL_PREFIX="%CMAKE_INSTALL_PREFIX%" -DCMAKE_PREFIX_PATH="%CMAKE_PREFIX_PATH%" ..
+cmake -DCMAKE_GENERATOR_PLATFORM=%Platform% -T %PlatformToolset% -Dgtest_force_shared_crt=ON -DBUILD_GMOCK=OFF -DBUILD_GTEST=ON -DCMAKE_INSTALL_PREFIX="%CMAKE_INSTALL_PREFIX%" -DCMAKE_PREFIX_PATH="%CMAKE_PREFIX_PATH%" -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING ..
 if %errorlevel% neq 0 exit /b %errorlevel%
 cmake --build . --config %CONFIGURATION% -- -maxcpucount /m
 if %errorlevel% neq 0 exit /b %errorlevel%
