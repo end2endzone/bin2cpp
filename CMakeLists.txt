@@ -220,10 +220,11 @@ set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
 set(CPACK_GENERATOR "")
 
+
 if (WIN32 AND NOT UNIX)
-  ######################
+  #####################
   # Windows packacking
-  ######################
+  #####################
   list(APPEND CPACK_GENERATOR "ZIP")
   if (NSIS_FOUND)
     list(APPEND CPACK_GENERATOR "NSIS")
@@ -231,78 +232,40 @@ if (WIN32 AND NOT UNIX)
   if (WIX_FOUND)
     list(APPEND CPACK_GENERATOR "WIX")
   endif (WIX_FOUND)
-elseif(APPLE)
-  ######################
-  # macOS packacking
-  ######################
+elseif(APPLE OR UNIX)
+  #############################
+  # Linux and MacOS packacking
+  #############################
   list(APPEND CPACK_GENERATOR "TGZ")
- 
-  # PackageMaker (Mac OSX) packaging.
-  find_program(PACKAGE_MAKER "PackageMaker")
-  if(PACKAGE_MAKER)
-    list(APPEND CPACK_GENERATOR "PackageMaker")
-  endif()
-  
-  # Build Info.plist file required for Bundle generator
-  #
-  # Documentation about Info.plist:
-  #   https://cmake.org/cmake/help/v3.4/prop_tgt/MACOSX_BUNDLE_INFO_PLIST.html
-  #   https://stackoverflow.com/questions/1792632/how-to-add-an-extra-plist-property-using-cmake
-  #   https://stackoverflow.com/questions/6323445/create-an-application-plist/6323462#6323462
-  # Info.plist examples:
-  #   https://github.com/biochem-fan/NDKmol/blob/master/MolecularViewer-Info.plist
-  #   https://github.com/f4exb/sdrangel/blob/master/cmake/cpack/CMakeLists.txt#L33
-  #   https://github.com/lzubiaur/woot/blob/master/src/CMakeLists.txt#L123
-  #   https://github.com/mozart/mozart2/blob/master/CMakeLists.txt#L128
-  #   
-  set(APPLICATION_ICON_NAME "bin2cpp.icon.256x256")
-  set(COPYRIGHT "Copyright (c) 2018 Antoine Beauchamp")
-  set(IDENTIFIER "com.com.github.end2endzone.${PROJECT_NAME}")
-  configure_file("${CMAKE_SOURCE_DIR}/docs/MacOSXBundleInfo.plist.in" "${CMAKE_BINARY_DIR}/Info.plist" @ONLY)
-    
-  list(APPEND CPACK_GENERATOR "Bundle")
-  set(CPACK_BINARY_DRAGNDROP ON)
-  set(CPACK_BUNDLE_NAME ${PROJECT_NAME})
-  set(CPACK_BUNDLE_ICON  "${CMAKE_SOURCE_DIR}/docs/bin2cpp.icon.256x256.icns")
-  set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/docs/bin2cpp.icon.256x256.icns")
-  set(CPACK_BUNDLE_PLIST "${CMAKE_BINARY_DIR}/Info.plist")
-    
-elseif(UNIX)
-  ######################
-  # Linux packacking
-  ######################
-  list(APPEND CPACK_GENERATOR "TGZ")
- 
-  # DEB (Debian, Ubuntu) packaging.
-  find_program(DPKG "dpkg")
-  if(DPKG)
-    list(APPEND CPACK_GENERATOR "DEB")
-    if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i686")
-     set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "i386")
-    elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
-     set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
-    endif()
-    set(CPACK_DEBIAN_PACKAGE_MAINTAINER " https://github.com/end2endzone")
-    set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
-    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE " https://github.com/end2endzone/bin2cpp")
-  endif()
- 
-  # RPM (Red Hat, CentOS) packaging.
-  find_program(RPMBUILD "rpmbuild")
-  if(RPMBUILD)
-    list(APPEND CPACK_GENERATOR "RPM")
-    if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i686")
-      set(CPACK_RPM_PACKAGE_ARCHITECTURE "i686")
-    elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
-      set(CPACK_RPM_PACKAGE_ARCHITECTURE "x86_64")
-    endif()
-    set(CPACK_RPM_PACKAGE_GROUP "Development/Tools/Other")
-    set(CPACK_RPM_PACKAGE_LICENSE "MIT")
-  endif()
 endif()
 
-# On linux and macOS, change the default package filename to something like includes the system name, 
-if (UNIX)
+
+# Patch OS_FRIENDLY_NAME variable: convert to lowerspace and replace space characters by dot characters.
+string(TOLOWER "${OS_FRIENDLY_NAME}" OS_FRIENDLY_NAME)
+string(REPLACE " " "." OS_FRIENDLY_NAME "${OS_FRIENDLY_NAME}")
+
+
+# Change the default package filename to something more meaningful than using default.
+# Default pattern for CPACK_PACKAGE_FILE_NAME is
+# "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}."
+if (WIN32)
+  # Default package filename examples :  `bin2cpp-2.4.0-win32.zip` or `bin2cpp-2.4.0-win64.zip`.
+  
+  # Updating the package filename to `bin2cpp-2.4.0-windows-32bit.zip` or `bin2cpp-2.4.0-windows-64bit.zip`.
+  if (CPACK_SYSTEM_NAME STREQUAL "win32")
+    set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-windows-32bit") 
+  elseif (CPACK_SYSTEM_NAME STREQUAL "win64")
+    set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-windows-64bit") 
+  endif()  
+elseif (UNIX)
+  # Default package filename example :  `bin2cpp-2.4.0-Linux.tar.gz`.
+  # 
+  # This is incomplete since it does not specify the following:
+  # - Which Linux distribution was used for build the package.
+  # - If the package is compatible with a debian-based or a redhat-based distribution.
+  # - What is the system's processor (32 bit or 64 bit)
+  
+  # Command output examples for references :
   # uname command outputs for ubuntu 18.04 :
   #   uname -a --> Linux myubuntu 5.4.0-73-generic #82~18.04.1-Ubuntu SMP Fri Apr 16 15:10:02 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
   #   CMAKE_SYSTEM_NAME,            uname -s --> Linux
@@ -322,16 +285,21 @@ if (UNIX)
   #   VERSION_CODENAME=bionic
   #   UBUNTU_CODENAME=bionic
   
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${OS_FRIENDLY_NAME}.${CMAKE_HOST_SYSTEM_PROCESSOR}")
+  # Updating the package filename to `bin2cpp-2.4.0-ubuntu-x86_64.tar.gz`.
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${OS_FRIENDLY_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
 elseif(APPLE)
+  # Default package filename example :  `bin2cpp-2.4.0-Darwin.tar.gz`.
+
+  # Command output examples for references :
   # uname command outputs for macOS Catalina 10.15 :
   #   uname -a --> Darwin mymac 19.6.0 Darwin Kernel Version 19.6.0: Mon Aug 31 22:12:52 PDT 2020; root:xnu-6153.141.2~1/RELEASE_X86_64 x86_64
   #   CMAKE_SYSTEM_NAME,            uname -s --> Darwin
   #   CMAKE_HOST_SYSTEM_PROCESSOR,  uname -m --> x86_64
   #   CMAKE_SYSTEM_PROCESSOR,       uname -p --> i386
   # cat /etc/os-release: No such file or directory
-  
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${OS_FRIENDLY_NAME}.${CMAKE_HOST_SYSTEM_PROCESSOR}")
+
+  # Updating the package filename to `bin2cpp-2.4.0-macos.catalina-x86_64.tar.gz`.
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${OS_FRIENDLY_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
 endif()
 
 
