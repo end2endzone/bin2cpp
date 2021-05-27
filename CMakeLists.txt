@@ -52,10 +52,26 @@ MESSAGE( STATUS "CMAKE_HOST_SYSTEM_PROCESSOR: " ${CMAKE_HOST_SYSTEM_PROCESSOR} )
 MESSAGE( STATUS "CMAKE_SYSTEM_INFO_FILE:      " ${CMAKE_SYSTEM_INFO_FILE} )
 
 # Get OS name and version.
-include(GetOsNameAndVersion)
-GetOsNameAndVersion()
-MESSAGE( STATUS "OS_FRIENDLY_NAME:            " ${OS_FRIENDLY_NAME} )
-MESSAGE( STATUS "OS_VERSION:                  " ${OS_VERSION} )
+if (WIN32)
+  # Get Windows info.
+  include(GetMacReleaseInfo)
+  GetMacReleaseInfo(WIN_RELEASE_NAME WIN_RELEASE_VER)
+  MESSAGE( STATUS "WIN_RELEASE_NAME:            " ${WIN_RELEASE_NAME} )
+  MESSAGE( STATUS "WIN_RELEASE_VER:             " ${WIN_RELEASE_VER} )
+elseif (APPLE)
+  # Get MacOS info.
+  include(GetMacReleaseInfo)
+  GetMacReleaseInfo(MAC_RELEASE_NAME MAC_RELEASE_VER)
+  MESSAGE( STATUS "MAC_RELEASE_NAME:            " ${MAC_RELEASE_NAME} )
+  MESSAGE( STATUS "MAC_RELEASE_VER:             " ${MAC_RELEASE_VER} )
+elseif (UNIX)
+  # Get Linux distribution info.
+  include(GetLinuxReleaseInfo)
+  GetLinuxReleaseInfo(LINUX_DIST_NAME LINUX_DIST_VER )
+  MESSAGE( STATUS "LINUX_DIST_NAME:             " ${LINUX_DIST_NAME} )
+  MESSAGE( STATUS "LINUX_DIST_VER:              " ${LINUX_DIST_VER} )
+endif()
+endif()
 
 
 ##############################################################################################################################################
@@ -240,9 +256,6 @@ elseif(APPLE OR UNIX)
 endif()
 
 
-# Patch OS_FRIENDLY_NAME variable: convert to lowerspace and replace space characters by dot characters.
-string(TOLOWER "${OS_FRIENDLY_NAME}" OS_FRIENDLY_NAME)
-string(REPLACE " " "." OS_FRIENDLY_NAME "${OS_FRIENDLY_NAME}")
 
 
 # Change the default package filename to something more meaningful than using default.
@@ -263,30 +276,14 @@ elseif (UNIX)
   # This is incomplete since it does not specify the following:
   # - Which Linux distribution was used for build the package.
   # - If the package is compatible with a debian-based or a redhat-based distribution.
-  # - What is the system's processor (32 bit or 64 bit)
+  # - What is the system's processor (32 bit or 64 bit)  
   
-  # Command output examples for references :
-  # uname command outputs for ubuntu 18.04 :
-  #   uname -a --> Linux myubuntu 5.4.0-73-generic #82~18.04.1-Ubuntu SMP Fri Apr 16 15:10:02 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
-  #   CMAKE_SYSTEM_NAME,            uname -s --> Linux
-  #   CMAKE_HOST_SYSTEM_PROCESSOR,  uname -m --> x86_64
-  #   CMAKE_SYSTEM_PROCESSOR,       uname -p --> x86_64
-  # cat /etc/os-release:
-  #   NAME="Ubuntu"
-  #   VERSION="18.04.2 LTS (Bionic Beaver)"
-  #   ID=ubuntu
-  #   ID_LIKE=debian
-  #   PRETTY_NAME="Ubuntu 18.04.2 LTS"
-  #   VERSION_ID="18.04"
-  #   HOME_URL="https://www.ubuntu.com/"
-  #   SUPPORT_URL="https://help.ubuntu.com/"
-  #   BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
-  #   PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
-  #   VERSION_CODENAME=bionic
-  #   UBUNTU_CODENAME=bionic
+  # Patch LINUX_DIST_NAME variable: convert to lowerspace and replace space characters by dot characters.
+  string(TOLOWER "${LINUX_DIST_NAME}" LINUX_DIST_NAME)
+  string(REPLACE " " "." LINUX_DIST_NAME "${LINUX_DIST_NAME}")
   
   # Updating the package filename to `bin2cpp-2.4.0-ubuntu-x86_64.tar.gz`.
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${OS_FRIENDLY_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${LINUX_DIST_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
 elseif(APPLE)
   # Default package filename example :  `bin2cpp-2.4.0-Darwin.tar.gz`.
 
@@ -296,10 +293,13 @@ elseif(APPLE)
   #   CMAKE_SYSTEM_NAME,            uname -s --> Darwin
   #   CMAKE_HOST_SYSTEM_PROCESSOR,  uname -m --> x86_64
   #   CMAKE_SYSTEM_PROCESSOR,       uname -p --> i386
-  # cat /etc/os-release: No such file or directory
+  
+  # Patch MAC_RELEASE_NAME variable: convert to lowerspace and replace space characters by dot characters.
+  string(TOLOWER "${MAC_RELEASE_NAME}" MAC_RELEASE_NAME)
+  string(REPLACE " " "." MAC_RELEASE_NAME "${MAC_RELEASE_NAME}")
 
   # Updating the package filename to `bin2cpp-2.4.0-macos.catalina-x86_64.tar.gz`.
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${OS_FRIENDLY_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${MAC_RELEASE_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
 endif()
 
 
