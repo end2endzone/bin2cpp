@@ -52,25 +52,22 @@ MESSAGE( STATUS "CMAKE_HOST_SYSTEM_PROCESSOR: " ${CMAKE_HOST_SYSTEM_PROCESSOR} )
 MESSAGE( STATUS "CMAKE_SYSTEM_INFO_FILE:      " ${CMAKE_SYSTEM_INFO_FILE} )
 
 # Get OS name and version.
+include(GetOsReleaseInfo)
 if (WIN32)
-  # Get Windows info.
-  include(GetMacReleaseInfo)
-  GetMacReleaseInfo(WIN_RELEASE_NAME WIN_RELEASE_VER)
+  # Get Windows release info.
+  GetOsReleaseInfo(WIN_RELEASE_NAME WIN_RELEASE_VER)
   MESSAGE( STATUS "WIN_RELEASE_NAME:            " ${WIN_RELEASE_NAME} )
   MESSAGE( STATUS "WIN_RELEASE_VER:             " ${WIN_RELEASE_VER} )
 elseif (APPLE)
-  # Get MacOS info.
-  include(GetMacReleaseInfo)
-  GetMacReleaseInfo(MAC_RELEASE_NAME MAC_RELEASE_VER)
+  # Get MacOS release info.
+  GetOsReleaseInfo(MAC_RELEASE_NAME MAC_RELEASE_VER)
   MESSAGE( STATUS "MAC_RELEASE_NAME:            " ${MAC_RELEASE_NAME} )
   MESSAGE( STATUS "MAC_RELEASE_VER:             " ${MAC_RELEASE_VER} )
 elseif (UNIX)
   # Get Linux distribution info.
-  include(GetLinuxReleaseInfo)
-  GetLinuxReleaseInfo(LINUX_DIST_NAME LINUX_DIST_VER )
+  GetOsReleaseInfo(LINUX_DIST_NAME LINUX_DIST_VER )
   MESSAGE( STATUS "LINUX_DIST_NAME:             " ${LINUX_DIST_NAME} )
   MESSAGE( STATUS "LINUX_DIST_VER:              " ${LINUX_DIST_VER} )
-endif()
 endif()
 
 
@@ -234,13 +231,13 @@ set(CPACK_PACKAGE_VERSION_PATCH "${BIN2CPP_VERSION_PATCH}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "bin2cpp: The easiest way to embed small files into a c++ executable. bin2cpp converts text or binary files to C++ files (*.h, *.cpp) for easy access within the code.")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+
+# Set CPACK_GENERATOR
 set(CPACK_GENERATOR "")
-
-
 if (WIN32 AND NOT UNIX)
-  #####################
-  # Windows packacking
-  #####################
+  # Windows:
+  # Release as a portable application in zip format
+  # Also create NSIS and WIX installers (if generators are available) since an installer package is expected by users.
   list(APPEND CPACK_GENERATOR "ZIP")
   if (NSIS_FOUND)
     list(APPEND CPACK_GENERATOR "NSIS")
@@ -249,9 +246,8 @@ if (WIN32 AND NOT UNIX)
     list(APPEND CPACK_GENERATOR "WIX")
   endif (WIX_FOUND)
 elseif(APPLE OR UNIX)
-  #############################
-  # Linux and MacOS packacking
-  #############################
+  # Linux and Mac:
+  # Release as a portable application in tar.gz format
   list(APPEND CPACK_GENERATOR "TGZ")
 endif()
 
