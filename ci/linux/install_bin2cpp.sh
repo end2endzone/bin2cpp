@@ -43,3 +43,10 @@ echo Installing bin2cpp into $BIN2CPP_SOURCE_DIR/install
 echo ============================================================================
 make install
 echo
+
+echo ============================================================================
+echo Creating bin2cpp install package
+echo ============================================================================
+#make package
+cpack
+echo

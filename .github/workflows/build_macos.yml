@@ -100,3 +100,16 @@ jobs:
       with:
         name: unit-test-results
         path: build/bin/bin2cpp_unittest.*.xml
+
+    - name: Get bin2cpp version
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      shell: bash
+      run: |
+        echo BIN2CPP_VERSION=$(cat build/version)
+        echo BIN2CPP_VERSION=$(cat build/version)>> $GITHUB_ENV
+    
+    - name: Archive installation packages
+      uses: actions/upload-artifact@v2
+      with:
+        name: Installation packages.
+        path: build/bin2cpp-${{env.BIN2CPP_VERSION}}-*.*

@@ -49,7 +49,7 @@ environment:
   PlatformToolset: v140
   
   # build platform, i.e. x86, x64, Any CPU. This setting is optional.
-  Platform: Win32
+  Platform: x64
 
   # build Configuration, i.e. Debug, Release, etc.
   Configuration: Release

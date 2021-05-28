@@ -107,12 +107,6 @@ if (WIN32)
   )
 endif()
 
-# Define the file extension for bash/batch files on the target platform
-if (WIN32)
-  set(SCRIPT_FILE_EXTENSION bat)
-else()
-  set(SCRIPT_FILE_EXTENSION sh)
-endif()
 set(TEMPLATE_SCRIPT_FILE ${BIN2CPP_UNITTEST_SOURCE_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION}.in)
 
 #  https://stackoverflow.com/questions/18427877/add-custom-build-step-in-cmake

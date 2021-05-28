@@ -6,7 +6,7 @@ env:
   PlatformToolset: v140
 
   # build platform, i.e. x86, x64, Any CPU. This setting is optional.
-  Platform: Win32
+  Platform: x64
 
   # build Configuration, i.e. Debug, Release, etc.
   Configuration: Release
@@ -83,7 +83,7 @@ jobs:
       run: |
         for /f "tokens=* usebackq" %%f in (`dir/b/s build\bin\${{env.configuration}}\bin2cpp_unittest.*.xml`) do (set UNITTEST_REPORT_PATH=%%f)
         echo UNITTEST_REPORT_PATH=%UNITTEST_REPORT_PATH%
-        echo UNITTEST_REPORT_PATH=%UNITTEST_REPORT_PATH% >> %GITHUB_ENV%
+        echo UNITTEST_REPORT_PATH=%UNITTEST_REPORT_PATH%>> %GITHUB_ENV%
       
     - name: Create test badge
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -102,3 +102,17 @@ jobs:
       with:
         name: unit-test-results
         path: build\bin\${{env.Configuration}}\bin2cpp_unittest.*.xml
+
+    - name: Get bin2cpp version
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      shell: cmd
+      run: |
+        set /p BIN2CPP_VERSION=<"build\version"
+        echo BIN2CPP_VERSION=%BIN2CPP_VERSION%
+        echo BIN2CPP_VERSION=%BIN2CPP_VERSION%>> %GITHUB_ENV%
+    
+    - name: Archive installation packages
+      uses: actions/upload-artifact@v2
+      with:
+        name: Installation packages.
+        path: build/bin2cpp-${{env.BIN2CPP_VERSION}}-*.*
