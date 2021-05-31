@@ -10,6 +10,7 @@ Changes for 2.4.0:
 * Fixed issue #40: Remove duplicated code that is now available in RapidAssit.
 * Fixed issue #41: All the small things.
 * Fixed issue #42: Function getIdentifier does not remove special characters.
+* Fixed issue #43: Replace icons of sample project.
 
 
 Changes for 2.3.0:

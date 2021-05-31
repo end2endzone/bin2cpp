@@ -260,18 +260,18 @@ int main(int argc, char* argv[])
 
 This examples shows how to use bin2cpp to convert multiple files of the same directory to c++ source code.
 
-### Input directory: [samples/demo_icons/icons](samples/demo_icons/icons).
+### Input directory: [samples/demo_icons/flat-color-icons](samples/demo_icons/flat-color-icons).
 
-The [samples/demo_icons/icons](samples/demo_icons/icons) directory contains the following 16 icons :
+The [samples/demo_icons/flat-color-icons](samples/demo_icons/flat-color-icons) directory contains the following 16 icons :
 
-![Font Awesome 5 animal icons](docs/Font%20Awesome%205%20animal%20icons.png)
+![Flat Color Icons by Icons8](docs/Flat%20Color%20Icons%20by%20Icons8.png)
 
-These icons are created by [Font Awesome](https://fontawesome.com/icons) and are licensed under the [Creative Commons Attribution 4.0](https://fontawesome.com/license) International license.
+These icons are from the *Very Basic* set of [Icons8 Flat Color Icons](https://github.com/icons8/flat-color-icons) and are licensed under the [Good Boy License](https://icons8.com/good-boy-license).
 
 ### Command:
 
 ```
-bin2cpp.exe --dir=icons --managerfile=IconsFileManager.h --output=.\outdir --chunksize=50
+bin2cpp.exe --dir=flat-color-icons --managerfile=IconsFileManager.h --output=.\outdir --chunksize=50
 ```
 
 ### Console output
@@ -280,22 +280,21 @@ bin2cpp.exe --dir=icons --managerfile=IconsFileManager.h --output=.\outdir --chu
 bin2cpp v2.4.0 - Convert binary files into C++ source code.
 Copyright (C) 2013-2021 end2endzone.com. All rights reserved.
 bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
-Embedding "icons\cat-solid.png" using chunks of 50 bytes...
-Writing file ".\outdir\cat-solid.h"...
-Writing file ".\outdir\cat-solid.cpp"...
-Embedding "icons\crow-solid.png" using chunks of 50 bytes...
-Writing file ".\outdir\crow-solid.h"...
-Writing file ".\outdir\crow-solid.cpp"...
+Embedding "flat-color-icons\about.png" using chunks of 50 bytes...
+Writing file ".\outdir\about.h"...
+Writing file ".\outdir\about.cpp"...
+Embedding "flat-color-icons\address_book.png" using chunks of 50 bytes...
+Writing file ".\outdir\address_book.h"...
+Writing file ".\outdir\address_book.cpp"...
 ...
-Embedding "icons\paw-solid.png" using chunks of 50 bytes...
-Writing file ".\outdir\paw-solid.h"...
-Writing file ".\outdir\paw-solid.cpp"...
-Embedding "icons\spider-solid.png" using chunks of 50 bytes...
-Writing file ".\outdir\spider-solid.h"...
-Writing file ".\outdir\spider-solid.cpp"...
+Embedding "flat-color-icons\video_file.png" using chunks of 50 bytes...
+Writing file ".\outdir\video_file.h"...
+Writing file ".\outdir\video_file.cpp"...
 Generating "IconsFileManager.h"...
 Writing file ".\outdir\IconsFileManager.h"...
 Writing file ".\outdir\IconsFileManager.cpp"...
+
+
 ```
 
 Notice that additional files `IconsFileManager.h` and `IconsFileManager.cpp` were also generated and will allow retreiving all files at once.
@@ -341,23 +340,26 @@ int main(int argc, char* argv[])
 ### Console output
 
 ```
-Found 16 embedded icons...
-  File 'cat-solid.png', 1099 bytes
-  File 'crow-solid.png', 1255 bytes
-  File 'dog-solid.png', 849 bytes
-  File 'dove-solid.png', 1519 bytes
-  File 'dragon-solid.png', 1334 bytes
-  File 'feather-alt-solid.png', 1236 bytes
-  File 'feather-solid.png', 1169 bytes
-  File 'fish-solid.png', 817 bytes
-  File 'frog-solid.png', 1409 bytes
-  File 'hippo-solid.png', 851 bytes
-  File 'horse-head-solid.png', 1332 bytes
-  File 'horse-solid.png', 1188 bytes
-  File 'kiwi-bird-solid.png', 1181 bytes
-  File 'otter-solid.png', 1327 bytes
-  File 'paw-solid.png', 1393 bytes
-  File 'spider-solid.png', 1973 bytes
+Found 56 embedded icons...
+  File 'about.png', 520 bytes
+  File 'address_book.png', 1412 bytes
+  File 'alarm_clock.png', 2334 bytes
+  File 'audio_file.png', 523 bytes
+  File 'binoculars.png', 1347 bytes
+  File 'bookmark.png', 478 bytes
+  File 'broken_link.png', 1522 bytes
+  File 'calculator.png', 574 bytes
+  File 'calendar.png', 574 bytes
+  File 'cancel.png', 1159 bytes
+  File 'checkmark.png', 666 bytes
+  File 'clock.png', 1534 bytes
+  File 'contacts.png', 626 bytes
+  ...
+  File 'support.png', 1292 bytes
+  File 'synchronize.png', 1269 bytes
+  File 'unlock.png', 718 bytes
+  File 'upload.png', 467 bytes
+  File 'video_file.png', 472 bytes
 Saving embedded icons to directory 'C:\Users\foobar\AppData\Local\Temp'...
 saved
 ```
