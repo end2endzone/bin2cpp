@@ -544,11 +544,11 @@ APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * 
   ra::logging::Log(ra::logging::LOG_INFO, info.c_str());
 
   //prepare output files path
-  std::string outputHeaderPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + args.headerFilename;
-  std::string outputCppPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + args.headerFilename;
   std::string cppFilename = args.headerFilename;
-  ra::strings::Replace(outputCppPath, ".h", ".cpp");
+  ra::strings::Replace(cppFilename, ".hpp", ".cpp");
   ra::strings::Replace(cppFilename, ".h", ".cpp");  
+  std::string outputHeaderPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + args.headerFilename;
+  std::string outputCppPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + cppFilename;
 
   //check if input file exists
   if (!ra::filesystem::FileExists(args.inputFile.c_str()))
@@ -671,11 +671,11 @@ APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator 
   ra::logging::Log(ra::logging::LOG_INFO, info.c_str());
 
   //prepare output files path
+  std::string cppFilename = args.managerHeaderFilename;
+  ra::strings::Replace(cppFilename, ".hpp", ".cpp");
+  ra::strings::Replace(cppFilename, ".h", ".cpp");
   std::string outputHeaderPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + args.managerHeaderFilename;
-  std::string outputCppPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + args.managerHeaderFilename;
-  std::string cppFilename = args.headerFilename;
-  ra::strings::Replace(outputCppPath, ".h", ".cpp");
-  ra::strings::Replace(cppFilename, ".h", ".cpp");  
+  std::string outputCppPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + cppFilename;
 
   //process files
   bool headerResult = generateManagerFile(outputHeaderPath, generator, args.overrideExisting);
