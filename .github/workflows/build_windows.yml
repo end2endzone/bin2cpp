@@ -51,6 +51,7 @@ jobs:
 
     - name: Deploy 'tests not available' badge before building
       uses: exuanbo/actions-deploy-gist@v1
+      if: github.event_name != 'pull_request'
       with:
         token: ${{ secrets.BADGES }}
         gist_id: 58cf6c72c08e706335337d5ef9ca48e8
@@ -91,6 +92,7 @@ jobs:
       
     - name: Deploy test badge to gist
       uses: exuanbo/actions-deploy-gist@v1
+      if: github.event_name != 'pull_request'
       with:
         token: ${{ secrets.BADGES }}
         gist_id: 58cf6c72c08e706335337d5ef9ca48e8
