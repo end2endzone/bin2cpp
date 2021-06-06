@@ -334,24 +334,27 @@ set(CPACK_NSIS_MENU_LINKS
   "https://github.com/end2endzone/bin2cpp" "Bin2cpp Web Site"
 )
 
-# Define more anchor points for NSIS installer.
-# SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS   "; CPACK_NSIS_EXTRA_INSTALL_COMMANDS INSERT LOCATION"    )
-# SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "; CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS INSERT LOCATION"  )
+if(BIN2CPP_BUILD_TEST)
+  # Define more anchor points for NSIS installer.
+  # SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS   "; CPACK_NSIS_EXTRA_INSTALL_COMMANDS INSERT LOCATION"    )
+  # SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "; CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS INSERT LOCATION"  )
 
-# Shortcuts that must start in 'bin' directory must be created manually...
-# NSIS CreateShortCut documentation: https://nsis.sourceforge.io/Reference/CreateShortCut
-# Note: CMake escaping mechanism is complicated. In short, to insert a backslash, use the literal string \\\\ and to insert a double-quote character, use the literal string \\\" .
-#       Also, generator expression variable such as `$<TARGET_FILE_NAME:bin2cpp_unittest>` does not work with CPACK_NSIS_CREATE_ICONS_EXTRA.
-SET(CPACK_NSIS_CREATE_ICONS_EXTRA "
+  # Shortcuts that must start in 'bin' directory must be created manually...
+  # NSIS CreateShortCut documentation: https://nsis.sourceforge.io/Reference/CreateShortCut
+  # Note: CMake escaping mechanism is complicated. In short, to insert a backslash, use the literal string \\\\ and to insert a double-quote character, use the literal string \\\" .
+  #       Also, generator expression variable such as `$<TARGET_FILE_NAME:bin2cpp_unittest>` does not work with CPACK_NSIS_CREATE_ICONS_EXTRA.
+  SET(CPACK_NSIS_CREATE_ICONS_EXTRA "
   SetOutPath \\\"$INSTDIR\\\\bin\\\"
   CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\Run Unit Tests.lnk\\\"                 \\\"$INSTDIR\\\\bin\\\\bin2cpp_unittest${CMAKE_DEBUG_POSTFIX}.exe\\\"
   CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\Generate test files.lnk\\\"            \\\"$INSTDIR\\\\bin\\\\generate_test_files.${SCRIPT_FILE_EXTENSION}\\\"
   SetOutPath \\\"$INSTDIR\\\"
   ")
-SET(CPACK_NSIS_DELETE_ICONS_EXTRA "
+  SET(CPACK_NSIS_DELETE_ICONS_EXTRA "
   Delete \\\"$SMPROGRAMS\\\\$MUI_TEMP\\\\Run Unit Tests.lnk\\\"
   Delete \\\"$SMPROGRAMS\\\\$MUI_TEMP\\\\Generate test files.lnk\\\"
   ")
+endif()
+
 
 #######################
 # WIX specific stuff #
@@ -379,8 +382,8 @@ set(CPACK_WIX_PROGRAM_MENU_FOLDER "bin2cpp ${bin2cpp_VERSION}")
 # Define start menu shortcuts for WIX
 if(BIN2CPP_BUILD_TEST)
   set_property(INSTALL "bin/$<TARGET_FILE_NAME:bin2cpp_unittest>"           PROPERTY CPACK_START_MENU_SHORTCUTS "Run Unit Tests"          )
+  set_property(INSTALL "bin/generate_test_files.${SCRIPT_FILE_EXTENSION}"   PROPERTY CPACK_START_MENU_SHORTCUTS "Generate test files"     )
 endif()
-set_property(INSTALL "bin/generate_test_files.${SCRIPT_FILE_EXTENSION}"   PROPERTY CPACK_START_MENU_SHORTCUTS "Generate test files"     )
 set_property(INSTALL "README.md"                                          PROPERTY CPACK_START_MENU_SHORTCUTS "README.md"               )
 set_property(INSTALL "CONTRIBUTING.md"                                    PROPERTY CPACK_START_MENU_SHORTCUTS "CONTRIBUTING.md"         )
 set_property(INSTALL "AUTHOR"                                             PROPERTY CPACK_START_MENU_SHORTCUTS "AUTHOR"                  )
