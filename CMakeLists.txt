@@ -377,7 +377,9 @@ set(CPACK_WIX_PROGRAM_MENU_FOLDER "bin2cpp ${bin2cpp_VERSION}")
 # See https://gitlab.kitware.com/cmake/cmake/-/issues/18081 for details.
 
 # Define start menu shortcuts for WIX
-set_property(INSTALL "bin/$<TARGET_FILE_NAME:bin2cpp_unittest>"           PROPERTY CPACK_START_MENU_SHORTCUTS "Run Unit Tests"          )
+if(BIN2CPP_BUILD_TEST)
+  set_property(INSTALL "bin/$<TARGET_FILE_NAME:bin2cpp_unittest>"           PROPERTY CPACK_START_MENU_SHORTCUTS "Run Unit Tests"          )
+endif()
 set_property(INSTALL "bin/generate_test_files.${SCRIPT_FILE_EXTENSION}"   PROPERTY CPACK_START_MENU_SHORTCUTS "Generate test files"     )
 set_property(INSTALL "README.md"                                          PROPERTY CPACK_START_MENU_SHORTCUTS "README.md"               )
 set_property(INSTALL "CONTRIBUTING.md"                                    PROPERTY CPACK_START_MENU_SHORTCUTS "CONTRIBUTING.md"         )
