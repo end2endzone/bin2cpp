@@ -171,9 +171,9 @@ struct ARGUMENTS
 };
 
 //pre-declarations
-bool generateFile(const std::string & inputFilePath, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator, bool overrideExisting);
-bool generateManagerFile(const std::string & iOutputFilePath, bin2cpp::IGenerator * generator, bool overrideExisting);
-APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
+bool generateFile(const ARGUMENTS & args, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator);
+bool generateManagerFile(const ARGUMENTS & args, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 
 void printHeader()
@@ -436,7 +436,7 @@ int main(int argc, char* argv[])
   //process file or directory
   if (args.hasFile)
   {
-    APP_ERROR_CODES error = processSingleFile(args, generator);
+    APP_ERROR_CODES error = processInputFile(args, generator);
     if (error != APP_ERROR_SUCCESS)
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
@@ -500,7 +500,7 @@ int main(int argc, char* argv[])
       argsCopy.functionIdentifier = ra::strings::CapitalizeFirstCharacter(argsCopy.functionIdentifier);
 
       //process this file...
-      APP_ERROR_CODES error = processSingleFile(argsCopy, generator);
+      APP_ERROR_CODES error = processInputFile(argsCopy, generator);
       if (error != APP_ERROR_SUCCESS)
       {
         ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
@@ -527,7 +527,7 @@ int main(int argc, char* argv[])
   return APP_ERROR_SUCCESS;
 }
 
-APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator)
+APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator)
 {
   // printing info
   std::string info;
@@ -566,11 +566,11 @@ APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * 
   generator->setRegisterFileEnabled(args.registerfile);
 
   //process files
-  bool headerResult = generateFile(args.inputFilePath, outputHeaderPath, generator, args.overrideExisting);
+  bool headerResult = generateFile(args, outputHeaderPath, generator);
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateFile(args.inputFilePath, outputCppPath,    generator, args.overrideExisting);
+  bool cppResult =    generateFile(args, outputCppPath, generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
@@ -599,9 +599,9 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFilePath, const std:
   return UPDATING;
 }
 
-bool generateFile(const std::string & inputFilePath, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator, bool overrideExisting)
+bool generateFile(const ARGUMENTS & args, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator)
 {
-  FILE_UPDATE_MODE mode = getFileUpdateMode(inputFilePath, iOutputFilePath, overrideExisting);
+  FILE_UPDATE_MODE mode = getFileUpdateMode(args.inputFilePath, iOutputFilePath, args.overrideExisting);
 
   //writing message
   ra::logging::Log(ra::logging::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
@@ -630,10 +630,10 @@ bool generateFile(const std::string & inputFilePath, const std::string & iOutput
   return result;
 }
 
-bool generateManagerFile(const std::string & iOutputFilePath, bin2cpp::IGenerator * generator, bool overrideExisting)
+bool generateManagerFile(const ARGUMENTS & args, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator)
 {
   std::string processPath = ra::process::GetCurrentProcessPath();
-  FILE_UPDATE_MODE mode = getFileUpdateMode(processPath, iOutputFilePath, overrideExisting);
+  FILE_UPDATE_MODE mode = getFileUpdateMode(processPath, iOutputFilePath, args.overrideExisting);
 
   //writing message
   ra::logging::Log(ra::logging::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
@@ -679,11 +679,11 @@ APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator 
   std::string outputCppPath = args.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
 
   //process files
-  bool headerResult = generateManagerFile(outputHeaderPath, generator, args.overrideExisting);
+  bool headerResult = generateManagerFile(args, outputHeaderPath, generator);
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateManagerFile(outputCppPath,    generator, args.overrideExisting);
+  bool cppResult =    generateManagerFile(args, outputCppPath, generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
