@@ -174,6 +174,7 @@ struct ARGUMENTS
 bool generateFile(const ARGUMENTS & args, const std::string & output_file_path, bin2cpp::IGenerator * generator);
 bool generateManagerFile(const ARGUMENTS & args, const std::string & output_file_path, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 
 void printHeader()
@@ -445,72 +446,12 @@ int main(int argc, char* argv[])
   }
   else if (args.hasDir)
   {
-    //check if input dir exists
-    if (!ra::filesystem::DirectoryExists(args.inputDirPath.c_str()))
+    APP_ERROR_CODES error = processInputDirectory(args, generator);
+    if (error != APP_ERROR_SUCCESS)
     {
-      APP_ERROR_CODES error = APP_ERROR_INPUTDIRNOTFOUND;
-      ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDirPath.c_str());
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
       return error;
     }
-
-    //search all files in the directory
-    ra::strings::StringVector files;
-    bool found = ra::filesystem::FindFiles(files, args.inputDirPath.c_str());
-    if (!found)
-    {
-      APP_ERROR_CODES error = APP_ERROR_INPUTDIRNOTFOUND;
-      ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDirPath.c_str());
-      return error;
-    }
-
-    //remove directories from list
-    ra::strings::StringVector tmp;
-    for(size_t i=0; i<files.size(); i++)
-    {
-      const std::string & file = files[i];
-      if (ra::filesystem::FileExists(file.c_str()))
-        tmp.push_back(file);
-    }
-    files = tmp;
-
-    //need to process files ?
-    if (files.empty())
-      return APP_ERROR_SUCCESS;
-
-    //for each files
-    for(size_t i=0; i<files.size(); i++)
-    {
-      const std::string & file = files[i];
-
-      //build a 'headerfile' and 'identifier' argument for this file...
-      ARGUMENTS argsCopy = args;
-
-      //replace 'dir' input by current file input
-      argsCopy.hasDir = false;
-      argsCopy.inputDirPath = "";
-      argsCopy.hasFile = true;
-      argsCopy.inputFilePath = file;
-
-      //use the file name without extension as 'headerfile'.
-      argsCopy.headerFilename = ra::filesystem::GetFilenameWithoutExtension(file.c_str());
-      argsCopy.headerFilename.append(".h");
-
-      //use the file name without extension as 'identifier'.
-      argsCopy.functionIdentifier = getFunctionIdentifierFromPath(ra::filesystem::GetFilenameWithoutExtension(file.c_str()));
-      argsCopy.functionIdentifier = ra::strings::CapitalizeFirstCharacter(argsCopy.functionIdentifier);
-
-      //process this file...
-      APP_ERROR_CODES error = processInputFile(argsCopy, generator);
-      if (error != APP_ERROR_SUCCESS)
-      {
-        ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
-        return error;
-      }
-
-      //next file
-    }
-
-    //all files processed
   }
 
   //should we also generate the FileManager class?
@@ -575,6 +516,74 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * g
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
   //success
+  return APP_ERROR_SUCCESS;
+}
+
+APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerator * generator)
+{
+  //check if input dir exists
+  if (!ra::filesystem::DirectoryExists(args.inputDirPath.c_str()))
+  {
+    APP_ERROR_CODES error = APP_ERROR_INPUTDIRNOTFOUND;
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDirPath.c_str());
+    return error;
+  }
+
+  //search all files in the directory
+  ra::strings::StringVector files;
+  bool found = ra::filesystem::FindFiles(files, args.inputDirPath.c_str());
+  if (!found)
+  {
+    APP_ERROR_CODES error = APP_ERROR_INPUTDIRNOTFOUND;
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDirPath.c_str());
+    return error;
+  }
+
+  //remove directories from list
+  ra::strings::StringVector tmp;
+  for(size_t i=0; i<files.size(); i++)
+  {
+    const std::string & file = files[i];
+    if (ra::filesystem::FileExists(file.c_str()))
+      tmp.push_back(file);
+  }
+  files = tmp;
+
+  //need to process files ?
+  if (files.empty())
+    return APP_ERROR_SUCCESS;
+
+  //for each files
+  for(size_t i=0; i<files.size(); i++)
+  {
+    const std::string & file = files[i];
+
+    //build a 'headerfile' and 'identifier' argument for this file...
+    ARGUMENTS argsCopy = args;
+
+    //replace 'dir' input by current file input
+    argsCopy.hasDir = false;
+    argsCopy.inputDirPath = "";
+    argsCopy.hasFile = true;
+    argsCopy.inputFilePath = file;
+
+    //use the file name without extension as 'headerfile'.
+    argsCopy.headerFilename = ra::filesystem::GetFilenameWithoutExtension(file.c_str());
+    argsCopy.headerFilename.append(".h");
+
+    //use the file name without extension as 'identifier'.
+    argsCopy.functionIdentifier = getFunctionIdentifierFromPath(ra::filesystem::GetFilenameWithoutExtension(file.c_str()));
+    argsCopy.functionIdentifier = ra::strings::CapitalizeFirstCharacter(argsCopy.functionIdentifier);
+
+    //process this file...
+    APP_ERROR_CODES error = processInputFile(argsCopy, generator);
+    if (error != APP_ERROR_SUCCESS)
+      return error;
+
+    //next file
+  }
+
+  //all files processed
   return APP_ERROR_SUCCESS;
 }
 
