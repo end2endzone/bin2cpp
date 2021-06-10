@@ -69,9 +69,9 @@ static const char * DEFAULT_NAMESPACE = "bin2cpp";
 static const char * DEFAULT_BASECLASSNAME = "File";
 static const IGenerator::CppEncoderEnum DEFAULT_ENCODING = IGenerator::CPP_ENCODER_OCT;
 
-const char * getErrorCodeDescription(const APP_ERROR_CODES & iErrorCode)
+const char * getErrorCodeDescription(const APP_ERROR_CODES & error_code)
 {
-  switch(iErrorCode)
+  switch(error_code)
   {
   case APP_ERROR_SUCCESS:
     return "Success";
@@ -96,9 +96,9 @@ const char * getErrorCodeDescription(const APP_ERROR_CODES & iErrorCode)
   };
 }
 
-const char * getUpdateModeText(const FILE_UPDATE_MODE & iMode)
+const char * getUpdateModeText(const FILE_UPDATE_MODE & mode)
 {
-  switch(iMode)
+  switch(mode)
   {
   case WRITING:
     return "Writing";
@@ -171,8 +171,8 @@ struct ARGUMENTS
 };
 
 //pre-declarations
-bool generateFile(const ARGUMENTS & args, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator);
-bool generateManagerFile(const ARGUMENTS & args, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator);
+bool generateFile(const ARGUMENTS & args, const std::string & output_file_path, bin2cpp::IGenerator * generator);
+bool generateManagerFile(const ARGUMENTS & args, const std::string & output_file_path, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 
@@ -578,9 +578,9 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * g
   return APP_ERROR_SUCCESS;
 }
 
-FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFilePath, const std::string & iOutputFilePath, bool overrideExisting)
+FILE_UPDATE_MODE getFileUpdateMode(const std::string & input_file_path, const std::string & output_file_path, bool overrideExisting)
 {
-  if (!ra::filesystem::FileExists(iOutputFilePath.c_str()))
+  if (!ra::filesystem::FileExists(output_file_path.c_str()))
     return WRITING;
   //at this point, we know that the file exists
 
@@ -588,10 +588,10 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFilePath, const std:
     return OVERWRITING;
 
   //do not modify the output file if it is not out of date
-  uint64_t lastModifiedDate = ra::filesystem::GetFileModifiedDate(inputFilePath);
-  uint64_t outputModifiedDate = bin2cpp::getOutputFileModifiedDate(iOutputFilePath);
+  uint64_t lastModifiedDate = ra::filesystem::GetFileModifiedDate(input_file_path);
+  uint64_t outputModifiedDate = bin2cpp::getOutputFileModifiedDate(output_file_path);
   if (outputModifiedDate == 0)
-    ra::logging::Log(ra::logging::LOG_WARNING, "Unable to get last modified date of file \'%s\'", iOutputFilePath.c_str());
+    ra::logging::Log(ra::logging::LOG_WARNING, "Unable to get last modified date of file \'%s\'", output_file_path.c_str());
   if (lastModifiedDate == outputModifiedDate)
     return SKIPPING;
 
@@ -599,27 +599,27 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFilePath, const std:
   return UPDATING;
 }
 
-bool generateFile(const ARGUMENTS & args, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator)
+bool generateFile(const ARGUMENTS & args, const std::string & output_file_path, bin2cpp::IGenerator * generator)
 {
-  FILE_UPDATE_MODE mode = getFileUpdateMode(args.inputFilePath, iOutputFilePath, args.overrideExisting);
+  FILE_UPDATE_MODE mode = getFileUpdateMode(args.inputFilePath, output_file_path, args.overrideExisting);
 
   //writing message
-  ra::logging::Log(ra::logging::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
+  ra::logging::Log(ra::logging::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), output_file_path.c_str());
   
   if (mode == SKIPPING)
     return true; //skipping is success
 
   //generate file
   bool result = false;
-  if (isCppHeaderFile(iOutputFilePath))
+  if (isCppHeaderFile(output_file_path))
   {
     //generate header
-    result = generator->createCppHeaderFile(iOutputFilePath.c_str());
+    result = generator->createCppHeaderFile(output_file_path.c_str());
   }
   else
   {
     //generate cpp
-    result = generator->createCppSourceFile(iOutputFilePath.c_str());
+    result = generator->createCppSourceFile(output_file_path.c_str());
   }
   if (!result)
   {
@@ -630,28 +630,28 @@ bool generateFile(const ARGUMENTS & args, const std::string & iOutputFilePath, b
   return result;
 }
 
-bool generateManagerFile(const ARGUMENTS & args, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator)
+bool generateManagerFile(const ARGUMENTS & args, const std::string & output_file_path, bin2cpp::IGenerator * generator)
 {
   std::string processPath = ra::process::GetCurrentProcessPath();
-  FILE_UPDATE_MODE mode = getFileUpdateMode(processPath, iOutputFilePath, args.overrideExisting);
+  FILE_UPDATE_MODE mode = getFileUpdateMode(processPath, output_file_path, args.overrideExisting);
 
   //writing message
-  ra::logging::Log(ra::logging::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
+  ra::logging::Log(ra::logging::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), output_file_path.c_str());
   
   if (mode == SKIPPING)
     return true; //skipping is success
 
   //generate file
   bool result = false;
-  if (isCppHeaderFile(iOutputFilePath))
+  if (isCppHeaderFile(output_file_path))
   {
     //generate header
-    result = generator->createManagerHeaderFile(iOutputFilePath.c_str());
+    result = generator->createManagerHeaderFile(output_file_path.c_str());
   }
   else
   {
     //generate cpp
-    result = generator->createManagerSourceFile(iOutputFilePath.c_str());
+    result = generator->createManagerSourceFile(output_file_path.c_str());
   }
   if (!result)
   {

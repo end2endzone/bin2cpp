@@ -115,9 +115,11 @@ void crc32Finish(uint32_t *pCrc32)
   *pCrc32 = ~(*pCrc32);
 }
 
-void crc32String(const uint32_t *pCrc32, std::string & oHexValue)
+void crc32String(const uint32_t *pCrc32, std::string * pHexStr)
 {
-  oHexValue = "";
+  if (!pHexStr) return;
+
+  *pHexStr = "";
 
   const int bufferSize = 5;
   char buffer[bufferSize];
@@ -126,6 +128,6 @@ void crc32String(const uint32_t *pCrc32, std::string & oHexValue)
   for(int i=sizeof(uint32_t) - 1; i>=0; i--)
   {
     sprintf(buffer, "%02x", p[i]);
-    oHexValue.append(buffer);
+    pHexStr->append(buffer);
   }
 }

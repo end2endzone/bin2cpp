@@ -230,7 +230,7 @@ namespace bin2cpp
     crc32Finish(&checksum);
 
     std::string checksumString;
-    crc32String(&checksum, checksumString);
+    crc32String(&checksum, &checksumString);
     checksumString = ra::strings::Uppercase(checksumString);
 
     //build the final identifier
