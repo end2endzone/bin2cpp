@@ -152,12 +152,12 @@ struct ARGUMENTS
   bool noheader;
   bool quiet;
   bool version;
-  bool hasFile;
-  bool hasDir;
-  bool hasManagerFile;
-  std::string inputFile;
-  std::string inputDir;
-  std::string outputFolder;
+  bool hasFile;                 // true if 'inputFilePath' is set.
+  bool hasDir;                  // true if 'inputDirPath' is set.
+  bool hasManagerFile;          // true if 'managerHeaderFilename' is set.
+  std::string inputFilePath;    // path of the input binary file
+  std::string inputDirPath;
+  std::string outputDirPath;
   std::string headerFilename;
   std::string functionIdentifier;
   size_t chunkSize;
@@ -171,7 +171,7 @@ struct ARGUMENTS
 };
 
 //pre-declarations
-bool generateFile(const std::string & inputFile, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator, bool overrideExisting);
+bool generateFile(const std::string & inputFilePath, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator, bool overrideExisting);
 bool generateManagerFile(const std::string & iOutputFilePath, bin2cpp::IGenerator * generator, bool overrideExisting);
 APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
@@ -270,8 +270,8 @@ int main(int argc, char* argv[])
     printHeader();
 
   //mandatory arguments
-  args.hasFile = ra::cli::ParseArgument("file", args.inputFile, argc, argv);
-  args.hasDir  = ra::cli::ParseArgument("dir",  args.inputDir,  argc, argv);
+  args.hasFile = ra::cli::ParseArgument("file", args.inputFilePath, argc, argv);
+  args.hasDir  = ra::cli::ParseArgument("dir",  args.inputDirPath,  argc, argv);
   args.hasManagerFile = ra::cli::ParseArgument("managerfile", args.managerHeaderFilename, argc, argv);
   if (!args.hasFile && !args.hasDir && !args.hasManagerFile)
   {
@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
     return error;
   }
 
-  if (!ra::cli::ParseArgument("output", args.outputFolder, argc, argv))
+  if (!ra::cli::ParseArgument("output", args.outputDirPath, argc, argv))
   {
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
     ra::logging::Log(ra::logging::LOG_ERROR, "%s (output)", getErrorCodeDescription(error));
@@ -446,20 +446,20 @@ int main(int argc, char* argv[])
   else if (args.hasDir)
   {
     //check if input dir exists
-    if (!ra::filesystem::DirectoryExists(args.inputDir.c_str()))
+    if (!ra::filesystem::DirectoryExists(args.inputDirPath.c_str()))
     {
       APP_ERROR_CODES error = APP_ERROR_INPUTDIRNOTFOUND;
-      ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDir.c_str());
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDirPath.c_str());
       return error;
     }
 
     //search all files in the directory
     ra::strings::StringVector files;
-    bool found = ra::filesystem::FindFiles(files, args.inputDir.c_str());
+    bool found = ra::filesystem::FindFiles(files, args.inputDirPath.c_str());
     if (!found)
     {
       APP_ERROR_CODES error = APP_ERROR_INPUTDIRNOTFOUND;
-      ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDir.c_str());
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDirPath.c_str());
       return error;
     }
 
@@ -487,9 +487,9 @@ int main(int argc, char* argv[])
 
       //replace 'dir' input by current file input
       argsCopy.hasDir = false;
-      argsCopy.inputDir = "";
+      argsCopy.inputDirPath = "";
       argsCopy.hasFile = true;
-      argsCopy.inputFile = file;
+      argsCopy.inputFilePath = file;
 
       //use the file name without extension as 'headerfile'.
       argsCopy.headerFilename = ra::filesystem::GetFilenameWithoutExtension(file.c_str());
@@ -531,7 +531,7 @@ APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * 
 {
   // printing info
   std::string info;
-  info << "Embedding \"" << args.inputFile << "\"";
+  info << "Embedding \"" << args.inputFilePath << "\"";
   if (args.chunkSize != DEFAULT_CHUNK_SIZE)
   {
     info << " using chunks of ";
@@ -547,29 +547,30 @@ APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * 
   std::string cppFilename = args.headerFilename;
   ra::strings::Replace(cppFilename, ".hpp", ".cpp");
   ra::strings::Replace(cppFilename, ".h", ".cpp");  
-  std::string outputHeaderPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + args.headerFilename;
-  std::string outputCppPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + cppFilename;
+  std::string outputHeaderPath = args.outputDirPath + ra::filesystem::GetPathSeparatorStr() + args.headerFilename;
+  std::string outputCppPath = args.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
 
   //check if input file exists
-  if (!ra::filesystem::FileExists(args.inputFile.c_str()))
+  if (!ra::filesystem::FileExists(args.inputFilePath.c_str()))
     return APP_ERROR_INPUTFILENOTFOUND;
 
   //configure the generator
-  generator->setInputFile(args.inputFile.c_str());
+  generator->setInputFilePath(args.inputFilePath.c_str());
+  generator->setHeaderFilename(args.headerFilename.c_str());
   generator->setFunctionIdentifier(args.functionIdentifier.c_str());
   generator->setChunkSize(args.chunkSize);
   generator->setNamespace(args.codeNamespace.c_str());
   generator->setBaseClass(args.baseClass.c_str());
   generator->setCppEncoder(args.encoding);
-  generator->setManagerHeaderFile(args.managerHeaderFilename.c_str());
+  generator->setManagerHeaderFilePath(args.managerHeaderFilename.c_str());
   generator->setRegisterFileEnabled(args.registerfile);
 
   //process files
-  bool headerResult = generateFile(args.inputFile, outputHeaderPath, generator, args.overrideExisting);
+  bool headerResult = generateFile(args.inputFilePath, outputHeaderPath, generator, args.overrideExisting);
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateFile(args.inputFile, outputCppPath,    generator, args.overrideExisting);
+  bool cppResult =    generateFile(args.inputFilePath, outputCppPath,    generator, args.overrideExisting);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
@@ -577,7 +578,7 @@ APP_ERROR_CODES processSingleFile(const ARGUMENTS & args, bin2cpp::IGenerator * 
   return APP_ERROR_SUCCESS;
 }
 
-FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::string & iOutputFilePath, bool overrideExisting)
+FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFilePath, const std::string & iOutputFilePath, bool overrideExisting)
 {
   if (!ra::filesystem::FileExists(iOutputFilePath.c_str()))
     return WRITING;
@@ -587,7 +588,7 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::str
     return OVERWRITING;
 
   //do not modify the output file if it is not out of date
-  uint64_t lastModifiedDate = ra::filesystem::GetFileModifiedDate(inputFile);
+  uint64_t lastModifiedDate = ra::filesystem::GetFileModifiedDate(inputFilePath);
   uint64_t outputModifiedDate = bin2cpp::getOutputFileModifiedDate(iOutputFilePath);
   if (outputModifiedDate == 0)
     ra::logging::Log(ra::logging::LOG_WARNING, "Unable to get last modified date of file \'%s\'", iOutputFilePath.c_str());
@@ -598,9 +599,9 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & inputFile, const std::str
   return UPDATING;
 }
 
-bool generateFile(const std::string & inputFile, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator, bool overrideExisting)
+bool generateFile(const std::string & inputFilePath, const std::string & iOutputFilePath, bin2cpp::IGenerator * generator, bool overrideExisting)
 {
-  FILE_UPDATE_MODE mode = getFileUpdateMode(inputFile, iOutputFilePath, overrideExisting);
+  FILE_UPDATE_MODE mode = getFileUpdateMode(inputFilePath, iOutputFilePath, overrideExisting);
 
   //writing message
   ra::logging::Log(ra::logging::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), iOutputFilePath.c_str());
@@ -674,8 +675,8 @@ APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator 
   std::string cppFilename = args.managerHeaderFilename;
   ra::strings::Replace(cppFilename, ".hpp", ".cpp");
   ra::strings::Replace(cppFilename, ".h", ".cpp");
-  std::string outputHeaderPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + args.managerHeaderFilename;
-  std::string outputCppPath = args.outputFolder + ra::filesystem::GetPathSeparatorStr() + cppFilename;
+  std::string outputHeaderPath = args.outputDirPath + ra::filesystem::GetPathSeparatorStr() + args.managerHeaderFilename;
+  std::string outputCppPath = args.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
 
   //process files
   bool headerResult = generateManagerFile(outputHeaderPath, generator, args.overrideExisting);

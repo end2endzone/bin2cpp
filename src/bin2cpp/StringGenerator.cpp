@@ -50,7 +50,7 @@ namespace bin2cpp
   bool StringGenerator::createCppSourceFile(const char * cpp_file_path)
   {
     //check if input file exists
-    FILE * input = fopen(mInputFile.c_str(), "rb");
+    FILE * input = fopen(getInputFilePath(), "rb");
     if (!input)
       return false;
 
@@ -73,7 +73,7 @@ namespace bin2cpp
 
     //determine file properties
     uint32_t fileSize = ra::filesystem::GetFileSize(input);
-    std::string filename = ra::filesystem::GetFilename(mInputFile.c_str());
+    std::string filename = ra::filesystem::GetFilename(getInputFilePath());
 
     //Build class name
     std::string className = getClassName();
@@ -94,7 +94,7 @@ namespace bin2cpp
     fprintf(cpp, "    %s() {}\n", className.c_str());
     fprintf(cpp, "    virtual ~%s() {}\n", className.c_str());
     fprintf(cpp, "    virtual size_t getSize() const { return %u; }\n", fileSize);
-    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::GetFilename(mInputFile.c_str()).c_str());
+    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::GetFilename(getInputFilePath()).c_str());
     fprintf(cpp, "    virtual const char * getBuffer() const\n");
     fprintf(cpp, "    {\n");
     fprintf(cpp, "      const char * buffer = ""\n");

@@ -46,15 +46,26 @@ namespace bin2cpp
   {
   }
 
-  void BaseGenerator::setInputFile(const char * path)
+  void BaseGenerator::setInputFilePath(const char * path)
   {
     if (path)
-      mInputFile = path;
+      mInputFilePath = path;
   }
 
-  const char * BaseGenerator::getInputFile() const
+  const char * BaseGenerator::getInputFilePath() const
   {
-    return mInputFile.c_str();
+    return mInputFilePath.c_str();
+  }
+
+  void BaseGenerator::setHeaderFilename(const char * path)
+  {
+    if (path)
+      mHeaderFilename = path;
+  }
+
+  const char * BaseGenerator::getHeaderFilename() const
+  {
+    return mHeaderFilename.c_str();
   }
 
   void BaseGenerator::setFunctionIdentifier(const char * function_identifier)
@@ -110,15 +121,15 @@ namespace bin2cpp
     return mCppEncoder;
   }
 
-  void BaseGenerator::setManagerHeaderFile(const char * manager_file)
+  void BaseGenerator::setManagerHeaderFilePath(const char * manager_file)
   {
     if (manager_file)
-      mManagerFile = manager_file;
+      mManagerFilePath = manager_file;
   }
 
-  const char * BaseGenerator::getManagerHeaderFile() const
+  const char * BaseGenerator::getManagerHeaderFilePath() const
   {
-    return mManagerFile.c_str();
+    return mManagerFilePath.c_str();
   }
 
   void BaseGenerator::setRegisterFileEnabled(bool register_file_enabled)
@@ -178,8 +189,8 @@ namespace bin2cpp
     header << " * bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp\n";
     if (includeSourceFile)
     {
-      std::string filename = ra::filesystem::GetFilename(mInputFile.c_str());
-      uint64_t lastModifiedDate = ra::filesystem::GetFileModifiedDate(mInputFile);
+      std::string filename = ra::filesystem::GetFilename(mInputFilePath.c_str());
+      uint64_t lastModifiedDate = ra::filesystem::GetFileModifiedDate(mInputFilePath);
       header << " * Source code for file '" << filename << "', last modified " << lastModifiedDate << ".\n";
     }
     header << " * Do not modify this file.\n";
