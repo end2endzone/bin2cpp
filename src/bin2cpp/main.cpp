@@ -503,7 +503,7 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * g
   generator->setNamespace(args.codeNamespace.c_str());
   generator->setBaseClass(args.baseClass.c_str());
   generator->setCppEncoder(args.encoding);
-  generator->setManagerHeaderFilePath(args.managerHeaderFilename.c_str());
+  generator->setManagerHeaderFilename(args.managerHeaderFilename.c_str());
   generator->setRegisterFileEnabled(args.registerfile);
 
   //process files

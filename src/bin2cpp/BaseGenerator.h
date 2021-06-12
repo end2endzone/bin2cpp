@@ -54,8 +54,8 @@ namespace bin2cpp
     virtual const char * getBaseClass() const;
     virtual void setCppEncoder(const CppEncoderEnum & cpp_encoder);
     virtual CppEncoderEnum getCppEncoder() const;
-    virtual void setManagerHeaderFilePath(const char * manager_file);
-    virtual const char * getManagerHeaderFilePath() const;
+    virtual void setManagerHeaderFilename(const char * manager_file);
+    virtual const char * getManagerHeaderFilename() const;
     virtual void setRegisterFileEnabled(bool register_file_enabled);
     virtual bool isRegisterFileEnabled() const;
 
@@ -74,6 +74,7 @@ namespace bin2cpp
     virtual std::string getSaveMethodTemplate();
     virtual std::string getFileManagerRegistrationTemplate();
     virtual std::string getClassName();
+    virtual std::string getClassMacroGuardPrefix();
 
     //attributes
     std::string mInputFilePath;
@@ -82,7 +83,7 @@ namespace bin2cpp
     size_t mChunkSize;
     std::string mNamespace;
     std::string mBaseClass;
-    std::string mManagerFilePath;
+    std::string mManagerHeaderFilename;
     IGenerator::CppEncoderEnum mCppEncoder;
     bool mManagerEnabled;
   };

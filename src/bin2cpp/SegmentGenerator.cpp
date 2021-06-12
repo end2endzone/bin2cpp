@@ -60,8 +60,6 @@ namespace bin2cpp
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(cpp_file_path);
     std::string cppPath = cpp_file_path;
-    std::string headerFilename = ra::filesystem::GetFilename(headerPath.c_str());
-    std::string cppFilename = ra::filesystem::GetFilename(cpp_file_path);
 
     //create cpp file
     FILE * cpp = fopen(cppPath.c_str(), "w");
@@ -84,14 +82,14 @@ namespace bin2cpp
     std::string getterFunctionName = getGetterFunctionName();
 
     //Build FileManager class template
-    std::string manager = getManagerHeaderFilePath();
+    std::string manager = getManagerHeaderFilename();
 
     //write cpp file heading
     fprintf(cpp, "%s", getHeaderTemplate().c_str());
     fprintf(cpp, "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n");
     fprintf(cpp, "#define _CRT_SECURE_NO_WARNINGS\n");
     fprintf(cpp, "#endif\n");
-    fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str() );
+    fprintf(cpp, "#include \"%s\"\n", getHeaderFilename() );
     fprintf(cpp, "#include <stdio.h> //for FILE\n");
     fprintf(cpp, "#include <string> //for memcpy\n");
     fprintf(cpp, "namespace %s\n", mNamespace.c_str());

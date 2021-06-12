@@ -26,6 +26,7 @@
 
 #include "rapidassist/testing.h"
 #include "rapidassist/filesystem.h"
+#include "rapidassist/testing.h"
 
 //generated_files
 #include "testHtml100000/_testHtml100000.h"
@@ -53,6 +54,8 @@
 #include "testIssue12/_testIssue12.h"
 #include "testIssue12Mini/_testIssue12Mini.h"
 #include "testIssue13/_testIssue13.h"
+#include "testIssue47/generated/_testIssue47.h"
+#include "testIssue50/_testIssue50.h"
 
 #undef BIN2CPP_EMBEDDEDFILE_CLASS
 #include "testNamespace/_testNamespace.h"
@@ -471,4 +474,78 @@ TEST_F(TestExtraction, testIssue13)
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testIssue47)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp47::File & file = bin2cpp47::getTestIssue47File();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+
+  //assert custom subfolder 'generated' is found in include directives.
+
+  int line = 0;
+  int index = 0;
+
+  //_testIssue47.h
+  {
+    std::string path = "generated_files/testIssue47/generated/_testIssue47.cpp";
+    ra::filesystem::NormalizePath(path);
+    ASSERT_TRUE( ra::filesystem::FileExists(path.c_str()) ) << "File '" << path.c_str() << "' not found!";
+    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "#include \"generated/_testIssue47.h\"", line, index) );
+  }
+
+  //FileManager47.cpp
+  {
+    std::string path = "generated_files/testIssue47/generated/FileManager47.cpp";
+    ra::filesystem::NormalizePath(path);
+    ASSERT_TRUE( ra::filesystem::FileExists(path.c_str()) ) << "File '" << path.c_str() << "' not found!";
+    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "#include \"generated/FileManager47.h\"", line, index) );
+  }
+
+}
+
+TEST_F(TestExtraction, testIssue50)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const bin2cpp50::File & file = bin2cpp50::getTestIssue50File();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert content is the same
+  std::string reason;
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+
+  //assert macro guards are prefixed with "BIN2CPP50"
+
+  int line = 0;
+  int index = 0;
+
+  //_testIssue50.h
+  {
+    std::string path = "generated_files/testIssue50/_testIssue50.h";
+    ra::filesystem::NormalizePath(path);
+    ASSERT_TRUE( ra::filesystem::FileExists(path.c_str()) ) << "File '" << path.c_str() << "' not found!";
+    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "BIN2CPP50_EMBEDDEDFILE_CLASS", line, index) );
+  }
+
+  //FileManager50.h
+  {
+    std::string path = "generated_files/testIssue50/FileManager50.h";
+    ra::filesystem::NormalizePath(path);
+    ASSERT_TRUE( ra::filesystem::FileExists(path.c_str()) ) << "File '" << path.c_str() << "' not found!";
+    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "BIN2CPP50_EMBEDDEDFILE_CLASS", line, index) );
+    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "BIN2CPP50_FILEMANAGER_CLASS",  line, index) );
+  }
 }

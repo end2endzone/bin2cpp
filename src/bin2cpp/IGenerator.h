@@ -113,16 +113,16 @@ namespace bin2cpp
     virtual const char * getBaseClass() const = 0;
 
     ///<summary>
-    ///Defines the path of the FileManager output file.
+    ///Defines the filename of the FileManager generated header.
     ///</summary>
     ///<param name="path">The path of the FileManager output file.</param>
-    virtual void setManagerHeaderFilePath(const char * path) = 0;
+    virtual void setManagerHeaderFilename(const char * path) = 0;
 
     ///<summary>
-    ///Provides the path of the FileManager output file.
+    ///Provides the filename of the FileManager generated header.
     ///</summary>
     ///<returns>Returns the path of the FileManager output file. Returns an empty string if not defined.</returns>
-    virtual const char * getManagerHeaderFilePath() const = 0;
+    virtual const char * getManagerHeaderFilename() const = 0;
 
     ///<summary>
     ///Enable or disable the registration of the generated file to the FileManager.

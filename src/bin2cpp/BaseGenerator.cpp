@@ -121,15 +121,15 @@ namespace bin2cpp
     return mCppEncoder;
   }
 
-  void BaseGenerator::setManagerHeaderFilePath(const char * manager_file)
+  void BaseGenerator::setManagerHeaderFilename(const char * manager_file)
   {
     if (manager_file)
-      mManagerFilePath = manager_file;
+      mManagerHeaderFilename = manager_file;
   }
 
-  const char * BaseGenerator::getManagerHeaderFilePath() const
+  const char * BaseGenerator::getManagerHeaderFilename() const
   {
-    return mManagerFilePath.c_str();
+    return mManagerHeaderFilename.c_str();
   }
 
   void BaseGenerator::setRegisterFileEnabled(bool register_file_enabled)
@@ -238,15 +238,26 @@ namespace bin2cpp
     return className;
   }
 
+  std::string BaseGenerator::getClassMacroGuardPrefix()
+  {
+    std::string macroGuardPrefix = ra::strings::Uppercase(mNamespace);
+
+    //remove namespace separators
+    ra::strings::Replace(macroGuardPrefix, "::", "_");
+
+    return macroGuardPrefix;
+  }
+
   bool BaseGenerator::createCppHeaderFile(const char * header_file_path)
   {
     FILE * header = fopen(header_file_path, "w");
     if (!header)
       return false;
 
-    //define macro guard a macro matching the filename
+    //define macro guard matching the filename
     std::string macroGuard = getCppIncludeGuardMacroName(header_file_path);
 
+    std::string classMacroGuardPrefix = getClassMacroGuardPrefix();
     std::string fileHeader = getHeaderTemplate();
 
     fprintf(header, "%s", fileHeader.c_str());
@@ -257,8 +268,8 @@ namespace bin2cpp
     fprintf(header, "\n");
     fprintf(header, "namespace %s\n", mNamespace.c_str());
     fprintf(header, "{\n");
-    fprintf(header, "  #ifndef BIN2CPP_EMBEDDEDFILE_CLASS\n");
-    fprintf(header, "  #define BIN2CPP_EMBEDDEDFILE_CLASS\n");
+    fprintf(header, "  #ifndef %s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
+    fprintf(header, "  #define %s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
     fprintf(header, "  class %s\n", mBaseClass.c_str());
     fprintf(header, "  {\n");
     fprintf(header, "  public:\n");
@@ -267,7 +278,7 @@ namespace bin2cpp
     fprintf(header, "    virtual const char * getBuffer() const = 0;\n");
     fprintf(header, "    virtual bool save(const char * iFilename) const = 0;\n");
     fprintf(header, "  };\n");
-    fprintf(header, "  #endif //BIN2CPP_EMBEDDEDFILE_CLASS\n");
+    fprintf(header, "  #endif //%s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
     fprintf(header, "  const %s & %s();\n", mBaseClass.c_str(), getGetterFunctionName().c_str());
     fprintf(header, "}; //%s\n", mNamespace.c_str());
     fprintf(header, "\n");
@@ -291,6 +302,7 @@ namespace bin2cpp
       macroGuard += "_";
     macroGuard += getCppIncludeGuardMacroName(header_file_path);
 
+    std::string classMacroGuardPrefix = getClassMacroGuardPrefix();
     std::string fileHeader = getHeaderTemplate(false);
 
     fprintf(header, "%s", fileHeader.c_str());
@@ -302,8 +314,8 @@ namespace bin2cpp
     fprintf(header, "\n");
     fprintf(header, "namespace %s\n", mNamespace.c_str());
     fprintf(header, "{\n");
-    fprintf(header, "  #ifndef BIN2CPP_EMBEDDEDFILE_CLASS\n");
-    fprintf(header, "  #define BIN2CPP_EMBEDDEDFILE_CLASS\n");
+    fprintf(header, "  #ifndef %s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
+    fprintf(header, "  #define %s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
     fprintf(header, "  class %s\n", mBaseClass.c_str());
     fprintf(header, "  {\n");
     fprintf(header, "  public:\n");
@@ -312,10 +324,10 @@ namespace bin2cpp
     fprintf(header, "    virtual const char * getBuffer() const = 0;\n");
     fprintf(header, "    virtual bool save(const char * iFilename) const = 0;\n");
     fprintf(header, "  };\n");
-    fprintf(header, "  #endif //BIN2CPP_EMBEDDEDFILE_CLASS\n");
+    fprintf(header, "  #endif //%s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
     fprintf(header, "\n");
-    fprintf(header, "  #ifndef BIN2CPP_FILEMANAGER_CLASS\n");
-    fprintf(header, "  #define BIN2CPP_FILEMANAGER_CLASS\n");
+    fprintf(header, "  #ifndef %s_FILEMANAGER_CLASS\n", classMacroGuardPrefix.c_str());
+    fprintf(header, "  #define %s_FILEMANAGER_CLASS\n", classMacroGuardPrefix.c_str());        
     fprintf(header, "  class FileManager\n");
     fprintf(header, "  {\n");
     fprintf(header, "  private:\n");
@@ -331,7 +343,7 @@ namespace bin2cpp
     fprintf(header, "  private:\n");
     fprintf(header, "    std::vector<t_func> functions_;\n");
     fprintf(header, "  };\n");
-    fprintf(header, "  #endif //BIN2CPP_FILEMANAGER_CLASS\n");
+    fprintf(header, "  #endif //%s_FILEMANAGER_CLASS\n", classMacroGuardPrefix.c_str());
     fprintf(header, "}; //%s\n", mNamespace.c_str());
     fprintf(header, "\n");
     fprintf(header, "#endif //%s\n", macroGuard.c_str());
@@ -350,13 +362,11 @@ namespace bin2cpp
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(cpp_file_path);
     std::string cppPath = cpp_file_path;
-    std::string headerFilename = ra::filesystem::GetFilename(headerPath.c_str());
-    std::string cppFilename = ra::filesystem::GetFilename(cpp_file_path);
 
     std::string fileHeader = getHeaderTemplate(false);
 
     fprintf(cpp, "%s", fileHeader.c_str());
-    fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str());
+    fprintf(cpp, "#include \"%s\"\n", getManagerHeaderFilename());
     fprintf(cpp, "#include <string>\n");
     fprintf(cpp, "\n");
     fprintf(cpp, "namespace %s\n", mNamespace.c_str());
@@ -378,7 +388,7 @@ namespace bin2cpp
     fprintf(cpp, "    if (index >= functions_.size())\n");
     fprintf(cpp, "      return NULL;\n");
     fprintf(cpp, "    t_func ressource_getter_function = functions_[index];\n");
-    fprintf(cpp, "    const bin2cpp::File & resource = ressource_getter_function();\n");
+    fprintf(cpp, "    const %s::File & resource = ressource_getter_function();\n", mNamespace.c_str());
     fprintf(cpp, "    return &resource;\n");
     fprintf(cpp, "  }\n");
     fprintf(cpp, "  bool FileManager::saveFiles(const char * iDirectory) const\n");
