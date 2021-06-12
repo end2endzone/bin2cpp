@@ -58,7 +58,7 @@ namespace bin2cpp
       return false;
 
     //check if input file exists
-    FILE * input = fopen(mInputFile.c_str(), "rb");
+    FILE * input = fopen(getInputFilePath(), "rb");
     if (!input)
       return false;
 
@@ -68,8 +68,6 @@ namespace bin2cpp
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(cpp_file_path);
     std::string cppPath = cpp_file_path;
-    std::string headerFilename = ra::filesystem::GetFilename(headerPath.c_str());
-    std::string cppFilename = ra::filesystem::GetFilename(cpp_file_path);
 
     //create cpp file
     FILE * cpp = fopen(cppPath.c_str(), "w");
@@ -81,7 +79,7 @@ namespace bin2cpp
 
     //determine file properties
     //uint32_t fileSize = ra::filesystem::GetFileSize(input);
-    std::string filename = ra::filesystem::GetFilename(mInputFile.c_str());
+    std::string filename = ra::filesystem::GetFilename(getInputFilePath());
 
     //Build class name
     std::string className = getClassName();
@@ -91,7 +89,7 @@ namespace bin2cpp
 
     //write cpp file heading
     fprintf(cpp, "%s", getHeaderTemplate().c_str());
-    fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str() );
+    fprintf(cpp, "#include \"%s\"\n", getHeaderFilename() );
     fprintf(cpp, "#include <stdio.h> //for FILE\n");
     fprintf(cpp, "#include <stdint.h>\n");
     fprintf(cpp, "\n");
@@ -121,7 +119,7 @@ namespace bin2cpp
     fprintf(cpp, "    }\n");
     fprintf(cpp, "    virtual ~%s() { unloadResource(); }\n", className.c_str());
     fprintf(cpp, "    virtual size_t getSize() const { return mBufferSize; }\n");
-    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::GetFilename(mInputFile.c_str()).c_str());
+    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::GetFilename(getInputFilePath()).c_str());
     fprintf(cpp, "    virtual const char * getBuffer() const { return mBuffer; }\n");
     fprintf(cpp, "    void loadResource()\n");
     fprintf(cpp, "    {\n");
@@ -134,7 +132,7 @@ namespace bin2cpp
     fprintf(cpp, "        if ( EnumProcessModules( hProcess, &hModule, sizeof(hModule), &cbNeeded) )\n");
     fprintf(cpp, "        {\n");
     fprintf(cpp, "          //Retrieve the resource\n");
-    fprintf(cpp, "          hResourceInfoBlock = FindResource(hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(mInputFile.c_str()).c_str());
+    fprintf(cpp, "          hResourceInfoBlock = FindResource(hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(getInputFilePath()).c_str());
     fprintf(cpp, "          if (hResourceInfoBlock)\n");
     fprintf(cpp, "          {\n");
     fprintf(cpp, "            hResHandle = LoadResource(hModule, hResourceInfoBlock);\n");
@@ -207,12 +205,12 @@ namespace bin2cpp
       return false;
     }
 
-    std::string filename = ra::filesystem::GetFilename(mInputFile.c_str());
+    std::string filename = ra::filesystem::GetFilename(getInputFilePath());
  
     //write res file heading
     fprintf(res, "%s", getHeaderTemplate().c_str());
     fprintf(res, "#include <windows.h>\n");
-    fprintf(res, "%s CUSTOM \"%s\"\n", getRandomIdentifier(mInputFile.c_str()).c_str(), filename.c_str());
+    fprintf(res, "%s CUSTOM \"%s\"\n", getRandomIdentifier(getInputFilePath()).c_str(), filename.c_str());
 
     fclose(res);
 
@@ -226,11 +224,11 @@ namespace bin2cpp
     //append a CRC32 checksum of the file path to allow storing multiple files with the same name in resources
     uint32_t checksum = 0;
     crc32Init(&checksum);
-    crc32Update(&checksum, (unsigned char *)cpp_file_path, strlen(cpp_file_path));
+    crc32Update(&checksum, (unsigned char *)cpp_file_path, (uint32_t)strlen(cpp_file_path));
     crc32Finish(&checksum);
 
     std::string checksumString;
-    crc32String(&checksum, checksumString);
+    crc32String(&checksum, &checksumString);
     checksumString = ra::strings::Uppercase(checksumString);
 
     //build the final identifier

@@ -40,8 +40,10 @@ namespace bin2cpp
     virtual ~BaseGenerator();
 
     //IGenerator methods
-    virtual void setInputFile(const char * path);
-    virtual const char * getInputFile() const;
+    virtual void setInputFilePath(const char * path);
+    virtual const char * getInputFilePath() const;
+    virtual void setHeaderFilename(const char * path);
+    virtual const char * getHeaderFilename() const;
     virtual void setFunctionIdentifier(const char * function_identifier);
     virtual const char * getFunctionIdentifier() const;
     virtual void setChunkSize(size_t chunk_size);
@@ -52,8 +54,8 @@ namespace bin2cpp
     virtual const char * getBaseClass() const;
     virtual void setCppEncoder(const CppEncoderEnum & cpp_encoder);
     virtual CppEncoderEnum getCppEncoder() const;
-    virtual void setManagerHeaderFile(const char * manager_file);
-    virtual const char * getManagerHeaderFile() const;
+    virtual void setManagerHeaderFilename(const char * manager_file);
+    virtual const char * getManagerHeaderFilename() const;
     virtual void setRegisterFileEnabled(bool register_file_enabled);
     virtual bool isRegisterFileEnabled() const;
 
@@ -68,18 +70,20 @@ namespace bin2cpp
     virtual std::string getHeaderFilePath(const char * cpp_file_path);
     virtual std::string getCppFilePath(const char * header_file_path);
     virtual std::string getHeaderTemplate();
-    virtual std::string getHeaderTemplate(bool includeSourceFile);
+    virtual std::string getHeaderTemplate(bool include_source_file);
     virtual std::string getSaveMethodTemplate();
     virtual std::string getFileManagerRegistrationTemplate();
     virtual std::string getClassName();
+    virtual std::string getClassMacroGuardPrefix();
 
     //attributes
-    std::string mInputFile;
+    std::string mInputFilePath;
+    std::string mHeaderFilename;
     std::string mFunctionIdentifier;
     size_t mChunkSize;
     std::string mNamespace;
     std::string mBaseClass;
-    std::string mManagerFile;
+    std::string mManagerHeaderFilename;
     IGenerator::CppEncoderEnum mCppEncoder;
     bool mManagerEnabled;
   };

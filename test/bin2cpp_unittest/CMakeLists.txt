@@ -12,6 +12,8 @@ include_directories(${GENERATED_TEST_FILES_DIR}/testHtml100000)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue12)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue12Mini)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue13)
+include_directories(${GENERATED_TEST_FILES_DIR}/testIssue47)
+include_directories(${GENERATED_TEST_FILES_DIR}/testIssue50)
 include_directories(${GENERATED_TEST_FILES_DIR}/testNamespace)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom1)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom2)
@@ -53,6 +55,14 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testIssue12Mini/_testIssue12Mini.cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue13/_testIssue13.h
   ${GENERATED_TEST_FILES_DIR}/testIssue13/_testIssue13.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue47/generated/_testIssue47.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue47/generated/_testIssue47.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue47/generated/FileManager47.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue47/generated/FileManager47.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue50/_testIssue50.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue50/_testIssue50.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue50/FileManager50.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue50/FileManager50.cpp
   ${GENERATED_TEST_FILES_DIR}/testNamespace/_testNamespace.h
   ${GENERATED_TEST_FILES_DIR}/testNamespace/_testNamespace.cpp
   ${GENERATED_TEST_FILES_DIR}/testRandom1/_testRandom1.h

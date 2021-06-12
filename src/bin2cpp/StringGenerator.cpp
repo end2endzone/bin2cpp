@@ -50,7 +50,7 @@ namespace bin2cpp
   bool StringGenerator::createCppSourceFile(const char * cpp_file_path)
   {
     //check if input file exists
-    FILE * input = fopen(mInputFile.c_str(), "rb");
+    FILE * input = fopen(getInputFilePath(), "rb");
     if (!input)
       return false;
 
@@ -60,8 +60,6 @@ namespace bin2cpp
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(cpp_file_path);
     std::string cppPath = cpp_file_path;
-    std::string headerFilename = ra::filesystem::GetFilename(headerPath.c_str());
-    std::string cppFilename = ra::filesystem::GetFilename(cpp_file_path);
 
     //create cpp file
     FILE * cpp = fopen(cppPath.c_str(), "w");
@@ -73,7 +71,7 @@ namespace bin2cpp
 
     //determine file properties
     uint32_t fileSize = ra::filesystem::GetFileSize(input);
-    std::string filename = ra::filesystem::GetFilename(mInputFile.c_str());
+    std::string filename = ra::filesystem::GetFilename(getInputFilePath());
 
     //Build class name
     std::string className = getClassName();
@@ -83,7 +81,7 @@ namespace bin2cpp
 
     //write cpp file heading
     fprintf(cpp, "%s", getHeaderTemplate().c_str());
-    fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str() );
+    fprintf(cpp, "#include \"%s\"\n", getHeaderFilename() );
     fprintf(cpp, "#include <stdio.h> //for FILE\n");
     fprintf(cpp, "#include <string> //for memcpy\n");
     fprintf(cpp, "namespace %s\n", mNamespace.c_str());
@@ -94,7 +92,7 @@ namespace bin2cpp
     fprintf(cpp, "    %s() {}\n", className.c_str());
     fprintf(cpp, "    virtual ~%s() {}\n", className.c_str());
     fprintf(cpp, "    virtual size_t getSize() const { return %u; }\n", fileSize);
-    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::GetFilename(mInputFile.c_str()).c_str());
+    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::GetFilename(getInputFilePath()).c_str());
     fprintf(cpp, "    virtual const char * getBuffer() const\n");
     fprintf(cpp, "    {\n");
     fprintf(cpp, "      const char * buffer = ""\n");

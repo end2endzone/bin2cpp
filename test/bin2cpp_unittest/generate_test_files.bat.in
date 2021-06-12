@@ -220,4 +220,19 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\images\IMG_0005.jpg --output=%OUTDIR%\sources --headerfile=_img0005.h --identifier=Img0005 --chunksize=200 --override
 if %errorlevel% neq 0 exit /b %errorlevel%
 
+set TEST_NAME=testIssue47
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+mkdir %OUTDIR%\generated 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=random --seed=1
+@BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=generated/_%TEST_NAME%.h --identifier=%TEST_NAME% --managerfile=generated/FileManager47.h --registerfile --namespace=bin2cpp47 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+set TEST_NAME=testIssue50
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=1000 --fill=random --seed=1
+@BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --managerfile=FileManager50.h --registerfile --namespace=bin2cpp50 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
+
 dir >NUL

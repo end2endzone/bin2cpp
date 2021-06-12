@@ -31,6 +31,6 @@
 void crc32Init(uint32_t *pCrc32);
 void crc32Update(uint32_t *pCrc32, unsigned char *pData, uint32_t uSize);
 void crc32Finish(uint32_t *pCrc32);
-void crc32String(const uint32_t *pCrc32, std::string & oHexValue);
+void crc32String(const uint32_t *pCrc32, std::string * pHexStr);
 
 #endif //CRC32_H

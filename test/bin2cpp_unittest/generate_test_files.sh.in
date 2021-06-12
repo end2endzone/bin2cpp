@@ -187,3 +187,16 @@ mkdir -p ${OUTDIR}/sources
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/images/IMG_0003.jpg --output=$OUTDIR/sources --headerfile=_img0003.h --identifier=Img0003 --chunksize=200 --override
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/images/IMG_0004.jpg --output=$OUTDIR/sources --headerfile=_img0004.h --identifier=Img0004 --chunksize=200 --override
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/images/IMG_0005.jpg --output=$OUTDIR/sources --headerfile=_img0005.h --identifier=Img0005 --chunksize=200 --override
+
+export TEST_NAME=testIssue47
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+mkdir -p ${OUTDIR}/generated
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR\$TEST_NAME.bin --size=1000 --fill=random --seed=1
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR\$TEST_NAME.bin --output=$OUTDIR --headerfile=generated/_$TEST_NAME.h --identifier=$TEST_NAME --managerfile=generated/FileManager47.h --registerfile --namespace=bin2cpp47 --override
+
+export TEST_NAME=testIssue50
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR\$TEST_NAME.bin --size=1000 --fill=random --seed=1
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR\$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME --managerfile=FileManager50.h --registerfile --namespace=bin2cpp50 --override

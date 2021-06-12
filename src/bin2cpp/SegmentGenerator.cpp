@@ -50,7 +50,7 @@ namespace bin2cpp
   bool SegmentGenerator::createCppSourceFile(const char * cpp_file_path)
   {
     //check if input file exists
-    FILE * input = fopen(mInputFile.c_str(), "rb");
+    FILE * input = fopen(getInputFilePath(), "rb");
     if (!input)
       return false;
 
@@ -60,8 +60,6 @@ namespace bin2cpp
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(cpp_file_path);
     std::string cppPath = cpp_file_path;
-    std::string headerFilename = ra::filesystem::GetFilename(headerPath.c_str());
-    std::string cppFilename = ra::filesystem::GetFilename(cpp_file_path);
 
     //create cpp file
     FILE * cpp = fopen(cppPath.c_str(), "w");
@@ -73,7 +71,7 @@ namespace bin2cpp
 
     //determine file properties
     uint32_t fileSize = ra::filesystem::GetFileSize(input);
-    std::string filename = ra::filesystem::GetFilename(mInputFile.c_str());
+    std::string filename = ra::filesystem::GetFilename(getInputFilePath());
     //long lastSegmentSize = fileSize%chunk_size;
     //size_t numSegments = fileSize/chunk_size + (lastSegmentSize == 0 ? 0 : 1);
 
@@ -84,14 +82,14 @@ namespace bin2cpp
     std::string getterFunctionName = getGetterFunctionName();
 
     //Build FileManager class template
-    std::string manager = getManagerHeaderFile();
+    std::string manager = getManagerHeaderFilename();
 
     //write cpp file heading
     fprintf(cpp, "%s", getHeaderTemplate().c_str());
     fprintf(cpp, "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n");
     fprintf(cpp, "#define _CRT_SECURE_NO_WARNINGS\n");
     fprintf(cpp, "#endif\n");
-    fprintf(cpp, "#include \"%s\"\n", headerFilename.c_str() );
+    fprintf(cpp, "#include \"%s\"\n", getHeaderFilename() );
     fprintf(cpp, "#include <stdio.h> //for FILE\n");
     fprintf(cpp, "#include <string> //for memcpy\n");
     fprintf(cpp, "namespace %s\n", mNamespace.c_str());
@@ -102,7 +100,7 @@ namespace bin2cpp
     fprintf(cpp, "    %s() { build(); }\n", className.c_str());
     fprintf(cpp, "    virtual ~%s() {}\n", className.c_str());
     fprintf(cpp, "    virtual size_t getSize() const { return %u; }\n", fileSize);
-    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::GetFilename(mInputFile.c_str()).c_str());
+    fprintf(cpp, "    virtual const char * getFilename() const { return \"%s\"; }\n", ra::filesystem::GetFilename(getInputFilePath()).c_str());
     fprintf(cpp, "    virtual const char * getBuffer() const { return mBuffer.c_str(); }\n");
     fprintf(cpp, "    void build()\n");
     fprintf(cpp, "    {\n");

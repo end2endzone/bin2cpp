@@ -44,13 +44,25 @@ namespace bin2cpp
     ///Defines the path of the binary input file.
     ///</summary>
     ///<param name="path">The path of the input file (resource) to embeded as C++ source code.</param>
-    virtual void setInputFile(const char * path) = 0;
+    virtual void setInputFilePath(const char * path) = 0;
 
     ///<summary>
     ///Provides the path of the binary input file.
     ///</summary>
     ///<returns>Returns the path of the binary input file. Returns an empty string if not defined.</returns>
-    virtual const char * getInputFile() const = 0;
+    virtual const char * getInputFilePath() const = 0;
+
+    ///<summary>
+    ///Defines the filename of the generated header.
+    ///</summary>
+    ///<param name="path">The path of the input file (resource) to embeded as C++ source code.</param>
+    virtual void setHeaderFilename(const char * path) = 0;
+
+    ///<summary>
+    ///Provides the filename of the generated header.
+    ///</summary>
+    ///<returns>Returns the path of the binary input file. Returns an empty string if not defined.</returns>
+    virtual const char * getHeaderFilename() const = 0;
 
     ///<summary>
     ///Defines the unique identifier name for the File class getter function.
@@ -101,16 +113,16 @@ namespace bin2cpp
     virtual const char * getBaseClass() const = 0;
 
     ///<summary>
-    ///Defines the path of the FileManager output file.
+    ///Defines the filename of the FileManager generated header.
     ///</summary>
     ///<param name="path">The path of the FileManager output file.</param>
-    virtual void setManagerHeaderFile(const char * path) = 0;
+    virtual void setManagerHeaderFilename(const char * path) = 0;
 
     ///<summary>
-    ///Provides the path of the FileManager output file.
+    ///Provides the filename of the FileManager generated header.
     ///</summary>
     ///<returns>Returns the path of the FileManager output file. Returns an empty string if not defined.</returns>
-    virtual const char * getManagerHeaderFile() const = 0;
+    virtual const char * getManagerHeaderFilename() const = 0;
 
     ///<summary>
     ///Enable or disable the registration of the generated file to the FileManager.
