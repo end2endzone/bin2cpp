@@ -262,7 +262,7 @@ This examples shows how to use bin2cpp to convert multiple files of the same dir
 
 ### Input directory: [samples/demo_icons/flat-color-icons](samples/demo_icons/flat-color-icons).
 
-The [samples/demo_icons/flat-color-icons](samples/demo_icons/flat-color-icons) directory contains the following 16 icons :
+The [samples/demo_icons/flat-color-icons](samples/demo_icons/flat-color-icons) directory contains the following 56 icons :
 
 ![Flat Color Icons by Icons8](docs/Flat%20Color%20Icons%20by%20Icons8.png)
 
@@ -293,8 +293,6 @@ Writing file ".\outdir\video_file.cpp"...
 Generating "IconsFileManager.h"...
 Writing file ".\outdir\IconsFileManager.h"...
 Writing file ".\outdir\IconsFileManager.cpp"...
-
-
 ```
 
 Notice that additional files `IconsFileManager.h` and `IconsFileManager.cpp` were also generated and will allow retreiving all files at once.
