@@ -266,6 +266,22 @@ if (WIN32)
   elseif (CPACK_SYSTEM_NAME STREQUAL "win64")
     set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-windows-64bit") 
   endif()  
+elseif (APPLE)
+  # Default package filename example :  `bin2cpp-2.4.0-Darwin.tar.gz`.
+
+  # Command output examples for references :
+  # uname command outputs for macOS Catalina 10.15 :
+  #   uname -a --> Darwin mymac 19.6.0 Darwin Kernel Version 19.6.0: Mon Aug 31 22:12:52 PDT 2020; root:xnu-6153.141.2~1/RELEASE_X86_64 x86_64
+  #   CMAKE_SYSTEM_NAME,            uname -s --> Darwin
+  #   CMAKE_HOST_SYSTEM_PROCESSOR,  uname -m --> x86_64
+  #   CMAKE_SYSTEM_PROCESSOR,       uname -p --> i386
+  
+  # Patch MAC_RELEASE_NAME variable: convert to lowerspace and replace space characters by dot characters.
+  string(TOLOWER "${MAC_RELEASE_NAME}" MAC_RELEASE_NAME)
+  string(REPLACE " " "." MAC_RELEASE_NAME "${MAC_RELEASE_NAME}")
+
+  # Updating the package filename to `bin2cpp-2.4.0-macos.catalina-x86_64.tar.gz`.
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${MAC_RELEASE_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
 elseif (UNIX)
   # Default package filename example :  `bin2cpp-2.4.0-Linux.tar.gz`.
   # 
@@ -280,25 +296,6 @@ elseif (UNIX)
   
   # Updating the package filename to `bin2cpp-2.4.0-ubuntu-x86_64.tar.gz`.
   set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${LINUX_DIST_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
-elseif (APPLE)
-  # Default package filename example :  `bin2cpp-2.4.0-Darwin.tar.gz`.
-
-  # Command output examples for references :
-  # uname command outputs for macOS Catalina 10.15 :
-  #   uname -a --> Darwin mymac 19.6.0 Darwin Kernel Version 19.6.0: Mon Aug 31 22:12:52 PDT 2020; root:xnu-6153.141.2~1/RELEASE_X86_64 x86_64
-  #   CMAKE_SYSTEM_NAME,            uname -s --> Darwin
-  #   CMAKE_HOST_SYSTEM_PROCESSOR,  uname -m --> x86_64
-  #   CMAKE_SYSTEM_PROCESSOR,       uname -p --> i386
-  
-  # Patch MAC_RELEASE_NAME variable: convert to lowerspace and replace space characters by dot characters.
-  MESSAGE( STATUS "DEBUG 1: MAC_RELEASE_NAME:            " ${MAC_RELEASE_NAME} )
-  string(TOLOWER "${MAC_RELEASE_NAME}" MAC_RELEASE_NAME)
-  MESSAGE( STATUS "DEBUG 2: MAC_RELEASE_NAME:            " ${MAC_RELEASE_NAME} )
-  string(REPLACE " " "." MAC_RELEASE_NAME "${MAC_RELEASE_NAME}")
-  MESSAGE( STATUS "DEBUG 3: MAC_RELEASE_NAME:            " ${MAC_RELEASE_NAME} )
-
-  # Updating the package filename to `bin2cpp-2.4.0-macos.catalina-x86_64.tar.gz`.
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${MAC_RELEASE_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
 endif()
 
 
