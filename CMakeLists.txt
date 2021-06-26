@@ -291,8 +291,11 @@ elseif(APPLE)
   #   CMAKE_SYSTEM_PROCESSOR,       uname -p --> i386
   
   # Patch MAC_RELEASE_NAME variable: convert to lowerspace and replace space characters by dot characters.
+  MESSAGE( STATUS "DEBUG 1: MAC_RELEASE_NAME:            " ${MAC_RELEASE_NAME} )
   string(TOLOWER "${MAC_RELEASE_NAME}" MAC_RELEASE_NAME)
+  MESSAGE( STATUS "DEBUG 2: MAC_RELEASE_NAME:            " ${MAC_RELEASE_NAME} )
   string(REPLACE " " "." MAC_RELEASE_NAME "${MAC_RELEASE_NAME}")
+  MESSAGE( STATUS "DEBUG 3: MAC_RELEASE_NAME:            " ${MAC_RELEASE_NAME} )
 
   # Updating the package filename to `bin2cpp-2.4.0-macos.catalina-x86_64.tar.gz`.
   set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${MAC_RELEASE_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
