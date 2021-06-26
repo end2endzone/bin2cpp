@@ -245,7 +245,7 @@ if (WIN32 AND NOT UNIX)
   if (WIX_FOUND)
     list(APPEND CPACK_GENERATOR "WIX")
   endif (WIX_FOUND)
-elseif(APPLE OR UNIX)
+elseif (APPLE OR UNIX)
   # Linux and Mac:
   # Release as a portable application in tar.gz format
   list(APPEND CPACK_GENERATOR "TGZ")
@@ -280,7 +280,7 @@ elseif (UNIX)
   
   # Updating the package filename to `bin2cpp-2.4.0-ubuntu-x86_64.tar.gz`.
   set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${LINUX_DIST_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
-elseif(APPLE)
+elseif (APPLE)
   # Default package filename example :  `bin2cpp-2.4.0-Darwin.tar.gz`.
 
   # Command output examples for references :

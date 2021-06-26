@@ -179,7 +179,7 @@ function(GetOsReleaseInfo output_name output_version)
       set(${output_name}    "${ID}"         PARENT_SCOPE)
       set(${output_version} "${VERSION_ID}" PARENT_SCOPE)
       
-    elseif(EXISTS "/usr/bin/lsb_release")
+    elseif (EXISTS "/usr/bin/lsb_release")
       # If it fails, try `/usr/bin/lsb_release`.
     
       # Get the name of the distribution first
@@ -196,7 +196,7 @@ function(GetOsReleaseInfo output_name output_version)
       )
       set(${output_version} "${LSBRELEASE_OUTPUT}" PARENT_SCOPE)
      
-    elseif(EXISTS "/etc/lsb-release")
+    elseif (EXISTS "/etc/lsb-release")
       # If it fails, try `/etc/lsb-release`.
     
       execute_process(COMMAND cat /etc/lsb-release
