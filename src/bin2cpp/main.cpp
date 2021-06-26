@@ -232,7 +232,7 @@ int main(int argc, char* argv[])
   args.hasDir = false;
   args.hasManagerFile = false;
   args.chunkSize = 0;
-  args.overrideExisting;
+  args.overrideExisting = false;
   args.registerfile = false;
 
   std::string dummy;
