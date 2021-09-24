@@ -1,6 +1,7 @@
 Changes for 2.5.0:
 
-* N/A
+* New feature: Using RapidAssist version 0.10.1
+* Fixed issue #55: Support for large files.
 
 
 Changes for 2.4.0:
