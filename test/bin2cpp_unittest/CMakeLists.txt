@@ -1,3 +1,5 @@
+include_directories(${CMAKE_SOURCE_DIR}/src/bin2cpp)    # for External Files
+
 set(GENERATED_TEST_FILES_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated_files)
 include_directories(${GENERATED_TEST_FILES_DIR})    # for TestExtraction.cpp
 
@@ -14,6 +16,7 @@ include_directories(${GENERATED_TEST_FILES_DIR}/testIssue12Mini)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue13)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue47)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue50)
+include_directories(${GENERATED_TEST_FILES_DIR}/testIssue56a)
 include_directories(${GENERATED_TEST_FILES_DIR}/testNamespace)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom1)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom2)
@@ -63,6 +66,12 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testIssue50/_testIssue50.cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue50/FileManager50.h
   ${GENERATED_TEST_FILES_DIR}/testIssue50/FileManager50.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/_testIssue56a.index.4321.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/_testIssue56a.index.1234.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/_testIssue56a.index.1234.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/_testIssue56a.index.4321.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/FileManager56a.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/FileManager56a.cpp
   ${GENERATED_TEST_FILES_DIR}/testNamespace/_testNamespace.h
   ${GENERATED_TEST_FILES_DIR}/testNamespace/_testNamespace.cpp
   ${GENERATED_TEST_FILES_DIR}/testRandom1/_testRandom1.h
@@ -156,10 +165,13 @@ endif()
 
 # Show all generated files in a common folder
 source_group("Generated Files" FILES ${GENERATED_TEST_FILES})
+source_group("External Files" FILES ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.cpp ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.h)
 
 add_executable(bin2cpp_unittest
   ${BIN2CPP_VERSION_HEADER}
   ${BIN2CPP_CONFIG_HEADER}
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.cpp
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.h
   application.cpp
   application.h
   CMakeLists.txt
@@ -169,6 +181,8 @@ add_executable(bin2cpp_unittest
   main.cpp
   TestCLI.cpp
   TestCLI.h
+  TestCommon.cpp
+  TestCommon.h
   TestExtraction.cpp
   TestExtraction.h
   ${GENERATED_TEST_FILES}

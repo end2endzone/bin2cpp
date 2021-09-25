@@ -56,6 +56,9 @@
 #include "testIssue13/_testIssue13.h"
 #include "testIssue47/generated/_testIssue47.h"
 #include "testIssue50/_testIssue50.h"
+#include "testIssue50/_testIssue50.h"
+#include "testIssue56a/compiled_sources/_testIssue56a.index.1234.h"
+#include "testIssue56a/compiled_sources/_testIssue56a.index.4321.h"
 
 #undef BIN2CPP_EMBEDDEDFILE_CLASS
 #include "testNamespace/_testNamespace.h"
@@ -108,7 +111,7 @@ TEST_F(TestExtraction, testText10)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -123,7 +126,7 @@ TEST_F(TestExtraction, testText1000)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -138,7 +141,7 @@ TEST_F(TestExtraction, testText100000)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -153,7 +156,7 @@ TEST_F(TestExtraction, testHtml100000)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -168,7 +171,7 @@ TEST_F(TestExtraction, testRandom1)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -183,7 +186,7 @@ TEST_F(TestExtraction, testRandom2)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -198,7 +201,7 @@ TEST_F(TestExtraction, testRandom3)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -213,7 +216,7 @@ TEST_F(TestExtraction, testRandom4)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -228,7 +231,7 @@ TEST_F(TestExtraction, testRandom5)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -243,7 +246,7 @@ TEST_F(TestExtraction, testRandom6)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -258,7 +261,7 @@ TEST_F(TestExtraction, testRandom7)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -273,7 +276,7 @@ TEST_F(TestExtraction, testRandom8)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -288,7 +291,7 @@ TEST_F(TestExtraction, testSequential1000)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -303,7 +306,7 @@ TEST_F(TestExtraction, testSequential10MB)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -318,7 +321,7 @@ TEST_F(TestExtraction, testGeneratorArray10000)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -333,7 +336,7 @@ TEST_F(TestExtraction, testGeneratorSegment10000)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -348,7 +351,7 @@ TEST_F(TestExtraction, testGeneratorString10000)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -364,7 +367,7 @@ TEST_F(TestExtraction, testGeneratorWin32)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -380,7 +383,7 @@ TEST_F(TestExtraction, testEncodingOct)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -395,7 +398,7 @@ TEST_F(TestExtraction, testEncodingHex)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -410,7 +413,7 @@ TEST_F(TestExtraction, testNamespace)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -425,7 +428,7 @@ TEST_F(TestExtraction, testBaseClass)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -440,7 +443,7 @@ TEST_F(TestExtraction, testIssue12)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -455,7 +458,7 @@ TEST_F(TestExtraction, testIssue12Mini)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -470,7 +473,7 @@ TEST_F(TestExtraction, testIssue13)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -485,7 +488,7 @@ TEST_F(TestExtraction, testIssue47)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -522,7 +525,7 @@ TEST_F(TestExtraction, testIssue50)
   bool extractSuccess = file.save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
-  //assert content is the same
+  //assert binary content is the same
   std::string reason;
   bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
   ASSERT_TRUE(equal) << reason.c_str();
@@ -548,4 +551,59 @@ TEST_F(TestExtraction, testIssue50)
     ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "BIN2CPP50_EMBEDDEDFILE_CLASS", line, index) );
     ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "BIN2CPP50_FILEMANAGER_CLASS",  line, index) );
   }
+}
+
+TEST_F(TestExtraction, testIssue56a)
+{
+  //save _testIssue56a.index.1234.css
+  std::string output_path1234 = "generated_files/testIssue56a/saved_files/_testIssue56a.index.1234.css";
+  {
+    ra::filesystem::NormalizePath(output_path1234);
+    const issue56a::File & file = issue56a::get_testIssue56aindex1234cssFile();
+    bool extractSuccess = file.save(output_path1234.c_str());
+    ASSERT_TRUE(extractSuccess);
+  }
+
+  //save _testIssue56a.index.4321.css
+  std::string output_path4321 = "generated_files/testIssue56a/saved_files/_testIssue56a.index.4321.css";
+  {
+    ra::filesystem::NormalizePath(output_path4321);
+    const issue56a::File & file = issue56a::get_testIssue56aindex4321cssFile();
+    bool extractSuccess = file.save(output_path4321.c_str());
+    ASSERT_TRUE(extractSuccess);
+  }
+
+  //assert binary content is the same
+  std::string reason;
+  std::string expected_path1234 = "generated_files/testIssue56a/input_files/_testIssue56a.index.1234.css";
+  ra::filesystem::NormalizePath(expected_path1234);
+  bool equal1234 = ra::testing::IsFileEquals(expected_path1234.c_str(), output_path1234.c_str(), reason);
+  ASSERT_TRUE(equal1234) << reason.c_str();
+
+  std::string expected_path4321 = "generated_files/testIssue56a/input_files/_testIssue56a.index.4321.css";
+  ra::filesystem::NormalizePath(expected_path4321);
+  bool equal4321 = ra::testing::IsFileEquals(expected_path4321.c_str(), output_path4321.c_str(), reason);
+  ASSERT_TRUE(equal4321) << reason.c_str();
+
+  //assert correct identifiers
+
+  int line = 0;
+  int index = 0;
+
+  //_testIssue56a.index.1234.h
+  {
+    std::string path = "generated_files/testIssue56a/compiled_sources/_testIssue56a.index.1234.h";
+    ra::filesystem::NormalizePath(path);
+    ASSERT_TRUE( ra::filesystem::FileExists(path.c_str()) ) << "File '" << path.c_str() << "' not found!";
+    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "get_testIssue56aindex1234cssFile()", line, index) );
+  }
+
+  //_testIssue56a.index.4321.h
+  {
+    std::string path = "generated_files/testIssue56a/compiled_sources/_testIssue56a.index.4321.h";
+    ra::filesystem::NormalizePath(path);
+    ASSERT_TRUE( ra::filesystem::FileExists(path.c_str()) ) << "File '" << path.c_str() << "' not found!";
+    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "get_testIssue56aindex4321cssFile()", line, index) );
+  }
+
 }

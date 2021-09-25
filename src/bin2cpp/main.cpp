@@ -68,6 +68,7 @@ static const size_t DEFAULT_CHUNK_SIZE = 200;
 static const char * DEFAULT_NAMESPACE = "bin2cpp";
 static const char * DEFAULT_BASECLASSNAME = "File";
 static const IGenerator::CppEncoderEnum DEFAULT_ENCODING = IGenerator::CPP_ENCODER_OCT;
+static Dictionary identifiers_dictionary; // unique values for identifiers
 
 const char * getErrorCodeDescription(const APP_ERROR_CODES & error_code)
 {
@@ -111,39 +112,6 @@ const char * getUpdateModeText(const FILE_UPDATE_MODE & mode)
   default:
     return "Unknown";
   };
-}
-
-inline std::string filter(std::string str, const std::string & valid_characters)
-{
-  std::string output;
-  
-  //reserve as many characters as in input string
-  output.reserve(str.size());
-
-  //for each characters in input string
-  for(size_t i=0; i < str.size(); i++)
-  {
-    //is the current character is found in valid characters?
-    size_t pos = valid_characters.find(str[i], 0);
-    if (pos != std::string::npos)
-      output.append(1, str[i]);
-  }
-
-  return output;
-}
-
-std::string getFunctionIdentifierFromPath(const std::string & path)
-{
-  std::string id;
-
-  //get filename of the given path
-  id = ra::filesystem::GetFilenameWithoutExtension(path.c_str());
-
-  // filter out characters which are not alphanumeric characters or '_'.
-  static const std::string validCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
-  id = filter(id, validCharacters);
-
-  return id;
 }
 
 struct ARGUMENTS
@@ -572,7 +540,7 @@ APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerato
     argsCopy.headerFilename.append(".h");
 
     //use the file name without extension as 'identifier'.
-    argsCopy.functionIdentifier = getFunctionIdentifierFromPath(ra::filesystem::GetFilenameWithoutExtension(file.c_str()));
+    argsCopy.functionIdentifier = getUniqueFunctionIdentifierFromPath(file.c_str(), identifiers_dictionary);
     argsCopy.functionIdentifier = ra::strings::CapitalizeFirstCharacter(argsCopy.functionIdentifier);
 
     //process this file...

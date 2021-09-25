@@ -9,3 +9,6 @@
 --file=..\..\test\bin2cpp_unittest\generated_files\testIssue28\testIssue28.bin --headerfile="generated/foo-data.h" --output=. --identifier=TestLongPath --managerfile=generated/foo-manager47.h --registerfile --namespace=myspace47
 --file=..\..\test\bin2cpp_unittest\generated_files\testIssue47\testIssue47.bin --output=..\..\test\bin2cpp_unittest\generated_files\testIssue47 --headerfile=generated/_testIssue47.h --identifier=testIssue47 --managerfile=generated/FileManager47.h --registerfile --namespace=myspace47 --override
 --file=..\..\test\bin2cpp_unittest\generated_files\testIssue50\testIssue50.bin --output=..\..\test\bin2cpp_unittest\generated_files\testIssue50 --headerfile=_testIssue50.h --identifier=testIssue50 --managerfile=FileManager50.h --registerfile --namespace=myspace50 --override
+
+--file=..\..\test\bin2cpp_unittest\generated_files\testSequential1000\testSequential1000.bin --headerfile="generated/foo-data.h" --output=. --identifier=TestLongPath --managerfile=generated/foo-manager47.h --registerfile --namespace=myspace47
+--dir=D:\Temp\issue56\css --output=D:\Temp\issue56\output

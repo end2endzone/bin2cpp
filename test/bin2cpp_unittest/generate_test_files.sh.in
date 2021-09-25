@@ -200,3 +200,13 @@ export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p ${OUTDIR}
 @TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=1000 --fill=random --seed=1
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME --managerfile=FileManager50.h --registerfile --namespace=bin2cpp50 --override
+
+export TEST_NAME=testIssue56a
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir ${OUTDIR} 1>NUL 2>NUL
+mkdir ${OUTDIR}/input_files 1>NUL 2>NUL
+mkdir ${OUTDIR}/compiled_sources 1>NUL 2>NUL
+mkdir ${OUTDIR}/saved_files 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --file=${OUTDIR}/input_files/_$TEST_NAME.index.1234.css --size=1010 --fill=text
+@TESTFILEGENERATOR_TARGET_FILE@ --file=${OUTDIR}/input_files/_$TEST_NAME.index.4321.css --size=1020 --fill=text
+@BIN2CPP_TARGET_FILE@ --noheader --dir=${OUTDIR}/input_files --output=${OUTDIR}/compiled_sources --chunksize=200 --managerfile=FileManager56a.h --registerfile --namespace=issue56a --override

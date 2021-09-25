@@ -134,5 +134,66 @@ namespace bin2cpp
     return filename;
   }
 
+  std::string filter(std::string str, const std::string & valid_characters)
+  {
+    std::string output;
+  
+    //reserve as many characters as in input string
+    output.reserve(str.size());
+
+    //for each characters in input string
+    for(size_t i=0; i < str.size(); i++)
+    {
+      //is the current character is found in valid characters?
+      size_t pos = valid_characters.find(str[i], 0);
+      if (pos != std::string::npos)
+        output.append(1, str[i]);
+    }
+
+    return output;
+  }
+
+  std::string getFunctionIdentifierFromPath(const std::string & path)
+  {
+    std::string id;
+
+    //get filename of the given path
+    id = ra::filesystem::GetFilename(path.c_str());
+
+    //filter out characters which are not alphanumeric characters or '_'.
+    static const std::string validCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+    id = filter(id, validCharacters);
+
+    return id;
+  }
+
+  std::string getUniqueFunctionIdentifierFromPath(const std::string & path, Dictionary & dict) {
+    std::string id = getFunctionIdentifierFromPath(path);
+
+    //find an unused identifier
+    bool exists = dict.find(id) != dict.end();
+    if (exists) {
+      std::string base_id = id + "_";
+
+      //increase a counter until an identifier does not already exists
+      size_t counter = 0;
+      while(exists) {
+        //duplicate id
+      
+        //increase counter and generate a new id
+        counter++;
+        id = base_id + ra::strings::ToString(counter);
+
+        //check again
+        exists = dict.find(id) != dict.end();
+      }
+    }
+
+    //this identifier is not already used.
+    //register this identifier in the dictionary.
+    dict.insert(id);
+
+    return id;
+  }
 
 }; //bin2cpp

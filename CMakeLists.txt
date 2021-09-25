@@ -76,8 +76,8 @@ endif()
 ##############################################################################################################################################
 
 # Product version according to Semantic Versioning v2.0.0 https://semver.org/
-SET(BIN2CPP_VERSION_MAJOR 2)
-SET(BIN2CPP_VERSION_MINOR 5)
+SET(BIN2CPP_VERSION_MAJOR 3)
+SET(BIN2CPP_VERSION_MINOR 0)
 SET(BIN2CPP_VERSION_PATCH 0)
 set(BIN2CPP_VERSION ${BIN2CPP_VERSION_MAJOR}.${BIN2CPP_VERSION_MINOR}.${BIN2CPP_VERSION_PATCH})
 FILE(WRITE ${CMAKE_BINARY_DIR}/version "${BIN2CPP_VERSION}")
