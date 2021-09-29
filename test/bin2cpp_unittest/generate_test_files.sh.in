@@ -210,3 +210,23 @@ mkdir ${OUTDIR}/saved_files 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=${OUTDIR}/input_files/_$TEST_NAME.index.1234.css --size=1010 --fill=text
 @TESTFILEGENERATOR_TARGET_FILE@ --file=${OUTDIR}/input_files/_$TEST_NAME.index.4321.css --size=1020 --fill=text
 @BIN2CPP_TARGET_FILE@ --noheader --dir=${OUTDIR}/input_files --output=${OUTDIR}/compiled_sources --chunksize=200 --managerfile=FileManager56a.h --registerfile --namespace=issue56a --override
+
+export TEST_NAME=testKeepDirectories
+export OUTDIR=./generated_files/%TEST_NAME%
+mkdir ${OUTDIR} 1>NUL 2>NUL
+mkdir ${OUTDIR}/input_files 1>NUL 2>NUL
+mkdir ${OUTDIR}/input_files/www 1>NUL 2>NUL
+mkdir ${OUTDIR}/input_files/www/home 1>NUL 2>NUL
+mkdir ${OUTDIR}/input_files/www/blog 1>NUL 2>NUL
+mkdir ${OUTDIR}/input_files/www/blog/how-to-create-a-web-site 1>NUL 2>NUL
+mkdir ${OUTDIR}/input_files/www/blog/using-bin2cpp 1>NUL 2>NUL
+mkdir ${OUTDIR}/input_files/www/contact 1>NUL 2>NUL
+mkdir ${OUTDIR}/generated_sources 1>NUL 2>NUL
+mkdir ${OUTDIR}/saved_files 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/index.html
+@TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/home/index.html
+@TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/blog/index.html
+@TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/blog/how-to-create-a-web-site/index.html
+@TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/blog/using-bin2cpp/index.html
+@TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/contact/index.html
+@BIN2CPP_TARGET_FILE@ --noheader --dir=${OUTDIR}/input_files --output=${OUTDIR}/generated_sources --chunksize=200 --managerfile=FileManagerKeepDirs.h --registerfile --namespace=testkeepdirs --override --keepdirs

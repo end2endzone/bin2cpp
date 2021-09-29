@@ -123,6 +123,7 @@ struct ARGUMENTS
   bool hasFile;                 // true if 'inputFilePath' is set.
   bool hasDir;                  // true if 'inputDirPath' is set.
   bool hasManagerFile;          // true if 'managerHeaderFilename' is set.
+  bool keepDirectoryStructure;  // true if the output files must have the same directory structure as the input files. Valid only when --dir is used.
   std::string inputFilePath;    // path of the input binary file
   std::string inputDirPath;
   std::string outputDirPath;
@@ -182,6 +183,8 @@ void printUsage()
     "  --managerfile=<name> File name of the generated C++ header file for the FileManager class. ie: FileManager.h\n"
     "  --registerfile       Register the generated file to the FileManager class. [default: false].\n"
     "                       This flags is automatically set when parameter 'managerfile' is specified.\n"
+    "  --keepdirs           Keep the directory structure. Forces the output files to have the same\n"
+    "                       directory structure as the input files. Valid only when --dir is used.\n"
     "  --override           Tells bin2cpp to overwrite the destination files.\n"
     "  --noheader           Do not print program header to standard output.\n"
     "  --quiet              Do not log any message to standard output.\n"
@@ -199,6 +202,7 @@ int main(int argc, char* argv[])
   args.hasFile = false;
   args.hasDir = false;
   args.hasManagerFile = false;
+  args.keepDirectoryStructure = false;
   args.chunkSize = 0;
   args.overrideExisting = false;
   args.registerfile = false;
@@ -340,6 +344,8 @@ int main(int argc, char* argv[])
     args.registerfile = true;
   }
 
+  args.keepDirectoryStructure = ra::cli::ParseArgument("keepdirs", dummy, argc, argv);
+
   std::string encodingStr;
   if (ra::cli::ParseArgument("encoding", encodingStr, argc, argv))
   {
@@ -474,6 +480,22 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * g
   generator->setManagerHeaderFilename(args.managerHeaderFilename.c_str());
   generator->setRegisterFileEnabled(args.registerfile);
 
+  //Build the output directory structure if required
+  if (args.keepDirectoryStructure)
+  {
+    std::string parent_directory = ra::filesystem::GetParentPath(outputHeaderPath);
+    if (!parent_directory.empty() && !ra::filesystem::DirectoryExists(parent_directory.c_str()))
+    {
+      ra::logging::Log(ra::logging::LOG_INFO, "Creating directory \"%s\"...", parent_directory.c_str());
+      bool success = ra::filesystem::CreateDirectory(parent_directory.c_str());
+      if (!success)
+      {
+        ra::logging::Log(ra::logging::LOG_ERROR, "Failed to create directory \"%s\".", parent_directory.c_str());
+        return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
+      }
+    }
+  }
+
   //process files
   bool headerResult = generateFile(args, outputHeaderPath, generator);
   if (!headerResult)
@@ -507,7 +529,7 @@ APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerato
     return error;
   }
 
-  //remove directories from list
+  //remove directory entries from list
   ra::strings::StringVector tmp;
   for(size_t i=0; i<files.size(); i++)
   {
@@ -531,17 +553,36 @@ APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerato
 
     //replace 'dir' input by current file input
     argsCopy.hasDir = false;
-    argsCopy.inputDirPath = "";
     argsCopy.hasFile = true;
     argsCopy.inputFilePath = file;
 
     //use the file name without extension as 'headerfile'.
     argsCopy.headerFilename = ra::filesystem::GetFilenameWithoutExtension(file.c_str());
-    argsCopy.headerFilename.append(".h");
+    argsCopy.headerFilename += ".h";
 
     //use the file name without extension as 'identifier'.
     argsCopy.functionIdentifier = getUniqueFunctionIdentifierFromPath(file.c_str(), identifiers_dictionary);
     argsCopy.functionIdentifier = ra::strings::CapitalizeFirstCharacter(argsCopy.functionIdentifier);
+
+    if (args.keepDirectoryStructure)
+    {
+      // To keep the directory structure, we need to
+      // make headerFilename a relative path
+      // inside the output directory
+      std::string relative_header_file_path = file;
+      relative_header_file_path.erase(0, argsCopy.inputDirPath.size() + 1 ); // convert absolute path to relative path. +1 to remove first \ character
+      ra::filesystem::NormalizePath(relative_header_file_path);
+
+      // change the file extension to *.h
+      std::string extension = ra::filesystem::GetFileExtention(relative_header_file_path);
+      if (relative_header_file_path.size() >= extension.size())
+      {
+        relative_header_file_path.erase(relative_header_file_path.size() - extension.size());
+        relative_header_file_path += "h";
+      }
+
+      argsCopy.headerFilename = relative_header_file_path;
+    }
 
     //process this file...
     APP_ERROR_CODES error = processInputFile(argsCopy, generator);
