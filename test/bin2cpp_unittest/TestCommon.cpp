@@ -115,3 +115,52 @@ TEST_F(TestCommon, testGetUniqueFunctionIdentifierFromPath)
     ASSERT_EQ("indexhtml_5", bin2cpp::getUniqueFunctionIdentifierFromPath("c:\\www\\blog\\using-bin2cpp\\index.html"             , tmp));
   }
 }
+
+TEST_F(TestCommon, testPathSplitJoin)
+{
+  std::string path;
+  std::string dir;
+  std::string file_name;
+  std::string file_ext;
+
+  // test split
+  path = "C:\\Windows\\notepad.exe";
+  bin2cpp::pathSplit(path, dir, file_name, file_ext);
+  ASSERT_EQ("C:\\Windows"     , dir);
+  ASSERT_EQ("notepad"         , file_name);
+  ASSERT_EQ("exe"             , file_ext);
+
+  // test join
+  dir = "C:\\Windows";
+  file_name = "notepad";
+  file_ext = "exe";
+  path = bin2cpp::pathJoin(dir, file_name, file_ext);
+  ASSERT_EQ("C:\\Windows\\notepad.exe", path);
+
+  static const char * paths[] = {
+    "C:\\Windows\\notepad.exe",
+    "notepad.exe",
+    "dumpfile",                       // filename without an extension
+    "dump.file.",                     // file name with a dot in name but without an extension
+    "C:\\temp\\dumpfile",             // directory and filename without an extension
+    "C:\\temp\\dump.file.",           // directory and file name with a dot in name
+    "C:\\Windows",                    // only a directory
+    "C:\\temp\\.tmp",                 // an file without a file name
+    "C:\\pagefile.sys",               // file in root directory
+    "C:\\bootmgr",                    // file in root directory without an extension
+    "C:\\",                           // the root directory
+  };
+  static const size_t num_paths = sizeof(paths)/sizeof(paths[0]);
+  for(size_t i=0; i<num_paths; i++)
+  {
+    path = paths[i];
+    bin2cpp::pathSplit(path, dir, file_name, file_ext);
+    std::string joined = bin2cpp::pathJoin(dir, file_name, file_ext);
+
+    ASSERT_EQ(path, joined) << "Failed calling pathSplit() and pathJoin() :\n" <<
+      "path=\"" << path << "\"\n" <<
+      "dir=\"" << dir << "\"\n" <<
+      "file_name=\"" << file_name << "\"\n" <<
+      "file_ext=\"" << file_ext << "\"\n";
+  }
+}

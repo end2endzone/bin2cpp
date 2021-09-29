@@ -96,6 +96,24 @@ namespace bin2cpp
   ///<return>Returns a unique function identifier from a file path.<return>
   std::string getUniqueFunctionIdentifierFromPath(const std::string & path, Dictionary & dict);
 
+  ///<summary>
+  ///Split a path into individual components: directory, file name, file extension.
+  ///</summary>
+  ///<param name="path">The path to split.</param>
+  ///<param name="directory">The dictionary of the given path.</param>
+  ///<param name="file_name">The file name (without the extension) of the given path.</param>
+  ///<param name="file_extension">The file extension of the given path.</param>
+  void pathSplit(const std::string & path, std::string & directory, std::string & file_name, std::string & file_extension);
+
+  ///<summary>
+  ///Join individual components of a path into a full path.
+  ///</summary>
+  ///<param name="directory">The dictionary of the path to join.</param>
+  ///<param name="file_name">The file name (without the extension) of the path to join.</param>
+  ///<param name="file_extension">The file extension of the path to join.</param>
+  ///<return>Returns the path matching all given components.<return>
+  std::string pathJoin(const std::string & directory, const std::string & file_name, const std::string & file_extension);
+
 }; //bin2cpp
 
 #endif //BIN2CPP_COMMON_H

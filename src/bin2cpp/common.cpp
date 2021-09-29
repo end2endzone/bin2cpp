@@ -167,7 +167,8 @@ namespace bin2cpp
     return id;
   }
 
-  std::string getUniqueFunctionIdentifierFromPath(const std::string & path, Dictionary & dict) {
+  std::string getUniqueFunctionIdentifierFromPath(const std::string & path, Dictionary & dict)
+  {
     std::string id = getFunctionIdentifierFromPath(path);
 
     //find an unused identifier
@@ -194,6 +195,78 @@ namespace bin2cpp
     dict.insert(id);
 
     return id;
+  }
+
+  inline bool isDriveLetter(char c)
+  {
+    if (  (c >= 'a' && c <= 'z') ||
+          (c >= 'A' && c <= 'Z')  )
+    {
+      return true;
+    }
+    return false;
+  }
+
+  void pathSplit(const std::string & path, std::string & directory, std::string & file_name, std::string & file_extension)
+  {
+    std::string tmp = path;
+
+    directory = ra::filesystem::GetParentPath(tmp);
+    if (!directory.empty())
+      tmp.erase(0, directory.size() + 1); // +1 to erase the last \ character
+
+    //test special case for root directories
+    //convert C: to C:\ 
+    if (directory.size() == 2 && directory[1] == ':')
+    {
+      if (isDriveLetter(directory[0]))
+      {
+        directory += "\\";
+      }
+    }
+
+    file_name       = ra::filesystem::GetFilenameWithoutExtension(tmp.c_str());
+    file_extension  = ra::filesystem::GetFileExtention(tmp);
+  }
+
+  std::string pathJoin(const std::string & directory, const std::string & file_name, const std::string & file_extension)
+  {
+    std::string tmp;
+
+    if (!directory.empty())
+    {
+      tmp += directory;
+      tmp += ra::filesystem::GetPathSeparatorStr();
+
+      //special case for root directories
+      if (directory.size() == 3 && directory[1] == ':' && directory[2] == '\\' && isDriveLetter(directory[0]))
+      {
+        tmp.erase(2, 1);
+      }
+    }
+
+    if (!file_name.empty())
+    {
+      tmp += file_name;
+    }
+
+    if (!file_extension.empty())
+    {
+      tmp += ".";
+      tmp += file_extension;
+    }
+    else
+    {
+      //no file extension
+      if (file_name.find('.') != std::string::npos)
+      {
+        // this file has a dot in file name
+        // we must add a dot at the end of the file name to make the distinction.
+        tmp += ".";
+      }
+    }
+
+    return tmp;
   }
 
 }; //bin2cpp
