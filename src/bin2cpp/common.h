@@ -97,6 +97,16 @@ namespace bin2cpp
   std::string getUniqueFunctionIdentifierFromPath(const std::string & path, Dictionary & dict);
 
   ///<summary>
+  ///Build a unique file path based on the path of a given file.
+  ///A dictionary is used to keep track of existing file paths.
+  ///If a file is already existing in the dictionary, "_[counter]" is added at the end of the filename.
+  ///</summary>
+  ///<param name="path">The path of a file.</param>
+  ///<param name="dict">A dictionary that contains the existing file paths.</param>
+  ///<return>Returns a unique file path from the path of a given file.<return>
+  std::string getUniqueFilePath(const std::string & path, Dictionary & dict);
+
+  ///<summary>
   ///Split a path into individual components: directory, file name, file extension.
   ///</summary>
   ///<param name="path">The path to split.</param>

@@ -116,6 +116,48 @@ TEST_F(TestCommon, testGetUniqueFunctionIdentifierFromPath)
   }
 }
 
+TEST_F(TestCommon, testGetUniqueFilePath)
+{
+  bin2cpp::Dictionary dict;
+  std::string path;
+
+  //test basic directory and filename path
+  {
+    path = "C:\\temp\\index.h";
+    ASSERT_EQ("C:\\temp\\index.h", bin2cpp::getUniqueFilePath(path, dict));
+
+    ASSERT_EQ("C:\\temp\\index_1.h", bin2cpp::getUniqueFilePath(path, dict));
+    ASSERT_EQ("C:\\temp\\index_2.h", bin2cpp::getUniqueFilePath(path, dict));
+    ASSERT_EQ("C:\\temp\\index_3.h", bin2cpp::getUniqueFilePath(path, dict));
+    ASSERT_EQ("C:\\temp\\index_4.h", bin2cpp::getUniqueFilePath(path, dict));
+    ASSERT_EQ("C:\\temp\\index_5.h", bin2cpp::getUniqueFilePath(path, dict));
+  }
+
+  //test filename only
+  {
+    path = "icon.h";
+    ASSERT_EQ("icon.h", bin2cpp::getUniqueFilePath(path, dict));
+
+    ASSERT_EQ("icon_1.h", bin2cpp::getUniqueFilePath(path, dict));
+    ASSERT_EQ("icon_2.h", bin2cpp::getUniqueFilePath(path, dict));
+    ASSERT_EQ("icon_3.h", bin2cpp::getUniqueFilePath(path, dict));
+    ASSERT_EQ("icon_4.h", bin2cpp::getUniqueFilePath(path, dict));
+    ASSERT_EQ("icon_5.h", bin2cpp::getUniqueFilePath(path, dict));
+  }
+
+  //test relative paths
+  {
+    path = "www\\blog\\index.h";
+    ASSERT_EQ("www\\blog\\index.h", bin2cpp::getUniqueFilePath(path, dict));
+
+    ASSERT_EQ("www\\blog\\index_1.h", bin2cpp::getUniqueFilePath(path, dict));
+    ASSERT_EQ("www\\blog\\index_2.h", bin2cpp::getUniqueFilePath(path, dict));
+    ASSERT_EQ("www\\blog\\index_3.h", bin2cpp::getUniqueFilePath(path, dict));
+    ASSERT_EQ("www\\blog\\index_4.h", bin2cpp::getUniqueFilePath(path, dict));
+    ASSERT_EQ("www\\blog\\index_5.h", bin2cpp::getUniqueFilePath(path, dict));
+  }
+}
+
 TEST_F(TestCommon, testPathSplitJoin)
 {
   std::string path;
@@ -138,8 +180,8 @@ TEST_F(TestCommon, testPathSplitJoin)
   ASSERT_EQ("C:\\Windows\\notepad.exe", path);
 
   static const char * paths[] = {
-    "C:\\Windows\\notepad.exe",
-    "notepad.exe",
+    "C:\\Windows\\notepad.exe",       // absolute file path
+    "notepad.exe",                    // filename only
     "dumpfile",                       // filename without an extension
     "dump.file.",                     // file name with a dot in name but without an extension
     "C:\\temp\\dumpfile",             // directory and filename without an extension
@@ -149,6 +191,7 @@ TEST_F(TestCommon, testPathSplitJoin)
     "C:\\pagefile.sys",               // file in root directory
     "C:\\bootmgr",                    // file in root directory without an extension
     "C:\\",                           // the root directory
+    "www\\blog\\index.html",          // test relative path
   };
   static const size_t num_paths = sizeof(paths)/sizeof(paths[0]);
   for(size_t i=0; i<num_paths; i++)

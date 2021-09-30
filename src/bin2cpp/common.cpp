@@ -197,6 +197,42 @@ namespace bin2cpp
     return id;
   }
 
+  std::string getUniqueFilePath(const std::string & base_path, Dictionary & dict)
+  {
+    std::string dir;
+    std::string file_name;
+    std::string file_ext;
+    pathSplit(base_path, dir, file_name, file_ext);
+
+    std::string next_path = base_path;
+
+    //find an unused identifier
+    bool exists = dict.find(base_path) != dict.end();
+    if (exists) {
+
+      //increase a counter until an identifier does not already exists
+      size_t counter = 0;
+      while(exists) {
+        //duplicate id
+      
+        //increase counter and generate a new path
+        counter++;
+        std::string next_file_name = file_name + "_" + ra::strings::ToString(counter);
+        next_path = pathJoin(dir, next_file_name, file_ext);
+
+        //check again
+        exists = dict.find(next_path) != dict.end();
+      }
+    }
+
+    //this identifier is not already used.
+    //register this identifier in the dictionary.
+    dict.insert(next_path);
+
+    return next_path;
+  }
+
+#ifdef _WIN32
   inline bool isDriveLetter(char c)
   {
     if (  (c >= 'a' && c <= 'z') ||
@@ -206,6 +242,7 @@ namespace bin2cpp
     }
     return false;
   }
+#endif
 
   void pathSplit(const std::string & path, std::string & directory, std::string & file_name, std::string & file_extension)
   {
@@ -215,6 +252,7 @@ namespace bin2cpp
     if (!directory.empty())
       tmp.erase(0, directory.size() + 1); // +1 to erase the last \ character
 
+#ifdef _WIN32
     //test special case for root directories
     //convert C: to C:\ 
     if (directory.size() == 2 && directory[1] == ':')
@@ -224,6 +262,7 @@ namespace bin2cpp
         directory += "\\";
       }
     }
+#endif
 
     file_name       = ra::filesystem::GetFilenameWithoutExtension(tmp.c_str());
     file_extension  = ra::filesystem::GetFileExtention(tmp);
@@ -238,11 +277,13 @@ namespace bin2cpp
       tmp += directory;
       tmp += ra::filesystem::GetPathSeparatorStr();
 
+#ifdef _WIN32
       //special case for root directories
       if (directory.size() == 3 && directory[1] == ':' && directory[2] == '\\' && isDriveLetter(directory[0]))
       {
         tmp.erase(2, 1);
       }
+#endif
     }
 
     if (!file_name.empty())
