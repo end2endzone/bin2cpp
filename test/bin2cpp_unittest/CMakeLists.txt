@@ -17,6 +17,8 @@ include_directories(${GENERATED_TEST_FILES_DIR}/testIssue13)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue47)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue50)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue56a)
+include_directories(${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources)
+include_directories(${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources)
 include_directories(${GENERATED_TEST_FILES_DIR}/testNamespace)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom1)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom2)
@@ -72,6 +74,36 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/_testIssue56a.index.4321.cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/FileManager56a.h
   ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/FileManager56a.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/FileManager56b.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/FileManager56b.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/how-to-create-a-web-site
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/using-bin2cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/how-to-create-a-web-site/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/how-to-create-a-web-site/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/using-bin2cpp/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/using-bin2cpp/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/contact/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/contact/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/home/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/home/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/FileManager56c.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/FileManager56c.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_1.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_1.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_2.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_2.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_3.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_3.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_4.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_4.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_5.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_5.h
   ${GENERATED_TEST_FILES_DIR}/testNamespace/_testNamespace.h
   ${GENERATED_TEST_FILES_DIR}/testNamespace/_testNamespace.cpp
   ${GENERATED_TEST_FILES_DIR}/testRandom1/_testRandom1.h

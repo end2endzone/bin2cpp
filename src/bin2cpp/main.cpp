@@ -68,7 +68,8 @@ static const size_t DEFAULT_CHUNK_SIZE = 200;
 static const char * DEFAULT_NAMESPACE = "bin2cpp";
 static const char * DEFAULT_BASECLASSNAME = "File";
 static const IGenerator::CppEncoderEnum DEFAULT_ENCODING = IGenerator::CPP_ENCODER_OCT;
-static Dictionary identifiers_dictionary; // unique values for identifiers
+static Dictionary identifiers_dictionary;   // unique values for identifiers
+static Dictionary output_files_dictionary;  // unique values for output file names
 
 const char * getErrorCodeDescription(const APP_ERROR_CODES & error_code)
 {
@@ -458,30 +459,38 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * g
   info << "...";
   ra::logging::Log(ra::logging::LOG_INFO, info.c_str());
 
-  //prepare output files path
-  std::string cppFilename = args.headerFilename;
-  ra::strings::Replace(cppFilename, ".hpp", ".cpp");
-  ra::strings::Replace(cppFilename, ".h", ".cpp");  
-  std::string outputHeaderPath = args.outputDirPath + ra::filesystem::GetPathSeparatorStr() + args.headerFilename;
-  std::string outputCppPath = args.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
-
   //check if input file exists
   if (!ra::filesystem::FileExists(args.inputFilePath.c_str()))
     return APP_ERROR_INPUTFILENOTFOUND;
 
-  //configure the generator
-  generator->setInputFilePath(args.inputFilePath.c_str());
-  generator->setHeaderFilename(args.headerFilename.c_str());
-  generator->setFunctionIdentifier(args.functionIdentifier.c_str());
-  generator->setChunkSize(args.chunkSize);
-  generator->setNamespace(args.codeNamespace.c_str());
-  generator->setBaseClass(args.baseClass.c_str());
-  generator->setCppEncoder(args.encoding);
-  generator->setManagerHeaderFilename(args.managerHeaderFilename.c_str());
-  generator->setRegisterFileEnabled(args.registerfile);
+  ARGUMENTS argsCopy = args;
 
-  //Build the output directory structure if required
-  if (args.keepDirectoryStructure)
+  //prepare output files path
+  std::string cppFilename = argsCopy.headerFilename;
+  ra::strings::Replace(cppFilename, ".hpp", ".cpp");
+  ra::strings::Replace(cppFilename, ".h", ".cpp");  
+
+  //build unique output relative file paths
+  argsCopy.headerFilename = bin2cpp::getUniqueFilePath(argsCopy.headerFilename, output_files_dictionary);
+  cppFilename = bin2cpp::getUniqueFilePath(cppFilename, output_files_dictionary);
+
+  //build full absolute paths
+  std::string outputHeaderPath = argsCopy.outputDirPath + ra::filesystem::GetPathSeparatorStr() + argsCopy.headerFilename;
+  std::string outputCppPath = argsCopy.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
+
+  //configure the generator
+  generator->setInputFilePath(argsCopy.inputFilePath.c_str());
+  generator->setHeaderFilename(argsCopy.headerFilename.c_str());
+  generator->setFunctionIdentifier(argsCopy.functionIdentifier.c_str());
+  generator->setChunkSize(argsCopy.chunkSize);
+  generator->setNamespace(argsCopy.codeNamespace.c_str());
+  generator->setBaseClass(argsCopy.baseClass.c_str());
+  generator->setCppEncoder(argsCopy.encoding);
+  generator->setManagerHeaderFilename(argsCopy.managerHeaderFilename.c_str());
+  generator->setRegisterFileEnabled(argsCopy.registerfile);
+
+  //build the output directory structure if required
+  if (argsCopy.keepDirectoryStructure)
   {
     std::string parent_directory = ra::filesystem::GetParentPath(outputHeaderPath);
     if (!parent_directory.empty() && !ra::filesystem::DirectoryExists(parent_directory.c_str()))
