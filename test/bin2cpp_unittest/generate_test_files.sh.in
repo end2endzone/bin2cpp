@@ -1,7 +1,7 @@
 # Any commands which fail will cause the shell script to exit immediately
 set -e
 
-echo SCRIPT GENERATE_TEST_FILES - START
+echo "SCRIPT GENERATE_TEST_FILES - START"
 
 export TEST_NAME=testText10
 export OUTDIR=./generated_files/$TEST_NAME
@@ -273,4 +273,4 @@ mkdir -p ${OUTDIR}/saved_files
 @TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/contact/index.html
 @BIN2CPP_TARGET_FILE@ --noheader --dir=${OUTDIR}/input_files --output=${OUTDIR}/generated_sources --chunksize=200 --managerfile=FileManagerKeepDirs.h --registerfile --namespace=testkeepdirs --override --keepdirs
 
-echo SCRIPT GENERATE_TEST_FILES - END
+echo "SCRIPT GENERATE_TEST_FILES - END"
