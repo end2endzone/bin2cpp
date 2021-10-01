@@ -1,6 +1,8 @@
 # Any commands which fail will cause the shell script to exit immediately
 set -e
 
+echo SCRIPT GENERATE_TEST_FILES - START
+
 export TEST_NAME=testText10
 export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p ${OUTDIR}
@@ -203,26 +205,26 @@ mkdir -p ${OUTDIR}
 
 export TEST_NAME=testIssue56a
 export OUTDIR=./generated_files/$TEST_NAME
-mkdir ${OUTDIR} 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files 1>NUL 2>NUL
-mkdir ${OUTDIR}/compiled_sources 1>NUL 2>NUL
-mkdir ${OUTDIR}/saved_files 1>NUL 2>NUL
+mkdir -p ${OUTDIR}
+mkdir -p ${OUTDIR}/input_files
+mkdir -p ${OUTDIR}/compiled_sources
+mkdir -p ${OUTDIR}/saved_files
 @TESTFILEGENERATOR_TARGET_FILE@ --file=${OUTDIR}/input_files/_$TEST_NAME.index.1234.css --size=1010 --fill=text
 @TESTFILEGENERATOR_TARGET_FILE@ --file=${OUTDIR}/input_files/_$TEST_NAME.index.4321.css --size=1020 --fill=text
 @BIN2CPP_TARGET_FILE@ --noheader --dir=${OUTDIR}/input_files --output=${OUTDIR}/compiled_sources --chunksize=200 --managerfile=FileManager56a.h --registerfile --namespace=issue56a --override
 
 export TEST_NAME=testIssue56b
-export OUTDIR=./generated_files/%TEST_NAME%
-mkdir ${OUTDIR} 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/home 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/blog 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/blog/how-to-create-a-web-site 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/blog/using-bin2cpp 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/contact 1>NUL 2>NUL
-mkdir ${OUTDIR}/generated_sources 1>NUL 2>NUL
-mkdir ${OUTDIR}/saved_files 1>NUL 2>NUL
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+mkdir -p ${OUTDIR}/input_files
+mkdir -p ${OUTDIR}/input_files/www
+mkdir -p ${OUTDIR}/input_files/www/home
+mkdir -p ${OUTDIR}/input_files/www/blog
+mkdir -p ${OUTDIR}/input_files/www/blog/how-to-create-a-web-site
+mkdir -p ${OUTDIR}/input_files/www/blog/using-bin2cpp
+mkdir -p ${OUTDIR}/input_files/www/contact
+mkdir -p ${OUTDIR}/generated_sources
+mkdir -p ${OUTDIR}/saved_files
 @TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/index.html
 @TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/home/index.html
 @TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/blog/index.html
@@ -232,17 +234,17 @@ mkdir ${OUTDIR}/saved_files 1>NUL 2>NUL
 @BIN2CPP_TARGET_FILE@ --noheader --dir=${OUTDIR}/input_files --output=${OUTDIR}/generated_sources --chunksize=200 --managerfile=FileManager56b.h --registerfile --namespace=issue56b --override --keepdirs
 
 export TEST_NAME=testIssue56c
-export OUTDIR=./generated_files/%TEST_NAME%
-mkdir ${OUTDIR} 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/home 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/blog 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/blog/how-to-create-a-web-site 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/blog/using-bin2cpp 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/contact 1>NUL 2>NUL
-mkdir ${OUTDIR}/generated_sources 1>NUL 2>NUL
-mkdir ${OUTDIR}/saved_files 1>NUL 2>NUL
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+mkdir -p ${OUTDIR}/input_files
+mkdir -p ${OUTDIR}/input_files/www
+mkdir -p ${OUTDIR}/input_files/www/home
+mkdir -p ${OUTDIR}/input_files/www/blog
+mkdir -p ${OUTDIR}/input_files/www/blog/how-to-create-a-web-site
+mkdir -p ${OUTDIR}/input_files/www/blog/using-bin2cpp
+mkdir -p ${OUTDIR}/input_files/www/contact
+mkdir -p ${OUTDIR}/generated_sources
+mkdir -p ${OUTDIR}/saved_files
 @TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/index.html
 @TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/home/index.html
 @TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/blog/index.html
@@ -252,17 +254,17 @@ mkdir ${OUTDIR}/saved_files 1>NUL 2>NUL
 @BIN2CPP_TARGET_FILE@ --noheader --dir=${OUTDIR}/input_files --output=${OUTDIR}/generated_sources --chunksize=200 --managerfile=FileManager56c.h --registerfile --namespace=issue56c --override
 
 export TEST_NAME=testKeepDirectories
-export OUTDIR=./generated_files/%TEST_NAME%
-mkdir ${OUTDIR} 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/home 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/blog 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/blog/how-to-create-a-web-site 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/blog/using-bin2cpp 1>NUL 2>NUL
-mkdir ${OUTDIR}/input_files/www/contact 1>NUL 2>NUL
-mkdir ${OUTDIR}/generated_sources 1>NUL 2>NUL
-mkdir ${OUTDIR}/saved_files 1>NUL 2>NUL
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+mkdir -p ${OUTDIR}/input_files
+mkdir -p ${OUTDIR}/input_files/www
+mkdir -p ${OUTDIR}/input_files/www/home
+mkdir -p ${OUTDIR}/input_files/www/blog
+mkdir -p ${OUTDIR}/input_files/www/blog/how-to-create-a-web-site
+mkdir -p ${OUTDIR}/input_files/www/blog/using-bin2cpp
+mkdir -p ${OUTDIR}/input_files/www/contact
+mkdir -p ${OUTDIR}/generated_sources
+mkdir -p ${OUTDIR}/saved_files
 @TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/index.html
 @TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/home/index.html
 @TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/blog/index.html
@@ -270,3 +272,5 @@ mkdir ${OUTDIR}/saved_files 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/blog/using-bin2cpp/index.html
 @TESTFILEGENERATOR_TARGET_FILE@ --size=1010 --fill=html --file=${OUTDIR}/input_files/www/contact/index.html
 @BIN2CPP_TARGET_FILE@ --noheader --dir=${OUTDIR}/input_files --output=${OUTDIR}/generated_sources --chunksize=200 --managerfile=FileManagerKeepDirs.h --registerfile --namespace=testkeepdirs --override --keepdirs
+
+echo SCRIPT GENERATE_TEST_FILES - END

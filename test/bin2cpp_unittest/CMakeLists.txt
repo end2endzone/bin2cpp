@@ -192,8 +192,17 @@ else()
                       COMMAND echo Calling 'generate_test_files.sh' script...
                       COMMAND cd ${CMAKE_CURRENT_BINARY_DIR} && ./generate_test_files.sh
   )
-  
 endif()
+
+# target build_test_files is always built
+add_custom_target(build_test_files ALL
+  COMMAND echo "Building unit test files..."
+  
+  # If the files exists, then commands related to these files won't be executed
+  # DONOT let other target depends on the same OUTPUT as current target,
+  #   or it may be bad when doing parallel make
+  DEPENDS ${GENERATED_TEST_FILES}
+)
 
 # Show all generated files in a common folder
 source_group("Generated Files" FILES ${GENERATED_TEST_FILES})
@@ -222,6 +231,7 @@ add_executable(bin2cpp_unittest
 
 add_dependencies(bin2cpp_unittest bin2cpp)
 add_dependencies(bin2cpp_unittest testfilegenerator)
+add_dependencies(bin2cpp_unittest build_test_files)
 
 # Unit test projects requires to link with pthread if also linking with gtest
 if(NOT WIN32)
