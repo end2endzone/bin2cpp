@@ -1732,3 +1732,76 @@ TEST_F(TestCLI, testRegisterFileAllGenerators)
     ASSERT_TRUE(deleteFile(backupCppFile2.c_str()));
   }
 }
+ 
+TEST_F(TestCLI, testKeepDirectories)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+ 
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --dir=generated_files\\testKeepDirectories\\input_files");      //use windows path separator
+  cmdline.append(" --output=generated_files\\testKeepDirectories\\generated_sources");
+  cmdline.append(" --noheader --managerfile=FileManagerKeepDirs.h --registerfile --namespace=testkeepdirs --override --keepdirs");
+
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+ 
+#if defined(__linux__) || defined(__APPLE__)
+  //fix path separator
+  ra::strings::Replace(cmdline, "\\", "/");
+#endif
+
+  //build the list of generated files
+  const char * generated_files_tmp[] = {
+    "generated_files\\testKeepDirectories\\generated_sources\\FileManagerKeepDirs.cpp",
+    "generated_files\\testKeepDirectories\\generated_sources\\FileManagerKeepDirs.h",
+    "generated_files\\testKeepDirectories\\generated_sources\\www\\index.cpp",
+    "generated_files\\testKeepDirectories\\generated_sources\\www\\index.h",
+    "generated_files\\testKeepDirectories\\generated_sources\\www\\blog\\index.cpp",
+    "generated_files\\testKeepDirectories\\generated_sources\\www\\blog\\index.h",
+    "generated_files\\testKeepDirectories\\generated_sources\\www\\blog\\how-to-create-a-web-site\\index.cpp",
+    "generated_files\\testKeepDirectories\\generated_sources\\www\\blog\\how-to-create-a-web-site\\index.h",
+    "generated_files\\testKeepDirectories\\generated_sources\\www\\blog\\using-bin2cpp\\index.cpp",
+    "generated_files\\testKeepDirectories\\generated_sources\\www\\blog\\using-bin2cpp\\index.h",
+    "generated_files\\testKeepDirectories\\generated_sources\\www\\contact\\index.cpp",
+    "generated_files\\testKeepDirectories\\generated_sources\\www\\contact\\index.h",
+    "generated_files\\testKeepDirectories\\generated_sources\\www\\home\\index.cpp",
+    "generated_files\\testKeepDirectories\\generated_sources\\www\\home\\index.h",
+  };
+  const size_t num_generated_files = sizeof(generated_files_tmp)/sizeof(generated_files_tmp[0]);
+  ra::strings::StringVector generated_files;
+  for(size_t i=0; i<num_generated_files; i++)
+  {
+    generated_files.push_back(generated_files_tmp[i]);
+#if defined(__linux__) || defined(__APPLE__)
+    ra::strings::Replace(generated_files[i], "\\", "/"); //fix path separator
+#endif
+  }
+
+  //delete generated files
+  for(size_t i=0; i<generated_files.size(); i++)
+  {
+    const std::string & generated_file = generated_files[i];
+    ASSERT_TRUE(deleteFile(generated_file.c_str()));
+  }
+  ASSERT_TRUE(ra::filesystem::DeleteDirectory("generated_files\\testKeepDirectories\\generated_sources\\www"));
+
+  //run the command
+  int returnCode = system(cmdline.c_str());
+#if defined(__linux__) || defined(__APPLE__)
+  returnCode = WEXITSTATUS(returnCode);
+#endif
+  ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+ 
+  //assert that expected files were generated
+  for(size_t i=0; i<generated_files.size(); i++)
+  {
+    const std::string & generates_file = generated_files[i];
+    ASSERT_TRUE(ra::filesystem::FileExists(generates_file.c_str())) << "File not found: '" << generates_file.c_str() << "'.";
+  }
+ 
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}

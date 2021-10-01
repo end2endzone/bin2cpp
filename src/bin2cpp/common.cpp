@@ -134,5 +134,180 @@ namespace bin2cpp
     return filename;
   }
 
+  std::string filter(std::string str, const std::string & valid_characters)
+  {
+    std::string output;
+  
+    //reserve as many characters as in input string
+    output.reserve(str.size());
+
+    //for each characters in input string
+    for(size_t i=0; i < str.size(); i++)
+    {
+      //is the current character is found in valid characters?
+      size_t pos = valid_characters.find(str[i], 0);
+      if (pos != std::string::npos)
+        output.append(1, str[i]);
+    }
+
+    return output;
+  }
+
+  std::string getFunctionIdentifierFromPath(const std::string & path)
+  {
+    std::string id;
+
+    //get filename of the given path
+    id = ra::filesystem::GetFilename(path.c_str());
+
+    //filter out characters which are not alphanumeric characters or '_'.
+    static const std::string validCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+    id = filter(id, validCharacters);
+
+    return id;
+  }
+
+  std::string getUniqueFunctionIdentifierFromPath(const std::string & path, Dictionary & dict)
+  {
+    std::string id = getFunctionIdentifierFromPath(path);
+
+    //find an unused identifier
+    bool exists = dict.find(id) != dict.end();
+    if (exists) {
+      std::string base_id = id + "_";
+
+      //increase a counter until an identifier does not already exists
+      size_t counter = 0;
+      while(exists) {
+        //duplicate id
+      
+        //increase counter and generate a new id
+        counter++;
+        id = base_id + ra::strings::ToString(counter);
+
+        //check again
+        exists = dict.find(id) != dict.end();
+      }
+    }
+
+    //this identifier is not already used.
+    //register this identifier in the dictionary.
+    dict.insert(id);
+
+    return id;
+  }
+
+  std::string getUniqueFilePath(const std::string & base_path, Dictionary & dict)
+  {
+    std::string dir;
+    std::string file_name;
+    std::string file_ext;
+    pathSplit(base_path, dir, file_name, file_ext);
+
+    std::string next_path = base_path;
+
+    //find an unused identifier
+    bool exists = dict.find(base_path) != dict.end();
+    if (exists) {
+
+      //increase a counter until an identifier does not already exists
+      size_t counter = 0;
+      while(exists) {
+        //duplicate id
+      
+        //increase counter and generate a new path
+        counter++;
+        std::string next_file_name = file_name + "_" + ra::strings::ToString(counter);
+        next_path = pathJoin(dir, next_file_name, file_ext);
+
+        //check again
+        exists = dict.find(next_path) != dict.end();
+      }
+    }
+
+    //this identifier is not already used.
+    //register this identifier in the dictionary.
+    dict.insert(next_path);
+
+    return next_path;
+  }
+
+#ifdef _WIN32
+  inline bool isDriveLetter(char c)
+  {
+    if (  (c >= 'a' && c <= 'z') ||
+          (c >= 'A' && c <= 'Z')  )
+    {
+      return true;
+    }
+    return false;
+  }
+#endif
+
+  void pathSplit(const std::string & path, std::string & directory, std::string & file_name, std::string & file_extension)
+  {
+    std::string tmp = path;
+
+    directory = ra::filesystem::GetParentPath(tmp);
+    if (!directory.empty())
+      tmp.erase(0, directory.size() + 1); // +1 to erase the last \ character
+
+#ifdef _WIN32
+    //test special case for root directories
+    //convert C: to C:\ 
+    if (directory.size() == 2 && directory[1] == ':')
+    {
+      if (isDriveLetter(directory[0]))
+      {
+        directory += "\\";
+      }
+    }
+#endif
+
+    file_name       = ra::filesystem::GetFilenameWithoutExtension(tmp.c_str());
+    file_extension  = ra::filesystem::GetFileExtention(tmp);
+  }
+
+  std::string pathJoin(const std::string & directory, const std::string & file_name, const std::string & file_extension)
+  {
+    std::string tmp;
+
+    if (!directory.empty())
+    {
+      tmp += directory;
+      tmp += ra::filesystem::GetPathSeparatorStr();
+
+#ifdef _WIN32
+      //special case for root directories
+      if (directory.size() == 3 && directory[1] == ':' && directory[2] == '\\' && isDriveLetter(directory[0]))
+      {
+        tmp.erase(2, 1);
+      }
+#endif
+    }
+
+    if (!file_name.empty())
+    {
+      tmp += file_name;
+    }
+
+    if (!file_extension.empty())
+    {
+      tmp += ".";
+      tmp += file_extension;
+    }
+    else
+    {
+      //no file extension
+      if (file_name.find('.') != std::string::npos)
+      {
+        // this file has a dot in file name
+        // we must add a dot at the end of the file name to make the distinction.
+        tmp += ".";
+      }
+    }
+
+    return tmp;
+  }
 
 }; //bin2cpp

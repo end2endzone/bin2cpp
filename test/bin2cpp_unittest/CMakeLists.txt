@@ -1,3 +1,5 @@
+include_directories(${CMAKE_SOURCE_DIR}/src/bin2cpp)    # for External Files
+
 set(GENERATED_TEST_FILES_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated_files)
 include_directories(${GENERATED_TEST_FILES_DIR})    # for TestExtraction.cpp
 
@@ -14,6 +16,9 @@ include_directories(${GENERATED_TEST_FILES_DIR}/testIssue12Mini)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue13)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue47)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue50)
+include_directories(${GENERATED_TEST_FILES_DIR}/testIssue56a)
+include_directories(${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources)
+include_directories(${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources)
 include_directories(${GENERATED_TEST_FILES_DIR}/testNamespace)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom1)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom2)
@@ -63,6 +68,42 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testIssue50/_testIssue50.cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue50/FileManager50.h
   ${GENERATED_TEST_FILES_DIR}/testIssue50/FileManager50.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/_testIssue56a.index.4321.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/_testIssue56a.index.1234.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/_testIssue56a.index.1234.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/_testIssue56a.index.4321.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/FileManager56a.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56a/compiled_sources/FileManager56a.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/FileManager56b.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/FileManager56b.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/how-to-create-a-web-site
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/using-bin2cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/how-to-create-a-web-site/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/how-to-create-a-web-site/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/using-bin2cpp/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/using-bin2cpp/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/contact/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/contact/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/home/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/home/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/FileManager56c.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/FileManager56c.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_1.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_1.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_2.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_2.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_3.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_3.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_4.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_4.h
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_5.cpp
+  ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_5.h
   ${GENERATED_TEST_FILES_DIR}/testNamespace/_testNamespace.h
   ${GENERATED_TEST_FILES_DIR}/testNamespace/_testNamespace.cpp
   ${GENERATED_TEST_FILES_DIR}/testRandom1/_testRandom1.h
@@ -151,15 +192,27 @@ else()
                       COMMAND echo Calling 'generate_test_files.sh' script...
                       COMMAND cd ${CMAKE_CURRENT_BINARY_DIR} && ./generate_test_files.sh
   )
-  
 endif()
+
+# target build_test_files is always built
+add_custom_target(build_test_files ALL
+  COMMAND echo "Building unit test files..."
+  
+  # If the files exists, then commands related to these files won't be executed
+  # DONOT let other target depends on the same OUTPUT as current target,
+  #   or it may be bad when doing parallel make
+  DEPENDS ${GENERATED_TEST_FILES}
+)
 
 # Show all generated files in a common folder
 source_group("Generated Files" FILES ${GENERATED_TEST_FILES})
+source_group("External Files" FILES ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.cpp ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.h)
 
 add_executable(bin2cpp_unittest
   ${BIN2CPP_VERSION_HEADER}
   ${BIN2CPP_CONFIG_HEADER}
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.cpp
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.h
   application.cpp
   application.h
   CMakeLists.txt
@@ -169,6 +222,8 @@ add_executable(bin2cpp_unittest
   main.cpp
   TestCLI.cpp
   TestCLI.h
+  TestCommon.cpp
+  TestCommon.h
   TestExtraction.cpp
   TestExtraction.h
   ${GENERATED_TEST_FILES}
@@ -176,6 +231,7 @@ add_executable(bin2cpp_unittest
 
 add_dependencies(bin2cpp_unittest bin2cpp)
 add_dependencies(bin2cpp_unittest testfilegenerator)
+add_dependencies(bin2cpp_unittest build_test_files)
 
 # Unit test projects requires to link with pthread if also linking with gtest
 if(NOT WIN32)
