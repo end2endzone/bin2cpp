@@ -262,6 +262,10 @@ namespace bin2cpp
         directory += "\\";
       }
     }
+#else
+    //test for root directory
+    if (directory.empty() && !path.empty() && path[0] == '/')
+      directory = "/";
 #endif
 
     file_name       = ra::filesystem::GetFilenameWithoutExtension(tmp.c_str());
@@ -283,6 +287,10 @@ namespace bin2cpp
       {
         tmp.erase(2, 1);
       }
+#else
+      //special case for root directory
+      if (directory == "/")
+        tmp.erase(0, 1);
 #endif
     }
 
