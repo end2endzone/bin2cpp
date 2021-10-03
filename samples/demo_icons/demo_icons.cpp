@@ -9,13 +9,13 @@ int main(int argc, char* argv[])
 
   //Print information about all files generated with "--managerfile" or --registerfile flags.
   size_t num_files = mgr.getFileCount();
-  printf("Found %lu embedded icons...\n", num_files);
+  printf("Found %llu embedded icons...\n", num_files);
 
   //Listing files.
   for(size_t i=0; i<num_files; i++)
   {
     const bin2cpp::File * file = mgr.getFile(i);
-    printf("  File '%s', %lu bytes\n", file->getFilename(), file->getSize());
+    printf("  File '%s', %llu bytes\n", file->getFilename(), file->getSize());
   }
 
   //Saving content back to files.
