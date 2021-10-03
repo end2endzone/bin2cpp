@@ -1,6 +1,7 @@
 Changes for 3.0.0:
 
 Note: This version introduces breaking changes. See notes about automatic identifiers.
+* New feature: Using RapidAssist version 0.10.2
 * New feature: Modified how automatic identifier are generated. New identifiers now includes the file extension. Existing code that uses bin2cpp generated files may not compile anymore.
 * Fixed issue #56: Problem with certain filenames
 
