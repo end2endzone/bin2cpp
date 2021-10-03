@@ -45,8 +45,22 @@ echo Compiling googletest...
 echo ============================================================================
 mkdir build >NUL 2>NUL
 cd build
-cmake -DCMAKE_GENERATOR_PLATFORM=%Platform% -T %PlatformToolset% -Dgtest_force_shared_crt=ON -DBUILD_GMOCK=OFF -DBUILD_GTEST=ON -DCMAKE_INSTALL_PREFIX="%CMAKE_INSTALL_PREFIX%" -DCMAKE_PREFIX_PATH="%CMAKE_PREFIX_PATH%" -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING ..
+cmake -DCMAKE_GENERATOR_PLATFORM=%Platform% -T %PlatformToolset% -Dgtest_force_shared_crt=ON -DBUILD_GMOCK=OFF -DBUILD_GTEST=ON -DCMAKE_INSTALL_PREFIX="%CMAKE_INSTALL_PREFIX%" -DCMAKE_PREFIX_PATH="%CMAKE_PREFIX_PATH%" ..
 if %errorlevel% neq 0 exit /b %errorlevel%
+
+echo.
+echo.
+echo ==================================================================================
+echo Patching googletest to silence warning C4996 about deprecated 'std::tr1' namespace
+echo ==================================================================================
+echo add_definitions(-D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)>>..\googletest\CMakeLists.txt
+echo add_definitions(-D_CRT_SECURE_NO_WARNINGS)>>..\googletest\CMakeLists.txt
+cmake .. 1>NUL 2>NUL
+echo Done patching.
+echo.
+echo.
+
+:: Continue with compilation
 cmake --build . --config %CONFIGURATION% -- -maxcpucount /m
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo.
