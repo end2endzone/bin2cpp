@@ -90,8 +90,9 @@ namespace bin2cpp
     //write cpp file heading
     fprintf(cpp, "%s", getHeaderTemplate().c_str());
     fprintf(cpp, "#include \"%s\"\n", getHeaderFilename() );
-    fprintf(cpp, "#include <stdio.h> //for FILE\n");
     fprintf(cpp, "#include <stdint.h>\n");
+    fprintf(cpp, "#include <iostream>\n");
+    fprintf(cpp, "#include <fstream>  //for ofstream\n");
     fprintf(cpp, "\n");
     fprintf(cpp, "#ifndef WIN32_LEAN_AND_MEAN\n");
     fprintf(cpp, "#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers\n");

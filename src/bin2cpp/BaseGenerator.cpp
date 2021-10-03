@@ -203,12 +203,12 @@ namespace bin2cpp
     std::string output;
     output << "    virtual bool save(const char * iFilename) const\n";
     output << "    {\n";
-    output << "      FILE * f = fopen(iFilename, \"wb\");\n";
-    output << "      if (!f) return false;\n";
+    output << "      std::ofstream f(iFilename, std::ios::out | std::ios::binary);\n";
+    output << "      if (f.fail()) return false;\n";
     output << "      size_t fileSize = getSize();\n";
     output << "      const char * buffer = getBuffer();\n";
-    output << "      fwrite(buffer, 1, fileSize, f);\n";
-    output << "      fclose(f);\n";
+    output << "      f.write(buffer, fileSize);\n";
+    output << "      f.close();\n";
     output << "      return true;\n";
     output << "    }\n";
     return output;

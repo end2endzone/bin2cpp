@@ -82,8 +82,8 @@ namespace bin2cpp
     //write cpp file heading
     fprintf(cpp, "%s", getHeaderTemplate().c_str());
     fprintf(cpp, "#include \"%s\"\n", getHeaderFilename() );
-    fprintf(cpp, "#include <stdio.h> //for FILE\n");
-    fprintf(cpp, "#include <string> //for memcpy\n");
+    fprintf(cpp, "#include <iostream>\n");
+    fprintf(cpp, "#include <fstream>  //for ofstream\n");
     fprintf(cpp, "namespace %s\n", mNamespace.c_str());
     fprintf(cpp, "{\n");
     fprintf(cpp, "  class %s : public virtual %s::%s\n", className.c_str(), mNamespace.c_str(), mBaseClass.c_str());
