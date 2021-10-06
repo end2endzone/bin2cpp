@@ -78,10 +78,8 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/FileManager56b.h
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/index.cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/index.h
-  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/how-to-create-a-web-site
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/index.cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/index.h
-  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/using-bin2cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/how-to-create-a-web-site/index.cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/how-to-create-a-web-site/index.h
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/using-bin2cpp/index.cpp
