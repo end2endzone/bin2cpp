@@ -46,6 +46,8 @@ namespace bin2cpp
     virtual const char * getHeaderFilename() const;
     virtual void setFunctionIdentifier(const char * function_identifier);
     virtual const char * getFunctionIdentifier() const;
+    virtual void setReportedFilePath(const char * path);
+    virtual const char * getReportedFilePath() const;
     virtual void setChunkSize(size_t chunk_size);
     virtual size_t getChunkSize() const;
     virtual void setNamespace(const char * name);
@@ -75,10 +77,13 @@ namespace bin2cpp
     virtual std::string getFileManagerRegistrationTemplate();
     virtual std::string getClassName();
     virtual std::string getClassMacroGuardPrefix();
+    virtual std::string getImplOfGetFileName();
+    virtual std::string getImplOfGetFilePath();
 
     //attributes
     std::string mInputFilePath;
     std::string mHeaderFilename;
+    std::string mReportedFilePath;
     std::string mFunctionIdentifier;
     size_t mChunkSize;
     std::string mNamespace;

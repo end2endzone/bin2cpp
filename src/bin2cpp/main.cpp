@@ -123,6 +123,7 @@ struct ARGUMENTS
   bool version;
   bool hasFile;                 // true if 'inputFilePath' is set.
   bool hasDir;                  // true if 'inputDirPath' is set.
+  bool hasReportedFilePath;     // true if 'reportedFilePath' is set.
   bool hasManagerFile;          // true if 'managerHeaderFilename' is set.
   bool keepDirectoryStructure;  // true if the output files must have the same directory structure as the input files. Valid only when --dir is used.
   std::string inputFilePath;    // path of the input binary file
@@ -130,6 +131,7 @@ struct ARGUMENTS
   std::string outputDirPath;
   std::string headerFilename;
   std::string functionIdentifier;
+  std::string reportedFilePath; // path reported in the public api when calling getFilePath();
   size_t chunkSize;
   bool overrideExisting;
   std::string codeNamespace;
@@ -202,6 +204,7 @@ int main(int argc, char* argv[])
   args.version = false;
   args.hasFile = false;
   args.hasDir = false;
+  args.hasReportedFilePath = false;
   args.hasManagerFile = false;
   args.keepDirectoryStructure = false;
   args.chunkSize = 0;
@@ -345,6 +348,15 @@ int main(int argc, char* argv[])
     args.registerfile = true;
   }
 
+  args.hasReportedFilePath  = ra::cli::ParseArgument("reportedfilepath",  args.reportedFilePath,  argc, argv);
+  if (args.hasReportedFilePath && args.hasDir)
+  {
+    APP_ERROR_CODES error = APP_ERROR_TOOMANYARGUMENTS;
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s (reportedfilepath)", getErrorCodeDescription(error));
+    printUsage();
+    return error;
+  }
+
   args.keepDirectoryStructure = ra::cli::ParseArgument("keepdirs", dummy, argc, argv);
 
   std::string encodingStr;
@@ -482,6 +494,7 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * g
   generator->setInputFilePath(argsCopy.inputFilePath.c_str());
   generator->setHeaderFilename(argsCopy.headerFilename.c_str());
   generator->setFunctionIdentifier(argsCopy.functionIdentifier.c_str());
+  generator->setReportedFilePath(argsCopy.reportedFilePath.c_str());
   generator->setChunkSize(argsCopy.chunkSize);
   generator->setNamespace(argsCopy.codeNamespace.c_str());
   generator->setBaseClass(argsCopy.baseClass.c_str());
@@ -573,14 +586,21 @@ APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerato
     argsCopy.functionIdentifier = getUniqueFunctionIdentifierFromPath(file.c_str(), identifiers_dictionary);
     argsCopy.functionIdentifier = ra::strings::CapitalizeFirstCharacter(argsCopy.functionIdentifier);
 
+    //build a relative file path
+    std::string relative_file_path = file;
+    relative_file_path.erase(0, argsCopy.inputDirPath.size() + 1 ); // convert absolute path to relative path. +1 to remove first \ character
+    ra::filesystem::NormalizePath(relative_file_path);
+
+    //automatically build a reported path with --dir mode.
+    argsCopy.hasReportedFilePath = true;
+    argsCopy.reportedFilePath = relative_file_path;
+
     if (args.keepDirectoryStructure)
     {
       // To keep the directory structure, we need to
       // make headerFilename a relative path
       // inside the output directory
-      std::string relative_header_file_path = file;
-      relative_header_file_path.erase(0, argsCopy.inputDirPath.size() + 1 ); // convert absolute path to relative path. +1 to remove first \ character
-      ra::filesystem::NormalizePath(relative_header_file_path);
+      std::string relative_header_file_path = relative_file_path;
 
       // change the file extension to *.h
       std::string extension = ra::filesystem::GetFileExtention(relative_header_file_path);
