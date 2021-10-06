@@ -265,7 +265,7 @@ namespace bin2cpp
 
     std::string inputFileName = ra::filesystem::GetFilename(getInputFilePath());
 
-    //could we report getFilename() as a substring of getFilePath() ?
+    //could we report getFileName() as a substring of getFilePath() ?
     const char * reported_path = getReportedFilePath();
     if (reported_path != NULL && reported_path[0] != '\0')
     {
@@ -311,8 +311,8 @@ namespace bin2cpp
     else
     {
       //if reported path is not specified ?
-      //report the same as getFilename()
-      output = "return getFilename();";
+      //report the same as getFileName()
+      output = "return getFileName();";
       return output;
     }
 
@@ -349,7 +349,8 @@ namespace bin2cpp
     fprintf(header, "  {\n");
     fprintf(header, "  public:\n");
     fprintf(header, "    virtual size_t getSize() const = 0;\n");
-    fprintf(header, "    virtual const char * getFilename() const = 0;\n");
+    fprintf(header, "    /* DEPRECATED */ virtual inline const char * getFilename() const { return getFileName(); }\n");
+    fprintf(header, "    virtual const char * getFileName() const = 0;\n");
     fprintf(header, "    virtual const char * getFilePath() const = 0;\n");
     fprintf(header, "    virtual const char * getBuffer() const = 0;\n");
     fprintf(header, "    virtual bool save(const char * filename) const = 0;\n");
@@ -396,7 +397,8 @@ namespace bin2cpp
     fprintf(header, "  {\n");
     fprintf(header, "  public:\n");
     fprintf(header, "    virtual size_t getSize() const = 0;\n");
-    fprintf(header, "    virtual const char * getFilename() const = 0;\n");
+    fprintf(header, "    /* DEPRECATED */ virtual inline const char * getFilename() const { return getFileName(); }\n");
+    fprintf(header, "    virtual const char * getFileName() const = 0;\n");
     fprintf(header, "    virtual const char * getFilePath() const = 0;\n");
     fprintf(header, "    virtual const char * getBuffer() const = 0;\n");
     fprintf(header, "    virtual bool save(const char * filename) const = 0;\n");
@@ -485,7 +487,7 @@ namespace bin2cpp
     fprintf(cpp, "      #else\n");
     fprintf(cpp, "      path.append(1, '/');\n");
     fprintf(cpp, "      #endif\n");
-    fprintf(cpp, "      path.append(f->getFilename());\n");
+    fprintf(cpp, "      path.append(f->getFileName());\n");
     fprintf(cpp, "      bool saved = f->save(path.c_str());\n");
     fprintf(cpp, "      if (!saved)\n");
     fprintf(cpp, "        return false;\n");

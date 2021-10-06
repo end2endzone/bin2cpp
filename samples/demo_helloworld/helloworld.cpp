@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
   const bin2cpp::File & resource = bin2cpp::getHelloWorldHtmlFile();
 
   //print information about the file.
-  printf("Embedded file '%s' is %llu bytes long.\n", resource.getFilename(), resource.getSize());
+  printf("Embedded file '%s' is %llu bytes long.\n", resource.getFileName(), resource.getSize());
 
   //Saving content back to a file.
   printf("Saving embedded file to 'helloworld_copy.html'...\n");

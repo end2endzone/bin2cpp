@@ -1,8 +1,9 @@
 Changes for 3.0.0:
 
-Note: This version introduces breaking changes. See notes about automatic identifiers.
+Note: This version introduces breaking changes. The public API has changed. See notes about automatic identifiers and deprecated method `getFilename()`.
 * New feature: Using RapidAssist version 0.10.2
 * New feature: Modified how automatic identifier are generated. New identifiers now includes the file extension. Existing code that uses bin2cpp generated files may not compile anymore.
+* New feature: Deprecated method `getFilename()` in favor to `getFileName()`. This is to be more inline with getFilePath().
 * Fixed issue #52: Generate only c++ code.
 * Fixed issue #56: Problem with certain filenames.
 * Fixed issue #59: Silence warning C4996 about deprecated 'std::tr1' namespace - Windows only.
