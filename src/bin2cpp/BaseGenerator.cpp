@@ -272,7 +272,7 @@ namespace bin2cpp
       size_t offset = mReportedFilePath.find(inputFileName);
       if (offset != std::string::npos)
       {
-        output = "return getFilePath()[";
+        output = "return &getFilePath()[";
         output += ra::strings::ToString(offset);
         output += "];";
         return output;
