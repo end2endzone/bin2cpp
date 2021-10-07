@@ -35,6 +35,9 @@ include_directories(${GENERATED_TEST_FILES_DIR}/testText1000)
 include_directories(${GENERATED_TEST_FILES_DIR}/testText100000)
 include_directories(${GENERATED_TEST_FILES_DIR}/testFileManager)
 include_directories(${GENERATED_TEST_FILES_DIR}/testDir01/sources)
+include_directories(${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources)
+include_directories(${GENERATED_TEST_FILES_DIR}testReportedPathFile1)
+include_directories(${GENERATED_TEST_FILES_DIR}testReportedPathFile2)
 if (WIN32)
   include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorWin32)
 endif()
@@ -146,6 +149,24 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0003.cpp
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0004.cpp
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0005.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_1.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_1.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_2.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_2.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_3.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_3.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_4.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_4.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_5.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_5.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/FileManagerReportedPathDir.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/FileManagerReportedPathDir.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathFile1/_testReportedPathFile1.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathFile1/_testReportedPathFile1.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathFile2/_testReportedPathFile2.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathFile2/_testReportedPathFile2.cpp
 )
 if (WIN32)
   # Include win32 generated test files only on Windows platform.

@@ -59,6 +59,9 @@
 #include "testIssue50/_testIssue50.h"
 #include "testIssue56a/compiled_sources/_testIssue56a.index.1234.h"
 #include "testIssue56a/compiled_sources/_testIssue56a.index.4321.h"
+#include "testReportedPathFile1/_testReportedPathFile1.h"
+#include "testReportedPathFile2/_testReportedPathFile2.h"
+#include "testReportedPathDir/generated_sources/FileManagerReportedPathDir.h"
 
 #undef BIN2CPP_EMBEDDEDFILE_CLASS
 #include "testNamespace/_testNamespace.h"
@@ -605,5 +608,70 @@ TEST_F(TestExtraction, testIssue56a)
     ASSERT_TRUE( ra::filesystem::FileExists(path.c_str()) ) << "File '" << path.c_str() << "' not found!";
     ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "get_testIssue56aindex4321cssFile()", line, index) );
   }
+}
 
+TEST_F(TestExtraction, testDeprecatedGetFilename)
+{
+  const testReportedPathFile1::File & file = testReportedPathFile1::getTestReportedPathFile1File();
+  ASSERT_TRUE( file.getFileName() != NULL );
+  ASSERT_TRUE( file.getFilename() != NULL );
+  ASSERT_EQ(0, strcmp(file.getFileName(), file.getFilename()) );
+}
+
+TEST_F(TestExtraction, testReportedPathFile1)
+{
+  const testReportedPathFile1::File & file = testReportedPathFile1::getTestReportedPathFile1File();
+
+  // @BIN2CPP_TARGET_FILE@ --noheader --file=.\generated_files\testReportedPathFile1\testReportedPathFile1.bin
+  // --output=.\generated_files\testReportedPathFile1 --chunksize=50
+  // --headerfile=_testReportedPathFile1.h --identifier=testReportedPathFile1
+  // --namespace=testReportedPathFile1 --override --reportedfilepath=foo\bar\testReportedPathFile1.bin
+
+  std::string actual_file_name = file.getFileName();
+  std::string expected_file_name = "testReportedPathFile1.bin";
+  ASSERT_EQ(expected_file_name, actual_file_name);
+
+  std::string actual_file_path = file.getFilePath();
+  std::string expected_file_path = "foo\\bar\\testReportedPathFile1.bin";
+  ra::filesystem::NormalizePath(expected_file_path);
+  ASSERT_EQ(expected_file_path, actual_file_path);
+}
+
+TEST_F(TestExtraction, testReportedPathFile2)
+{
+  const testReportedPathFile2::File & file = testReportedPathFile2::getTestReportedPathFile2File();
+
+  // @BIN2CPP_TARGET_FILE@ --noheader --file=.\generated_files\testReportedPathFile2\testReportedPathFile2.bin
+  // --output=.\generated_files\testReportedPathFile2 --chunksize=50
+  // --headerfile=_testReportedPathFile2.h --identifier=testReportedPathFile2
+  // --namespace=testReportedPathFile2 --override --reportedfilepath=ham\eggs\breakfast.bin
+
+  std::string actual_file_name = file.getFileName();
+  std::string expected_file_name = "testReportedPathFile2.bin";
+  ASSERT_EQ(expected_file_name, actual_file_name);
+
+  std::string actual_file_path = file.getFilePath();
+  std::string expected_file_path = "ham\\eggs\\breakfast.bin";
+  ra::filesystem::NormalizePath(expected_file_path);
+  ASSERT_EQ(expected_file_path, actual_file_path);
+}
+
+TEST_F(TestExtraction, testReportedPathDir)
+{
+  testReportedPathDir::FileManager & mgr = testReportedPathDir::FileManager::getInstance();
+
+  std::string expected_path;
+  expected_path += "www";
+  expected_path += ra::filesystem::GetPathSeparatorStr();
+
+  size_t count = mgr.getFileCount();
+  for(size_t i=0; i<count; i++)
+  {
+    const testReportedPathDir::File * file = mgr.getFile(i);
+    ASSERT_TRUE( file != NULL );
+    std::string file_path = file->getFilePath();
+    
+    //assert in www directory
+    ASSERT_EQ( 0, file_path.compare(0, expected_path.size(), expected_path) ) << "file_path=" << file_path;
+  }
 }
