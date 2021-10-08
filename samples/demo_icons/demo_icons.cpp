@@ -1,5 +1,6 @@
 #include <stdio.h>  // printf
 #include <stdlib.h> // getenv
+#include <iostream>
 
 #include "IconsFileManager.h"
 
@@ -9,23 +10,23 @@ int main(int argc, char* argv[])
 
   //Print information about all files generated with "--managerfile" or --registerfile flags.
   size_t num_files = mgr.getFileCount();
-  printf("Found %llu embedded icons...\n", num_files);
+  std::cout << "Found " << num_files << " embedded icons...\n";
 
   //Listing files.
   for(size_t i=0; i<num_files; i++)
   {
     const bin2cpp::File * file = mgr.getFile(i);
-    printf("  File '%s', %llu bytes\n", file->getFilename(), file->getSize());
+    std::cout << "  File '" << file->getFilename() << "', " << file->getSize() << " bytes\n";
   }
 
   //Saving content back to files.
   const char * temp_dir = getenv("TEMP");
-  printf("Saving embedded icons to directory '%s'...\n", temp_dir);
+  std::cout << "Saving embedded icons to directory '" << temp_dir << "'...\n";
   bool saved = mgr.saveFiles(temp_dir);
   if (saved)
-    printf("saved\n");
+    std::cout << "saved\n";
   else
-    printf("failed\n");
+    std::cout << "failed\n";
 
   return 0;
 }
