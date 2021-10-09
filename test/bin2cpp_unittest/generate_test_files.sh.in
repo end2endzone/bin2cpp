@@ -274,20 +274,20 @@ mkdir -p ${OUTDIR}/saved_files
 @BIN2CPP_TARGET_FILE@ --noheader --dir=${OUTDIR}/input_files --output=${OUTDIR}/generated_sources --chunksize=200 --managerfile=FileManagerKeepDirs.h --registerfile --namespace=testkeepdirs --override --keepdirs
 
 export TEST_NAME=testReportedPathFile1
-export OUTDIR=./generated_files/%TEST_NAME%
+export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p $OUTDIR
-@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/%TEST_NAME%.bin --size=1024 --fill=random --seed=1
-@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/%TEST_NAME%.bin --output=$OUTDIR --chunksize=50 --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --namespace=testReportedPathFile1 --override --reportedfilepath=foo/bar/%TEST_NAME%.bin
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=1024 --fill=random --seed=1
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --chunksize=50 --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME --namespace=testReportedPathFile1 --override --reportedfilepath=foo/bar/$TEST_NAME.bin
 
 # Test option --reportedfilepath where the reported filename does not match the original filename.
 export TEST_NAME=testReportedPathFile2
-export OUTDIR=./generated_files/%TEST_NAME%
+export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p $OUTDIR
-@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/%TEST_NAME%.bin --size=1024 --fill=random --seed=2
-@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/%TEST_NAME%.bin --output=$OUTDIR --chunksize=50 --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --namespace=testReportedPathFile2 --override --reportedfilepath=ham/eggs/breakfast.bin
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=1024 --fill=random --seed=2
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --chunksize=50 --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME --namespace=testReportedPathFile2 --override --reportedfilepath=ham/eggs/breakfast.bin
 
 export TEST_NAME=testReportedPathDir
-export OUTDIR=./generated_files/%TEST_NAME%
+export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p $OUTDIR
 mkdir -p $OUTDIR/input_files
 mkdir -p $OUTDIR/input_files/www
