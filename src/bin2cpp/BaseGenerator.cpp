@@ -79,6 +79,17 @@ namespace bin2cpp
     return mFunctionIdentifier.c_str();
   }
 
+  void BaseGenerator::setReportedFilePath(const char * path)
+  {
+    if (path)
+      mReportedFilePath = path;
+  }
+
+  const char * BaseGenerator::getReportedFilePath() const
+  {
+    return mReportedFilePath.c_str();
+  }
+
   void BaseGenerator::setChunkSize(size_t chunk_size)
   {
     mChunkSize = chunk_size;
@@ -201,9 +212,9 @@ namespace bin2cpp
   std::string BaseGenerator::getSaveMethodTemplate()
   {
     std::string output;
-    output << "    virtual bool save(const char * iFilename) const\n";
+    output << "    virtual bool save(const char * filename) const\n";
     output << "    {\n";
-    output << "      std::ofstream f(iFilename, std::ios::out | std::ios::binary);\n";
+    output << "      std::ofstream f(filename, std::ios::out | std::ios::binary);\n";
     output << "      if (f.fail()) return false;\n";
     output << "      size_t fileSize = getSize();\n";
     output << "      const char * buffer = getBuffer();\n";
@@ -248,6 +259,70 @@ namespace bin2cpp
     return macroGuardPrefix;
   }
 
+  std::string BaseGenerator::getImplOfGetFileName()
+  {
+    std::string output;
+
+    std::string inputFileName = ra::filesystem::GetFilename(getInputFilePath());
+
+    //could we report getFileName() as a substring of getFilePath() ?
+    const char * reported_path = getReportedFilePath();
+    if (reported_path != NULL && reported_path[0] != '\0')
+    {
+      size_t offset = mReportedFilePath.find(inputFileName);
+      if (offset != std::string::npos)
+      {
+        output = "return &getFilePath()[";
+        output += ra::strings::ToString(offset);
+        output += "];";
+        return output;
+      }
+    }
+
+    //return default implementation
+    output = "return \"";
+    output += inputFileName;
+    output += "\";";
+    return output;
+  }
+
+  std::string BaseGenerator::getImplOfGetFilePath()
+  {
+    std::string output;
+
+    //convert mReportedFilePath string to c++
+    std::string path = mReportedFilePath;
+#ifdef _WIN32
+    //escape backslash characters for c++
+    static const std::string BACKSLASH = "\\";
+    static const std::string BACKSLASH_ESCAPED = "\\\\";
+    ra::strings::Replace(path, BACKSLASH, BACKSLASH_ESCAPED);
+#endif
+
+    //is there a reported path specified ?
+    const char * reported_path = getReportedFilePath();
+    if (reported_path != NULL && reported_path[0] != '\0')
+    {
+      output = "return \"";
+      output += path;
+      output += "\";";
+      return output;
+    }
+    else
+    {
+      //if reported path is not specified ?
+      //report the same as getFileName()
+      output = "return getFileName();";
+      return output;
+    }
+
+    //return default implementation
+    output = "return \"";
+    output += path;
+    output += "\";";
+    return output;
+  }
+
   bool BaseGenerator::createCppHeaderFile(const char * header_file_path)
   {
     FILE * header = fopen(header_file_path, "w");
@@ -274,9 +349,11 @@ namespace bin2cpp
     fprintf(header, "  {\n");
     fprintf(header, "  public:\n");
     fprintf(header, "    virtual size_t getSize() const = 0;\n");
-    fprintf(header, "    virtual const char * getFilename() const = 0;\n");
+    fprintf(header, "    /* DEPRECATED */ virtual inline const char * getFilename() const { return getFileName(); }\n");
+    fprintf(header, "    virtual const char * getFileName() const = 0;\n");
+    fprintf(header, "    virtual const char * getFilePath() const = 0;\n");
     fprintf(header, "    virtual const char * getBuffer() const = 0;\n");
-    fprintf(header, "    virtual bool save(const char * iFilename) const = 0;\n");
+    fprintf(header, "    virtual bool save(const char * filename) const = 0;\n");
     fprintf(header, "  };\n");
     fprintf(header, "  #endif //%s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
     fprintf(header, "  const %s & %s();\n", mBaseClass.c_str(), getGetterFunctionName().c_str());
@@ -320,9 +397,11 @@ namespace bin2cpp
     fprintf(header, "  {\n");
     fprintf(header, "  public:\n");
     fprintf(header, "    virtual size_t getSize() const = 0;\n");
-    fprintf(header, "    virtual const char * getFilename() const = 0;\n");
+    fprintf(header, "    /* DEPRECATED */ virtual inline const char * getFilename() const { return getFileName(); }\n");
+    fprintf(header, "    virtual const char * getFileName() const = 0;\n");
+    fprintf(header, "    virtual const char * getFilePath() const = 0;\n");
     fprintf(header, "    virtual const char * getBuffer() const = 0;\n");
-    fprintf(header, "    virtual bool save(const char * iFilename) const = 0;\n");
+    fprintf(header, "    virtual bool save(const char * filename) const = 0;\n");
     fprintf(header, "  };\n");
     fprintf(header, "  #endif //%s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
     fprintf(header, "\n");
@@ -336,10 +415,10 @@ namespace bin2cpp
     fprintf(header, "  public:\n");
     fprintf(header, "    typedef const %s & (*t_func)();\n", mBaseClass.c_str());
     fprintf(header, "    static FileManager & getInstance();\n");
-    fprintf(header, "    void registerFile(t_func iFunctionPtr);\n");
+    fprintf(header, "    void registerFile(t_func func);\n");
     fprintf(header, "    size_t getFileCount() const;\n");
     fprintf(header, "    const %s * getFile(const size_t & index) const;\n", mBaseClass.c_str());
-    fprintf(header, "    bool saveFiles(const char * iDirectory) const;\n");
+    fprintf(header, "    bool saveFiles(const char * directory) const;\n");
     fprintf(header, "  private:\n");
     fprintf(header, "    std::vector<t_func> functions_;\n");
     fprintf(header, "  };\n");
@@ -371,17 +450,17 @@ namespace bin2cpp
     fprintf(cpp, "\n");
     fprintf(cpp, "namespace %s\n", mNamespace.c_str());
     fprintf(cpp, "{\n");
-    fprintf(cpp, "  bool RegisterFile(FileManager::t_func iFunctionPointer)\n");
+    fprintf(cpp, "  bool RegisterFile(FileManager::t_func functionPointer)\n");
     fprintf(cpp, "  {\n");
-    fprintf(cpp, "    if (iFunctionPointer == NULL)\n");
+    fprintf(cpp, "    if (functionPointer == NULL)\n");
     fprintf(cpp, "      return false;\n");
-    fprintf(cpp, "    FileManager::getInstance().registerFile(iFunctionPointer);\n");
+    fprintf(cpp, "    FileManager::getInstance().registerFile(functionPointer);\n");
     fprintf(cpp, "    return true;\n");
     fprintf(cpp, "  }\n");
     fprintf(cpp, "  FileManager::FileManager() {}\n");
     fprintf(cpp, "  FileManager::~FileManager() {}\n");
     fprintf(cpp, "  FileManager & FileManager::getInstance() { static FileManager _mgr; return _mgr; }\n");
-    fprintf(cpp, "  void FileManager::registerFile(t_func iFunctionPtr) { functions_.push_back(iFunctionPtr); }\n");
+    fprintf(cpp, "  void FileManager::registerFile(t_func func) { functions_.push_back(func); }\n");
     fprintf(cpp, "  size_t FileManager::getFileCount() const { return functions_.size(); }\n");
     fprintf(cpp, "  const File * FileManager::getFile(const size_t & index) const\n");
     fprintf(cpp, "  {\n");
@@ -391,9 +470,9 @@ namespace bin2cpp
     fprintf(cpp, "    const %s::File & resource = ressource_getter_function();\n", mNamespace.c_str());
     fprintf(cpp, "    return &resource;\n");
     fprintf(cpp, "  }\n");
-    fprintf(cpp, "  bool FileManager::saveFiles(const char * iDirectory) const\n");
+    fprintf(cpp, "  bool FileManager::saveFiles(const char * directory) const\n");
     fprintf(cpp, "  {\n");
-    fprintf(cpp, "    if (iDirectory == NULL)\n");
+    fprintf(cpp, "    if (directory == NULL)\n");
     fprintf(cpp, "      return false;\n");
     fprintf(cpp, "    size_t count = getFileCount();\n");
     fprintf(cpp, "    for(size_t i=0; i<count; i++)\n");
@@ -402,13 +481,13 @@ namespace bin2cpp
     fprintf(cpp, "      if (!f)\n");
     fprintf(cpp, "        return false;\n");
     fprintf(cpp, "      std::string path;\n");
-    fprintf(cpp, "      path.append(iDirectory);\n");
+    fprintf(cpp, "      path.append(directory);\n");
     fprintf(cpp, "      #ifdef _WIN32\n");
     fprintf(cpp, "      path.append(1, '\\\\');\n");
     fprintf(cpp, "      #else\n");
     fprintf(cpp, "      path.append(1, '/');\n");
     fprintf(cpp, "      #endif\n");
-    fprintf(cpp, "      path.append(f->getFilename());\n");
+    fprintf(cpp, "      path.append(f->getFileName());\n");
     fprintf(cpp, "      bool saved = f->save(path.c_str());\n");
     fprintf(cpp, "      if (!saved)\n");
     fprintf(cpp, "        return false;\n");

@@ -77,6 +77,18 @@ namespace bin2cpp
     virtual const char * getFunctionIdentifier() const = 0;
 
     ///<summary>
+    ///Defines the path reported by the getFilePath() method of the File class.
+    ///</summary>
+    ///<param name="path">The path of the input file (resource) to embeded as C++ source code.</param>
+    virtual void setReportedFilePath(const char * path) = 0;
+
+    ///<summary>
+    ///Provides the path reported by the getFilePath() method of the File class.
+    ///</summary>
+    ///<returns>The path reported by the getFilePath() method of the File class. Returns an empty string if not defined.</returns>
+    virtual const char * getReportedFilePath() const = 0;
+
+    ///<summary>
     ///Defines the size in bytes of each chunk of data.
     ///</summary>
     ///<param name="chunk_size">The size in bytes of each chunk of data.</param>

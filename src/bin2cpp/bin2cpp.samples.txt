@@ -16,3 +16,6 @@
 --dir=..\..\test\bin2cpp_unittest\generated_files\testIssue56a\input_files --output=..\..\test\bin2cpp_unittest\generated_files\testIssue56a\compiled_sources
 --dir=..\..\test\bin2cpp_unittest\generated_files\testIssue56b\input_files\www --output=..\..\test\bin2cpp_unittest\generated_files\testIssue56b\generated_sources --namespace=issue56b --override
 --dir=..\..\test\bin2cpp_unittest\generated_files\testKeepDirectories\input_files\www --output=..\..\test\bin2cpp_unittest\generated_files\testKeepDirectories\generated_sources --override --keepdirs
+
+--file=D:\Temp\bin2cpp\issue51\input_files\IMG_0001.jpg --output=D:\Temp\bin2cpp\issue51\generated_sources --headerfile="IMG_0001.h" --identifier=testIssue51 --namespace=testIssue51 --managerfile=FileManager51.h --override --reportedfilepath=foo\bar\IMG_0001.h
+--dir=D:\Temp\bin2cpp\testIssue56b\input_files\www --output=D:\Temp\bin2cpp\testIssue56b\generated_sources --namespace=testIssue51 --managerfile=FileManager51.h --override

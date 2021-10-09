@@ -4,12 +4,19 @@ set(GENERATED_TEST_FILES_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated_files)
 include_directories(${GENERATED_TEST_FILES_DIR})    # for TestExtraction.cpp
 
 # Include directories for each generated files.
+# These are required because each generated cpp file is including its header file
+# without using the parent directory.
 include_directories(${GENERATED_TEST_FILES_DIR}/testBaseClass)
+include_directories(${GENERATED_TEST_FILES_DIR}/testDir01/sources)
 include_directories(${GENERATED_TEST_FILES_DIR}/testEncodingHex)
 include_directories(${GENERATED_TEST_FILES_DIR}/testEncodingOct)
+include_directories(${GENERATED_TEST_FILES_DIR}/testFileManager)
 include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorArray10000)
 include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorSegment10000)
 include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorString10000)
+if (WIN32)
+  include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorWin32)
+endif()
 include_directories(${GENERATED_TEST_FILES_DIR}/testHtml100000)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue12)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue12Mini)
@@ -19,6 +26,7 @@ include_directories(${GENERATED_TEST_FILES_DIR}/testIssue50)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue56a)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources)
+include_directories(${GENERATED_TEST_FILES_DIR}/testKeepDirectories)
 include_directories(${GENERATED_TEST_FILES_DIR}/testNamespace)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom1)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom2)
@@ -28,16 +36,14 @@ include_directories(${GENERATED_TEST_FILES_DIR}/testRandom5)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom6)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom7)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom8)
+include_directories(${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources)
+include_directories(${GENERATED_TEST_FILES_DIR}/testReportedPathFile1)
+include_directories(${GENERATED_TEST_FILES_DIR}/testReportedPathFile2)
 include_directories(${GENERATED_TEST_FILES_DIR}/testSequential1000)
 include_directories(${GENERATED_TEST_FILES_DIR}/testSequential10MB)
 include_directories(${GENERATED_TEST_FILES_DIR}/testText10)
 include_directories(${GENERATED_TEST_FILES_DIR}/testText1000)
 include_directories(${GENERATED_TEST_FILES_DIR}/testText100000)
-include_directories(${GENERATED_TEST_FILES_DIR}/testFileManager)
-include_directories(${GENERATED_TEST_FILES_DIR}/testDir01/sources)
-if (WIN32)
-  include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorWin32)
-endif()
 
 set(GENERATED_TEST_FILES 
   ${GENERATED_TEST_FILES_DIR}/testBaseClass/_testBaseClass.h
@@ -78,10 +84,8 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/FileManager56b.h
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/index.cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/index.h
-  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/how-to-create-a-web-site
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/index.cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/index.h
-  ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/using-bin2cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/how-to-create-a-web-site/index.cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/how-to-create-a-web-site/index.h
   ${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources/www/blog/using-bin2cpp/index.cpp
@@ -148,6 +152,24 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0003.cpp
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0004.cpp
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0005.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_1.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_1.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_2.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_2.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_3.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_3.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_4.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_4.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_5.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/index_5.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/FileManagerReportedPathDir.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathDir/generated_sources/FileManagerReportedPathDir.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathFile1/_testReportedPathFile1.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathFile1/_testReportedPathFile1.cpp
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathFile2/_testReportedPathFile2.h
+  ${GENERATED_TEST_FILES_DIR}/testReportedPathFile2/_testReportedPathFile2.cpp
 )
 if (WIN32)
   # Include win32 generated test files only on Windows platform.

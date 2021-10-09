@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
   const bin2cpp::File & resource = bin2cpp::getHelloWorldHtmlFile();
 
   //print information about the file.
-  std::cout << "Embedded file '" << resource.getFilename() << "' is " << resource.getSize() << " bytes long.\n";
+  std::cout << "Embedded file '" << resource.getFileName() << "' is " << resource.getSize() << " bytes long.\n";
 
   //Saving content back to a file.
   std::cout << " Saving embedded file to 'helloworld_copy.html'...\n";

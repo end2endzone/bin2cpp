@@ -123,6 +123,7 @@ struct ARGUMENTS
   bool version;
   bool hasFile;                 // true if 'inputFilePath' is set.
   bool hasDir;                  // true if 'inputDirPath' is set.
+  bool hasReportedFilePath;     // true if 'reportedFilePath' is set.
   bool hasManagerFile;          // true if 'managerHeaderFilename' is set.
   bool keepDirectoryStructure;  // true if the output files must have the same directory structure as the input files. Valid only when --dir is used.
   std::string inputFilePath;    // path of the input binary file
@@ -130,6 +131,7 @@ struct ARGUMENTS
   std::string outputDirPath;
   std::string headerFilename;
   std::string functionIdentifier;
+  std::string reportedFilePath; // path reported in the public api when calling getFilePath();
   size_t chunkSize;
   bool overrideExisting;
   std::string codeNamespace;
@@ -159,7 +161,8 @@ void printUsage()
   //usage string in docopt format. See http://docopt.org/
   static const char usage[] = 
     "Usage:\n"
-    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<value>] [--managerfile=<name>] [--registerfile] [--override] [--noheader] [--quiet]\n"
+    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<name>] [--managerfile=<name>] [--registerfile] [--reportedfilepath=<value>] [--override] [--noheader] [--quiet]\n"
+    "  bin2cpp --dir=<path>  --output=<path> [--keepdirs] [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<name>] [--managerfile=<name>] [--registerfile] [--override] [--noheader] [--quiet]\n"
     "  bin2cpp --help\n"
     "  bin2cpp --version\n"
     "\n"
@@ -170,25 +173,27 @@ void printUsage()
     "  --dir=<path>         Path of the input directory used for embedding all files of the directory as C++ source code.\n"
     "                       When specified, the parameters 'headerfile' and 'identifier' are automatically calculated and cannot be manually specified.\n"
     #ifdef _WIN32
-    "  --output=<path>      Output folder where to create generated code. ie: .\\generated_files\n"
+    "  --output=<path>            Output folder where to create generated code. ie: .\\generated_files\n"
     #else
-    "  --output=<path>      Output folder where to create generated code. ie: ./generated_files\n"
+    "  --output=<path>            Output folder where to create generated code. ie: ./generated_files\n"
     #endif
-    "  --headerfile=<name>  File name of the generated C++ Header file. ie: SplashScreen.h\n"
-    "  --generator=<name>   Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'. [default: segment].\n"
-    "  --encoding=<name>    Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct].\n"
-    "  --identifier=<name>  Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
-    "  --chunksize=<value>  Size in bytes of each string segments (bytes per row). [default: 200].\n"
-    "  --baseclass=<value>  The name of the interface for embedded files. [default: File].\n"
-    "  --namespace=<value>  The namespace of the generated source code [default: bin2cpp].\n"
-    "  --managerfile=<name> File name of the generated C++ header file for the FileManager class. ie: FileManager.h\n"
-    "  --registerfile       Register the generated file to the FileManager class. [default: false].\n"
-    "                       This flags is automatically set when parameter 'managerfile' is specified.\n"
-    "  --keepdirs           Keep the directory structure. Forces the output files to have the same\n"
-    "                       directory structure as the input files. Valid only when --dir is used.\n"
-    "  --override           Tells bin2cpp to overwrite the destination files.\n"
-    "  --noheader           Do not print program header to standard output.\n"
-    "  --quiet              Do not log any message to standard output.\n"
+    "  --headerfile=<name>        File name or relative path of the generated C++ Header file. ie: SplashScreen.h\n"
+    "  --generator=<name>         Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'. [default: segment].\n"
+    "  --encoding=<name>          Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct].\n"
+    "  --identifier=<name>        Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
+    "  --chunksize=<value>        Size in bytes of each string segments (bytes per row). [default: 200].\n"
+    "  --baseclass=<value>        The name of the interface for embedded files. [default: File].\n"
+    "  --namespace=<value>        The namespace of the generated source code [default: bin2cpp].\n"
+    "  --managerfile=<name>       File name of the generated C++ header file for the FileManager class. ie: FileManager.h\n"
+    "  --registerfile             Register the generated file to the FileManager class. [default: false].\n"
+    "                             This flags is automatically set when parameter 'managerfile' is specified.\n"
+    "  --keepdirs                 Keep the directory structure. Forces the output files to have the same\n"
+    "                             directory structure as the input files. Valid only when --dir is used.\n"
+    "  --reportedfilepath=<name>  The relative reported path of the File. Path returned when calling method getFilePath() of the File class. ie: images/DCIM/IMG_0001.jpg.\n"
+    "                             Automatically calculated when --dir mode is used.\n"
+    "  --override                 Tells bin2cpp to overwrite the destination files.\n"
+    "  --noheader                 Do not print program header to standard output.\n"
+    "  --quiet                    Do not log any message to standard output.\n"
     "\n";
   printf("%s", usage);
 }
@@ -202,6 +207,7 @@ int main(int argc, char* argv[])
   args.version = false;
   args.hasFile = false;
   args.hasDir = false;
+  args.hasReportedFilePath = false;
   args.hasManagerFile = false;
   args.keepDirectoryStructure = false;
   args.chunkSize = 0;
@@ -345,6 +351,15 @@ int main(int argc, char* argv[])
     args.registerfile = true;
   }
 
+  args.hasReportedFilePath  = ra::cli::ParseArgument("reportedfilepath",  args.reportedFilePath,  argc, argv);
+  if (args.hasReportedFilePath && args.hasDir)
+  {
+    APP_ERROR_CODES error = APP_ERROR_TOOMANYARGUMENTS;
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s (reportedfilepath)", getErrorCodeDescription(error));
+    printUsage();
+    return error;
+  }
+
   args.keepDirectoryStructure = ra::cli::ParseArgument("keepdirs", dummy, argc, argv);
 
   std::string encodingStr;
@@ -482,6 +497,7 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * g
   generator->setInputFilePath(argsCopy.inputFilePath.c_str());
   generator->setHeaderFilename(argsCopy.headerFilename.c_str());
   generator->setFunctionIdentifier(argsCopy.functionIdentifier.c_str());
+  generator->setReportedFilePath(argsCopy.reportedFilePath.c_str());
   generator->setChunkSize(argsCopy.chunkSize);
   generator->setNamespace(argsCopy.codeNamespace.c_str());
   generator->setBaseClass(argsCopy.baseClass.c_str());
@@ -573,14 +589,21 @@ APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerato
     argsCopy.functionIdentifier = getUniqueFunctionIdentifierFromPath(file.c_str(), identifiers_dictionary);
     argsCopy.functionIdentifier = ra::strings::CapitalizeFirstCharacter(argsCopy.functionIdentifier);
 
+    //build a relative file path
+    std::string relative_file_path = file;
+    relative_file_path.erase(0, argsCopy.inputDirPath.size() + 1 ); // convert absolute path to relative path. +1 to remove first \ character
+    ra::filesystem::NormalizePath(relative_file_path);
+
+    //automatically build a reported path with --dir mode.
+    argsCopy.hasReportedFilePath = true;
+    argsCopy.reportedFilePath = relative_file_path;
+
     if (args.keepDirectoryStructure)
     {
       // To keep the directory structure, we need to
       // make headerFilename a relative path
       // inside the output directory
-      std::string relative_header_file_path = file;
-      relative_header_file_path.erase(0, argsCopy.inputDirPath.size() + 1 ); // convert absolute path to relative path. +1 to remove first \ character
-      ra::filesystem::NormalizePath(relative_header_file_path);
+      std::string relative_header_file_path = relative_file_path;
 
       // change the file extension to *.h
       std::string extension = ra::filesystem::GetFileExtention(relative_header_file_path);
