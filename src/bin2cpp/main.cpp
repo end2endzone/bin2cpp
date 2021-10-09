@@ -158,6 +158,12 @@ void printHeader()
 
 void printUsage()
 {
+#ifdef _WIN32
+#define SEPARATOR "\\"
+#else
+#define SEPARATOR "/"
+#endif
+
   //usage string in docopt format. See http://docopt.org/
   static const char usage[] = 
     "Usage:\n"
@@ -167,20 +173,17 @@ void printUsage()
     "  bin2cpp --version\n"
     "\n"
     "Options:\n"
-    "  --help               Display this help message.\n"
-    "  --version            Display this application version.\n"
-    "  --file=<path>        Path of the input file used for embedding as C++ source code.\n"
-    "  --dir=<path>         Path of the input directory used for embedding all files of the directory as C++ source code.\n"
-    "                       When specified, the parameters 'headerfile' and 'identifier' are automatically calculated and cannot be manually specified.\n"
-    #ifdef _WIN32
-    "  --output=<path>            Output folder where to create generated code. ie: .\\generated_files\n"
-    #else
-    "  --output=<path>            Output folder where to create generated code. ie: ./generated_files\n"
-    #endif
+    "  --help                     Display this help message.\n"
+    "  --version                  Display this application version.\n"
+    "  --file=<path>              Path of the input file used for embedding as C++ source code.\n"
+    "  --dir=<path>               Path of the input directory used for embedding all files of the directory as C++ source code.\n"
+    "                             When specified, the parameters 'headerfile' and 'identifier' are automatically calculated and cannot be manually specified.\n"
+    "  --output=<path>            Path of the output directory where to create generated code. ie: ." SEPARATOR "generated_files.\n"
     "  --headerfile=<name>        File name or relative path of the generated C++ Header file. ie: SplashScreen.h\n"
+    "                             If a relative path from the output directory is specified, the #include statement in the generated cpp file will match the relative path.\n"
+    "  --identifier=<name>        Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
     "  --generator=<name>         Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'. [default: segment].\n"
     "  --encoding=<name>          Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct].\n"
-    "  --identifier=<name>        Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
     "  --chunksize=<value>        Size in bytes of each string segments (bytes per row). [default: 200].\n"
     "  --baseclass=<value>        The name of the interface for embedded files. [default: File].\n"
     "  --namespace=<value>        The namespace of the generated source code [default: bin2cpp].\n"
@@ -189,7 +192,7 @@ void printUsage()
     "                             This flags is automatically set when parameter 'managerfile' is specified.\n"
     "  --keepdirs                 Keep the directory structure. Forces the output files to have the same\n"
     "                             directory structure as the input files. Valid only when --dir is used.\n"
-    "  --reportedfilepath=<name>  The relative reported path of the File. Path returned when calling method getFilePath() of the File class. ie: images/DCIM/IMG_0001.jpg.\n"
+    "  --reportedfilepath=<name>  The relative reported path of the File. Path returned when calling method getFilePath() of the File class. ie: images" SEPARATOR "DCIM" SEPARATOR "IMG_0001.jpg.\n"
     "                             Automatically calculated when --dir mode is used.\n"
     "  --override                 Tells bin2cpp to overwrite the destination files.\n"
     "  --noheader                 Do not print program header to standard output.\n"

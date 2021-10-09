@@ -81,27 +81,27 @@ bin2cpp --help
 bin2cpp --version
 ```
 
-| Argument                        | Description                                                                                                                                                                                                               |
-|---------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| --help                          | Display this help message.                                                                                                                                                                                                |
-| --version                       | Display this application version.                                                                                                                                                                                         |
-| --file=&lt;path&gt;             | Path of the input file used for embedding as C++ source code.                                                                                                                                                             |
-| --dir=&lt;path&gt;              | Path of the input directory used for embedding all files of the directory as C++ source code. When specified, the parameters 'headerfile' and 'identifier' are automatically calculated and cannot be manually specified. |
-| --output=&lt;path&gt;           | Path of the output directory where to create generated code. ie: .\generated_files                                                                                                                                        |
-| --headerfile=&lt;name&gt;       | File name or relative path of the generated C++ header file. ie: SplashScreen.h                                                                                                                                           |
-| --identifier=&lt;name&gt;       | Identifier of the function name that is used to get an instance of the file. ie: SplashScreen                                                                                                                             |
-| --generator=&lt;name&gt;        | Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'. [default: segment].                                                                                                           |
-| --encoding=&lt;name&gt;         | Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct].                                                                                                                |
-| --chunksize=&lt;value&gt;       | Size in bytes of each string segments (bytes per row). [default: 200].                                                                                                                                                    |
-| --baseclass=&lt;name&gt;        | The name of the interface for embedded files. [default: File].                                                                                                                                                            |
-| --namespace=&lt;name&gt;        | The namespace of the generated source code [default: bin2cpp].                                                                                                                                                            |
-| --managerfile=&lt;name&gt;      | File name of the generated C++ header file for the FileManager class. ie: FileManager.h.                                                                                                                                  |
-| --registerfile                  | Register the generated file to the FileManager class. This flags is automatically set when parameter 'managerfile' is specified. [default: false].                                                                        |
-| --keepdirs                      | Keep the directory structure. Forces the output files to have the same directory structure as the input files. Valid only when --dir is used.                                                                             |
-| --reportedfilepath=&lt;name&gt; | The relative reported path of the File. Path returned when calling method getFilePath() of the File class. ie: images/DCIM/IMG_0001.jpg. Automatically calculated when --dir mode is used.                                |
-| --override                      | Tells bin2cpp to overwrite the destination files.                                                                                                                                                                         |
-| --noheader                      | Do not print program header to standard output.                                                                                                                                                                           |
-| --quiet                         | Do not log any message to standard output.                                                                                                                                                                                |
+| Argument                        | Description                                                                                                                                                                                                                |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --help                          | Display this help message.                                                                                                                                                                                                 |
+| --version                       | Display this application version.                                                                                                                                                                                          |
+| --file=&lt;path&gt;             | Path of the input file used for embedding as C++ source code.                                                                                                                                                              |
+| --dir=&lt;path&gt;              | Path of the input directory used for embedding all files of the directory as C++ source code. When specified, the parameters 'headerfile' and 'identifier' are automatically calculated and cannot be manually specified.  |
+| --output=&lt;path&gt;           | Path of the output directory where to create generated code. ie: ./generated_files                                                                                                                                         |
+| --headerfile=&lt;name&gt;       | File name or relative path of the generated C++ header file. ie: SplashScreen.h. If a relative path from the output directory is specified, the #include statement in the generated cpp file will match the relative path. |
+| --identifier=&lt;name&gt;       | Identifier of the function name that is used to get an instance of the file. ie: SplashScreen                                                                                                                              |
+| --generator=&lt;name&gt;        | Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'. [default: segment].                                                                                                            |
+| --encoding=&lt;name&gt;         | Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct].                                                                                                                 |
+| --chunksize=&lt;value&gt;       | Size in bytes of each string segments (bytes per row). [default: 200].                                                                                                                                                     |
+| --baseclass=&lt;name&gt;        | The name of the interface for embedded files. [default: File].                                                                                                                                                             |
+| --namespace=&lt;name&gt;        | The namespace of the generated source code [default: bin2cpp].                                                                                                                                                             |
+| --managerfile=&lt;name&gt;      | File name of the generated C++ header file for the FileManager class. ie: FileManager.h.                                                                                                                                   |
+| --registerfile                  | Register the generated file to the FileManager class. This flags is automatically set when parameter 'managerfile' is specified. [default: false].                                                                         |
+| --keepdirs                      | Keep the directory structure. Forces the output files to have the same directory structure as the input files. Valid only when --dir is used.                                                                              |
+| --reportedfilepath=&lt;name&gt; | The relative reported path of the File. Path returned when calling method getFilePath() of the File class. ie: images/DCIM/IMG_0001.jpg. Automatically calculated when --dir mode is used.                                 |
+| --override                      | Tells bin2cpp to overwrite the destination files.                                                                                                                                                                          |
+| --noheader                      | Do not print program header to standard output.                                                                                                                                                                            |
+| --quiet                         | Do not log any message to standard output.                                                                                                                                                                                 |
 
 
 ## Example 1 - single file
@@ -134,7 +134,7 @@ bin2cpp.exe --file=helloworld.html --output=.\outdir --headerfile=generated_hell
 ### Console output
 
 ```
-bin2cpp v2.4.0 - Convert binary files into C++ source code.
+bin2cpp v3.0.0 - Convert binary files into C++ source code.
 Copyright (C) 2013-2021 end2endzone.com. All rights reserved.
 bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
 Embedding "helloworld.html" using chunks of 50 bytes...
@@ -146,7 +146,7 @@ Writing file ".\outdir\generated_helloworld.cpp"...
 
 ```cpp
 /**
- * This file was generated by bin2cpp v2.4.0
+ * This file was generated by bin2cpp v3.0.0
  * Copyright (C) 2013-2021 end2endzone.com. All rights reserved.
  * bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
  * Source code for file 'helloworld.html', last modified 1548537787.
@@ -165,9 +165,11 @@ namespace bin2cpp
   {
   public:
     virtual size_t getSize() const = 0;
-    virtual const char * getFilename() const = 0;
+    /* DEPRECATED */ virtual inline const char * getFilename() const { return getFileName(); }
+    virtual const char * getFileName() const = 0;
+    virtual const char * getFilePath() const = 0;
     virtual const char * getBuffer() const = 0;
-    virtual bool save(const char * iFilename) const = 0;
+    virtual bool save(const char * filename) const = 0;
   };
   #endif //BIN2CPP_EMBEDDEDFILE_CLASS
   const File & getHelloWorldHtmlFile();
@@ -180,7 +182,7 @@ namespace bin2cpp
 
 ```cpp
 /**
- * This file was generated by bin2cpp v2.4.0
+ * This file was generated by bin2cpp v3.0.0
  * Copyright (C) 2013-2021 end2endzone.com. All rights reserved.
  * bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
  * Source code for file 'helloworld.html', last modified 1548537787.
@@ -190,8 +192,9 @@ namespace bin2cpp
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 #include "generated_helloworld.h"
-#include <stdio.h> //for FILE
-#include <string> //for memcpy
+#include <string> //for std::string
+#include <iostream>
+#include <fstream>  //for ofstream
 namespace bin2cpp
 {
   class HelloWorldHtmlFile : public virtual bin2cpp::File
@@ -200,7 +203,8 @@ namespace bin2cpp
     HelloWorldHtmlFile() { build(); }
     virtual ~HelloWorldHtmlFile() {}
     virtual size_t getSize() const { return 238; }
-    virtual const char * getFilename() const { return "helloworld.html"; }
+    virtual const char * getFileName() const { return "helloworld.html"; }
+    virtual const char * getFilePath() const { return getFileName(); }
     virtual const char * getBuffer() const { return mBuffer.c_str(); }
     void build()
     {
@@ -212,14 +216,14 @@ namespace bin2cpp
       mBuffer.append("le=yes\">\r\n  <title>Hello World!</title>\r\n</head>\r\n", 50);
       mBuffer.append("<body>\r\nHello World!\r\n</body>\r\n</html>", 38);
     }
-    virtual bool save(const char * iFilename) const
+    virtual bool save(const char * filename) const
     {
-      FILE * f = fopen(iFilename, "wb");
-      if (!f) return false;
+      std::ofstream f(filename, std::ios::out | std::ios::binary);
+      if (f.fail()) return false;
       size_t fileSize = getSize();
       const char * buffer = getBuffer();
-      fwrite(buffer, 1, fileSize, f);
-      fclose(f);
+      f.write(buffer, fileSize);
+      f.close();
       return true;
     }
   private:
@@ -236,6 +240,7 @@ At runtime, show file properties and save/export data back to a file.
 ```cpp
 #include <stdio.h>
 #include <string>
+#include <iostream>
 #include "generated_helloworld.h" //a single include file is all you need
 
 int main(int argc, char* argv[])
@@ -244,21 +249,21 @@ int main(int argc, char* argv[])
   const bin2cpp::File & resource = bin2cpp::getHelloWorldHtmlFile();
 
   //print information about the file.
-  printf("Embedded file '%s' is %lu bytes long.\n", resource.getFilename(), resource.getSize());
+  std::cout << "Embedded file '" << resource.getFileName() << "' is " << resource.getSize() << " bytes long.\n";
 
   //Saving content back to a file.
-  printf("Saving embedded file to 'helloworld_copy.html'...\n");
+  std::cout << " Saving embedded file to 'helloworld_copy.html'...\n";
   bool saved = resource.save("helloworld_copy.html");
   if (saved)
-    printf("saved\n");
+    std::cout << "saved\n";
   else
-    printf("failed\n");
+    std::cout << "failed\n";
 
   //Get the internal buffer and do something with the binary data
   const char * buffer = resource.getBuffer();
   size_t bufferSize = resource.getSize();
   //...
-
+  
   return 0;
 }
 ```
@@ -284,7 +289,7 @@ bin2cpp.exe --dir=flat-color-icons --managerfile=IconsFileManager.h --output=.\o
 ### Console output
 
 ```
-bin2cpp v2.4.0 - Convert binary files into C++ source code.
+bin2cpp v3.0.0 - Convert binary files into C++ source code.
 Copyright (C) 2013-2021 end2endzone.com. All rights reserved.
 bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
 Embedding "flat-color-icons\about.png" using chunks of 50 bytes...
@@ -311,6 +316,7 @@ At runtime, show a file listing and save/export the icons files in users tempora
 ```cpp
 #include <stdio.h>  // printf
 #include <stdlib.h> // getenv
+#include <iostream>
 
 #include "IconsFileManager.h"
 
@@ -320,23 +326,23 @@ int main(int argc, char* argv[])
 
   //Print information about all files generated with "--managerfile" or --registerfile flags.
   size_t num_files = mgr.getFileCount();
-  printf("Found %lu embedded icon files...\n", num_files);
+  std::cout << "Found " << num_files << " embedded icons...\n";
 
   //Listing files.
   for(size_t i=0; i<num_files; i++)
   {
     const bin2cpp::File * file = mgr.getFile(i);
-    printf("  File '%s', %lu bytes\n", file->getFilename(), file->getSize());
+    std::cout << "  File '" << file->getFileName() << "', " << file->getSize() << " bytes\n";
   }
 
   //Saving content back to files.
   const char * temp_dir = getenv("TEMP");
-  printf("Saving embedded icons to directory '%s'...\n", temp_dir);
+  std::cout << "Saving embedded icons to directory '" << temp_dir << "'...\n";
   bool saved = mgr.saveFiles(temp_dir);
   if (saved)
-    printf("saved\n");
+    std::cout << "saved\n";
   else
-    printf("failed\n");
+    std::cout << "failed\n";
 
   return 0;
 }
