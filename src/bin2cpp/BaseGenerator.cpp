@@ -214,7 +214,7 @@ namespace bin2cpp
     std::string output;
     output << "    virtual bool save(const char * filename) const\n";
     output << "    {\n";
-    output << "      std::ofstream f(filename, std::ios::out | std::ios::binary);\n";
+    output << "      std::ofstream f(filename, std::ios::out | std::ios::binary | std::ios::trunc);\n";
     output << "      if (f.fail()) return false;\n";
     output << "      size_t fileSize = getSize();\n";
     output << "      const char * buffer = getBuffer();\n";

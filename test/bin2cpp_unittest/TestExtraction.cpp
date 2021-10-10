@@ -675,3 +675,31 @@ TEST_F(TestExtraction, testReportedPathDir)
     ASSERT_EQ( 0, file_path.compare(0, expected_path.size(), expected_path) ) << "file_path=" << file_path;
   }
 }
+
+TEST_F(TestExtraction, testFileSave)
+{
+  std::string expectedFilePath = "generated_files/testEncodingHex/testEncodingHex.bin";
+  std::string outputFilePath   = "generated_files/testEncodingHex/testEncodingHex.output";
+  ra::filesystem::NormalizePath(expectedFilePath);
+  ra::filesystem::NormalizePath(outputFilePath  );
+
+  const bin2cpp::File & file = bin2cpp::getTestEncodingHexFile();
+  bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //change the content of the file
+  ra::testing::ChangeFileContent(outputFilePath.c_str(), 0, 'T');
+  ra::testing::ChangeFileContent(outputFilePath.c_str(), 1, 'E');
+  ra::testing::ChangeFileContent(outputFilePath.c_str(), 2, 'S');
+  ra::testing::ChangeFileContent(outputFilePath.c_str(), 3, 'T');
+
+  //assert calling save() when the file already exists should replace the content
+  extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert binary content is the same
+  std::string reason;
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+
+}
