@@ -168,6 +168,7 @@ endif()
 if(BIN2CPP_BUILD_SAMPLES)
   add_subdirectory(samples/demo_helloworld)
   add_subdirectory(samples/demo_icons)
+  add_subdirectory(samples/demo_website)
 endif()
 
 ##############################################################################################################################################
