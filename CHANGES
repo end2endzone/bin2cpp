@@ -4,6 +4,7 @@ Note: This version introduces breaking changes. The public API has changed. See 
 * New feature: Using RapidAssist version 0.10.2
 * New feature: Modified how automatic identifier are generated. New identifiers now includes the file extension. Existing code that uses bin2cpp generated files may not compile anymore.
 * New feature: Deprecated method `getFilename()` in favor to `getFileName()`. This is to be more inline with getFilePath().
+* New feature: Calls to FileManager::saveFiles() is now saving all files as the original input directories.
 * Fixed issue #51: Support getfilePath api and handle same function identifier.
 * Fixed issue #52: Generate only c++ code.
 * Fixed issue #56: Problem with certain filenames.
