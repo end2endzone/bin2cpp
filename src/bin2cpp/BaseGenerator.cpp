@@ -449,6 +449,7 @@ namespace bin2cpp
     fprintf(cpp, "%s", fileHeader.c_str());
     fprintf(cpp, "#include \"%s\"\n", getManagerHeaderFilename());
     fprintf(cpp, "#include <string>\n");
+    fprintf(cpp, "#include <string.h> // strlen\n");
     fprintf(cpp, "#include <sys/stat.h> // stat\n");
     fprintf(cpp, "#include <errno.h>    // errno, EEXIST\n");
     fprintf(cpp, "#if defined(_WIN32)\n");
