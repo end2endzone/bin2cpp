@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
   //Saving content back to files preserving the original directory structure.
   std::string temp_dir = getenv("TEMP");
-#ifdef _Win32
+#ifdef _WIN32
   temp_dir += "\\";
 #else
   temp_dir += "/";
