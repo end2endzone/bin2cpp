@@ -9,6 +9,8 @@ bin2cpp is a command line tool for embedding small files (like images, icons or 
 
 When executed, bin2cpp takes binary file as input and outputs c++ code (a function) that when called allows a c++ program to retrieve the content of the input binary file.
 
+
+
 ## Status
 
 Build:
@@ -27,6 +29,9 @@ Statistics:
 | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | [![Statistics](https://buildstats.info/appveyor/chart/end2endzone/bin2cpp)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master) | [![Statistics](https://buildstats.info/travisci/chart/end2endzone/bin2cpp)](https://travis-ci.org/end2endzone/bin2cpp) | [![Statistics](https://buildstats.info/github/chart/end2endzone/bin2cpp)](https://github.com/end2endzone/bin2cpp/actions/) |
 
+
+
+
 # Purpose
 
 bin2cpp is not implemented using [executable resources](http://en.wikipedia.org/wiki/Resource_(Windows)). Instead, bin2cpp creates a single function call for retrieving the content and the properties of a file which makes it harder to steal the executable's content. It also makes it even harder to replace an existing resource of the executable.
@@ -35,6 +40,9 @@ It is designed to be easy to use by developers and to provide easy call function
 
 The generated functions that reads and extracts the embedded content does not rely on external libraries so you don't need to setup your projects to use any third party library to start using bin2cpp. All your embedded data can be accessed right away.
 
+
+
+
 # Features
 
 The main features of the project are:
@@ -42,11 +50,15 @@ The main features of the project are:
 * Easily converts small files as C++ source code for embedding into a C++ executable.
 * Access content with a unique function call for each embedded file.
 * Supports multiple embedded files at once.
+* Keep the directory structure when embedding directories.
+* Supports encoding and extracting files with a custom directory structure.
 * Makes it harder for resource hacker to modify or steal the embedded files.
 * No third party libraries required for retrieving the data of the embedded files.
 * Supports different types of code generator: string, segment, array.
-* File's originals `size` and `filename` properties available from generated source code.
-* Source code control: select a custom file interface and namespace.
+* File's originals `size`, `filename` and `directory` properties available from generated source code.
+* Control generated source code: choose your custom _File_ interface and namespace.
+
+
 
 ## Use cases
 
@@ -62,9 +74,14 @@ The following list show situations where bin2cpp is useful:
 * Allowing an executable to be downloaded from an intranet server as a single file.
 * Distributing an application without an installer package. All configurations files and resources can be embedded and extracted at first launch of the application.
 
+
+
+
 # Usage
 
 The following section shows how to use bin2cpp with code examples:
+
+
 
 ## Command Line Usage
 
@@ -104,9 +121,11 @@ bin2cpp --version
 | --quiet                         | Do not log any message to standard output.                                                                                                                                                                                 |
 
 
+
 ## Example 1 - single file
 
 This examples shows how to use bin2cpp to convert a single html file to c++ source code.
+
 
 ### Input file: helloworld.html
 
@@ -124,12 +143,14 @@ Hello World!
 </html>
 ```
 
+
 ### Command:
 
 ```
 bin2cpp.exe --file=helloworld.html --output=.\outdir --headerfile=generated_helloworld.h
             --identifier=HelloWorldHtml --chunksize=50
 ```
+
 
 ### Console output
 
@@ -141,6 +162,7 @@ Embedding "helloworld.html" using chunks of 50 bytes...
 Writing file ".\outdir\generated_helloworld.h"...
 Writing file ".\outdir\generated_helloworld.cpp"...
 ```
+
 
 ### Output file: generated_helloworld.h
 
@@ -177,6 +199,7 @@ namespace bin2cpp
 
 #endif //GENERATED_HELLOWORLD_H
 ```
+
 
 ### Output file: generated_helloworld.cpp
 
@@ -233,6 +256,7 @@ namespace bin2cpp
 }; //bin2cpp
 ```
 
+
 ### Code sample (querying the generated code)
 
 At runtime, show file properties and save/export data back to a file.
@@ -268,9 +292,12 @@ int main(int argc, char* argv[])
 }
 ```
 
+
+
 ## Examples 2 - directory
 
 This examples shows how to use bin2cpp to convert multiple files of the same directory to c++ source code.
+
 
 ### Input directory: [samples/demo_icons/flat-color-icons](samples/demo_icons/flat-color-icons).
 
@@ -280,11 +307,13 @@ The [samples/demo_icons/flat-color-icons](samples/demo_icons/flat-color-icons) d
 
 These icons are from the *Very Basic* set of [Icons8 Flat Color Icons](https://github.com/icons8/flat-color-icons) and are licensed under the [Good Boy License](https://icons8.com/good-boy-license).
 
+
 ### Command:
 
 ```
 bin2cpp.exe --dir=flat-color-icons --managerfile=IconsFileManager.h --output=.\outdir --chunksize=50
 ```
+
 
 ### Console output
 
@@ -308,6 +337,7 @@ Writing file ".\outdir\IconsFileManager.cpp"...
 ```
 
 Notice that additional files `IconsFileManager.h` and `IconsFileManager.cpp` were also generated and will allow retreiving all files at once.
+
 
 ### Code sample (querying the generated code)
 
@@ -348,6 +378,7 @@ int main(int argc, char* argv[])
 }
 ```
 
+
 ### Console output
 
 ```
@@ -375,6 +406,153 @@ Saving embedded icons to directory 'C:\Users\foobar\AppData\Local\Temp'...
 saved
 ```
 
+
+
+## Examples 3 - web site (embedding directory structure)
+
+This examples shows how to use bin2cpp to convert files from multiple directories to c++ source code. The input directory structure and file location are preserved.
+
+
+### Input directory: [samples/demo_website/www](samples/demo_website/www).
+
+The [samples/demo_website/www](samples/demo_website/www) directory contains web pages in the following directory structure :
+
+```
+www
+├── blog
+│   ├── how-to-create-a-web-site
+│   │   └── index.html
+│   ├── index.html
+│   └── using-bin2cpp
+│       └── index.html
+├── contact
+│   └── index.html
+├── home
+│   └── index.html
+└── index.html
+```
+
+The directories above contains multiple files named `index.html`.
+
+bin2cpp can create unique identifiers for each files. In case of duplicate identifiers, bin2cpp appends a counter that increases by 1 on every duplicate. The pattern `_<counter>` is added to the end where `<counter>` is the next counter value. For example, the files above create the following identifiers:
+ * Indexhtml
+ * Indexhtml_1
+ * Indexhtml_2
+ * Indexhtml_3
+ * Indexhtml_4
+ * Indexhtml_5
+
+The same strategy is implemented for duplicate file names.
+
+
+### Command:
+
+```
+bin2cpp.exe --dir=www --managerfile=PagesFileManager.h --namespace=www --output=.\outdir --chunksize=50 --keepdirs
+```
+
+Note the `--keepdirs` command line option which keep the input directory structure and allows the output files to have the same directory structure as the input files. This prevents duplicate file names.
+
+
+### Console output
+
+```
+bin2cpp v3.0.0 - Convert binary files into C++ source code.
+Copyright (C) 2013-2021 end2endzone.com. All rights reserved.
+bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
+Embedding "www\blog\how-to-create-a-web-site\index.html" using chunks of 50 bytes...
+Creating directory ".\outdir\blog\how-to-create-a-web-site"...
+Writing file ".\outdir\blog\how-to-create-a-web-site\index.h"...
+Writing file ".\outdir\blog\how-to-create-a-web-site\index.cpp"...
+Embedding "www\blog\index.html" using chunks of 50 bytes...
+Writing file ".\outdir\blog\index.h"...
+Writing file ".\outdir\blog\index.cpp"...
+Embedding "www\blog\using-bin2cpp\index.html" using chunks of 50 bytes...
+Creating directory ".\outdir\blog\using-bin2cpp"...
+Writing file ".\outdir\blog\using-bin2cpp\index.h"...
+Writing file ".\outdir\blog\using-bin2cpp\index.cpp"...
+Embedding "www\contact\index.html" using chunks of 50 bytes...
+Creating directory ".\outdir\contact"...
+Writing file ".\outdir\contact\index.h"...
+Writing file ".\outdir\contact\index.cpp"...
+Embedding "www\home\index.html" using chunks of 50 bytes...
+Creating directory ".\outdir\home"...
+Writing file ".\outdir\home\index.h"...
+Writing file ".\outdir\home\index.cpp"...
+Embedding "www\index.html" using chunks of 50 bytes...
+Writing file ".\outdir\index.h"...
+Writing file ".\outdir\index.cpp"...
+Generating "PagesFileManager.h"...
+Writing file ".\outdir\PagesFileManager.h"...
+Writing file ".\outdir\PagesFileManager.cpp"...
+```
+
+Notice that files `PagesFileManager.h` and `PagesFileManager.cpp` were also generated. They provide support for extracting the content of the embedded ***www*** directory.
+
+
+### Code sample (querying the generated code)
+
+At runtime, show a file listing and save/export all `index.html` files in the right directories.
+
+```cpp
+#include <stdio.h>  // printf
+#include <stdlib.h> // getenv
+#include <iostream>
+#include <string>
+
+#include "PagesFileManager.h"
+
+int main(int argc, char* argv[])
+{
+  www::FileManager & mgr = www::FileManager::getInstance();
+
+  //Print information about all files generated with "--managerfile" or --registerfile flags.
+  size_t num_files = mgr.getFileCount();
+  std::cout << "Found " << num_files << " embedded web pages...\n";
+
+  //Listing files.
+  for(size_t i=0; i<num_files; i++)
+  {
+    const www::File * file = mgr.getFile(i);
+    std::cout << "  File '" << file->getFilePath() << "', " << file->getSize() << " bytes\n";
+  }
+
+  //Saving content back to files preserving the original directory structure.
+  std::string temp_dir = getenv("TEMP");
+#ifdef _Win32
+  temp_dir += "\\";
+#else
+  temp_dir += "/";
+#endif
+  temp_dir += "www";
+  std::cout << "Saving embedded web pages to directory '" << temp_dir << "'...\n";
+  bool saved = mgr.saveFiles(temp_dir.c_str());
+  if (saved)
+    std::cout << "saved\n";
+  else
+    std::cout << "failed\n";
+
+  return 0;
+}
+```
+
+
+### Console output
+
+```
+Found 6 embedded web pages...
+  File 'index.html', 241 bytes
+  File 'blog\index.html', 543 bytes
+  File 'blog\using-bin2cpp\index.html', 4332 bytes
+  File 'blog\how-to-create-a-web-site\index.html', 3645 bytes
+  File 'contact\index.html', 2375 bytes
+  File 'home\index.html', 1422 bytes
+Saving embedded web pages to directory 'C:\Users\foobar\AppData\Local\Temp\www'...
+saved
+```
+
+
+
 ## Screenshots
 
 [![bin2cpp v2.4.0 Sample](docs/bin2cpp-v2.4.0-sample.png)](docs/bin2cpp-v2.4.0-sample.png)
@@ -385,9 +563,15 @@ bin2cpp v2.4.0 Sample
 
 Demo extraction sample
 
+
+
+
 # Build
 
 Please refer to file [INSTALL.md](INSTALL.md) for details on how installing/building the application.
+
+
+
 
 # Platform
 
@@ -397,15 +581,24 @@ bin2cpp has been tested with the following platform:
 * Windows, 32 and 64 bit
 * macOS, 32 and 64 bit
 
+
+
+
 # Versioning
 
 We use [Semantic Versioning 2.0.0](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/end2endzone/bin2cpp/tags).
+
+
+
 
 # Authors
 
 * **Antoine Beauchamp** - *Initial work* - [end2endzone](https://github.com/end2endzone)
 
 See also the list of [contributors](https://github.com/end2endzone/bin2cpp/blob/master/AUTHORS) who participated in this project.
+
+
+
 
 # License
 
