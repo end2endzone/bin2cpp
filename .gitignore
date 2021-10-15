@@ -5,3 +5,4 @@
 /samples/demo_icons/outdir
 .DS_Store
 /samples/demo_website/outdir
+/samples/demo_relative_dir/include/bin2cpp
