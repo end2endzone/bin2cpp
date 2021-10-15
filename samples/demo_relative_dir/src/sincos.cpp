@@ -22,40 +22,8 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#include <math.h>
-#include "libcalc/calc.h"
+#include "libtrigo/sincos.h"
 #include "bin2cpp/file_sinus.h"
-
-int calc_add(int a, int b, int * c)
-{
-  *c = (a+b);
-  return 1;
-}
-
-int calc_substract(int a, int b, int * c)
-{
-  *c = (a-b);
-  return 1;
-}
-
-int calc_multiply(int a, int b, int * c)
-{
-  *c = (a*b);
-  return 1;
-}
-
-int calc_divide(int a, int b, int * c)
-{
-  if (b == 0)
-  {
-    *c = 0;
-    return 0;
-  }
-  *c = (a/b);
-  return 1;
-}
-
-static const float INVERSE_SIGN = -1.0f;
 
 struct SINUS_TABLE_ENTRY
 {
@@ -67,12 +35,12 @@ inline float map(float x, float in_min, float in_max, float out_min, float out_m
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-float calc_sin(float degrees)
+float sindeg(float degrees)
 {
   float result;
   if (degrees < 0)
   {
-    result = -calc_sin(-degrees);
+    result = -sindeg(-degrees);
     return result;
   }
   if (degrees > 360.0f)
@@ -82,7 +50,7 @@ float calc_sin(float degrees)
   }
   if (degrees > 180.0f)
   {
-    result = -calc_sin(degrees-180.0f);
+    result = -sindeg(degrees-180.0f);
     return result;
   }
   if (degrees == 0.0f)
@@ -109,11 +77,11 @@ float calc_sin(float degrees)
     }
   }
 
-  result = CALC_INVALID;
+  result = LIBTRIGO_INVALID;
   return result;
 }
 
-float calc_cos(float degrees)
+float cosdeg(float degrees)
 {
-  return calc_sin(degrees + 90.0f);
+  return sindeg(degrees + 90.0f);
 }

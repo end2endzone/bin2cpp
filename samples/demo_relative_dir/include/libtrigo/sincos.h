@@ -22,20 +22,15 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef LIBCALC_H
-#define LIBCALC_H
+#ifndef LIBTRIGO_H
+#define LIBTRIGO_H
 
-#define CALC_PI (3.14159265359f)
-#define CALC_INVALID (99999999.9999f)
-#define DEG2RAD(value) ((value*CALC_PI)/180.0f)
-#define RAD2DEG(value) ((value*180.0f)/CALC_PI)
+#define LIBTRIGO_PI (3.14159265359f)
+#define LIBTRIGO_INVALID (99999999.9999f)
+#define DEG2RAD(value) ((value*LIBTRIGO_PI)/180.0f)
+#define RAD2DEG(value) ((value*180.0f)/LIBTRIGO_PI)
 
-int calc_add(int a, int b, int * c);
-int calc_substract(int a, int b, int * c);
-int calc_multiply(int a, int b, int * c);
-int calc_divide(int a, int b, int * c);
+float sindeg(float degrees);
+float cosdeg(float degrees);
 
-float calc_sin(float degrees);
-float calc_cos(float degrees);
-
-#endif //LIBCALC_H
+#endif //LIBTRIGO_H

@@ -2,8 +2,7 @@
 #include <string>
 #include <iostream>
 
-#include "files\file_icon.h"
-#include "libcalc/calc.h" //a single include file is all you need
+#include "libtrigo/sincos.h"
 
 enum APP_ERROR_CODES
 {
@@ -21,9 +20,7 @@ int generate_sinus_table(const char * filename)
   const float DEGREES_MIN = 0.0f;
   const float DEGREES_MAX = 180.0f;
   const size_t NUM_DIVISIONS = 10000;
-  //const float DEGREES_STEP = (DEGREES_MAX-DEGREES_MIN)/NUM_DIVISIONS;
 
-  //for(float degrees = DEGREES_MIN; degrees <= DEGREES_MAX; degrees += DEGREES_STEP)
   for(size_t i=0; i<NUM_DIVISIONS; i++)
   {
     float degrees = DEGREES_MIN + ((DEGREES_MAX-DEGREES_MIN)*i)/float(NUM_DIVISIONS);
