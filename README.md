@@ -124,7 +124,7 @@ bin2cpp --version
 
 ## Example 1 - single file
 
-This examples shows how to use bin2cpp to convert a single html file to c++ source code.
+This example shows how to use bin2cpp to convert a single html file to c++ source code.
 
 
 ### Input file: helloworld.html
@@ -294,9 +294,9 @@ int main(int argc, char* argv[])
 
 
 
-## Examples 2 - directory
+## Example 2 - directory
 
-This examples shows how to use bin2cpp to convert multiple files of the same directory to c++ source code.
+This example shows how to use bin2cpp to convert multiple files of the same directory to c++ source code.
 
 
 ### Input directory: [samples/demo_icons/flat-color-icons](samples/demo_icons/flat-color-icons).
@@ -408,9 +408,9 @@ saved
 
 
 
-## Examples 3 - web site (embedding directory structure)
+## Example 4 - web site (embedding directory structure)
 
-This examples shows how to use bin2cpp to convert files from multiple directories to c++ source code. The input directory structure and file location are preserved.
+This example shows how to use bin2cpp to convert files from multiple directories to c++ source code. The input directory structure and file location are preserved.
 
 
 ### Input directory: [samples/demo_website/www](samples/demo_website/www).
