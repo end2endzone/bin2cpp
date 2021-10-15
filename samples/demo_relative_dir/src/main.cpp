@@ -2,7 +2,6 @@
 #include <string>
 #include <iostream>
 
-#include "files\file_icon.h"
 #include "libcalc/calc.h" //a single include file is all you need
 
 enum APP_ERROR_CODES

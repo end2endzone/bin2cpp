@@ -24,7 +24,7 @@
 
 #include <math.h>
 #include "libcalc/calc.h"
-#include "files/file_sinus.h"
+#include "bin2cpp/file_sinus.h"
 
 int calc_add(int a, int b, int * c)
 {
