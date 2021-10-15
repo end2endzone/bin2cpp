@@ -425,10 +425,10 @@ This example shows how to specify a relative path for the header file.
 ### Command:
 
 ```
-bin2cpp.exe --file=res/icon.ico         --output=include --headerfile=bin2cpp/file_icon.h         --identifier=icon  
+bin2cpp.exe --file=res/icon.ico --output=include --headerfile=bin2cpp/file_icon.h --identifier=icon  
 ```
 
-Note the *bin2cpp* sub directory in `--headerfile=bin2cpp/file_icon.h`. The output sub directory must exists.
+Note the *bin2cpp* sub directory in `--headerfile=bin2cpp/file_icon.h`. The output sub directory must already exists.
 
 
 
@@ -438,9 +438,9 @@ Note the *bin2cpp* sub directory in `--headerfile=bin2cpp/file_icon.h`. The outp
 bin2cpp v3.0.0 - Convert binary files into C++ source code.
 Copyright (C) 2013-2021 end2endzone.com. All rights reserved.
 bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
-Embedding "res\icon.ico"...
-Writing file "include\bin2cpp\file_icon.h"...
-Writing file "include\bin2cpp\file_icon.cpp"...
+Embedding "res/icon.ico"...
+Writing file "include/bin2cpp/file_icon.h"...
+Writing file "include/bin2cpp/file_icon.cpp"...
 ```
 
 
@@ -448,7 +448,6 @@ Writing file "include\bin2cpp\file_icon.cpp"...
 ### Output file: file_icon.cpp
 
 Here are the first few generated lines of file `file_icon.cpp`.
-Note the `#include "bin2cpp/file_icon.h"` statement which is relative to the project's *include* directory.
 
 ```cpp
 /**
@@ -467,6 +466,8 @@ Note the `#include "bin2cpp/file_icon.h"` statement which is relative to the pro
 #include <fstream>  //for ofstream
 ...
 ```
+
+Note the `#include "bin2cpp/file_icon.h"` statement which is relative to the project's *include* directory.
 
 
 
@@ -611,6 +612,23 @@ Found 6 embedded web pages...
   File 'home\index.html', 1422 bytes
 Saving embedded web pages to directory 'C:\Users\foobar\AppData\Local\Temp\www'...
 saved
+```
+
+The executed code above has extracted the files above with the following directory structure:
+
+```
+C:\Users\foobar\AppData\Local\Temp\www
+├── blog
+│   ├── how-to-create-a-web-site
+│   │   └── index.html
+│   ├── index.html
+│   └── using-bin2cpp
+│       └── index.html
+├── contact
+│   └── index.html
+├── home
+│   └── index.html
+└── index.html
 ```
 
 
