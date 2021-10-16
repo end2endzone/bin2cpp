@@ -33,6 +33,7 @@
 #include "rapidassist/strings.h"
 #include "rapidassist/filesystem.h"
 #include "rapidassist/timing.h"
+#include "rapidassist/code_cpp.h"
 
 namespace bin2cpp
 {
@@ -556,6 +557,58 @@ namespace bin2cpp
     fprintf(cpp, "}; //%s\n", mNamespace.c_str());
 
     fclose(cpp);
+
+    return true;
+  }
+
+  bool BaseGenerator::printFileContent()
+  {
+    //check if input file exists
+    FILE * input = fopen(getInputFilePath(), "rb");
+    if (!input)
+      return false;
+
+    //determine file properties
+    uint32_t fileSize = ra::filesystem::GetFileSize(input);
+
+    //create buffer for each chunks from input buffer
+    int numLinePrinted = 0;
+    unsigned char * buffer = new unsigned char[mChunkSize];
+    while(!feof(input))
+    {
+      //read a chunk of the file
+      size_t readSize = fread(buffer, 1, mChunkSize, input);
+
+      bool isLastChunk = !(readSize == mChunkSize);
+
+      if (readSize > 0)
+      {
+        if (numLinePrinted > 0)
+        {
+          //end previous line
+          printf("\n");
+        }
+
+        //output
+        std::string text;
+        switch(mCppEncoder)
+        {
+        case IGenerator::CPP_ENCODER_HEX:
+          text = ra::code::cpp::ToHexString(buffer, readSize);
+          break;
+        case IGenerator::CPP_ENCODER_OCT:
+        default:
+          text = ra::code::cpp::ToOctString(buffer, readSize, false);
+          break;
+        };
+        printf("\"%s\"", text.c_str());
+        numLinePrinted++;
+      }
+    }
+    delete[] buffer;
+    buffer = NULL;
+
+    fclose(input);
 
     return true;
   }

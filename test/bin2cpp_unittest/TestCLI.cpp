@@ -1805,3 +1805,152 @@ TEST_F(TestCLI, testKeepDirectories)
   //cleanup
   ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
+
+TEST_F(TestCLI, testPlainOutput)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  //build command line
+  std::string cmdline;
+  cmdline.append(getBin2cppPath());
+  cmdline.append(" --file=");
+  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(" --plainoutput");
+  cmdline.append(" --chunksize=50");
+
+  cmdline.append(" >");
+  cmdline.append(outputFilePath.c_str());
+
+  //delete generated files
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+
+  //run the command
+  int returnCode = system(cmdline.c_str());
+#if defined(__linux__) || defined(__APPLE__)
+  returnCode = WEXITSTATUS(returnCode);
+#endif
+  ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+  
+  //assert generated code
+  ASSERT_TRUE(ra::filesystem::FileExists(outputFilePath.c_str()));
+
+  //load output file
+  std::string content;
+  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), content);
+  ASSERT_TRUE(loaded);
+
+  //assert content is a string and not c++ code
+  ASSERT_EQ('\"', content[0]);
+  ASSERT_EQ('\"', content[content.size()-1]);
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+}
+
+TEST_F(TestCLI, testPlainOutputGenerators)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  static const std::string WIN32_GENERATOR_NAME = "win32";
+  static const std::string SEGMENT_GENERATOR_NAME = "segment";
+  static const std::string STRING_GENERATOR_NAME = "string";
+
+  //define all command line generators
+  std::vector<std::string> generators;
+  generators.push_back("segment");
+  generators.push_back("string");
+  generators.push_back("array");
+  generators.push_back("win32");
+
+  //generate output for each generators
+  std::vector<std::string> files;
+  for(size_t genIndex = 0; genIndex<generators.size(); genIndex++)
+  {
+    const char * generatorName = generators[genIndex].c_str();
+    std::string generatorOutputFilePath = outputFilePath + "." + generatorName + ".txt";
+
+    printf("Testing '%s' generator...\n", generatorName);
+
+    //build command line
+    std::string cmdline;
+    cmdline.append(getBin2cppPath());
+    cmdline.append(" --file=");
+    cmdline.append(getBin2cppPath()); //itself
+    cmdline.append(" --plainoutput");
+    cmdline.append(" --chunksize=50");
+    cmdline.append(" --generator=");
+    cmdline.append(generatorName);
+
+    //segment and string generators have the same output.
+    //use a different encoding to make them different
+    if (SEGMENT_GENERATOR_NAME == generatorName)
+      cmdline.append(" --encoding=oct");
+    else if (STRING_GENERATOR_NAME == generatorName)
+      cmdline.append(" --encoding=hex");
+
+    cmdline.append(" >");
+    cmdline.append(generatorOutputFilePath.c_str());
+
+    //run the command
+    int returnCode = system(cmdline.c_str());
+#if defined(__linux__) || defined(__APPLE__)
+      returnCode = WEXITSTATUS(returnCode);
+#endif
+    if (WIN32_GENERATOR_NAME == generatorName)
+    {
+      ASSERT_NE(0, returnCode) << "The command line '" << cmdline.c_str() << "' was expected to fail but returned " << returnCode;
+
+      //remember this generated file
+      files.push_back(generatorOutputFilePath);
+    }
+    else
+    {
+      ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+
+      //remember this generated file
+      files.push_back(generatorOutputFilePath);
+
+      //assert generated code
+      ASSERT_TRUE(ra::filesystem::FileExists(generatorOutputFilePath.c_str()));
+
+      //load output file
+      std::string content;
+      bool loaded = ra::filesystem::ReadTextFile(generatorOutputFilePath.c_str(), content);
+      ASSERT_TRUE(loaded);
+
+      //assert content is a string and not c++ code
+      ASSERT_EQ('\"', content[0]);
+      ASSERT_EQ('\"', content[content.size()-1]);
+    }
+  }
+
+  //assert all files different
+  if (files.size() >= 2)
+  {
+    for(size_t i=0; i<files.size()-1; i++)
+    {
+      for(size_t j=1; j<files.size(); j++)
+      {
+        const std::string & fileA = files[i];
+        const std::string & fileB = files[j];
+
+        if (fileA != fileB)
+        {
+          std::string reason;
+          bool isSourceCodeIdentical = ra::testing::IsFileEquals(fileA.c_str(), fileB.c_str(), reason);
+          ASSERT_FALSE( isSourceCodeIdentical ) << reason.c_str();
+        }
+      }
+    }
+  }
+
+  //cleanup
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
+  for(size_t i=0; i<files.size(); i++)
+  {
+    const std::string & path = files[i];
+    ASSERT_TRUE(deleteFile(path.c_str()));
+  }
+}

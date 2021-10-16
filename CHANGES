@@ -7,6 +7,7 @@ Note: This version introduces breaking changes. The public API has changed. See 
 * New feature: Calls to FileManager::saveFiles() is now saving all files as the original input directories.
 * Fixed issue #51: Support getfilePath api and handle same function identifier.
 * Fixed issue #52: Generate only c++ code.
+* Fixed issue #54: Output the encoded string in plain format to stdout.
 * Fixed issue #56: Problem with certain filenames.
 * Fixed issue #59: Silence warning C4996 about deprecated 'std::tr1' namespace - Windows only.
 

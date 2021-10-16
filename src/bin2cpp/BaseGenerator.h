@@ -65,6 +65,7 @@ namespace bin2cpp
     virtual bool createCppHeaderFile(const char * header_file_path);
     virtual bool createManagerHeaderFile(const char * header_file_path);
     virtual bool createManagerSourceFile(const char * cpp_file_path);
+    virtual bool printFileContent();
 
   protected:
 

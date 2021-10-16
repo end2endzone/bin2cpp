@@ -19,3 +19,6 @@
 
 --file=D:\Temp\bin2cpp\issue51\input_files\IMG_0001.jpg --output=D:\Temp\bin2cpp\issue51\generated_sources --headerfile="IMG_0001.h" --identifier=testIssue51 --namespace=testIssue51 --managerfile=FileManager51.h --override --reportedfilepath=foo\bar\IMG_0001.h
 --dir=D:\Temp\bin2cpp\testIssue56b\input_files\www --output=D:\Temp\bin2cpp\testIssue56b\generated_sources --namespace=testIssue51 --managerfile=FileManager51.h --override
+
+--file=..\..\test\bin2cpp_unittest\generated_files\testSequential1000\testSequential1000.bin --plainoutput --chunksize=50
+--managerfile=MyManager.h --output=generated_files --override

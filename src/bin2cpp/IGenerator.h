@@ -198,6 +198,12 @@ namespace bin2cpp
     ///<returns>Returns true when the file was created. Returns false otherwise.</returns>
     virtual bool createManagerSourceFile(const char * cpp_file_path) = 0;
 
+    ///<summary>
+    ///Print the encoded file content to stdout
+    ///</summary>
+    ///<returns>Returns true when the operation is succesful. Returns false otherwise.</returns>
+    virtual bool printFileContent() = 0;
+
   };
   
 }; //bin2cpp

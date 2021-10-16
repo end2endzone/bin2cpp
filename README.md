@@ -57,6 +57,7 @@ The main features of the project are:
 * Supports different types of code generator: string, segment, array.
 * File's originals `size`, `filename` and `directory` properties available from generated source code.
 * Control generated source code: choose your custom _File_ interface and namespace.
+* Print a file encoded content to stdout. Useful for scripts and integration with third party application.
 
 
 
@@ -116,6 +117,7 @@ bin2cpp --version
 | --registerfile                  | Register the generated file to the FileManager class. This flags is automatically set when parameter 'managerfile' is specified. [default: false].                                                                         |
 | --keepdirs                      | Keep the directory structure. Forces the output files to have the same directory structure as the input files. Valid only when --dir is used.                                                                              |
 | --reportedfilepath=&lt;name&gt; | The relative reported path of the File. Path returned when calling method getFilePath() of the File class. ie: images/DCIM/IMG_0001.jpg. Automatically calculated when --dir mode is used.                                 |
+| --plainoutput                   | Print the encoded string in plain format to stdout. Useful for scripts and integration with third party application.                                                                                                       |
 | --override                      | Tells bin2cpp to overwrite the destination files.                                                                                                                                                                          |
 | --noheader                      | Do not print program header to standard output.                                                                                                                                                                            |
 | --quiet                         | Do not log any message to standard output.                                                                                                                                                                                 |

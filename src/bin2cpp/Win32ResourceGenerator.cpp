@@ -242,4 +242,9 @@ namespace bin2cpp
     return id;
   }
 
+  bool Win32ResourceGenerator::printFileContent()
+  {
+    return false; // not supported
+  }
+
 }; //bin2cpp

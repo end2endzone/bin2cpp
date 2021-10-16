@@ -150,4 +150,46 @@ namespace bin2cpp
     return true;
   }
 
+  bool ArrayGenerator::printFileContent()
+  {
+    //check if input file exists
+    FILE * input = fopen(getInputFilePath(), "rb");
+    if (!input)
+      return false;
+
+    //determine file properties
+    uint32_t fileSize = ra::filesystem::GetFileSize(input);
+
+    //create buffer for each chunks from input buffer
+    int numLinePrinted = 0;
+    unsigned char * buffer = new unsigned char[mChunkSize];
+    while(!feof(input))
+    {
+      //read a chunk of the file
+      size_t readSize = fread(buffer, 1, mChunkSize, input);
+
+      bool isLastChunk = !(readSize == mChunkSize);
+
+      if (readSize > 0)
+      {
+        if (numLinePrinted > 0)
+        {
+          //end previous line
+          printf("\n");
+        }
+
+        //output
+        std::string text = ra::code::cpp::ToCppCharactersArray(buffer, readSize);
+        printf("\"%s\"", text.c_str());
+        numLinePrinted++;
+      }
+    }
+    delete[] buffer;
+    buffer = NULL;
+
+    fclose(input);
+
+    return true;
+  }
+
 }; //bin2cpp

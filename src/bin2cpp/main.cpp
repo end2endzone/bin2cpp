@@ -52,7 +52,9 @@ enum APP_ERROR_CODES
   APP_ERROR_INPUTFILENOTFOUND,
   APP_ERROR_UNABLETOCREATEOUTPUTFILES,
   APP_ERROR_TOOMANYARGUMENTS,
-  APP_ERROR_INPUTDIRNOTFOUND
+  APP_ERROR_INPUTDIRNOTFOUND,
+  AAP_ERROR_NOTSUPPORTED,
+  APP_ERROR_OPERATIONHASFAILED
 };
 
 enum FILE_UPDATE_MODE
@@ -92,6 +94,12 @@ const char * getErrorCodeDescription(const APP_ERROR_CODES & error_code)
     break;
   case APP_ERROR_INPUTDIRNOTFOUND:
     return "Input directory not found";
+    break;
+  case AAP_ERROR_NOTSUPPORTED:
+    return "Operation not supported";
+    break;
+  case APP_ERROR_OPERATIONHASFAILED:
+    return "Operation has failed";
     break;
   default:
     return "Unknown error";
@@ -133,6 +141,7 @@ struct ARGUMENTS
   std::string functionIdentifier;
   std::string reportedFilePath; // path reported in the public api when calling getFilePath();
   size_t chunkSize;
+  bool plainOutput;
   bool overrideExisting;
   std::string codeNamespace;
   std::string baseClass;
@@ -148,6 +157,7 @@ bool generateManagerFile(const ARGUMENTS & args, const std::string & output_file
 APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processPlainOutput(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 
 void printHeader()
 {
@@ -194,6 +204,7 @@ void printUsage()
     "                             directory structure as the input files. Valid only when --dir is used.\n"
     "  --reportedfilepath=<name>  The relative reported path of the File. Path returned when calling method getFilePath() of the File class. ie: images" SEPARATOR "DCIM" SEPARATOR "IMG_0001.jpg.\n"
     "                             Automatically calculated when --dir mode is used.\n"
+    "  --plainoutput              Print the encoded string in plain format to stdout. Useful for scripts and integration with third party application.\n"
     "  --override                 Tells bin2cpp to overwrite the destination files.\n"
     "  --noheader                 Do not print program header to standard output.\n"
     "  --quiet                    Do not log any message to standard output.\n"
@@ -214,6 +225,7 @@ int main(int argc, char* argv[])
   args.hasManagerFile = false;
   args.keepDirectoryStructure = false;
   args.chunkSize = 0;
+  args.plainOutput = false;
   args.overrideExisting = false;
   args.registerfile = false;
 
@@ -233,6 +245,14 @@ int main(int argc, char* argv[])
 
   //quiet
   args.quiet = ra::cli::ParseArgument("quiet", dummy, argc, argv);
+
+  //force quiet and noheader if plain output
+  args.plainOutput = ra::cli::ParseArgument("plainoutput", dummy, argc, argv);
+  if (args.plainOutput)
+  {
+    args.quiet = true;
+    args.noheader = true;
+  }
 
   //force noheader if quiet
   if (args.quiet)
@@ -256,11 +276,11 @@ int main(int argc, char* argv[])
   args.hasFile = ra::cli::ParseArgument("file", args.inputFilePath, argc, argv);
   args.hasDir  = ra::cli::ParseArgument("dir",  args.inputDirPath,  argc, argv);
   args.hasManagerFile = ra::cli::ParseArgument("managerfile", args.managerHeaderFilename, argc, argv);
-  if (!args.hasFile && !args.hasDir && !args.hasManagerFile)
+  if (!args.hasFile && !args.hasDir && !args.hasManagerFile && !args.plainOutput)
   {
-    //file, dir or managerfile must be specified
+    //file, dir, managerfile or plainoutput must be specified
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    ra::logging::Log(ra::logging::LOG_ERROR, "%s (file, dir, managerfile)", getErrorCodeDescription(error));
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s (file, dir, managerfile, plainoutput)", getErrorCodeDescription(error));
     printUsage();
     return error;
   }
@@ -273,12 +293,15 @@ int main(int argc, char* argv[])
     return error;
   }
 
-  if (!ra::cli::ParseArgument("output", args.outputDirPath, argc, argv))
+  if (args.hasDir || (args.hasFile && !args.plainOutput) || args.hasManagerFile)
   {
-    APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-    ra::logging::Log(ra::logging::LOG_ERROR, "%s (output)", getErrorCodeDescription(error));
-    printUsage();
-    return error;
+    if (!ra::cli::ParseArgument("output", args.outputDirPath, argc, argv))
+    {
+      APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s (output)", getErrorCodeDescription(error));
+      printUsage();
+      return error;
+    }
   }
 
   if (args.hasDir)
@@ -292,7 +315,7 @@ int main(int argc, char* argv[])
       return error;
     }
   }
-  else if (args.hasFile)
+  else if ((args.hasFile && !args.plainOutput))
   {
     if (!ra::cli::ParseArgument("headerfile", args.headerFilename, argc, argv))
     {
@@ -314,7 +337,7 @@ int main(int argc, char* argv[])
       return error;
     }
   }
-  else if (args.hasFile)
+  else if ((args.hasFile && !args.plainOutput))
   {
     if (!ra::cli::ParseArgument("identifier", args.functionIdentifier, argc, argv))
     {
@@ -421,19 +444,36 @@ int main(int argc, char* argv[])
     }
   }
 
+  //win32 generator does not support plain output
+  if (args.generatorName == "win32" && args.plainOutput)
+  {
+    APP_ERROR_CODES error = AAP_ERROR_NOTSUPPORTED;
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
+    return error;
+  }
+
   //apply default generator
   if (generator == NULL)
   {
     generator = &segmentGenerator;
   }
 
-  //process file or directory
-  if (args.hasFile)
+  //process file, directory or plain format
+  if (args.plainOutput)
+  {
+    APP_ERROR_CODES error = processPlainOutput(args, generator);
+    if (error != APP_ERROR_SUCCESS)
+    {
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
+      return error;
+    }
+  }
+  else if (args.hasFile)
   {
     APP_ERROR_CODES error = processInputFile(args, generator);
     if (error != APP_ERROR_SUCCESS)
     {
-      ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
       return error;
     }
   }
@@ -442,7 +482,7 @@ int main(int argc, char* argv[])
     APP_ERROR_CODES error = processInputDirectory(args, generator);
     if (error != APP_ERROR_SUCCESS)
     {
-      ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
       return error;
     }
   }
@@ -453,7 +493,7 @@ int main(int argc, char* argv[])
     APP_ERROR_CODES error = processManagerFiles(args, generator);
     if (error != APP_ERROR_SUCCESS)
     {
-      ra::logging::Log(ra::logging::LOG_ERROR, "%s", getErrorCodeDescription(error));
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
       return error;
     }
   }
@@ -739,6 +779,28 @@ APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator 
   bool cppResult =    generateManagerFile(args, outputCppPath, generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
+
+  //success
+  return APP_ERROR_SUCCESS;
+}
+
+APP_ERROR_CODES processPlainOutput(const ARGUMENTS & args, bin2cpp::IGenerator * generator)
+{
+  //check if input file exists
+  if (!ra::filesystem::FileExists(args.inputFilePath.c_str()))
+    return APP_ERROR_INPUTFILENOTFOUND;
+
+  ARGUMENTS argsCopy = args;
+
+  //configure the generator
+  generator->setInputFilePath(argsCopy.inputFilePath.c_str());
+  generator->setChunkSize(argsCopy.chunkSize);
+  generator->setCppEncoder(argsCopy.encoding);
+
+  //process file
+  bool result = generator->printFileContent();
+  if (!result)
+    return APP_ERROR_OPERATIONHASFAILED;
 
   //success
   return APP_ERROR_SUCCESS;
