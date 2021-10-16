@@ -7,6 +7,9 @@ set(GENERATED_TEST_FILES
   ${CMAKE_CURRENT_BINARY_DIR}/include/bin2cpp/file_splashscreen.cpp
 )
 
+
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/bin2cpp)
+
 add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
                     # Execute bin2cpp generator
                     COMMAND $<TARGET_FILE:bin2cpp> 
