@@ -942,12 +942,14 @@ TEST_F(TestCLI, testErrorMissingArgumentOutput)
   ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
  
-TEST_F(TestCLI, testErrorMissingArgumentHeaderfile)
+TEST_F(TestCLI, testAutomaticIdentifierHeaderfile)
 {
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
  
-  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
+  static const std::string bin2cppPath = getBin2cppPath();
+
+  std::string headerFileName = ra::filesystem::GetFilenameWithoutExtension(bin2cppPath.c_str()) + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
   std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
  
@@ -955,85 +957,36 @@ TEST_F(TestCLI, testErrorMissingArgumentHeaderfile)
   std::string cmdline;
   cmdline.append(getBin2cppPath());
   cmdline.append(" --file=");
-  cmdline.append(getBin2cppPath()); //itself
+  cmdline.append(bin2cppPath); //itself
   cmdline.append(" --output=generated_files");
-  //cmdline.append(" --headerfile=");
-  //cmdline.append(headerFileName);
-  cmdline.append(" --identifier=");
-  cmdline.append(ra::testing::GetTestCaseName().c_str());
   cmdline.append(" --noheader");
  
   cmdline.append(" >");
   cmdline.append(outputFilePath.c_str());
  
   //delete generated files
+  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
   ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
   ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
- 
+
   //run the command
   int returnCode = system(cmdline.c_str());
 #if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
-  ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+  ASSERT_EQ(0, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
-  //load output file
-  ra::strings::StringVector lines;
-  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
-  ASSERT_TRUE(loaded);
- 
-  //assert standard output log
-  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Missing arguments (headerfile)");
+  //assert generated code
+  ASSERT_TRUE(ra::filesystem::FileExists(headerFilePath.c_str()));
+  ASSERT_TRUE(ra::filesystem::FileExists(cppFilePath.c_str()));
+
+  //assert content properly generated
+  ASSERT_TEXT_IN_FILE(true, cppFilePath.c_str(), "class Bin2cppdexeFile");
  
   //cleanup
   ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
-}
- 
-TEST_F(TestCLI, testErrorMissingArgumentIdentifier)
-{
-  static const std::string expectedFilePath = getExpectedFilePath();
-  static const std::string outputFilePath   = getActualFilePath();
- 
-  std::string headerFileName = std::string("_") + ra::testing::GetTestCaseName().c_str() + ".h";
-  std::string headerFilePath = gGeneratedFilesDir + headerFileName;
-  std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
- 
-  //build command line
-  std::string cmdline;
-  cmdline.append(getBin2cppPath());
-  cmdline.append(" --file=");
-  cmdline.append(getBin2cppPath()); //itself
-  cmdline.append(" --output=generated_files");
-  cmdline.append(" --headerfile=");
-  cmdline.append(headerFileName);
-  //cmdline.append(" --identifier=");
-  //cmdline.append(ra::testing::GetTestCaseName().c_str());
-  cmdline.append(" --noheader");
- 
-  cmdline.append(" >");
-  cmdline.append(outputFilePath.c_str());
- 
-  //delete generated files
   ASSERT_TRUE(deleteFile(headerFilePath.c_str()));
   ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
- 
-  //run the command
-  int returnCode = system(cmdline.c_str());
-#if defined(__linux__) || defined(__APPLE__)
-  returnCode = WEXITSTATUS(returnCode);
-#endif
-  ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
- 
-  //load output file
-  ra::strings::StringVector lines;
-  bool loaded = ra::filesystem::ReadTextFile(outputFilePath.c_str(), lines);
-  ASSERT_TRUE(loaded);
- 
-  //assert standard output log
-  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Missing arguments (identifier)");
- 
-  //cleanup
-  ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
 }
  
 TEST_F(TestCLI, testErrorMissingArgumentEncoding)

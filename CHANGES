@@ -10,6 +10,7 @@ Note: This version introduces breaking changes. The public API has changed. See 
 * Fixed issue #54: Output the encoded string in plain format to stdout.
 * Fixed issue #56: Problem with certain filenames.
 * Fixed issue #59: Silence warning C4996 about deprecated 'std::tr1' namespace - Windows only.
+* Fixed issue #58: Mandatory options `--identifier` and `--headerfile` should be calculated automatically if not specified.
 
 
 Changes for 2.5.0:

@@ -158,6 +158,8 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * g
 APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processPlainOutput(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
+std::string getDefaultFunctionIdentifier(const ARGUMENTS & args, Dictionary & identifiers_dictionary);
+std::string getDefaultHeaderFile(const ARGUMENTS & args);
 
 void printHeader()
 {
@@ -177,7 +179,7 @@ void printUsage()
   //usage string in docopt format. See http://docopt.org/
   static const char usage[] = 
     "Usage:\n"
-    "  bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name> [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<name>] [--managerfile=<name>] [--registerfile] [--reportedfilepath=<value>] [--override] [--noheader] [--quiet]\n"
+    "  bin2cpp --file=<path> --output=<path> [--headerfile=<name>] [--identifier=<name>] [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<name>] [--managerfile=<name>] [--registerfile] [--reportedfilepath=<value>] [--override] [--noheader] [--quiet]\n"
     "  bin2cpp --dir=<path>  --output=<path> [--keepdirs] [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<name>] [--managerfile=<name>] [--registerfile] [--override] [--noheader] [--quiet]\n"
     "  bin2cpp --help\n"
     "  bin2cpp --version\n"
@@ -276,6 +278,8 @@ int main(int argc, char* argv[])
   args.hasFile = ra::cli::ParseArgument("file", args.inputFilePath, argc, argv);
   args.hasDir  = ra::cli::ParseArgument("dir",  args.inputDirPath,  argc, argv);
   args.hasManagerFile = ra::cli::ParseArgument("managerfile", args.managerHeaderFilename, argc, argv);
+
+  //if no mandatory args is specified
   if (!args.hasFile && !args.hasDir && !args.hasManagerFile && !args.plainOutput)
   {
     //file, dir, managerfile or plainoutput must be specified
@@ -293,6 +297,7 @@ int main(int argc, char* argv[])
     return error;
   }
 
+  //if output args is mandatory
   if (args.hasDir || (args.hasFile && !args.plainOutput) || args.hasManagerFile)
   {
     if (!ra::cli::ParseArgument("output", args.outputDirPath, argc, argv))
@@ -304,6 +309,7 @@ int main(int argc, char* argv[])
     }
   }
 
+  // if headerfile should not be specified 
   if (args.hasDir)
   {
     if (ra::cli::ParseArgument("headerfile", args.headerFilename, argc, argv))
@@ -315,17 +321,8 @@ int main(int argc, char* argv[])
       return error;
     }
   }
-  else if ((args.hasFile && !args.plainOutput))
-  {
-    if (!ra::cli::ParseArgument("headerfile", args.headerFilename, argc, argv))
-    {
-      APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-      ra::logging::Log(ra::logging::LOG_ERROR, "%s (headerfile)", getErrorCodeDescription(error));
-      printUsage();
-      return error;
-    }
-  }
 
+  // if identifier should not be specified 
   if (args.hasDir)
   {
     if (ra::cli::ParseArgument("identifier", args.functionIdentifier, argc, argv))
@@ -337,18 +334,25 @@ int main(int argc, char* argv[])
       return error;
     }
   }
-  else if ((args.hasFile && !args.plainOutput))
-  {
-    if (!ra::cli::ParseArgument("identifier", args.functionIdentifier, argc, argv))
-    {
-      APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
-      ra::logging::Log(ra::logging::LOG_ERROR, "%s (identifier)", getErrorCodeDescription(error));
-      printUsage();
-      return error;
-    }
-  }
 
   //optional arguments
+
+  if (args.hasFile)
+  {
+    //identifier
+    if (!ra::cli::ParseArgument("identifier", args.functionIdentifier, argc, argv))
+    {
+      //identifier is not manually specified.
+      args.functionIdentifier = getDefaultFunctionIdentifier(args, identifiers_dictionary);
+    }
+
+    //headerfile
+    if (!ra::cli::ParseArgument("headerfile", args.headerFilename, argc, argv))
+    {
+      //use the file name without extension as 'headerfile'.
+      args.headerFilename = getDefaultHeaderFile(args);
+    }
+  }
 
   size_t tmpChunkSize = 0;
   args.chunkSize = DEFAULT_CHUNK_SIZE;
@@ -501,6 +505,28 @@ int main(int argc, char* argv[])
   return APP_ERROR_SUCCESS;
 }
 
+std::string getDefaultFunctionIdentifier(const ARGUMENTS & args, Dictionary & identifiers_dictionary)
+{
+  std::string output;
+
+  //use the file name without extension as 'identifier'.
+  output = getUniqueFunctionIdentifierFromPath(args.inputFilePath.c_str(), identifiers_dictionary);
+  output = ra::strings::CapitalizeFirstCharacter(output);
+
+  return output;
+}
+
+std::string getDefaultHeaderFile(const ARGUMENTS & args)
+{
+  std::string output;
+
+  //use the file name without extension as 'headerfile'.
+  output = ra::filesystem::GetFilenameWithoutExtension(args.inputFilePath.c_str());
+  output += ".h";
+
+  return output;
+}
+
 APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator)
 {
   // printing info
@@ -625,12 +651,10 @@ APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerato
     argsCopy.inputFilePath = file;
 
     //use the file name without extension as 'headerfile'.
-    argsCopy.headerFilename = ra::filesystem::GetFilenameWithoutExtension(file.c_str());
-    argsCopy.headerFilename += ".h";
+    argsCopy.headerFilename = getDefaultHeaderFile(argsCopy);
 
     //use the file name without extension as 'identifier'.
-    argsCopy.functionIdentifier = getUniqueFunctionIdentifierFromPath(file.c_str(), identifiers_dictionary);
-    argsCopy.functionIdentifier = ra::strings::CapitalizeFirstCharacter(argsCopy.functionIdentifier);
+    argsCopy.functionIdentifier = getDefaultFunctionIdentifier(argsCopy, identifiers_dictionary);
 
     //build a relative file path
     std::string relative_file_path = file;

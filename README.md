@@ -54,10 +54,11 @@ The main features of the project are:
 * Supports encoding and extracting files with a custom directory structure.
 * Makes it harder for resource hacker to modify or steal the embedded files.
 * No third party libraries required for retrieving the data of the embedded files.
-* Supports different types of code generator: string, segment, array.
+* Supports different types of code generator: string, segment, array, win32 resources.
 * File's originals `size`, `filename` and `directory` properties available from generated source code.
 * Control generated source code: choose your custom _File_ interface and namespace.
 * Print a file encoded content to stdout. Useful for scripts and integration with third party application.
+* Generated code is C++98 standard-compliant
 
 
 
@@ -87,7 +88,7 @@ The following section shows how to use bin2cpp with code examples:
 ## Command Line Usage
 
 ```
-bin2cpp --file=<path> --output=<path> --headerfile=<name> --identifier=<name>
+bin2cpp --file=<path> --output=<path> [--headerfile=<name>] [--identifier=<name>]
         [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>]
         [--baseclass=<name>] [--managerfile=<name>] [--registerfile] 
         [--reportedfilepath=<value>] [--override] [--noheader] [--quiet]
