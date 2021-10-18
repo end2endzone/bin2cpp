@@ -952,7 +952,15 @@ TEST_F(TestCLI, testAutomaticIdentifierHeaderfile)
   std::string headerFileName = ra::filesystem::GetFilenameWithoutExtension(bin2cppPath.c_str()) + ".h";
   std::string headerFilePath = gGeneratedFilesDir + headerFileName;
   std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
- 
+
+  //build the expected generated class
+  std::string expectedClassDeclaration = ra::filesystem::GetFilename(bin2cppPath.c_str());
+  expectedClassDeclaration = ra::strings::CapitalizeFirstCharacter(expectedClassDeclaration);
+  expectedClassDeclaration.insert(0, "class ");
+  expectedClassDeclaration += "File";
+  ra::strings::Replace(expectedClassDeclaration, ".", ""); // remove the dot  from bin2cpp.exe on Windows
+  ra::strings::Replace(expectedClassDeclaration, "-", ""); // remove the dash from bin2cpp-d.exe on Windows
+
   //build command line
   std::string cmdline;
   cmdline.append(getBin2cppPath());
@@ -981,7 +989,7 @@ TEST_F(TestCLI, testAutomaticIdentifierHeaderfile)
   ASSERT_TRUE(ra::filesystem::FileExists(cppFilePath.c_str()));
 
   //assert content properly generated
-  ASSERT_TEXT_IN_FILE(true, cppFilePath.c_str(), "class Bin2cppdexeFile");
+  ASSERT_TEXT_IN_FILE(true, cppFilePath.c_str(), expectedClassDeclaration.c_str());
  
   //cleanup
   ASSERT_TRUE(deleteFile(outputFilePath.c_str()));
