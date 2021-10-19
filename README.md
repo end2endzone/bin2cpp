@@ -58,7 +58,7 @@ The main features of the project are:
 * File's originals `size`, `filename` and `directory` properties available from generated source code.
 * Control generated source code: choose your custom _File_ interface and namespace.
 * Print a file encoded content to stdout. Useful for scripts and integration with third party application.
-* Generated code is C++98 standard-compliant
+* Generated code is C++98 standard-compliant.
 
 
 
@@ -100,28 +100,28 @@ bin2cpp --help
 bin2cpp --version
 ```
 
-| Argument                        | Description                                                                                                                                                                                                                |
-|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| --help                          | Display this help message.                                                                                                                                                                                                 |
-| --version                       | Display this application version.                                                                                                                                                                                          |
-| --file=&lt;path&gt;             | Path of the input file used for embedding as C++ source code.                                                                                                                                                              |
-| --dir=&lt;path&gt;              | Path of the input directory used for embedding all files of the directory as C++ source code. When specified, the parameters 'headerfile' and 'identifier' are automatically calculated and cannot be manually specified.  |
-| --output=&lt;path&gt;           | Path of the output directory where to create generated code. ie: ./generated_files                                                                                                                                         |
-| --headerfile=&lt;name&gt;       | File name or relative path of the generated C++ header file. ie: SplashScreen.h. If a relative path from the output directory is specified, the #include statement in the generated cpp file will match the relative path. |
-| --identifier=&lt;name&gt;       | Identifier of the function name that is used to get an instance of the file. ie: SplashScreen                                                                                                                              |
-| --generator=&lt;name&gt;        | Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'. [default: segment].                                                                                                            |
-| --encoding=&lt;name&gt;         | Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct].                                                                                                                 |
-| --chunksize=&lt;value&gt;       | Size in bytes of each string segments (bytes per row). [default: 200].                                                                                                                                                     |
-| --baseclass=&lt;name&gt;        | The name of the interface for embedded files. [default: File].                                                                                                                                                             |
-| --namespace=&lt;name&gt;        | The namespace of the generated source code [default: bin2cpp].                                                                                                                                                             |
-| --managerfile=&lt;name&gt;      | File name of the generated C++ header file for the FileManager class. ie: FileManager.h.                                                                                                                                   |
-| --registerfile                  | Register the generated file to the FileManager class. This flags is automatically set when parameter 'managerfile' is specified. [default: false].                                                                         |
-| --keepdirs                      | Keep the directory structure. Forces the output files to have the same directory structure as the input files. Valid only when --dir is used.                                                                              |
-| --reportedfilepath=&lt;name&gt; | The relative reported path of the File. Path returned when calling method getFilePath() of the File class. ie: images/DCIM/IMG_0001.jpg. Automatically calculated when --dir mode is used.                                 |
-| --plainoutput                   | Print the encoded string in plain format to stdout. Useful for scripts and integration with third party application.                                                                                                       |
-| --override                      | Tells bin2cpp to overwrite the destination files.                                                                                                                                                                          |
-| --noheader                      | Do not print program header to standard output.                                                                                                                                                                            |
-| --quiet                         | Do not log any message to standard output.                                                                                                                                                                                 |
+| Argument                        | Description                                                                                                                                                                                                                                                                         |
+|---------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --help                          | Display this help message.                                                                                                                                                                                                                                                          |
+| --version                       | Display this application version.                                                                                                                                                                                                                                                   |
+| --file=&lt;path&gt;             | Path of the input file used for embedding as C++ source code.                                                                                                                                                                                                                       |
+| --dir=&lt;path&gt;              | Path of the input directory used for embedding all files of the directory as C++ source code.                                                                                                                                                                                       |
+| --output=&lt;path&gt;           | Path of the output directory where to create generated code.<br>ie: ./generated_files                                                                                                                                                                                               |
+| --headerfile=&lt;name&gt;       | File name or relative path of the generated C++ header file. If a relative path from the output directory is specified, the #include statement in the generated cpp file will match the relative path. <br>ie: SplashScreen.h<br>Default value: input file name (without extension) |
+| --identifier=&lt;name&gt;       | Identifier of the function name that is used to get an instance of the file.<br>ie: SplashScreen<br>Default value is based on input file with format 'NameExt'.                                                                                                                     |
+| --generator=&lt;name&gt;        | Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'.<br>[default: segment]                                                                                                                                                                   |
+| --encoding=&lt;name&gt;         | Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'.<br>[default: oct]                                                                                                                                                                        |
+| --chunksize=&lt;value&gt;       | Size in bytes of each string segments (bytes per LoC).<br>[default: 200]                                                                                                                                                                                                            |
+| --baseclass=&lt;name&gt;        | The name of the interface for embedded files.<br>[default: File]                                                                                                                                                                                                                    |
+| --namespace=&lt;name&gt;        | The namespace of the generated source code.<br>[default: bin2cpp]                                                                                                                                                                                                                   |
+| --reportedfilepath=&lt;path&gt; | The relative reported path of the File. Path returned when calling method getFilePath() of the File class. Automatically calculated when --dir mode is used.<br>ie: images/DCIM/IMG_0001.jpg                                                                                        |
+| --managerfile=&lt;path&gt;      | File name or relative path of the generated C++ header file for the FileManager class.<br>ie: FileManager.h.                                                                                                                                                                        |
+| --registerfile                  | Register the generated file to the FileManager class. This flags is automatically set when parameter 'managerfile' is specified.                                                                                                                                                    |
+| --keepdirs                      | Keep the directory structure. Forces the output files to have the same directory structure as the input files. Valid only when --dir is used.                                                                                                                                       |
+| --plainoutput                   | Print the encoded string in plain format to stdout. Useful for scripts and integration with third party application.                                                                                                                                                                |
+| --override                      | Tells bin2cpp to overwrite the destination files.                                                                                                                                                                                                                                   |
+| --noheader                      | Do not print program header to standard output.                                                                                                                                                                                                                                     |
+| --quiet                         | Do not log any message to standard output.                                                                                                                                                                                                                                          |
 
 
 
@@ -189,7 +189,6 @@ namespace bin2cpp
   {
   public:
     virtual size_t getSize() const = 0;
-    /* DEPRECATED */ virtual inline const char * getFilename() const { return getFileName(); }
     virtual const char * getFileName() const = 0;
     virtual const char * getFilePath() const = 0;
     virtual const char * getBuffer() const = 0;
@@ -617,7 +616,7 @@ saved
 The executed code above has extracted the files above with the following directory structure:
 
 ```
-C:\Users\foobar\AppData\Local\Temp\www
+C:\Users\username\AppData\Local\Temp\www
 ├── blog
 │   ├── how-to-create-a-web-site
 │   │   └── index.html
