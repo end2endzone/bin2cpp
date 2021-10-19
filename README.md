@@ -150,8 +150,7 @@ Hello World!
 ### Command:
 
 ```
-bin2cpp.exe --file=helloworld.html --output=.\outdir --headerfile=generated_helloworld.h
-            --identifier=HelloWorldHtml --chunksize=50
+bin2cpp.exe --file=helloworld.html --output=.\outdir
 ```
 
 
@@ -161,13 +160,13 @@ bin2cpp.exe --file=helloworld.html --output=.\outdir --headerfile=generated_hell
 bin2cpp v3.0.0 - Convert binary files into C++ source code.
 Copyright (C) 2013-2021 end2endzone.com. All rights reserved.
 bin2cpp is open source software, see http://github.com/end2endzone/bin2cpp
-Embedding "helloworld.html" using chunks of 50 bytes...
-Writing file ".\outdir\generated_helloworld.h"...
-Writing file ".\outdir\generated_helloworld.cpp"...
+Embedding "helloworld.html"...
+Writing file ".\outdir\helloworld.h"...
+Writing file ".\outdir\helloworld.cpp"...
 ```
 
 
-### Output file: generated_helloworld.h
+### Output file: helloworld.h
 
 ```cpp
 /**
@@ -177,8 +176,8 @@ Writing file ".\outdir\generated_helloworld.cpp"...
  * Source code for file 'helloworld.html', last modified 1548537787.
  * Do not modify this file.
  */
-#ifndef GENERATED_HELLOWORLD_H
-#define GENERATED_HELLOWORLD_H
+#ifndef HELLOWORLD_H
+#define HELLOWORLD_H
 
 #include <stddef.h>
 
@@ -197,14 +196,14 @@ namespace bin2cpp
     virtual bool save(const char * filename) const = 0;
   };
   #endif //BIN2CPP_EMBEDDEDFILE_CLASS
-  const File & getHelloWorldHtmlFile();
+  const File & getHelloworldhtmlFile();
 }; //bin2cpp
 
-#endif //GENERATED_HELLOWORLD_H
+#endif //HELLOWORLD_H
 ```
 
 
-### Output file: generated_helloworld.cpp
+### Output file: helloworld.cpp
 
 ```cpp
 /**
@@ -217,17 +216,17 @@ namespace bin2cpp
 #if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
-#include "generated_helloworld.h"
+#include "helloworld.h"
 #include <string> //for std::string
 #include <iostream>
 #include <fstream>  //for ofstream
 namespace bin2cpp
 {
-  class HelloWorldHtmlFile : public virtual bin2cpp::File
+  class HelloworldhtmlFile : public virtual bin2cpp::File
   {
   public:
-    HelloWorldHtmlFile() { build(); }
-    virtual ~HelloWorldHtmlFile() {}
+    HelloworldhtmlFile() { build(); }
+    virtual ~HelloworldhtmlFile() {}
     virtual size_t getSize() const { return 238; }
     virtual const char * getFileName() const { return "helloworld.html"; }
     virtual const char * getFilePath() const { return getFileName(); }
@@ -236,15 +235,12 @@ namespace bin2cpp
     {
       mBuffer.clear();
       mBuffer.reserve(getSize()); //allocate all required memory at once to prevent reallocations
-      mBuffer.append("<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n  <meta", 50);
-      mBuffer.append(" charset=\"utf-8\">\r\n  <meta name=\"viewport\" content", 50);
-      mBuffer.append("=\"width=device-width, initial-scale=1, user-scalab", 50);
-      mBuffer.append("le=yes\">\r\n  <title>Hello World!</title>\r\n</head>\r\n", 50);
+      mBuffer.append("<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n  <meta charset=\"utf-8\">\r\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=yes\">\r\n  <title>Hello World!</title>\r\n</head>\r\n", 200);
       mBuffer.append("<body>\r\nHello World!\r\n</body>\r\n</html>", 38);
     }
     virtual bool save(const char * filename) const
     {
-      std::ofstream f(filename, std::ios::out | std::ios::binary);
+      std::ofstream f(filename, std::ios::out | std::ios::binary | std::ios::trunc);
       if (f.fail()) return false;
       size_t fileSize = getSize();
       const char * buffer = getBuffer();
@@ -255,7 +251,7 @@ namespace bin2cpp
   private:
     std::string mBuffer;
   };
-  const File & getHelloWorldHtmlFile() { static HelloWorldHtmlFile _instance; return _instance; }
+  const File & getHelloworldhtmlFile() { static HelloworldhtmlFile _instance; return _instance; }
 }; //bin2cpp
 ```
 
@@ -268,12 +264,13 @@ At runtime, show file properties and save/export data back to a file.
 #include <stdio.h>
 #include <string>
 #include <iostream>
-#include "generated_helloworld.h" //a single include file is all you need
+
+#include "helloworld.h" //a single include file is all you need
 
 int main(int argc, char* argv[])
 {
   //get a reference to the embedded file
-  const bin2cpp::File & resource = bin2cpp::getHelloWorldHtmlFile();
+  const bin2cpp::File & resource = bin2cpp::getHelloworldhtmlFile();
 
   //print information about the file.
   std::cout << "Embedded file '" << resource.getFileName() << "' is " << resource.getSize() << " bytes long.\n";

@@ -2,12 +2,12 @@
 #include <string>
 #include <iostream>
 
-#include "generated_helloworld.h" //a single include file is all you need
+#include "helloworld.h" //a single include file is all you need
 
 int main(int argc, char* argv[])
 {
   //get a reference to the embedded file
-  const bin2cpp::File & resource = bin2cpp::getHelloWorldHtmlFile();
+  const bin2cpp::File & resource = bin2cpp::getHelloworldhtmlFile();
 
   //print information about the file.
   std::cout << "Embedded file '" << resource.getFileName() << "' is " << resource.getSize() << " bytes long.\n";

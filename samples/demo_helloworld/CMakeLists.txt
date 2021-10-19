@@ -1,6 +1,6 @@
 set(GENERATED_TEST_FILES 
-  ${CMAKE_CURRENT_BINARY_DIR}/generated_helloworld.h
-  ${CMAKE_CURRENT_BINARY_DIR}/generated_helloworld.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/helloworld.h
+  ${CMAKE_CURRENT_BINARY_DIR}/helloworld.cpp
 )
 
 add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
@@ -8,9 +8,6 @@ add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
                     COMMAND $<TARGET_FILE:bin2cpp> 
                       --file=${CMAKE_CURRENT_SOURCE_DIR}/helloworld.html
                       --output=${CMAKE_CURRENT_BINARY_DIR}
-                      --headerfile=generated_helloworld.h
-                      --identifier=HelloWorldHtml
-                      --chunksize=50
 )
 
 # Show all generated files in a common folder
@@ -19,7 +16,7 @@ source_group("Generated Files" FILES ${GENERATED_TEST_FILES})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(demo_helloworld
-  helloworld.cpp
+  demo_helloworld.cpp
   ${GENERATED_TEST_FILES}
 )
 
