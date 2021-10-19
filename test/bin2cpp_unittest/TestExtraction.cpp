@@ -562,7 +562,7 @@ TEST_F(TestExtraction, testIssue56a)
   std::string output_path1234 = "generated_files/testIssue56a/saved_files/_testIssue56a.index.1234.css";
   {
     ra::filesystem::NormalizePath(output_path1234);
-    const issue56a::File & file = issue56a::get_testIssue56aindex1234cssFile();
+    const issue56a::File & file = issue56a::get_testIssue56aindex1234CssFile();
     bool extractSuccess = file.save(output_path1234.c_str());
     ASSERT_TRUE(extractSuccess);
   }
@@ -571,7 +571,7 @@ TEST_F(TestExtraction, testIssue56a)
   std::string output_path4321 = "generated_files/testIssue56a/saved_files/_testIssue56a.index.4321.css";
   {
     ra::filesystem::NormalizePath(output_path4321);
-    const issue56a::File & file = issue56a::get_testIssue56aindex4321cssFile();
+    const issue56a::File & file = issue56a::get_testIssue56aindex4321CssFile();
     bool extractSuccess = file.save(output_path4321.c_str());
     ASSERT_TRUE(extractSuccess);
   }

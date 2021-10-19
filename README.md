@@ -196,7 +196,7 @@ namespace bin2cpp
     virtual bool save(const char * filename) const = 0;
   };
   #endif //BIN2CPP_EMBEDDEDFILE_CLASS
-  const File & getHelloworldhtmlFile();
+  const File & getHelloworldHtmlFile();
 }; //bin2cpp
 
 #endif //HELLOWORLD_H
@@ -222,11 +222,11 @@ namespace bin2cpp
 #include <fstream>  //for ofstream
 namespace bin2cpp
 {
-  class HelloworldhtmlFile : public virtual bin2cpp::File
+  class HelloworldHtmlFile : public virtual bin2cpp::File
   {
   public:
-    HelloworldhtmlFile() { build(); }
-    virtual ~HelloworldhtmlFile() {}
+    HelloworldHtmlFile() { build(); }
+    virtual ~HelloworldHtmlFile() {}
     virtual size_t getSize() const { return 238; }
     virtual const char * getFileName() const { return "helloworld.html"; }
     virtual const char * getFilePath() const { return getFileName(); }
@@ -251,7 +251,7 @@ namespace bin2cpp
   private:
     std::string mBuffer;
   };
-  const File & getHelloworldhtmlFile() { static HelloworldhtmlFile _instance; return _instance; }
+  const File & getHelloworldHtmlFile() { static HelloworldHtmlFile _instance; return _instance; }
 }; //bin2cpp
 ```
 

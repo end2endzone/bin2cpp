@@ -7,7 +7,7 @@
 int main(int argc, char* argv[])
 {
   //get a reference to the embedded file
-  const bin2cpp::File & resource = bin2cpp::getHelloworldhtmlFile();
+  const bin2cpp::File & resource = bin2cpp::getHelloworldHtmlFile();
 
   //print information about the file.
   std::cout << "Embedded file '" << resource.getFileName() << "' is " << resource.getSize() << " bytes long.\n";

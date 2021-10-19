@@ -157,8 +157,12 @@ namespace bin2cpp
   {
     std::string id;
 
-    //get filename of the given path
-    id = ra::filesystem::GetFilename(path.c_str());
+    //build default id
+    std::string name = ra::filesystem::GetFilenameWithoutExtension(path.c_str());
+    std::string ext  = ra::filesystem::GetFileExtention(path.c_str());
+    name = ra::strings::CapitalizeFirstCharacter(name);
+    ext  = ra::strings::CapitalizeFirstCharacter(ext );
+    id = name + ext;
 
     //filter out characters which are not alphanumeric characters or '_'.
     static const std::string validCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
