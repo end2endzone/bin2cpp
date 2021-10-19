@@ -54,21 +54,21 @@ TEST_F(TestCommon, testGetFunctionIdentifierFromPath)
 
   path = www_directory + "\\static\\css\\theme.dark.css";
   ra::filesystem::NormalizePath(path);
-  ASSERT_EQ("themedarkcss", bin2cpp::getFunctionIdentifierFromPath(path));
+  ASSERT_EQ("ThemedarkCss", bin2cpp::getFunctionIdentifierFromPath(path));
 
   //test running twice returns the same value
   path = www_directory + "\\static\\css\\theme.dark.css";
   ra::filesystem::NormalizePath(path);
-  ASSERT_EQ("themedarkcss", bin2cpp::getFunctionIdentifierFromPath(path));
+  ASSERT_EQ("ThemedarkCss", bin2cpp::getFunctionIdentifierFromPath(path));
 
   //test with only a filename
-  ASSERT_EQ("themedarkcss", bin2cpp::getFunctionIdentifierFromPath("theme.dark.css"));
+  ASSERT_EQ("ThemedarkCss", bin2cpp::getFunctionIdentifierFromPath("theme.dark.css"));
 
   //test valid special characters
-  ASSERT_EQ("hello_world_1234567890", bin2cpp::getFunctionIdentifierFromPath("hello_world_1234567890"));
+  ASSERT_EQ("Hello_world_1234567890", bin2cpp::getFunctionIdentifierFromPath("hello_world_1234567890"));
 
   //test more invalid characters
-  ASSERT_EQ("index1234bangdollars", bin2cpp::getFunctionIdentifierFromPath("index.1234.bang!.dollars$"));
+  ASSERT_EQ("Index1234bangDollars", bin2cpp::getFunctionIdentifierFromPath("index.1234.bang!.dollars$"));
 }
 
 TEST_F(TestCommon, testGetUniqueFunctionIdentifierFromPath)
@@ -81,14 +81,14 @@ TEST_F(TestCommon, testGetUniqueFunctionIdentifierFromPath)
     path = www_directory + "\\static\\css\\theme.dark.css";
     ra::filesystem::NormalizePath(path);
 
-    ASSERT_EQ("themedarkcss", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
+    ASSERT_EQ("ThemedarkCss", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
 
     //test duplicates
-    ASSERT_EQ("themedarkcss_1", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
-    ASSERT_EQ("themedarkcss_2", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
-    ASSERT_EQ("themedarkcss_3", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
-    ASSERT_EQ("themedarkcss_4", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
-    ASSERT_EQ("themedarkcss_5", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
+    ASSERT_EQ("ThemedarkCss_1", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
+    ASSERT_EQ("ThemedarkCss_2", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
+    ASSERT_EQ("ThemedarkCss_3", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
+    ASSERT_EQ("ThemedarkCss_4", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
+    ASSERT_EQ("ThemedarkCss_5", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
   }
 
   //test behavior with files that ends with numbers
@@ -96,18 +96,18 @@ TEST_F(TestCommon, testGetUniqueFunctionIdentifierFromPath)
     path = temp_directory + "\\index.001";
     ra::filesystem::NormalizePath(path);
 
-    ASSERT_EQ("index001", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
+    ASSERT_EQ("Index001", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
 
     //test duplicates
-    ASSERT_EQ("index001_1", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
-    ASSERT_EQ("index001_2", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
-    ASSERT_EQ("index001_3", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
-    ASSERT_EQ("index001_4", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
-    ASSERT_EQ("index001_5", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
+    ASSERT_EQ("Index001_1", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
+    ASSERT_EQ("Index001_2", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
+    ASSERT_EQ("Index001_3", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
+    ASSERT_EQ("Index001_4", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
+    ASSERT_EQ("Index001_5", bin2cpp::getUniqueFunctionIdentifierFromPath(path, tmp));
   }
 
   //try to bug the system: get an identifier from a file which is already a duplicate identifer.
-  ASSERT_EQ("themedarkcss_3_1", bin2cpp::getUniqueFunctionIdentifierFromPath("themedarkcss_3", tmp));
+  ASSERT_EQ("ThemedarkCss_3_1", bin2cpp::getUniqueFunctionIdentifierFromPath("ThemedarkCss_3", tmp));
 
   //test getting duplicate identifiers because of invalid characters
   {
@@ -115,14 +115,13 @@ TEST_F(TestCommon, testGetUniqueFunctionIdentifierFromPath)
     ra::filesystem::NormalizePath(path);
     path += slash;
 
-    ASSERT_EQ("jqueryjs",   bin2cpp::getUniqueFunctionIdentifierFromPath(path + "jquery.js", tmp));
+    ASSERT_EQ("JqueryJs",   bin2cpp::getUniqueFunctionIdentifierFromPath(path + "jquery.js", tmp));
 
     //test duplicates
-    ASSERT_EQ("jqueryjs_1", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "j.query.js"   , tmp));
-    ASSERT_EQ("jqueryjs_2", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "j!qu!ery.js"  , tmp));
-    ASSERT_EQ("jqueryjs_3", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "j-query.js"   , tmp));
-    ASSERT_EQ("jqueryjs_4", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "jqu.er.y.js"  , tmp));
-    ASSERT_EQ("jqueryjs_5", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "jqueryjs"     , tmp));
+    ASSERT_EQ("JqueryJs_1", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "j.query.js"   , tmp));
+    ASSERT_EQ("JqueryJs_2", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "j!qu!ery.js"  , tmp));
+    ASSERT_EQ("JqueryJs_3", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "j-query.js"   , tmp));
+    ASSERT_EQ("JqueryJs_4", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "jqu.er.y.js"  , tmp));
   }
 
   //test getting duplicates from different directories
@@ -131,14 +130,14 @@ TEST_F(TestCommon, testGetUniqueFunctionIdentifierFromPath)
     ra::filesystem::NormalizePath(path);
     path += slash;
 
-    ASSERT_EQ("indexhtml",   bin2cpp::getUniqueFunctionIdentifierFromPath(path + "index.html", tmp));
+    ASSERT_EQ("IndexHtml",   bin2cpp::getUniqueFunctionIdentifierFromPath(path + "index.html", tmp));
 
     //test duplicates
-    ASSERT_EQ("indexhtml_1", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "home"     + slash + "index.html"                                        , tmp));
-    ASSERT_EQ("indexhtml_2", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "blog"     + slash + "index.html"                                        , tmp));
-    ASSERT_EQ("indexhtml_3", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "blog"     + slash + "how-to-create-a-web-site" + slash + "index.html"   , tmp));
-    ASSERT_EQ("indexhtml_4", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "contact"  + slash + "index.html"                                        , tmp));
-    ASSERT_EQ("indexhtml_5", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "blog"     + slash + "using-bin2cpp" + slash + "index.html"              , tmp));
+    ASSERT_EQ("IndexHtml_1", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "home"     + slash + "index.html"                                        , tmp));
+    ASSERT_EQ("IndexHtml_2", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "blog"     + slash + "index.html"                                        , tmp));
+    ASSERT_EQ("IndexHtml_3", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "blog"     + slash + "how-to-create-a-web-site" + slash + "index.html"   , tmp));
+    ASSERT_EQ("IndexHtml_4", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "contact"  + slash + "index.html"                                        , tmp));
+    ASSERT_EQ("IndexHtml_5", bin2cpp::getUniqueFunctionIdentifierFromPath(path + "blog"     + slash + "using-bin2cpp" + slash + "index.html"              , tmp));
   }
 }
 

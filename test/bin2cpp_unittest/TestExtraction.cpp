@@ -598,7 +598,7 @@ TEST_F(TestExtraction, testIssue56a)
     std::string path = "generated_files/testIssue56a/compiled_sources/_testIssue56a.index.1234.h";
     ra::filesystem::NormalizePath(path);
     ASSERT_TRUE( ra::filesystem::FileExists(path.c_str()) ) << "File '" << path.c_str() << "' not found!";
-    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "get_testIssue56aindex1234cssFile()", line, index) );
+    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "get_testIssue56aindex1234CssFile()", line, index) );
   }
 
   //_testIssue56a.index.4321.h
@@ -606,7 +606,7 @@ TEST_F(TestExtraction, testIssue56a)
     std::string path = "generated_files/testIssue56a/compiled_sources/_testIssue56a.index.4321.h";
     ra::filesystem::NormalizePath(path);
     ASSERT_TRUE( ra::filesystem::FileExists(path.c_str()) ) << "File '" << path.c_str() << "' not found!";
-    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "get_testIssue56aindex4321cssFile()", line, index) );
+    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "get_testIssue56aindex4321CssFile()", line, index) );
   }
 }
 

@@ -954,9 +954,13 @@ TEST_F(TestCLI, testAutomaticIdentifierHeaderfile)
   std::string cppFilePath = headerFilePath; ra::strings::Replace(cppFilePath, ".h", ".cpp");
 
   //build the expected generated class
-  std::string expectedClassDeclaration = ra::filesystem::GetFilename(bin2cppPath.c_str());
-  expectedClassDeclaration = ra::strings::CapitalizeFirstCharacter(expectedClassDeclaration);
-  expectedClassDeclaration.insert(0, "class ");
+  std::string expectedClassDeclaration;
+  std::string name = ra::filesystem::GetFilenameWithoutExtension(bin2cppPath.c_str());
+  std::string ext  = ra::filesystem::GetFileExtention(bin2cppPath.c_str());
+  name = ra::strings::CapitalizeFirstCharacter(name);
+  ext  = ra::strings::CapitalizeFirstCharacter(ext );
+  expectedClassDeclaration = "class ";
+  expectedClassDeclaration += (name + ext);
   expectedClassDeclaration += "File";
   ra::strings::Replace(expectedClassDeclaration, ".", ""); // remove the dot  from bin2cpp.exe on Windows
   ra::strings::Replace(expectedClassDeclaration, "-", ""); // remove the dash from bin2cpp-d.exe on Windows
