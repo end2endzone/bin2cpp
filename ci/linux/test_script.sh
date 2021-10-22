@@ -2,18 +2,18 @@
 set -e
 
 # Validate mandatory environment variables
-if [ "$BIN2CPP_BUILD_TYPE" = "" ]; then
-  echo "Please define 'BIN2CPP_BUILD_TYPE' environment variable.";
+if [ "$PRODUCT_BUILD_TYPE" = "" ]; then
+  echo "Please define 'PRODUCT_BUILD_TYPE' environment variable.";
   exit 1;
 fi
 
-# Set BIN2CPP_SOURCE_DIR root directory
-if [ "$BIN2CPP_SOURCE_DIR" = "" ]; then
+# Set PRODUCT_SOURCE_DIR root directory
+if [ "$PRODUCT_SOURCE_DIR" = "" ]; then
   RESTORE_DIRECTORY="$PWD"
   cd "$(dirname "$0")"
   cd ../..
-  export BIN2CPP_SOURCE_DIR="$PWD"
-  echo "BIN2CPP_SOURCE_DIR set to '$BIN2CPP_SOURCE_DIR'."
+  export PRODUCT_SOURCE_DIR="$PWD"
+  echo "PRODUCT_SOURCE_DIR set to '$PRODUCT_SOURCE_DIR'."
   cd "$RESTORE_DIRECTORY"
   unset RESTORE_DIRECTORY
 fi
@@ -21,9 +21,9 @@ fi
 echo ============================================================================
 echo Testing bin2cpp...
 echo ============================================================================
-cd "$BIN2CPP_SOURCE_DIR/build/bin"
+cd "$PRODUCT_SOURCE_DIR/build/bin"
 ./generate_test_files.sh
-if [ "$BIN2CPP_BUILD_TYPE" = "Debug" ]; then
+if [ "$PRODUCT_BUILD_TYPE" = "Debug" ]; then
   ./bin2cpp_unittest-d || true; #do not fail build even if a test fails.
 else
   ./bin2cpp_unittest   || true; #do not fail build even if a test fails.

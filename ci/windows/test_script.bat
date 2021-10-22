@@ -10,22 +10,23 @@ if "%PLATFORM%"=="" (
   exit /B 1
 )
 
-:: Set BIN2CPP_SOURCE_DIR root directory
+:: Set PRODUCT_SOURCE_DIR root directory
 setlocal enabledelayedexpansion
-if "%BIN2CPP_SOURCE_DIR%"=="" (
+if "%PRODUCT_SOURCE_DIR%"=="" (
   :: Delayed expansion is required within parentheses https://superuser.com/questions/78496/variables-in-batch-file-not-being-set-when-inside-if
   cd /d "%~dp0"
   cd ..\..
-  set BIN2CPP_SOURCE_DIR=!CD!
+  set PRODUCT_SOURCE_DIR=!CD!
   cd ..\..
-  echo BIN2CPP_SOURCE_DIR set to '!BIN2CPP_SOURCE_DIR!'.
+  echo PRODUCT_SOURCE_DIR set to '!PRODUCT_SOURCE_DIR!'.
 )
-endlocal & set BIN2CPP_SOURCE_DIR=%BIN2CPP_SOURCE_DIR%
+endlocal & set PRODUCT_SOURCE_DIR=%PRODUCT_SOURCE_DIR%
+echo.
 
 echo =======================================================================
 echo Testing bin2cpp...
 echo =======================================================================
-cd /d "%BIN2CPP_SOURCE_DIR%\build\bin\%CONFIGURATION%"
+cd /d "%PRODUCT_SOURCE_DIR%\build\bin\%CONFIGURATION%"
 call generate_test_files.bat
 if "%CONFIGURATION%"=="Debug" (
   bin2cpp_unittest-d.exe
