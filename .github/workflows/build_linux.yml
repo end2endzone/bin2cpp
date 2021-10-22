@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 env:
   # build Configuration, i.e. Debug, Release, etc.
-  BIN2CPP_BUILD_TYPE: Release
+  PRODUCT_BUILD_TYPE: Release
 
   # Required for Github Action. Unit test TestProcess.testKillAndTerminate fails to start /bin/nano with the following error: "Error opening terminal: unknown."
   TERM: xterm
