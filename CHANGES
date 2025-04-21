@@ -1,3 +1,8 @@
+Changes for 3.0.1:
+
+* Fixed issue #68: Update to RapidAssist version 0.11.0
+
+
 Changes for 3.0.0:
 
 Note: This version introduces breaking changes. The public API has changed. See notes about automatic identifiers and deprecated method `getFilename()`.
