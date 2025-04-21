@@ -51,6 +51,11 @@ MESSAGE( STATUS "CMAKE_SYSTEM_PROCESSOR:      " ${CMAKE_SYSTEM_PROCESSOR} )
 MESSAGE( STATUS "CMAKE_HOST_SYSTEM_PROCESSOR: " ${CMAKE_HOST_SYSTEM_PROCESSOR} )
 MESSAGE( STATUS "CMAKE_SYSTEM_INFO_FILE:      " ${CMAKE_SYSTEM_INFO_FILE} )
 
+function(get_major_version VERSION_STRING OUTPUT_VARIABLE)
+    string(REGEX MATCH "^([0-9]+)" MAJOR_VERSION ${VERSION_STRING})
+    set(${OUTPUT_VARIABLE} "${CMAKE_MATCH_1}" PARENT_SCOPE)
+endfunction()
+
 # Get OS name and version.
 include(GetOsReleaseInfo)
 if (WIN32)
@@ -61,13 +66,28 @@ if (WIN32)
 elseif (APPLE)
   # Get MacOS release info.
   GetOsReleaseInfo(MAC_RELEASE_NAME MAC_RELEASE_VER)
+
+  # MAC_RELEASE_NAME used to resolve to something like `macOS Catalina`. Now On Github's Action,
+  # the output is `macOS Unknown`. If the code name of the OS is Unknown, it is better to remove it completely.
+  # Replace ` Unknown` by ``.
+  string(REPLACE " Unknown" " " MAC_RELEASE_NAME "${MAC_RELEASE_NAME}")
+
+  # Extract release MAJOR version
+  get_major_version(${MAC_RELEASE_VER} MAC_RELEASE_VER_MAJOR)
+
   MESSAGE( STATUS "MAC_RELEASE_NAME:            " ${MAC_RELEASE_NAME} )
   MESSAGE( STATUS "MAC_RELEASE_VER:             " ${MAC_RELEASE_VER} )
+  MESSAGE( STATUS "MAC_RELEASE_VER_MAJOR:       " ${MAC_RELEASE_VER_MAJOR} )
 elseif (UNIX)
   # Get Linux distribution info.
   GetOsReleaseInfo(LINUX_DIST_NAME LINUX_DIST_VER )
+
+  # Extract distribution MAJOR version
+  get_major_version(${LINUX_DIST_VER} LINUX_DIST_VER_MAJOR)
+
   MESSAGE( STATUS "LINUX_DIST_NAME:             " ${LINUX_DIST_NAME} )
   MESSAGE( STATUS "LINUX_DIST_VER:              " ${LINUX_DIST_VER} )
+  MESSAGE( STATUS "LINUX_DIST_VER_MAJOR:        " ${LINUX_DIST_VER_MAJOR} )
 endif()
 
 
@@ -283,8 +303,8 @@ elseif (APPLE)
   string(TOLOWER "${MAC_RELEASE_NAME}" MAC_RELEASE_NAME)
   string(REPLACE " " "." MAC_RELEASE_NAME "${MAC_RELEASE_NAME}")
 
-  # Updating the package filename to `bin2cpp-2.4.0-macos.catalina-x86_64.tar.gz`.
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${MAC_RELEASE_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
+  # Updating the package filename to `bin2cpp-2.4.0-macos.catalina.10-x86_64.tar.gz` or `bin2cpp-3.0.1-macos.14-arm64.tar.gz`.
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${MAC_RELEASE_NAME}.${MAC_RELEASE_VER_MAJOR}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
 elseif (UNIX)
   # Default package filename example :  `bin2cpp-2.4.0-Linux.tar.gz`.
   # 
@@ -297,8 +317,8 @@ elseif (UNIX)
   string(TOLOWER "${LINUX_DIST_NAME}" LINUX_DIST_NAME)
   string(REPLACE " " "." LINUX_DIST_NAME "${LINUX_DIST_NAME}")
   
-  # Updating the package filename to `bin2cpp-2.4.0-ubuntu-x86_64.tar.gz`.
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${LINUX_DIST_NAME}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
+  # Updating the package filename to `bin2cpp-3.0.1-ubuntu.24-x86_64.tar.gz` or `bin2cpp-3.0.1-centos.10-x86_64.tar.gz`.
+  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${LINUX_DIST_NAME}.${LINUX_DIST_VER_MAJOR}-${CMAKE_HOST_SYSTEM_PROCESSOR}")
 endif()
 
 
