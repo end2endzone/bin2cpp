@@ -70,7 +70,7 @@ elseif (APPLE)
   # MAC_RELEASE_NAME used to resolve to something like `macOS Catalina`. Now On Github's Action,
   # the output is `macOS Unknown`. If the code name of the OS is Unknown, it is better to remove it completely.
   # Replace ` Unknown` by ``.
-  string(REPLACE " Unknown" " " MAC_RELEASE_NAME "${MAC_RELEASE_NAME}")
+  string(REPLACE " Unknown" "" MAC_RELEASE_NAME "${MAC_RELEASE_NAME}")
 
   # Extract release MAJOR version
   get_major_version(${MAC_RELEASE_VER} MAC_RELEASE_VER_MAJOR)
