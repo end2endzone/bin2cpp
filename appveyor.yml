@@ -17,6 +17,7 @@ version: "{branch} (#{build})"
 branches:
   only:
     - master
+    - /feature-issue.*/
 
 # Do not build on tags (GitHub and BitBucket)
 skip_tags: true
@@ -26,7 +27,7 @@ skip_tags: true
 #---------------------------------#
 
 # Build worker image (VM template)
-image: Visual Studio 2015
+image: Visual Studio 2019
 
 # scripts that are called at very beginning, before repo cloning
 init:
@@ -38,7 +39,6 @@ clone_folder: c:\projects\bin2cpp
 
 # scripts that run after cloning repository
 install:
-- cmd: echo INSTALL!
 - cmd: git submodule update --init --recursive
 
 #---------------------------------#
@@ -46,7 +46,7 @@ install:
 #---------------------------------#
 
 environment:
-  PlatformToolset: v140
+  PlatformToolset: v142
   
   # build platform, i.e. x86, x64, Any CPU. This setting is optional.
   Platform: x64

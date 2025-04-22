@@ -17,7 +17,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Configure GIT
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -28,7 +28,7 @@ jobs:
         git submodule update --init --recursive
 
     - name: Setup python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
         architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
@@ -48,7 +48,8 @@ jobs:
         env
 
     - name: Deploy 'tests not available' badge before building
-      uses: exuanbo/actions-deploy-gist@v1
+      #uses: exuanbo/actions-deploy-gist@v1
+      uses: end2endzone/actions-deploy-gist@main
       if: github.event_name != 'pull_request'
       with:
         token: ${{ secrets.BADGES }}
@@ -72,11 +73,13 @@ jobs:
       run: ./ci/github/install_bin2cpp.sh
 
     - name: Run unit tests
+      id: unit_tests
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: bash
       run: ./ci/github/test_script.sh
 
     - name: Search unit test report file
+      if: success() || steps.unit_tests.conclusion == 'failure'
       working-directory: ${{env.GITHUB_WORKSPACE}}
       shell: bash
       run: |
@@ -85,12 +88,14 @@ jobs:
         echo UNITTEST_REPORT_PATH=$UNITTEST_REPORT_PATH >> $GITHUB_ENV
       
     - name: Create test badge
+      if: success() || steps.unit_tests.conclusion == 'failure'
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: python ci/github/maketestbadge.py ${{env.UNITTEST_REPORT_PATH}}
 
     - name: Deploy test badge to gist
-      uses: exuanbo/actions-deploy-gist@v1
-      if: github.event_name != 'pull_request'
+      if: success() || steps.unit_tests.conclusion == 'failure'
+      #uses: exuanbo/actions-deploy-gist@v1
+      uses: end2endzone/actions-deploy-gist@main
       with:
         token: ${{ secrets.BADGES }}
         gist_id: 58cf6c72c08e706335337d5ef9ca48e8
@@ -98,7 +103,8 @@ jobs:
         file_path: ./badge.json
     
     - name: Archive test results
-      uses: actions/upload-artifact@v2
+      if: success() || steps.unit_tests.conclusion == 'failure'
+      uses: actions/upload-artifact@v4.3.5
       with:
         name: unit-test-results
         path: build/bin/bin2cpp_unittest.*.xml
@@ -111,7 +117,8 @@ jobs:
         echo BIN2CPP_VERSION=$(cat build/version)>> $GITHUB_ENV
     
     - name: Archive installation packages
-      uses: actions/upload-artifact@v2
+      if: success() || steps.unit_tests.conclusion == 'failure'
+      uses: actions/upload-artifact@v4.3.5
       with:
         name: Installation packages.
         path: build/bin2cpp-${{env.BIN2CPP_VERSION}}-*.*
