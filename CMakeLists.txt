@@ -228,7 +228,10 @@ endif()
 #   On Windows, installs to "C:\Program Files (x86)\${PROJECT_NAME}" or to "C:\Program Files\${PROJECT_NAME}" for 64 bit binaries
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/licenses DESTINATION ${BIN2CPP_INSTALL_ROOT_DIR})
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/samples DESTINATION ${BIN2CPP_INSTALL_ROOT_DIR})
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/samples DESTINATION ${BIN2CPP_INSTALL_ROOT_DIR} 
+    PATTERN "outdir" EXCLUDE
+    PATTERN "outdir/*" EXCLUDE
+)
 
 install(FILES ${CMAKE_SOURCE_DIR}/README.md
               ${CMAKE_SOURCE_DIR}/CONTRIBUTING.md
