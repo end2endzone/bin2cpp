@@ -1,4 +1,4 @@
-Changes for x.y.z:
+Changes for 3.1.0:
 
 * Fixed issue #64: Remove build artifacts of samples from installation packages.
 
