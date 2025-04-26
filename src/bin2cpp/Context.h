@@ -26,7 +26,7 @@
 #define CONTEXT_H
 
 #include <string>
-#include "IGenerator.h"
+#include "enums.h"
 
 namespace bin2cpp
 {
@@ -38,76 +38,42 @@ namespace bin2cpp
   {
   public:
     Context();
+    Context(const Context & other);
     virtual ~Context();
 
-    enum Flags
-    {
-      KEEP_DIRECTORY_STRUCTURE = 0,   // true if the output files must have the same directory structure as the input files. Valid only when --dir is used.
-      PLAIN_OUTPUT,
-      OVERRIDE_EXISTING,
-      REGISTER_FILE,
+    Context& operator=(const Context& other);
 
-      FLAG_COUNT
-    };
+    // flags
+    bool hasInputFile;            // true if 'inputFilePath' is set.
+    bool hasInputDir;             // true if 'inputDirPath' is set.
+    bool hasOutputDir;            // true if 'outputDirPath' is set.
+    bool hasReportedFilePath;     // true if 'reportedFilePath' is set.
+    bool hasManagerFile;          // true if 'managerHeaderFilename' is set.
+    bool keepDirectoryStructure;  // true if the output files must have the same directory structure as the input files. Valid only when --dir is used.
+    bool overrideExistingFiles;
+    bool registerFiles;
+    bool plainOutput;
+
+    // public attributes
+    std::string inputFilePath;    // The path of the input file (resource) to embeded as C++ source code.
+    std::string inputDirPath;
+    std::string outputDirPath;
+    std::string headerFilename;   // The path of the input file (resource) to embeded as C++ source code.
+    std::string functionIdentifier;
+    std::string reportedFilePath; // path reported in the public api when calling getFilePath();
+    size_t chunkSize;
+    std::string codeNamespace;
+    std::string baseClass;
+    std::string managerHeaderFilename;
+    CppEncoderEnum cppEncoder;
+    std::string generatorName;
 
     void reset();
-
-    bool hasInputFileSet() const;
-    bool hasInputDirSet() const;
-    bool hasOutputDirSet() const;
-    bool hasReportedFilePath() const;
-    bool hasManagerFile() const;
-
-    void setFlag(const Flags & flag, bool value);
-    bool isFlagSet(const Flags& flag) const;
-
-    void setInputFilePath(const char* path);
-    const std::string& getInputFilePath() const;
-    void setInputDirPath(const char* path);
-    const std::string& getInputDirPath() const;
-    void setOutputDirPath(const char* path);
-    const std::string& getOutputDirPath() const;
-    void setHeaderFilename(const char* path);
-    const std::string& getHeaderFilename() const;
-    void setFunctionIdentifier(const char* function_identifier);
-    const std::string& getFunctionIdentifier() const;
-    void setReportedFilePath(const char* path);
-    const std::string& getReportedFilePath() const;
-    void setChunkSize(size_t chunk_size);
-    size_t getChunkSize() const;
-    void setNamespace(const char* name);
-    const std::string& getNamespace() const;
-    void setBaseClass(const char* name);
-    const std::string& getBaseClass() const;
-    void setManagerHeaderFilename(const char* manager_file);
-    const std::string& getManagerHeaderFilename() const;
-    void setCppEncoder(const IGenerator::CppEncoderEnum& cpp_encoder);
-    IGenerator::CppEncoderEnum getCppEncoder() const;
-
 
   protected:
 
     //attributes
-    bool mHasInputFile;               // true if 'mInputFilePath' is set.
-    bool mHasInputDir;                // true if 'mInputDirPath' is set.
-    bool mHasOutputDir;               // true if 'mOutputDirPath' is set.
-    bool mHasReportedFilePath;        // true if 'mReportedFilePath' is set.
-    bool mHasManagerFile;             // true if 'mManagerHeaderFilename' is set.
-    
-    bool mFlags[Flags::FLAG_COUNT];
 
-    std::string mInputFilePath;       // path of the input binary file
-    std::string mInputDirPath;
-    std::string mOutputDirPath;
-    std::string mHeaderFilename;
-    std::string mFunctionIdentifier;
-    std::string mReportedFilePath; // path reported in the public api when calling getFilePath();
-    size_t mChunkSize;
-    std::string mNamespace;
-    std::string mBaseClass;
-    std::string mManagerHeaderFilename;
-    IGenerator::CppEncoderEnum mCppEncoder;
-    std::string mGeneratorName;
   };
 
 }; //bin2cpp

@@ -26,6 +26,7 @@
 #define IGENERATOR_H
 
 #include <string>
+#include "Context.h"
  
 namespace bin2cpp
 {
@@ -35,140 +36,16 @@ namespace bin2cpp
   public:
 
     ///<summary>
-    ///Get the name of the generator.
+    ///Sets the current context for the generator.
     ///</summary>
-    ///<returns>Returns the name of the generator</returns>
-    virtual const char * getName() const = 0;
+    ///<param name="c">The new context.</param>
+    virtual void setContext(const Context& c) = 0;
 
     ///<summary>
-    ///Defines the path of the binary input file.
+    ///Get the current context set for the generator.
     ///</summary>
-    ///<param name="path">The path of the input file (resource) to embeded as C++ source code.</param>
-    virtual void setInputFilePath(const char * path) = 0;
-
-    ///<summary>
-    ///Provides the path of the binary input file.
-    ///</summary>
-    ///<returns>Returns the path of the binary input file. Returns an empty string if not defined.</returns>
-    virtual const char * getInputFilePath() const = 0;
-
-    ///<summary>
-    ///Defines the filename of the generated header.
-    ///</summary>
-    ///<param name="path">The path of the input file (resource) to embeded as C++ source code.</param>
-    virtual void setHeaderFilename(const char * path) = 0;
-
-    ///<summary>
-    ///Provides the filename of the generated header.
-    ///</summary>
-    ///<returns>Returns the path of the binary input file. Returns an empty string if not defined.</returns>
-    virtual const char * getHeaderFilename() const = 0;
-
-    ///<summary>
-    ///Defines the unique identifier name for the File class getter function.
-    ///</summary>
-    ///<param name="function_identifier">The unique identifier name for the File class getter function.</param>
-    virtual void setFunctionIdentifier(const char * function_identifier) = 0;
-
-    ///<summary>
-    ///Provides the unique identifier name for the File class getter function.
-    ///</summary>
-    ///<returns>Returns the unique identifier name for the File class getter function. Returns an empty string if not defined.</returns>
-    virtual const char * getFunctionIdentifier() const = 0;
-
-    ///<summary>
-    ///Defines the path reported by the getFilePath() method of the File class.
-    ///</summary>
-    ///<param name="path">The path of the input file (resource) to embeded as C++ source code.</param>
-    virtual void setReportedFilePath(const char * path) = 0;
-
-    ///<summary>
-    ///Provides the path reported by the getFilePath() method of the File class.
-    ///</summary>
-    ///<returns>The path reported by the getFilePath() method of the File class. Returns an empty string if not defined.</returns>
-    virtual const char * getReportedFilePath() const = 0;
-
-    ///<summary>
-    ///Defines the size in bytes of each chunk of data.
-    ///</summary>
-    ///<param name="chunk_size">The size in bytes of each chunk of data.</param>
-    virtual void setChunkSize(size_t chunk_size) = 0;
-
-    ///<summary>
-    ///Provides the size in bytes of each chunk of data.
-    ///</summary>
-    ///<returns>Returns the unique identifier name for the File class getter function. Returns an empty string if not defined.</returns>
-    virtual size_t getChunkSize() const = 0;
-
-    ///<summary>
-    ///Defines the namespace of the generated code.
-    ///</summary>
-    ///<param name="name">The name of the namespace of the generated code.</param>
-    virtual void setNamespace(const char * name) = 0;
-
-    ///<summary>
-    ///Provides the namespace of the generated code.
-    ///</summary>
-    ///<returns>Returns the name of the namespace of the generated code. Returns an empty string if not defined.</returns>
-    virtual const char * getNamespace() const = 0;
-
-    ///<summary>
-    ///Defines the base class of the generated code.
-    ///</summary>
-    ///<param name="name">The name of the base class of the generated code.</param>
-    virtual void setBaseClass(const char * name) = 0;
-
-    ///<summary>
-    ///Provides the base class of the generated code.
-    ///</summary>
-    ///<returns>Returns the name of the base class of the generated code. Returns an empty string if not defined.</returns>
-    virtual const char * getBaseClass() const = 0;
-
-    ///<summary>
-    ///Defines the filename of the FileManager generated header.
-    ///</summary>
-    ///<param name="path">The path of the FileManager output file.</param>
-    virtual void setManagerHeaderFilename(const char * path) = 0;
-
-    ///<summary>
-    ///Provides the filename of the FileManager generated header.
-    ///</summary>
-    ///<returns>Returns the path of the FileManager output file. Returns an empty string if not defined.</returns>
-    virtual const char * getManagerHeaderFilename() const = 0;
-
-    ///<summary>
-    ///Enable or disable the registration of the generated file to the FileManager.
-    ///</summary>
-    ///<param name="register_file_enabled">The new value of the flag.</param>
-    virtual void setRegisterFileEnabled(bool register_file_enabled) = 0;
-
-    ///<summary>
-    ///Returns true if the generated file should be registated FileManager should be used in generated code.
-    ///</summary>
-    ///<returns>Returns true if the FileManager should be used in generated code. Returns false otherwise.</returns>
-    virtual bool isRegisterFileEnabled() const = 0;
-
-    ///<summary>
-    ///Defines the different type of cpp encoding.
-    ///See setCppEncoder() and getCppEncoder() functions.
-    ///</summary>
-    enum CppEncoderEnum
-    {
-       CPP_ENCODER_OCT,
-       CPP_ENCODER_HEX,
-    };
-
-    ///<summary>
-    ///Defines the type of cpp encoder to use. See CppEncoderEnum for details.
-    ///</summary>
-    ///<param name="cpp_encoder">The type of cpp encoder to use</param>
-    virtual void setCppEncoder(const CppEncoderEnum & cpp_encoder) = 0;
-
-    ///<summary>
-    ///Provides the type of cpp encoder to use. See CppEncoderEnum for details.
-    ///</summary>
-    ///<returns>Returns the type of cpp encoder to use.</returns>
-    virtual CppEncoderEnum getCppEncoder() const = 0;
+    ///<returns>Returns the current context set for the generator.</returns>
+    virtual const Context& getContext() const = 0;
 
     ///<summary>
     ///Creates a header file for embedding a given file into C++ source code.

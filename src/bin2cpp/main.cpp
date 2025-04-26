@@ -29,6 +29,7 @@
 #include "StringGenerator.h"
 #include "ArrayGenerator.h"
 #include "Win32ResourceGenerator.h"
+#include "Context.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -69,7 +70,7 @@ enum FILE_UPDATE_MODE
 static const size_t DEFAULT_CHUNK_SIZE = 200;
 static const char * DEFAULT_NAMESPACE = "bin2cpp";
 static const char * DEFAULT_BASECLASSNAME = "File";
-static const IGenerator::CppEncoderEnum DEFAULT_ENCODING = IGenerator::CPP_ENCODER_OCT;
+static const CppEncoderEnum DEFAULT_ENCODING = CPP_ENCODER_OCT;
 static Dictionary identifiers_dictionary;   // unique values for identifiers
 static Dictionary output_files_dictionary;  // unique values for output file names
 
@@ -129,37 +130,18 @@ struct ARGUMENTS
   bool noheader;
   bool quiet;
   bool version;
-  bool hasFile;                 // true if 'inputFilePath' is set.
-  bool hasDir;                  // true if 'inputDirPath' is set.
-  bool hasReportedFilePath;     // true if 'reportedFilePath' is set.
-  bool hasManagerFile;          // true if 'managerHeaderFilename' is set.
-  bool keepDirectoryStructure;  // true if the output files must have the same directory structure as the input files. Valid only when --dir is used.
-  std::string inputFilePath;    // path of the input binary file
-  std::string inputDirPath;
-  std::string outputDirPath;
-  std::string headerFilename;
-  std::string functionIdentifier;
-  std::string reportedFilePath; // path reported in the public api when calling getFilePath();
-  size_t chunkSize;
-  bool plainOutput;
-  bool overrideExisting;
-  std::string codeNamespace;
-  std::string baseClass;
-  std::string managerHeaderFilename;
-  bool registerfile;
-  IGenerator::CppEncoderEnum encoding;
   std::string generatorName;
 };
 
 //pre-declarations
-bool generateFile(const ARGUMENTS & args, const std::string & output_file_path, bin2cpp::IGenerator * generator);
-bool generateManagerFile(const ARGUMENTS & args, const std::string & output_file_path, bin2cpp::IGenerator * generator);
-APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
-APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
-APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
-APP_ERROR_CODES processPlainOutput(const ARGUMENTS & args, bin2cpp::IGenerator * generator);
-std::string getDefaultFunctionIdentifier(const ARGUMENTS & args, Dictionary & identifiers_dictionary);
-std::string getDefaultHeaderFile(const ARGUMENTS & args);
+bool generateFile(const ARGUMENTS & args, const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator);
+bool generateManagerFile(const ARGUMENTS & args, const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processInputFile(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processPlainOutput(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator);
+std::string getDefaultFunctionIdentifier(const ARGUMENTS & args, const Context & c, Dictionary & identifiers_dictionary);
+std::string getDefaultHeaderFile(const ARGUMENTS & args, const Context & c);
 
 void printHeader()
 {
@@ -222,15 +204,8 @@ int main(int argc, char* argv[])
   args.noheader = false;
   args.quiet = false;
   args.version = false;
-  args.hasFile = false;
-  args.hasDir = false;
-  args.hasReportedFilePath = false;
-  args.hasManagerFile = false;
-  args.keepDirectoryStructure = false;
-  args.chunkSize = 0;
-  args.plainOutput = false;
-  args.overrideExisting = false;
-  args.registerfile = false;
+
+  Context c;
 
   std::string dummy;
 
@@ -250,8 +225,8 @@ int main(int argc, char* argv[])
   args.quiet = ra::cli::ParseArgument("quiet", dummy, argc, argv);
 
   //force quiet and noheader if plain output
-  args.plainOutput = ra::cli::ParseArgument("plainoutput", dummy, argc, argv);
-  if (args.plainOutput)
+  c.plainOutput = ra::cli::ParseArgument("plainoutput", dummy, argc, argv);
+  if ( c.plainOutput )
   {
     args.quiet = true;
     args.noheader = true;
@@ -276,12 +251,12 @@ int main(int argc, char* argv[])
     printHeader();
 
   //mandatory arguments
-  args.hasFile = ra::cli::ParseArgument("file", args.inputFilePath, argc, argv);
-  args.hasDir  = ra::cli::ParseArgument("dir",  args.inputDirPath,  argc, argv);
-  args.hasManagerFile = ra::cli::ParseArgument("managerfile", args.managerHeaderFilename, argc, argv);
+  c.hasInputFile = ra::cli::ParseArgument("file", c.inputFilePath, argc, argv);
+  c.hasInputDir  = ra::cli::ParseArgument("dir",  c.inputDirPath,  argc, argv);
+  c.hasManagerFile = ra::cli::ParseArgument("managerfile", c.managerHeaderFilename, argc, argv);
 
   //if no mandatory args is specified
-  if (!args.hasFile && !args.hasDir && !args.hasManagerFile && !args.plainOutput)
+  if (!c.hasInputFile && !c.hasInputDir && !c.hasManagerFile && !c.plainOutput)
   {
     //file, dir, managerfile or plainoutput must be specified
     APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
@@ -289,7 +264,7 @@ int main(int argc, char* argv[])
     printUsage();
     return error;
   }
-  else if (args.hasFile && args.hasDir)
+  else if (c.hasInputFile && c.hasInputDir)
   {
     //file OR dir must be specified, not both
     APP_ERROR_CODES error = APP_ERROR_TOOMANYARGUMENTS;
@@ -299,9 +274,10 @@ int main(int argc, char* argv[])
   }
 
   //if output args is mandatory
-  if (args.hasDir || (args.hasFile && !args.plainOutput) || args.hasManagerFile)
+  if (c.hasInputDir || (c.hasInputFile && !c.plainOutput) || c.hasManagerFile)
   {
-    if (!ra::cli::ParseArgument("output", args.outputDirPath, argc, argv))
+    c.hasOutputDir = ra::cli::ParseArgument("output", c.outputDirPath, argc, argv);
+    if (!c.hasOutputDir )
     {
       APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
       ra::logging::Log(ra::logging::LOG_ERROR, "%s (output)", getErrorCodeDescription(error));
@@ -311,9 +287,9 @@ int main(int argc, char* argv[])
   }
 
   // if headerfile should not be specified 
-  if (args.hasDir)
+  if (c.hasInputDir)
   {
-    if (ra::cli::ParseArgument("headerfile", args.headerFilename, argc, argv))
+    if (ra::cli::ParseArgument("headerfile", c.headerFilename, argc, argv))
     {
       //headerfile not supported with dir argument
       APP_ERROR_CODES error = APP_ERROR_TOOMANYARGUMENTS;
@@ -324,9 +300,9 @@ int main(int argc, char* argv[])
   }
 
   // if identifier should not be specified 
-  if (args.hasDir)
+  if (c.hasInputDir)
   {
-    if (ra::cli::ParseArgument("identifier", args.functionIdentifier, argc, argv))
+    if (ra::cli::ParseArgument("identifier", c.functionIdentifier, argc, argv))
     {
       //identifier not supported with dir argument
       APP_ERROR_CODES error = APP_ERROR_TOOMANYARGUMENTS;
@@ -338,52 +314,52 @@ int main(int argc, char* argv[])
 
   //optional arguments
 
-  if (args.hasFile)
+  if (c.hasInputFile)
   {
     //identifier
-    if (!ra::cli::ParseArgument("identifier", args.functionIdentifier, argc, argv))
+    if (!ra::cli::ParseArgument("identifier", c.functionIdentifier, argc, argv))
     {
       //identifier is not manually specified.
-      args.functionIdentifier = getDefaultFunctionIdentifier(args, identifiers_dictionary);
+      c.functionIdentifier = getDefaultFunctionIdentifier(args, c, identifiers_dictionary);
     }
 
     //headerfile
-    if (!ra::cli::ParseArgument("headerfile", args.headerFilename, argc, argv))
+    if (!ra::cli::ParseArgument("headerfile", c.headerFilename, argc, argv))
     {
       //use the file name without extension as 'headerfile'.
-      args.headerFilename = getDefaultHeaderFile(args);
+      c.headerFilename = getDefaultHeaderFile(args, c);
     }
   }
 
   size_t tmpChunkSize = 0;
-  args.chunkSize = DEFAULT_CHUNK_SIZE;
+  c.chunkSize = DEFAULT_CHUNK_SIZE;
   if (ra::cli::ParseArgument("chunksize", tmpChunkSize, argc, argv))
   {
-    args.chunkSize = tmpChunkSize;
+    c.chunkSize = tmpChunkSize;
   }
 
-  args.overrideExisting = ra::cli::ParseArgument("override", dummy, argc, argv);
+  c.overrideExistingFiles = ra::cli::ParseArgument("override", dummy, argc, argv);
 
-  if (!ra::cli::ParseArgument("namespace", args.codeNamespace, argc, argv))
+  if (!ra::cli::ParseArgument("namespace", c.codeNamespace, argc, argv))
   {
-    args.codeNamespace = DEFAULT_NAMESPACE;
+    c.codeNamespace = DEFAULT_NAMESPACE;
   }
 
-  if (!ra::cli::ParseArgument("baseclass", args.baseClass, argc, argv))
+  if (!ra::cli::ParseArgument("baseclass", c.baseClass, argc, argv))
   {
-    args.baseClass = DEFAULT_BASECLASSNAME;
+    c.baseClass = DEFAULT_BASECLASSNAME;
   }
 
-  args.registerfile = ra::cli::ParseArgument("registerfile", dummy, argc, argv);
+  c.registerFiles = ra::cli::ParseArgument("registerfile", dummy, argc, argv);
   
   //force registerfile if managerfile is specified
-  if (args.hasManagerFile)
+  if (c.hasManagerFile)
   {
-    args.registerfile = true;
+    c.registerFiles = true;
   }
 
-  args.hasReportedFilePath  = ra::cli::ParseArgument("reportedfilepath",  args.reportedFilePath,  argc, argv);
-  if (args.hasReportedFilePath && args.hasDir)
+  c.hasReportedFilePath  = ra::cli::ParseArgument("reportedfilepath",  c.reportedFilePath,  argc, argv);
+  if (c.hasReportedFilePath && c.hasInputDir)
   {
     APP_ERROR_CODES error = APP_ERROR_TOOMANYARGUMENTS;
     ra::logging::Log(ra::logging::LOG_ERROR, "%s (reportedfilepath)", getErrorCodeDescription(error));
@@ -391,15 +367,15 @@ int main(int argc, char* argv[])
     return error;
   }
 
-  args.keepDirectoryStructure = ra::cli::ParseArgument("keepdirs", dummy, argc, argv);
+  c.keepDirectoryStructure = ra::cli::ParseArgument("keepdirs", dummy, argc, argv);
 
   std::string encodingStr;
   if (ra::cli::ParseArgument("encoding", encodingStr, argc, argv))
   {
     if (ra::strings::Uppercase(encodingStr) == "OCT")
-      args.encoding = IGenerator::CPP_ENCODER_OCT;
+      c.cppEncoder = CPP_ENCODER_OCT;
     else if (ra::strings::Uppercase(encodingStr) == "HEX")
-      args.encoding = IGenerator::CPP_ENCODER_HEX;
+      c.cppEncoder = CPP_ENCODER_HEX;
     else
     {
       APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
@@ -410,7 +386,7 @@ int main(int argc, char* argv[])
   }
   else
   {
-    args.encoding = DEFAULT_ENCODING;
+    c.cppEncoder = DEFAULT_ENCODING;
   }
 
   //select generator
@@ -450,7 +426,7 @@ int main(int argc, char* argv[])
   }
 
   //win32 generator does not support plain output
-  if (args.generatorName == "win32" && args.plainOutput)
+  if (args.generatorName == "win32" && c.plainOutput)
   {
     APP_ERROR_CODES error = AAP_ERROR_NOTSUPPORTED;
     ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
@@ -464,27 +440,27 @@ int main(int argc, char* argv[])
   }
 
   //process file, directory or plain format
-  if (args.plainOutput)
+  if (c.plainOutput)
   {
-    APP_ERROR_CODES error = processPlainOutput(args, generator);
+    APP_ERROR_CODES error = processPlainOutput(args, c, generator);
     if (error != APP_ERROR_SUCCESS)
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
       return error;
     }
   }
-  else if (args.hasFile)
+  else if (c.hasInputFile)
   {
-    APP_ERROR_CODES error = processInputFile(args, generator);
+    APP_ERROR_CODES error = processInputFile(args, c, generator);
     if (error != APP_ERROR_SUCCESS)
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
       return error;
     }
   }
-  else if (args.hasDir)
+  else if (c.hasInputDir)
   {
-    APP_ERROR_CODES error = processInputDirectory(args, generator);
+    APP_ERROR_CODES error = processInputDirectory(args, c, generator);
     if (error != APP_ERROR_SUCCESS)
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
@@ -493,9 +469,9 @@ int main(int argc, char* argv[])
   }
 
   //should we also generate the FileManager class?
-  if (args.hasManagerFile)
+  if (c.hasManagerFile)
   {
-    APP_ERROR_CODES error = processManagerFiles(args, generator);
+    APP_ERROR_CODES error = processManagerFiles(args, c, generator);
     if (error != APP_ERROR_SUCCESS)
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
@@ -506,77 +482,69 @@ int main(int argc, char* argv[])
   return APP_ERROR_SUCCESS;
 }
 
-std::string getDefaultFunctionIdentifier(const ARGUMENTS & args, Dictionary & identifiers_dictionary)
+std::string getDefaultFunctionIdentifier(const ARGUMENTS & args, const Context & c, Dictionary & identifiers_dictionary)
 {
   std::string output;
 
   //use the file name without extension as 'identifier'.
-  output = getUniqueFunctionIdentifierFromPath(args.inputFilePath.c_str(), identifiers_dictionary);
+  output = getUniqueFunctionIdentifierFromPath(c.inputFilePath.c_str(), identifiers_dictionary);
   output = ra::strings::CapitalizeFirstCharacter(output);
 
   return output;
 }
 
-std::string getDefaultHeaderFile(const ARGUMENTS & args)
+std::string getDefaultHeaderFile(const ARGUMENTS & args, const Context & c)
 {
   std::string output;
 
   //use the file name without extension as 'headerfile'.
-  output = ra::filesystem::GetFilenameWithoutExtension(args.inputFilePath.c_str());
+  output = ra::filesystem::GetFilenameWithoutExtension(c.inputFilePath.c_str());
   output += ".h";
 
   return output;
 }
 
-APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * generator)
+APP_ERROR_CODES processInputFile(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator)
 {
   // printing info
   std::string info;
-  info << "Embedding \"" << args.inputFilePath << "\"";
-  if (args.chunkSize != DEFAULT_CHUNK_SIZE)
+  info << "Embedding \"" << c.inputFilePath << "\"";
+  if (c.chunkSize != DEFAULT_CHUNK_SIZE)
   {
     info << " using chunks of ";
-    info << ra::strings::ToString(args.chunkSize);
+    info << ra::strings::ToString(c.chunkSize);
     info << " bytes";
   }
-  if (args.overrideExisting)
+  if (c.overrideExistingFiles)
     info << " overriding existing files";
   info << "...";
   ra::logging::Log(ra::logging::LOG_INFO, info.c_str());
 
   //check if input file exists
-  if (!ra::filesystem::FileExists(args.inputFilePath.c_str()))
+  if (!ra::filesystem::FileExists(c.inputFilePath.c_str()))
     return APP_ERROR_INPUTFILENOTFOUND;
 
   ARGUMENTS argsCopy = args;
+  Context cCopy = c;
 
   //prepare output files path
-  std::string cppFilename = argsCopy.headerFilename;
+  std::string cppFilename = cCopy.headerFilename;
   ra::strings::Replace(cppFilename, ".hpp", ".cpp");
   ra::strings::Replace(cppFilename, ".h", ".cpp");  
 
   //build unique output relative file paths
-  argsCopy.headerFilename = bin2cpp::getUniqueFilePath(argsCopy.headerFilename, output_files_dictionary);
+  cCopy.headerFilename = bin2cpp::getUniqueFilePath(cCopy.headerFilename, output_files_dictionary);
   cppFilename = bin2cpp::getUniqueFilePath(cppFilename, output_files_dictionary);
 
   //build full absolute paths
-  std::string outputHeaderPath = argsCopy.outputDirPath + ra::filesystem::GetPathSeparatorStr() + argsCopy.headerFilename;
-  std::string outputCppPath = argsCopy.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
+  std::string outputHeaderPath = cCopy.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cCopy.headerFilename;
+  std::string outputCppPath = cCopy.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
 
   //configure the generator
-  generator->setInputFilePath(argsCopy.inputFilePath.c_str());
-  generator->setHeaderFilename(argsCopy.headerFilename.c_str());
-  generator->setFunctionIdentifier(argsCopy.functionIdentifier.c_str());
-  generator->setReportedFilePath(argsCopy.reportedFilePath.c_str());
-  generator->setChunkSize(argsCopy.chunkSize);
-  generator->setNamespace(argsCopy.codeNamespace.c_str());
-  generator->setBaseClass(argsCopy.baseClass.c_str());
-  generator->setCppEncoder(argsCopy.encoding);
-  generator->setManagerHeaderFilename(argsCopy.managerHeaderFilename.c_str());
-  generator->setRegisterFileEnabled(argsCopy.registerfile);
+  generator->setContext(c);
 
   //build the output directory structure if required
-  if (argsCopy.keepDirectoryStructure)
+  if (cCopy.keepDirectoryStructure)
   {
     std::string parent_directory = ra::filesystem::GetParentPath(outputHeaderPath);
     if (!parent_directory.empty() && !ra::filesystem::DirectoryExists(parent_directory.c_str()))
@@ -592,11 +560,11 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * g
   }
 
   //process files
-  bool headerResult = generateFile(args, outputHeaderPath, generator);
+  bool headerResult = generateFile(args, c, outputHeaderPath, generator);
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateFile(args, outputCppPath, generator);
+  bool cppResult =    generateFile(args, c, outputCppPath, generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
@@ -604,23 +572,23 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, bin2cpp::IGenerator * g
   return APP_ERROR_SUCCESS;
 }
 
-APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerator * generator)
+APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, const Context& c, bin2cpp::IGenerator * generator)
 {
   //check if input dir exists
-  if (!ra::filesystem::DirectoryExists(args.inputDirPath.c_str()))
+  if (!ra::filesystem::DirectoryExists(c.inputDirPath.c_str()))
   {
     APP_ERROR_CODES error = APP_ERROR_INPUTDIRNOTFOUND;
-    ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDirPath.c_str());
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), c.inputDirPath.c_str());
     return error;
   }
 
   //search all files in the directory
   ra::strings::StringVector files;
-  bool found = ra::filesystem::FindFiles(files, args.inputDirPath.c_str());
+  bool found = ra::filesystem::FindFiles(files, c.inputDirPath.c_str());
   if (!found)
   {
     APP_ERROR_CODES error = APP_ERROR_INPUTDIRNOTFOUND;
-    ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), args.inputDirPath.c_str());
+    ra::logging::Log(ra::logging::LOG_ERROR, "%s (%s)", getErrorCodeDescription(error), c.inputDirPath.c_str());
     return error;
   }
 
@@ -645,28 +613,29 @@ APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerato
 
     //build a 'headerfile' and 'identifier' argument for this file...
     ARGUMENTS argsCopy = args;
+    Context cCopy = c;
 
     //replace 'dir' input by current file input
-    argsCopy.hasDir = false;
-    argsCopy.hasFile = true;
-    argsCopy.inputFilePath = file;
+    cCopy.hasInputDir = false;
+    cCopy.hasInputFile = true;
+    cCopy.inputFilePath = file;
 
     //use the file name without extension as 'headerfile'.
-    argsCopy.headerFilename = getDefaultHeaderFile(argsCopy);
+    cCopy.headerFilename = getDefaultHeaderFile(argsCopy, cCopy);
 
     //use the file name without extension as 'identifier'.
-    argsCopy.functionIdentifier = getDefaultFunctionIdentifier(argsCopy, identifiers_dictionary);
+    cCopy.functionIdentifier = getDefaultFunctionIdentifier(argsCopy, cCopy, identifiers_dictionary);
 
     //build a relative file path
     std::string relative_file_path = file;
-    relative_file_path.erase(0, argsCopy.inputDirPath.size() + 1 ); // convert absolute path to relative path. +1 to remove first \ character
+    relative_file_path.erase(0, cCopy.inputDirPath.size() + 1 ); // convert absolute path to relative path. +1 to remove first \ character
     ra::filesystem::NormalizePath(relative_file_path);
 
     //automatically build a reported path with --dir mode.
-    argsCopy.hasReportedFilePath = true;
-    argsCopy.reportedFilePath = relative_file_path;
+    cCopy.hasReportedFilePath = true;
+    cCopy.reportedFilePath = relative_file_path;
 
-    if (args.keepDirectoryStructure)
+    if (c.keepDirectoryStructure)
     {
       // To keep the directory structure, we need to
       // make headerFilename a relative path
@@ -681,11 +650,11 @@ APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, bin2cpp::IGenerato
         relative_header_file_path += "h";
       }
 
-      argsCopy.headerFilename = relative_header_file_path;
+      cCopy.headerFilename = relative_header_file_path;
     }
 
     //process this file...
-    APP_ERROR_CODES error = processInputFile(argsCopy, generator);
+    APP_ERROR_CODES error = processInputFile(argsCopy, cCopy, generator);
     if (error != APP_ERROR_SUCCESS)
       return error;
 
@@ -717,9 +686,9 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & input_file_path, const st
   return UPDATING;
 }
 
-bool generateFile(const ARGUMENTS & args, const std::string & output_file_path, bin2cpp::IGenerator * generator)
+bool generateFile(const ARGUMENTS & args, const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator)
 {
-  FILE_UPDATE_MODE mode = getFileUpdateMode(args.inputFilePath, output_file_path, args.overrideExisting);
+  FILE_UPDATE_MODE mode = getFileUpdateMode(c.inputFilePath, output_file_path, c.overrideExistingFiles);
 
   //writing message
   ra::logging::Log(ra::logging::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), output_file_path.c_str());
@@ -748,10 +717,10 @@ bool generateFile(const ARGUMENTS & args, const std::string & output_file_path, 
   return result;
 }
 
-bool generateManagerFile(const ARGUMENTS & args, const std::string & output_file_path, bin2cpp::IGenerator * generator)
+bool generateManagerFile(const ARGUMENTS & args, const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator)
 {
   std::string processPath = ra::process::GetCurrentProcessPath();
-  FILE_UPDATE_MODE mode = getFileUpdateMode(processPath, output_file_path, args.overrideExisting);
+  FILE_UPDATE_MODE mode = getFileUpdateMode(processPath, output_file_path, c.overrideExistingFiles);
 
   //writing message
   ra::logging::Log(ra::logging::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), output_file_path.c_str());
@@ -779,29 +748,29 @@ bool generateManagerFile(const ARGUMENTS & args, const std::string & output_file
   return result;
 }
 
-APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator * generator)
+APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator)
 {
   // printing info
   std::string info;
-  info << "Generating \"" << args.managerHeaderFilename << "\"";
-  if (args.overrideExisting)
+  info << "Generating \"" << c.managerHeaderFilename << "\"";
+  if (c.overrideExistingFiles)
     info << " overriding existing files";
   info << "...";
   ra::logging::Log(ra::logging::LOG_INFO, info.c_str());
 
   //prepare output files path
-  std::string cppFilename = args.managerHeaderFilename;
+  std::string cppFilename = c.managerHeaderFilename;
   ra::strings::Replace(cppFilename, ".hpp", ".cpp");
   ra::strings::Replace(cppFilename, ".h", ".cpp");
-  std::string outputHeaderPath = args.outputDirPath + ra::filesystem::GetPathSeparatorStr() + args.managerHeaderFilename;
-  std::string outputCppPath = args.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
+  std::string outputHeaderPath = c.outputDirPath + ra::filesystem::GetPathSeparatorStr() + c.managerHeaderFilename;
+  std::string outputCppPath = c.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
 
   //process files
-  bool headerResult = generateManagerFile(args, outputHeaderPath, generator);
+  bool headerResult = generateManagerFile(args, c, outputHeaderPath, generator);
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateManagerFile(args, outputCppPath, generator);
+  bool cppResult =    generateManagerFile(args, c, outputCppPath, generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
@@ -809,18 +778,17 @@ APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, bin2cpp::IGenerator 
   return APP_ERROR_SUCCESS;
 }
 
-APP_ERROR_CODES processPlainOutput(const ARGUMENTS & args, bin2cpp::IGenerator * generator)
+APP_ERROR_CODES processPlainOutput(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator)
 {
   //check if input file exists
-  if (!ra::filesystem::FileExists(args.inputFilePath.c_str()))
+  if (!ra::filesystem::FileExists(c.inputFilePath.c_str()))
     return APP_ERROR_INPUTFILENOTFOUND;
 
   ARGUMENTS argsCopy = args;
+  Context cCopy = c;
 
   //configure the generator
-  generator->setInputFilePath(argsCopy.inputFilePath.c_str());
-  generator->setChunkSize(argsCopy.chunkSize);
-  generator->setCppEncoder(argsCopy.encoding);
+  generator->setContext(cCopy);
 
   //process file
   bool result = generator->printFileContent();
