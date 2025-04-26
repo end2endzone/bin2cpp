@@ -15,6 +15,8 @@ add_executable(bin2cpp
   bin2cpp.samples.txt
   common.cpp
   common.h
+  Context.cpp
+  Context.h
   crc32.cpp
   crc32.h
   IGenerator.h
