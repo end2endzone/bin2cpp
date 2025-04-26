@@ -19,6 +19,7 @@ add_executable(bin2cpp
   Context.h
   crc32.cpp
   crc32.h
+  enums.h
   IGenerator.h
   main.cpp
   SegmentGenerator.cpp
