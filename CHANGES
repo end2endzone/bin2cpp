@@ -1,3 +1,8 @@
+Changes for 3.1.0:
+
+* Fixed issue #64: Remove build artifacts of samples from installation packages.
+
+
 Changes for 3.0.1:
 
 * Fixed issue #68: Update to RapidAssist version 0.11.0
