@@ -136,7 +136,6 @@ struct ARGUMENTS
 
 //pre-declarations
 bool generateFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator);
-bool generateManagerFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processInputDirectory(const Context & c, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processManagerFiles(const Context & c);
@@ -716,37 +715,6 @@ bool generateFile(const Context & c, const std::string & output_file_path, bin2c
   return result;
 }
 
-bool generateManagerFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator)
-{
-  std::string processPath = ra::process::GetCurrentProcessPath();
-  FILE_UPDATE_MODE mode = getFileUpdateMode(processPath, output_file_path, c.overrideExistingFiles);
-
-  //writing message
-  ra::logging::Log(ra::logging::LOG_INFO, "%s file \"%s\"...", getUpdateModeText(mode), output_file_path.c_str());
-  
-  if (mode == SKIPPING)
-    return true; //skipping is success
-
-  //generate file
-  bool result = false;
-  if (isCppHeaderFile(output_file_path))
-  {
-    //generate header
-    result = generator->createCppHeaderFile(output_file_path.c_str());
-  }
-  else
-  {
-    //generate cpp
-    result = generator->createCppSourceFile(output_file_path.c_str());
-  }
-  if (!result)
-  {
-    //there was an error generating file
-    ra::logging::Log(ra::logging::LOG_ERROR, "%s failed!", getUpdateModeText(mode));
-  }
-  return result;
-}
-
 APP_ERROR_CODES processManagerFiles(const Context & c)
 {
   // printing info
@@ -769,11 +737,11 @@ APP_ERROR_CODES processManagerFiles(const Context & c)
   generator.setContext(c);
 
   //process files
-  bool headerResult = generateManagerFile(c, outputHeaderPath, &generator);
+  bool headerResult = generateFile(c, outputHeaderPath, &generator);
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateManagerFile(c, outputCppPath, &generator);
+  bool cppResult =    generateFile(c, outputCppPath, &generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
