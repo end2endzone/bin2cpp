@@ -134,14 +134,14 @@ struct ARGUMENTS
 };
 
 //pre-declarations
-bool generateFile(const ARGUMENTS & args, const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator);
-bool generateManagerFile(const ARGUMENTS & args, const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator);
-APP_ERROR_CODES processInputFile(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator);
-APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator);
-APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator);
-APP_ERROR_CODES processPlainOutput(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator);
-std::string getDefaultFunctionIdentifier(const ARGUMENTS & args, const Context & c, Dictionary & identifiers_dictionary);
-std::string getDefaultHeaderFile(const ARGUMENTS & args, const Context & c);
+bool generateFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator);
+bool generateManagerFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processInputDirectory(const Context & c, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processManagerFiles(const Context & c, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processPlainOutput(const Context & c, bin2cpp::IGenerator * generator);
+std::string getDefaultFunctionIdentifier(const Context & c, Dictionary & identifiers_dictionary);
+std::string getDefaultHeaderFile(const Context & c);
 
 void printHeader()
 {
@@ -320,14 +320,14 @@ int main(int argc, char* argv[])
     if (!ra::cli::ParseArgument("identifier", c.functionIdentifier, argc, argv))
     {
       //identifier is not manually specified.
-      c.functionIdentifier = getDefaultFunctionIdentifier(args, c, identifiers_dictionary);
+      c.functionIdentifier = getDefaultFunctionIdentifier(c, identifiers_dictionary);
     }
 
     //headerfile
     if (!ra::cli::ParseArgument("headerfile", c.headerFilename, argc, argv))
     {
       //use the file name without extension as 'headerfile'.
-      c.headerFilename = getDefaultHeaderFile(args, c);
+      c.headerFilename = getDefaultHeaderFile(c);
     }
   }
 
@@ -442,7 +442,7 @@ int main(int argc, char* argv[])
   //process file, directory or plain format
   if (c.plainOutput)
   {
-    APP_ERROR_CODES error = processPlainOutput(args, c, generator);
+    APP_ERROR_CODES error = processPlainOutput(c, generator);
     if (error != APP_ERROR_SUCCESS)
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
@@ -451,7 +451,7 @@ int main(int argc, char* argv[])
   }
   else if (c.hasInputFile)
   {
-    APP_ERROR_CODES error = processInputFile(args, c, generator);
+    APP_ERROR_CODES error = processInputFile(c, generator);
     if (error != APP_ERROR_SUCCESS)
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
@@ -460,7 +460,7 @@ int main(int argc, char* argv[])
   }
   else if (c.hasInputDir)
   {
-    APP_ERROR_CODES error = processInputDirectory(args, c, generator);
+    APP_ERROR_CODES error = processInputDirectory(c, generator);
     if (error != APP_ERROR_SUCCESS)
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
@@ -471,7 +471,7 @@ int main(int argc, char* argv[])
   //should we also generate the FileManager class?
   if (c.hasManagerFile)
   {
-    APP_ERROR_CODES error = processManagerFiles(args, c, generator);
+    APP_ERROR_CODES error = processManagerFiles(c, generator);
     if (error != APP_ERROR_SUCCESS)
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
@@ -482,7 +482,7 @@ int main(int argc, char* argv[])
   return APP_ERROR_SUCCESS;
 }
 
-std::string getDefaultFunctionIdentifier(const ARGUMENTS & args, const Context & c, Dictionary & identifiers_dictionary)
+std::string getDefaultFunctionIdentifier(const Context & c, Dictionary & identifiers_dictionary)
 {
   std::string output;
 
@@ -493,7 +493,7 @@ std::string getDefaultFunctionIdentifier(const ARGUMENTS & args, const Context &
   return output;
 }
 
-std::string getDefaultHeaderFile(const ARGUMENTS & args, const Context & c)
+std::string getDefaultHeaderFile(const Context & c)
 {
   std::string output;
 
@@ -504,7 +504,7 @@ std::string getDefaultHeaderFile(const ARGUMENTS & args, const Context & c)
   return output;
 }
 
-APP_ERROR_CODES processInputFile(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator)
+APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * generator)
 {
   // printing info
   std::string info;
@@ -524,7 +524,6 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, const Context & c, bin2
   if (!ra::filesystem::FileExists(c.inputFilePath.c_str()))
     return APP_ERROR_INPUTFILENOTFOUND;
 
-  ARGUMENTS argsCopy = args;
   Context cCopy = c;
 
   //prepare output files path
@@ -560,11 +559,11 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, const Context & c, bin2
   }
 
   //process files
-  bool headerResult = generateFile(args, c, outputHeaderPath, generator);
+  bool headerResult = generateFile(c, outputHeaderPath, generator);
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateFile(args, c, outputCppPath, generator);
+  bool cppResult =    generateFile(c, outputCppPath, generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
@@ -572,7 +571,7 @@ APP_ERROR_CODES processInputFile(const ARGUMENTS & args, const Context & c, bin2
   return APP_ERROR_SUCCESS;
 }
 
-APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, const Context& c, bin2cpp::IGenerator * generator)
+APP_ERROR_CODES processInputDirectory(const Context& c, bin2cpp::IGenerator * generator)
 {
   //check if input dir exists
   if (!ra::filesystem::DirectoryExists(c.inputDirPath.c_str()))
@@ -612,7 +611,6 @@ APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, const Context& c, 
     const std::string & file = files[i];
 
     //build a 'headerfile' and 'identifier' argument for this file...
-    ARGUMENTS argsCopy = args;
     Context cCopy = c;
 
     //replace 'dir' input by current file input
@@ -621,10 +619,10 @@ APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, const Context& c, 
     cCopy.inputFilePath = file;
 
     //use the file name without extension as 'headerfile'.
-    cCopy.headerFilename = getDefaultHeaderFile(argsCopy, cCopy);
+    cCopy.headerFilename = getDefaultHeaderFile(cCopy);
 
     //use the file name without extension as 'identifier'.
-    cCopy.functionIdentifier = getDefaultFunctionIdentifier(argsCopy, cCopy, identifiers_dictionary);
+    cCopy.functionIdentifier = getDefaultFunctionIdentifier(cCopy, identifiers_dictionary);
 
     //build a relative file path
     std::string relative_file_path = file;
@@ -654,7 +652,7 @@ APP_ERROR_CODES processInputDirectory(const ARGUMENTS & args, const Context& c, 
     }
 
     //process this file...
-    APP_ERROR_CODES error = processInputFile(argsCopy, cCopy, generator);
+    APP_ERROR_CODES error = processInputFile(cCopy, generator);
     if (error != APP_ERROR_SUCCESS)
       return error;
 
@@ -686,7 +684,7 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & input_file_path, const st
   return UPDATING;
 }
 
-bool generateFile(const ARGUMENTS & args, const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator)
+bool generateFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator)
 {
   FILE_UPDATE_MODE mode = getFileUpdateMode(c.inputFilePath, output_file_path, c.overrideExistingFiles);
 
@@ -717,7 +715,7 @@ bool generateFile(const ARGUMENTS & args, const Context & c, const std::string &
   return result;
 }
 
-bool generateManagerFile(const ARGUMENTS & args, const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator)
+bool generateManagerFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator)
 {
   std::string processPath = ra::process::GetCurrentProcessPath();
   FILE_UPDATE_MODE mode = getFileUpdateMode(processPath, output_file_path, c.overrideExistingFiles);
@@ -748,7 +746,7 @@ bool generateManagerFile(const ARGUMENTS & args, const Context & c, const std::s
   return result;
 }
 
-APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator)
+APP_ERROR_CODES processManagerFiles(const Context & c, bin2cpp::IGenerator * generator)
 {
   // printing info
   std::string info;
@@ -766,11 +764,11 @@ APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, const Context & c, b
   std::string outputCppPath = c.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
 
   //process files
-  bool headerResult = generateManagerFile(args, c, outputHeaderPath, generator);
+  bool headerResult = generateManagerFile(c, outputHeaderPath, generator);
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateManagerFile(args, c, outputCppPath, generator);
+  bool cppResult =    generateManagerFile(c, outputCppPath, generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
@@ -778,13 +776,12 @@ APP_ERROR_CODES processManagerFiles(const ARGUMENTS & args, const Context & c, b
   return APP_ERROR_SUCCESS;
 }
 
-APP_ERROR_CODES processPlainOutput(const ARGUMENTS & args, const Context & c, bin2cpp::IGenerator * generator)
+APP_ERROR_CODES processPlainOutput(const Context & c, bin2cpp::IGenerator * generator)
 {
   //check if input file exists
   if (!ra::filesystem::FileExists(c.inputFilePath.c_str()))
     return APP_ERROR_INPUTFILENOTFOUND;
 
-  ARGUMENTS argsCopy = args;
   Context cCopy = c;
 
   //configure the generator
