@@ -524,12 +524,15 @@ APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * genera
   if (!ra::filesystem::FileExists(c.inputFilePath.c_str()))
     return APP_ERROR_INPUTFILENOTFOUND;
 
-  Context cCopy = c;
-
   //prepare output files path
-  std::string cppFilename = cCopy.headerFilename;
+  std::string cppFilename = c.headerFilename;
   ra::strings::Replace(cppFilename, ".hpp", ".cpp");
   ra::strings::Replace(cppFilename, ".h", ".cpp");  
+
+  //create a copy of the context.
+  //we may have already generated files from a previous call to processInputFile().
+  //make sure the file paths are unique.
+  Context cCopy = c;
 
   //build unique output relative file paths
   cCopy.headerFilename = bin2cpp::getUniqueFilePath(cCopy.headerFilename, output_files_dictionary);
@@ -540,7 +543,7 @@ APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * genera
   std::string outputCppPath = cCopy.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
 
   //configure the generator
-  generator->setContext(c);
+  generator->setContext(cCopy);
 
   //build the output directory structure if required
   if (cCopy.keepDirectoryStructure)
@@ -732,8 +735,9 @@ APP_ERROR_CODES processManagerFiles(const Context & c)
   std::string outputHeaderPath = c.outputDirPath + ra::filesystem::GetPathSeparatorStr() + c.managerHeaderFilename;
   std::string outputCppPath = c.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
 
-  //init generator
   ManagerGenerator generator;
+
+  //configure the generator
   generator.setContext(c);
 
   //process files
@@ -755,10 +759,8 @@ APP_ERROR_CODES processPlainOutput(const Context & c, bin2cpp::IGenerator * gene
   if (!ra::filesystem::FileExists(c.inputFilePath.c_str()))
     return APP_ERROR_INPUTFILENOTFOUND;
 
-  Context cCopy = c;
-
   //configure the generator
-  generator->setContext(cCopy);
+  generator->setContext(c);
 
   //process file
   bool result = generator->printFileContent();
