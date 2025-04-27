@@ -62,20 +62,6 @@ namespace bin2cpp
     virtual bool createCppSourceFile(const char * cpp_file_path) = 0;
 
     ///<summary>
-    ///Creates a FileManager header file.
-    ///</summary>
-    ///<param name="header_file_path">The path of the header file (*.h).</param>
-    ///<returns>Returns true when the file was created. Returns false otherwise.</returns>
-    virtual bool createManagerHeaderFile(const char * header_file_path) = 0;
-
-    ///<summary>
-    ///Creates a FileManager cpp file.
-    ///</summary>
-    ///<param name="header_file_path">The path of the cpp file (*.h).</param>
-    ///<returns>Returns true when the file was created. Returns false otherwise.</returns>
-    virtual bool createManagerSourceFile(const char * cpp_file_path) = 0;
-
-    ///<summary>
     ///Print the encoded file content to stdout
     ///</summary>
     ///<returns>Returns true when the operation is succesful. Returns false otherwise.</returns>

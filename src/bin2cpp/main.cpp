@@ -29,6 +29,7 @@
 #include "StringGenerator.h"
 #include "ArrayGenerator.h"
 #include "Win32ResourceGenerator.h"
+#include "ManagerGenerator.h"
 #include "Context.h"
 
 #include <stdlib.h>
@@ -138,7 +139,7 @@ bool generateFile(const Context & c, const std::string & output_file_path, bin2c
 bool generateManagerFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processInputDirectory(const Context & c, bin2cpp::IGenerator * generator);
-APP_ERROR_CODES processManagerFiles(const Context & c, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processManagerFiles(const Context & c);
 APP_ERROR_CODES processPlainOutput(const Context & c, bin2cpp::IGenerator * generator);
 std::string getDefaultFunctionIdentifier(const Context & c, Dictionary & identifiers_dictionary);
 std::string getDefaultHeaderFile(const Context & c);
@@ -471,7 +472,7 @@ int main(int argc, char* argv[])
   //should we also generate the FileManager class?
   if (c.hasManagerFile)
   {
-    APP_ERROR_CODES error = processManagerFiles(c, generator);
+    APP_ERROR_CODES error = processManagerFiles(c);
     if (error != APP_ERROR_SUCCESS)
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
@@ -731,12 +732,12 @@ bool generateManagerFile(const Context & c, const std::string & output_file_path
   if (isCppHeaderFile(output_file_path))
   {
     //generate header
-    result = generator->createManagerHeaderFile(output_file_path.c_str());
+    result = generator->createCppHeaderFile(output_file_path.c_str());
   }
   else
   {
     //generate cpp
-    result = generator->createManagerSourceFile(output_file_path.c_str());
+    result = generator->createCppSourceFile(output_file_path.c_str());
   }
   if (!result)
   {
@@ -746,7 +747,7 @@ bool generateManagerFile(const Context & c, const std::string & output_file_path
   return result;
 }
 
-APP_ERROR_CODES processManagerFiles(const Context & c, bin2cpp::IGenerator * generator)
+APP_ERROR_CODES processManagerFiles(const Context & c)
 {
   // printing info
   std::string info;
@@ -763,12 +764,16 @@ APP_ERROR_CODES processManagerFiles(const Context & c, bin2cpp::IGenerator * gen
   std::string outputHeaderPath = c.outputDirPath + ra::filesystem::GetPathSeparatorStr() + c.managerHeaderFilename;
   std::string outputCppPath = c.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
 
+  //init generator
+  ManagerGenerator generator;
+  generator.setContext(c);
+
   //process files
-  bool headerResult = generateManagerFile(c, outputHeaderPath, generator);
+  bool headerResult = generateManagerFile(c, outputHeaderPath, &generator);
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateManagerFile(c, outputCppPath, generator);
+  bool cppResult =    generateManagerFile(c, outputCppPath, &generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 

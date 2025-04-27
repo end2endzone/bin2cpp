@@ -22,6 +22,8 @@ add_executable(bin2cpp
   enums.h
   IGenerator.h
   main.cpp
+  ManagerGenerator.cpp
+  ManagerGenerator.h
   SegmentGenerator.cpp
   SegmentGenerator.h
   StringGenerator.cpp
