@@ -22,49 +22,25 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef BASEGENERATOR_H
-#define BASEGENERATOR_H
+#ifndef ENUMS_H
+#define ENUMS_H
 
-#include "IGenerator.h"
-
+#include <string>
+#include "Context.h"
+ 
 namespace bin2cpp
 {
 
   ///<summary>
-  ///This generator is the base of all generators.
+  ///Defines the different type of cpp encoding.
+  ///See setCppEncoder() and getCppEncoder() functions.
   ///</summary>
-  class BaseGenerator : public virtual IGenerator
+  enum CppEncoderEnum
   {
-  public:
-    BaseGenerator();
-    virtual ~BaseGenerator();
-
-    //IGenerator methods
-    virtual void setContext(const Context& c);
-    virtual const Context & getContext() const;
-
-    //same header file for all generators
-    virtual bool createCppHeaderFile(const char * header_file_path);
-    virtual bool printFileContent();
-
-  protected:
-
-    virtual std::string getGetterFunctionName();
-    virtual std::string getHeaderFilePath(const char * cpp_file_path);
-    virtual std::string getCppFilePath(const char * header_file_path);
-    virtual std::string getHeaderTemplate();
-    virtual std::string getHeaderTemplate(bool include_source_file);
-    virtual std::string getSaveMethodTemplate();
-    virtual std::string getFileManagerRegistrationTemplate();
-    virtual std::string getClassName();
-    virtual std::string getClassMacroGuardPrefix();
-    virtual std::string getImplOfGetFileName();
-    virtual std::string getImplOfGetFilePath();
-
-    //attributes
-    Context mContext;
+      CPP_ENCODER_OCT,
+      CPP_ENCODER_HEX,
   };
-
+  
 }; //bin2cpp
 
-#endif //BASEGENERATOR_H
+#endif //IGENERATOR_H

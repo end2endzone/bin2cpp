@@ -50,12 +50,12 @@ namespace bin2cpp
   bool StringGenerator::createCppSourceFile(const char * cpp_file_path)
   {
     //check if input file exists
-    FILE * input = fopen(getInputFilePath(), "rb");
+    FILE * input = fopen(mContext.inputFilePath.c_str(), "rb");
     if (!input)
       return false;
 
     //Uppercase function identifier
-    std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mFunctionIdentifier);
+    std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(getContext().functionIdentifier);
 
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(cpp_file_path);
@@ -71,7 +71,7 @@ namespace bin2cpp
 
     //determine file properties
     uint32_t fileSize = ra::filesystem::GetFileSize(input);
-    std::string filename = ra::filesystem::GetFilename(getInputFilePath());
+    std::string filename = ra::filesystem::GetFilename(mContext.inputFilePath.c_str());
 
     //Build class name
     std::string className = getClassName();
@@ -81,12 +81,12 @@ namespace bin2cpp
 
     //write cpp file heading
     fprintf(cpp, "%s", getHeaderTemplate().c_str());
-    fprintf(cpp, "#include \"%s\"\n", getHeaderFilename() );
+    fprintf(cpp, "#include \"%s\"\n", mContext.headerFilename.c_str() );
     fprintf(cpp, "#include <iostream>\n");
     fprintf(cpp, "#include <fstream>  //for ofstream\n");
-    fprintf(cpp, "namespace %s\n", mNamespace.c_str());
+    fprintf(cpp, "namespace %s\n", getContext().codeNamespace.c_str());
     fprintf(cpp, "{\n");
-    fprintf(cpp, "  class %s : public virtual %s::%s\n", className.c_str(), mNamespace.c_str(), mBaseClass.c_str());
+    fprintf(cpp, "  class %s : public virtual %s::%s\n", className.c_str(), getContext().codeNamespace.c_str(), getContext().baseClass.c_str());
     fprintf(cpp, "  {\n");
     fprintf(cpp, "  public:\n");
     fprintf(cpp, "    %s() {}\n", className.c_str());
@@ -100,13 +100,13 @@ namespace bin2cpp
 
     //create buffer for each chunks from input buffer
     int numLinePrinted = 0;
-    unsigned char * buffer = new unsigned char[mChunkSize];
+    unsigned char * buffer = new unsigned char[getContext().chunkSize];
     while(!feof(input))
     {
       //read a chunk of the file
-      size_t readSize = fread(buffer, 1, mChunkSize, input);
+      size_t readSize = fread(buffer, 1, getContext().chunkSize, input);
 
-      bool isLastChunk = !(readSize == mChunkSize);
+      bool isLastChunk = !(readSize == getContext().chunkSize);
 
       if (readSize > 0)
       {
@@ -118,12 +118,12 @@ namespace bin2cpp
 
         //convert to cpp string
         std::string cppEncoder;
-        switch(mCppEncoder)
+        switch(getContext().cppEncoder)
         {
-        case IGenerator::CPP_ENCODER_HEX:
+        case CPP_ENCODER_HEX:
           cppEncoder = ra::code::cpp::ToHexString(buffer, readSize);
           break;
-        case IGenerator::CPP_ENCODER_OCT:
+        case CPP_ENCODER_OCT:
         default:
           cppEncoder = ra::code::cpp::ToOctString(buffer, readSize, false);
           break;
@@ -148,13 +148,13 @@ namespace bin2cpp
     fprintf(cpp, "    }\n");
     fprintf(cpp, "%s", getSaveMethodTemplate().c_str());
     fprintf(cpp, "  };\n");
-    fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", mBaseClass.c_str(), getterFunctionName.c_str(), className.c_str());
-    if (isRegisterFileEnabled())
+    fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", getContext().baseClass.c_str(), getterFunctionName.c_str(), className.c_str());
+    if (mContext.registerFiles)
     {
       std::string fileManagerTemplate = getFileManagerRegistrationTemplate();
       fprintf(cpp, "%s", fileManagerTemplate.c_str());
     }
-    fprintf(cpp, "}; //%s\n", mNamespace.c_str());
+    fprintf(cpp, "}; //%s\n", getContext().codeNamespace.c_str());
 
     fclose(input);
     fclose(cpp);

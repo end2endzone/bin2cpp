@@ -26,3 +26,6 @@
 --file=..\..\test\bin2cpp_unittest\generated_files\testText1000\testText1000.bin --output=. --override
 
 --noheader --dir=..\..\test\bin2cpp_unittest\generated_files\testIssue56a\input_files --output=..\..\test\bin2cpp_unittest\generated_files\testIssue56a\compiled_sources --chunksize=200 --managerfile=FileManager56a.h --registerfile --namespace=issue56a --override
+
+
+--plainoutput --chunksize=9999 --file=..\..\test\bin2cpp_unittest\generated_files\testSequential1000\testSequential1000.bin

@@ -15,10 +15,15 @@ add_executable(bin2cpp
   bin2cpp.samples.txt
   common.cpp
   common.h
+  Context.cpp
+  Context.h
   crc32.cpp
   crc32.h
+  enums.h
   IGenerator.h
   main.cpp
+  ManagerGenerator.cpp
+  ManagerGenerator.h
   SegmentGenerator.cpp
   SegmentGenerator.h
   StringGenerator.cpp

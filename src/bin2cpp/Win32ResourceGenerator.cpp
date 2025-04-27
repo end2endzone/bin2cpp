@@ -58,12 +58,12 @@ namespace bin2cpp
       return false;
 
     //check if input file exists
-    FILE * input = fopen(getInputFilePath(), "rb");
+    FILE * input = fopen(mContext.inputFilePath.c_str(), "rb");
     if (!input)
       return false;
 
     //Uppercase function identifier
-    std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mFunctionIdentifier);
+    std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(getContext().functionIdentifier);
 
     //Build header and cpp file path
     std::string headerPath = getHeaderFilePath(cpp_file_path);
@@ -79,7 +79,7 @@ namespace bin2cpp
 
     //determine file properties
     //uint32_t fileSize = ra::filesystem::GetFileSize(input);
-    std::string filename = ra::filesystem::GetFilename(getInputFilePath());
+    std::string filename = ra::filesystem::GetFilename(mContext.inputFilePath.c_str());
 
     //Build class name
     std::string className = getClassName();
@@ -89,7 +89,7 @@ namespace bin2cpp
 
     //write cpp file heading
     fprintf(cpp, "%s", getHeaderTemplate().c_str());
-    fprintf(cpp, "#include \"%s\"\n", getHeaderFilename() );
+    fprintf(cpp, "#include \"%s\"\n", mContext.headerFilename.c_str() );
     fprintf(cpp, "#include <stdint.h>\n");
     fprintf(cpp, "#include <iostream>\n");
     fprintf(cpp, "#include <fstream>  //for ofstream\n");
@@ -103,9 +103,9 @@ namespace bin2cpp
     fprintf(cpp, "#pragma comment( lib, \"psapi.lib\" )\n");
     fprintf(cpp, "\n");
 
-    fprintf(cpp, "namespace %s\n", mNamespace.c_str());
+    fprintf(cpp, "namespace %s\n", getContext().codeNamespace.c_str());
     fprintf(cpp, "{\n");
-    fprintf(cpp, "  class %s : public virtual %s::%s\n", className.c_str(), mNamespace.c_str(), mBaseClass.c_str());
+    fprintf(cpp, "  class %s : public virtual %s::%s\n", className.c_str(), getContext().codeNamespace.c_str(), getContext().baseClass.c_str());
     fprintf(cpp, "  {\n");
     fprintf(cpp, "  public:\n");
     fprintf(cpp, "    %s() :\n", className.c_str());
@@ -134,7 +134,7 @@ namespace bin2cpp
     fprintf(cpp, "        if ( EnumProcessModules( hProcess, &hModule, sizeof(hModule), &cbNeeded) )\n");
     fprintf(cpp, "        {\n");
     fprintf(cpp, "          //Retrieve the resource\n");
-    fprintf(cpp, "          hResourceInfoBlock = FindResource(hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(getInputFilePath()).c_str());
+    fprintf(cpp, "          hResourceInfoBlock = FindResource(hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(mContext.inputFilePath.c_str()).c_str());
     fprintf(cpp, "          if (hResourceInfoBlock)\n");
     fprintf(cpp, "          {\n");
     fprintf(cpp, "            hResHandle = LoadResource(hModule, hResourceInfoBlock);\n");
@@ -173,13 +173,13 @@ namespace bin2cpp
     fprintf(cpp, "    DWORD mBufferSize;\n");
     fprintf(cpp, "    const char * mBuffer;\n");
     fprintf(cpp, "  };\n");
-    fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", mBaseClass.c_str(), getterFunctionName.c_str(), className.c_str());
-    if (isRegisterFileEnabled())
+    fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", getContext().baseClass.c_str(), getterFunctionName.c_str(), className.c_str());
+    if (mContext.registerFiles)
     {
       std::string fileManagerTemplate = getFileManagerRegistrationTemplate();
       fprintf(cpp, "%s", fileManagerTemplate.c_str());
     }
-    fprintf(cpp, "}; //%s\n", mNamespace.c_str());
+    fprintf(cpp, "}; //%s\n", getContext().codeNamespace.c_str());
 
     fclose(input);
     fclose(cpp);
@@ -207,12 +207,12 @@ namespace bin2cpp
       return false;
     }
 
-    std::string filename = ra::filesystem::GetFilename(getInputFilePath());
+    std::string filename = ra::filesystem::GetFilename(mContext.inputFilePath.c_str());
  
     //write res file heading
     fprintf(res, "%s", getHeaderTemplate().c_str());
     fprintf(res, "#include <windows.h>\n");
-    fprintf(res, "%s CUSTOM \"%s\"\n", getRandomIdentifier(getInputFilePath()).c_str(), filename.c_str());
+    fprintf(res, "%s CUSTOM \"%s\"\n", getRandomIdentifier(mContext.inputFilePath.c_str()).c_str(), filename.c_str());
 
     fclose(res);
 
