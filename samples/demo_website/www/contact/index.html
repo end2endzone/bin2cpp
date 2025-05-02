@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
-  <title>Contact</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 600px; margin: auto; }
+        label { display: block; margin-top: 10px; }
+        input, textarea { width: 100%; padding: 10px; margin-top: 5px; }
+        button { margin-top: 15px; padding: 10px 20px; background-color: blue; color: white; border: none; cursor: pointer; }
+        .profile-image-container {
+            text-align: center; /* Centers the image horizontally */
+        }
+        .profile-image-container img {
+            width: 300px;
+            height: auto; /* Keeps aspect ratio */
+        }
+    </style>
 </head>
 <body>
-  <article id="post-13" class="post-13 page type-page status-publish hentry wpautop">
-     <header class="entry-header">
-        <h1 class="entry-title">Contact</h1>
-     </header>
-     <div class="entry-content">
-     <p>Feel free to contact me about your DIY projects!</p>
-     <div role="form" class="wpcf7" id="wpcf7-f2524-p13-o1" lang="en-US" dir="ltr">
-        <div class="screen-reader-response">
-           <p role="status" aria-live="polite" aria-atomic="true"></p>
-           <ul></ul>
+
+    <div class="container">
+        <h2>Contact Me</h2>
+        <div class="profile-image-container">
+            <img class="foobar" src="../static/profile-picture.jpg">
         </div>
         <form action="/contact/#wpcf7-f2524-p13-o1" method="post" class="wpcf7-form init" novalidate="novalidate" data-status="init">
            <p>Your Name (required)<br>
@@ -37,7 +46,7 @@
            <p><input type="submit" value="Send" class="wpcf7-form-control wpcf7-submit" aria-invalid="false"><span class="ajax-loader"></span></p>
            <div class="wpcf7-response-output" aria-hidden="true"></div>
         </form>
-     </div>
-  </article>
+    </div>
+
 </body>
 </html>

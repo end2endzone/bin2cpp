@@ -1,0 +1,41 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1B1F22; /* Deep charcoal */
+    color: #E3E6D5; /* Soft cream text */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    color: #A5C882; /* Muted pastel green */
+}
+
+a {
+    color: #CFAE6D; /* Warm golden brown for links */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #E0C085; /* Lightened golden shade */
+}
+
+.button {
+    background-color: #689F38; /* Earthy green */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.button:hover {
+    background-color: #4E7931; /* Slightly darker green */
+}
