@@ -228,13 +228,20 @@ add_custom_target(build_test_files ALL
 
 # Show all generated files in a common folder
 source_group("Generated Files" FILES ${GENERATED_TEST_FILES})
-source_group("External Files" FILES ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.cpp ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.h)
+source_group("External Files" FILES 
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.cpp
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.h
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.cpp
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.h
+)
 
 add_executable(bin2cpp_unittest
   ${BIN2CPP_VERSION_HEADER}
   ${BIN2CPP_CONFIG_HEADER}
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.cpp
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.h
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.cpp
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.h
   application.cpp
   application.h
   CMakeLists.txt
@@ -248,6 +255,8 @@ add_executable(bin2cpp_unittest
   TestCommon.h
   TestExtraction.cpp
   TestExtraction.h
+  TestWildcard.cpp
+  TestWildcard.h
   ${GENERATED_TEST_FILES}
 )
 
