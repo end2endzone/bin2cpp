@@ -180,6 +180,9 @@ add_subdirectory(src/bin2cpp)
 
 # unit tests
 if(BIN2CPP_BUILD_TEST)
+  # Create a temp directory under the build directory to output temporary files.
+  make_directory(${CMAKE_CURRENT_BINARY_DIR}/temp)
+
   add_subdirectory(test/testfilegenerator)
   add_subdirectory(test/bin2cpp_unittest)
 endif()
