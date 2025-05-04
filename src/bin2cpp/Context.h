@@ -26,6 +26,7 @@
 #define CONTEXT_H
 
 #include <string>
+#include <vector>
 #include "enums.h"
 
 namespace bin2cpp
@@ -53,6 +54,8 @@ namespace bin2cpp
     bool overrideExistingFiles;
     bool registerFiles;
     bool plainOutput;
+    bool hasDirectoryIncludeFilters;
+    bool hasDirectoryExcludeFilters;
 
     // public attributes
     std::string inputFilePath;    // The path of the input file (resource) to embeded as C++ source code.
@@ -67,6 +70,8 @@ namespace bin2cpp
     std::string managerHeaderFilename;
     CppEncoderEnum cppEncoder;
     std::string generatorName;
+    std::vector<std::string> directoryIncludeFilters;
+    std::vector<std::string> directoryExcludeFilters;
 
     void reset();
 

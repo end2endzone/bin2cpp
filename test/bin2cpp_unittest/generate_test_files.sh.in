@@ -190,6 +190,22 @@ mkdir -p ${OUTDIR}/sources
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/images/IMG_0004.jpg --output=$OUTDIR/sources --headerfile=_img0004.h --identifier=Img0004 --chunksize=200 --override
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/images/IMG_0005.jpg --output=$OUTDIR/sources --headerfile=_img0005.h --identifier=Img0005 --chunksize=200 --override
 
+export TEST_NAME=testDir02
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+mkdir -p ${OUTDIR}/images
+mkdir -p ${OUTDIR}/testDirIncludeFilter
+mkdir -p ${OUTDIR}/testDirExcludeFilter
+mkdir -p ${OUTDIR}/testDirMultipleFilter
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0001.jpg --size=1010 --fill=random --seed=1
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0002.jpg --size=1020 --fill=random --seed=2
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0003.jpg --size=1030 --fill=random --seed=3
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0004.png --size=1040 --fill=random --seed=4
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0005.png --size=1050 --fill=random --seed=5
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0006.png --size=1060 --fill=random --seed=6
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0007.svg --size=0170 --fill=html   --seed=7
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/images/IMG_0008.svg --size=0180 --fill=html   --seed=8
+
 export TEST_NAME=testIssue47
 export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p ${OUTDIR}

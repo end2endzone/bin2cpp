@@ -222,6 +222,22 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\images\IMG_0005.jpg --output=%OUTDIR%\sources --headerfile=_img0005.h --identifier=Img0005 --chunksize=200 --override
 if %errorlevel% neq 0 exit /b %errorlevel%
 
+set TEST_NAME=testDir02
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+mkdir %OUTDIR%\images 1>NUL 2>NUL
+mkdir %OUTDIR%\testDirIncludeFilter 1>NUL 2>NUL
+mkdir %OUTDIR%\testDirExcludeFilter 1>NUL 2>NUL
+mkdir %OUTDIR%\testDirMultipleFilter 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0001.jpg --size=1010 --fill=random --seed=1
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0002.jpg --size=1020 --fill=random --seed=2
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0003.jpg --size=1030 --fill=random --seed=3
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0004.png --size=1040 --fill=random --seed=4
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0005.png --size=1050 --fill=random --seed=5
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0006.png --size=1060 --fill=random --seed=6
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0007.svg --size=0170 --fill=html   --seed=7
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\images\IMG_0008.svg --size=0180 --fill=html   --seed=8
+
 set TEST_NAME=testIssue47
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
