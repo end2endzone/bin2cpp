@@ -102,6 +102,13 @@ SET(BIN2CPP_VERSION_PATCH 0)
 set(BIN2CPP_VERSION ${BIN2CPP_VERSION_MAJOR}.${BIN2CPP_VERSION_MINOR}.${BIN2CPP_VERSION_PATCH})
 FILE(WRITE ${CMAKE_BINARY_DIR}/version "${BIN2CPP_VERSION}")
 
+# Force c++ 11
+# https://www.reddit.com/r/cpp_questions/comments/1d4tt8a/comment/l6gqea5/
+# My guess is that you are on mac and using g++ to compile. For godforsaken reasons, g++ by default is an alias to clang++ forced into some crazy C++98 mode.
+# https://stackoverflow.com/questions/10851247/how-do-i-activate-c-11-in-cmake
+set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
 # Create a c++ file header from the project LICENSE file.
 # The c++ header will be added to all generated files.
 include(MakeCplusplusHeader)
