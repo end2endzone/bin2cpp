@@ -41,14 +41,14 @@ std::string to_boolean_str(bool value)
 
 TEST_F(TestWildcard, testBasicExamples)
 {
-  struct TESTVALUE
+  struct TEST_HELPER
   {
     const char* value;
     const char* pattern;
     bool expected_result;
     std::vector<std::string> expected_captures;
   };
-  static const TESTVALUE test_values[] = {
+  static const TEST_HELPER test_values[] = {
       // ============================== matches ==============================
       // ?
       {"a", "?",                                                      true, {"a"}},
@@ -102,7 +102,7 @@ TEST_F(TestWildcard, testBasicExamples)
 
   for ( size_t i = 0; i < num_test_values; i++ )
   {
-    const TESTVALUE& t = test_values[i];
+    const TEST_HELPER& t = test_values[i];
 
     std::vector<std::string> actual_captures;
     bool actual_result = bin2cpp::wildcard_match(t.value, t.pattern, actual_captures);
@@ -110,5 +110,79 @@ TEST_F(TestWildcard, testBasicExamples)
     ASSERT_EQ(actual_result, t.expected_result)     << "Test fail with test_values[" << i << "]. The match between value '" << t.value << "' and pattern '" << t.pattern << "' is supposed to return '" << to_boolean_str(t.expected_result) << "' but it actually retuned '" << to_boolean_str(actual_result) << "'.";
     ASSERT_EQ(actual_captures, t.expected_captures) << "Test fail with test_values[" << i << "]. The match between value '" << t.value << "' and pattern '" << t.pattern << "' is has returned '" << to_boolean_str(t.expected_result) << "' but the expected captures does not match.";
   }
+}
 
+TEST_F(TestWildcard, testWildcardMatchAny)
+{
+  const std::string path = "path/to/a/file.jpg";
+  std::vector<std::string> patterns;
+
+  {
+    // test for no matches
+    patterns.clear();
+    patterns.push_back("idonotmatch");
+    patterns.push_back("idonotmatcheither");
+
+    ASSERT_FALSE(bin2cpp::wildcard_match_any(path, patterns));
+  }
+
+  {
+    // test matches from first element
+    patterns.clear();
+    patterns.push_back("*.jpg");
+    patterns.push_back("idonotmatch");
+
+    ASSERT_TRUE(bin2cpp::wildcard_match_any(path, patterns));
+  }
+
+  {
+    // test matches from second element
+    patterns.clear();
+    patterns.push_back("idonotmatch");
+    patterns.push_back("*.jpg");
+
+    ASSERT_TRUE(bin2cpp::wildcard_match_any(path, patterns));
+  }
+}
+
+TEST_F(TestWildcard, testWildcardMatchAll)
+{
+  const std::string path = "path/to/a/file.jpg";
+  std::vector<std::string> patterns;
+
+  {
+    // test for no matches
+    patterns.clear();
+    patterns.push_back("idonotmatch");
+    patterns.push_back("idonotmatcheither");
+
+    ASSERT_FALSE(bin2cpp::wildcard_match_all(path, patterns));
+  }
+
+  {
+    // test matches from first element
+    patterns.clear();
+    patterns.push_back("*.jpg");
+    patterns.push_back("idonotmatch");
+
+    ASSERT_FALSE(bin2cpp::wildcard_match_all(path, patterns));
+  }
+
+  {
+    // test matches from second element
+    patterns.clear();
+    patterns.push_back("idonotmatch");
+    patterns.push_back("*.jpg");
+
+    ASSERT_FALSE(bin2cpp::wildcard_match_all(path, patterns));
+  }
+
+  {
+    // test matches from all elements
+    patterns.clear();
+    patterns.push_back("*/to/*");
+    patterns.push_back("*.jpg");
+
+    ASSERT_TRUE(bin2cpp::wildcard_match_all(path, patterns));
+  }
 }

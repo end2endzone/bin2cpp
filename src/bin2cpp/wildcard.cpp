@@ -140,4 +140,32 @@ namespace bin2cpp
     return match;
   }
 
+  bool wildcard_match_any(const std::string& value, const std::vector<std::string>& patterns)
+  {
+    bool result = false;
+    std::vector<std::string> captures;
+    for ( size_t i = 0; i < patterns.size(); i++ )
+    {
+      const std::string& pattern = patterns[i];
+      bool match = wildcard_match(value, pattern, captures);
+      if ( match )
+        return true;
+    }
+    return result;
+  }
+
+  bool wildcard_match_all(const std::string& value, const std::vector<std::string>& patterns)
+  {
+    bool result = true;
+    std::vector<std::string> captures;
+    for ( size_t i = 0; i < patterns.size(); i++ )
+    {
+      const std::string& pattern = patterns[i];
+      bool match = wildcard_match(value, pattern, captures);
+      if ( !match )
+        return false;
+    }
+    return result;
+  }
+
 }; //bin2cpp

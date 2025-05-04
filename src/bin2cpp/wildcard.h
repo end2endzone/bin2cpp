@@ -42,7 +42,7 @@ namespace bin2cpp
   ///  -'[charlist]' matches any character in the provided set.
   ///  -'[a-z]', '[A-Z]', '[0-9]' match characters in respective ranges.
   ///  -'[a-zA-Z0-9]' matches any alphanumeric character.
-  ///< / remarks>
+  ///</remarks>
   ///<param name="value">The file path, value or string to match.</param>
   ///<param name="pattern">The pattern containing wildcards.</param>
   ///<param name="captures">The captured value of wildcard within the input value. The number of captures matches the number of wildcard in the pattern.</param>
@@ -60,7 +60,7 @@ namespace bin2cpp
   ///  -'[charlist]' matches any character in the provided set.
   ///  -'[a-z]', '[A-Z]', '[0-9]' match characters in respective ranges.
   ///  -'[a-zA-Z0-9]' matches any alphanumeric character.
-  ///< / remarks>
+  ///</remarks>
   ///<param name="value">The file path, value or string to match.</param>
   ///<param name="pattern">The pattern containing wildcards.</param>
   ///<returns>Returns true if the value matches the pattern, otherwise false.</returns>
@@ -69,6 +69,22 @@ namespace bin2cpp
     std::vector<std::string> tmp_captures;
     return wildcard_match(value, pattern, tmp_captures);
   }
+
+  ///<summary>
+  ///Checks if a given value matches at least one of the given patterns.
+  ///</summary>
+  ///<param name="value">The file path, value or string to match.</param>
+  ///<param name="patterns">The list of patterns containing wildcards.</param>
+  ///<returns>Returns true if the value matches the any pattern, otherwise false.</returns>
+  bool wildcard_match_any(const std::string& value, const std::vector<std::string>& patterns);
+
+  ///<summary>
+  ///Checks if a given value matches at of the given patterns.
+  ///</summary>
+  ///<param name="value">The file path, value or string to match.</param>
+  ///<param name="patterns">The list of patterns containing wildcards.</param>
+  ///<returns>Returns true if the value matches the any pattern, otherwise false.</returns>
+  bool wildcard_match_all(const std::string& value, const std::vector<std::string>& patterns);
 
 }; //bin2cpp
 
