@@ -44,6 +44,7 @@
 #include "rapidassist/timing.h"
 
 #include "common.h"
+#include "wildcard.h"
 
 using namespace bin2cpp;
 
@@ -74,6 +75,8 @@ static const char * DEFAULT_BASECLASSNAME = "File";
 static const CppEncoderEnum DEFAULT_ENCODING = CPP_ENCODER_OCT;
 static Dictionary identifiers_dictionary;   // unique values for identifiers
 static Dictionary output_files_dictionary;  // unique values for output file names
+#define DIRECTORY_FILTER_SEPARATOR_STR ":"
+static const char DIRECTORY_FILTER_SEPARATOR = DIRECTORY_FILTER_SEPARATOR_STR[0];
 
 const char * getErrorCodeDescription(const APP_ERROR_CODES & error_code)
 {
@@ -159,40 +162,61 @@ void printUsage()
 #endif
 
   //usage string in docopt format. See http://docopt.org/
-  static const char usage[] = 
+  static const char usage[] =
     "Usage:\n"
     "  bin2cpp --file=<path> --output=<path> [--headerfile=<name>] [--identifier=<name>] [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<name>] [--managerfile=<name>] [--registerfile] [--reportedfilepath=<value>] [--override] [--noheader] [--quiet]\n"
-    "  bin2cpp --dir=<path>  --output=<path> [--keepdirs] [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<name>] [--managerfile=<name>] [--registerfile] [--override] [--noheader] [--quiet]\n"
+    "  bin2cpp --dir=<path>  --output=<path> [--keepdirs] [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>] [--baseclass=<name>] [--managerfile=<name>] [--registerfile] [--dirincludefilter=<value>] [--direxcludefilter=<value>] [--override] [--noheader] [--quiet]\n"
     "  bin2cpp --help\n"
     "  bin2cpp --version\n"
     "\n"
     "Options:\n"
-    "  --help                     Display this help message.\n"
-    "  --version                  Display this application version.\n"
-    "  --file=<path>              Path of the input file used for embedding as C++ source code.\n"
-    "  --dir=<path>               Path of the input directory used for embedding all files of the directory as C++ source code.\n"
-    "  --output=<path>            Path of the output directory where to create generated code. ie: ." SEPARATOR "generated_files\n"
-    "  --headerfile=<path>        File name or relative path of the generated C++ header file. If a relative path from the output directory is specified,\n"
-    "                             the #include statement in the generated cpp file will match the relative path. ie: SplashScreen.h\n"
-    "                             Default value: input file name (without extension)\n"
-    "  --identifier=<name>        Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
-    "                             Default value is based on input file with format 'NameExt'.\n"
-    "  --generator=<name>         Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'. [default: segment]\n"
-    "  --encoding=<name>          Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct]\n"
-    "  --chunksize=<value>        Size in bytes of each string segments (bytes per LoC). [default: 200]\n"
-    "  --baseclass=<name>         The name of the interface for embedded files. [default: File]\n"
-    "  --namespace=<name>         The namespace of the generated source code. [default: bin2cpp]\n"
-    "  --reportedfilepath=<path>  The relative reported path of the File. Path returned when calling method getFilePath() of the File class. ie: images" SEPARATOR "DCIM" SEPARATOR "IMG_0001.jpg.\n"
-    "                             Automatically calculated when --dir mode is used.\n"
-    "  --managerfile=<path>       File name or relative path of the generated C++ header file for the FileManager class. ie: FileManager.h\n"
-    "  --registerfile             Register the generated file to the FileManager class.\n"
-    "                             This flags is automatically set when parameter 'managerfile' is specified.\n"
-    "  --keepdirs                 Keep the directory structure. Forces the output files to have the same\n"
-    "                             directory structure as the input files. Valid only when --dir is used.\n"
-    "  --plainoutput              Print the encoded string in plain format to stdout. Useful for scripts and integration with third party application.\n"
-    "  --override                 Tells bin2cpp to overwrite the destination files.\n"
-    "  --noheader                 Do not print program header to standard output.\n"
-    "  --quiet                    Do not log any message to standard output.\n"
+    "  --help                         Display this help message.\n"
+    "  --version                      Display this application version.\n"
+    "  --file=<path>                  Path of the input file used for embedding as C++ source code.\n"
+    "  --dir=<path>                   Path of the input directory used for embedding all files of the directory as C++ source code.\n"
+    "  --output=<path>                Path of the output directory where to create generated code. ie: ." SEPARATOR "generated_files\n"
+    "  --headerfile=<path>            File name or relative path of the generated C++ header file. If a relative path from the output directory is specified,\n"
+    "                                 the #include statement in the generated cpp file will match the relative path. ie: SplashScreen.h\n"
+    "                                 Default value: input file name (without extension)\n"
+    "  --identifier=<name>            Identifier of the function name that is used to get an instance of the file. ie: SplashScreen\n"
+    "                                 Default value is based on input file with format 'NameExt'.\n"
+    "  --generator=<name>             Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'. [default: segment]\n"
+    "  --encoding=<name>              Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'. [default: oct]\n"
+    "  --chunksize=<value>            Size in bytes of each string segments (bytes per LoC). [default: 200]\n"
+    "  --baseclass=<name>             The name of the interface for embedded files. [default: File]\n"
+    "  --namespace=<name>             The namespace of the generated source code. [default: bin2cpp]\n"
+    "  --reportedfilepath=<path>      The relative reported path of the File. Path returned when calling method getFilePath() of the File class. ie: images" SEPARATOR "DCIM" SEPARATOR "IMG_0001.jpg.\n"
+    "                                 Automatically calculated when --dir mode is used.\n"
+    "  --managerfile=<path>           File name or relative path of the generated C++ header file for the FileManager class. ie: FileManager.h\n"
+    "  --registerfile                 Register the generated file to the FileManager class.\n"
+    "                                 This flags is automatically set when parameter 'managerfile' is specified.\n"
+    "  --dirincludefilter=<value>     Set a positive filter on the input directory to only select files matching the filter. Wildcard characters are accepted.\n"
+    "                                 Separate each filter with the character '" DIRECTORY_FILTER_SEPARATOR_STR "'. Valid only when --dir is used. See wildcard characters definition below.\n"
+    "  --direxcludefilter=<value>     Set a negative filter on the input directory to skip files matching the filter. Wildcard characters are accepted.\n"
+    "                                 Separate each filter with the character '" DIRECTORY_FILTER_SEPARATOR_STR "'. Valid only when --dir is used. See wildcard characters definition below.\n"
+    "                                 The exclude filter has precedence over the include filter.\n"
+    "  --keepdirs                     Keep the directory structure. Forces the output files to have the same\n"
+    "                                 directory structure as the input files. Valid only when --dir is used.\n"
+    "  --plainoutput                  Print the encoded string in plain format to stdout. Useful for scripts and integration with third party application.\n"
+    "  --override                     Tells bin2cpp to overwrite the destination files.\n"
+    "  --noheader                     Do not print program header to standard output.\n"
+    "  --quiet                        Do not log any message to standard output.\n"
+    "\n"
+    "  Wildcard characters:\n"
+    "    '?'            Matches any single character.\n"
+    "    '*'            Matches zero or more characters.\n"
+    "    '#'            Matches exactly one numeric digit (0-9).\n"
+    "    [charlist]     Matches any single character inside the brackets.\n"
+    "    [a-z]          Matches any single lowercase letter between 'a' and 'z'.\n"
+    "    [A-Z]          Matches any single uppercase letter between 'A' and 'A'.\n"
+    "    [0-9]          Matches any single digit between '0' and '9'.\n"
+    "    [a-zA-Z0-9]    Matches any single letter (uppercase or lowercase) or digit.\n"
+    "\n"
+    "    For example:\n"
+    "       'ker*##.???' would match files that starts with 'ker', and ends with 2 digits, a dot and then 3 characters."
+    "       --dir-include-filter=\"*.jpg:*.png\" would include all files whose file extension is 'jpg' or 'png'.\n"
+    "       --dir-exclude-filter=\"*.bak\" would exclude all backup files.\n"
+    "       --dir-include-filter=\"*.log\" --dir-exclude-filter=\"debug.log\" would include all log files but not the one named 'debug.log'."
     "\n";
   printf("%s", usage);
 }
@@ -352,6 +376,21 @@ int main(int argc, char* argv[])
 
   c.registerFiles = ra::cli::ParseArgument("registerfile", dummy, argc, argv);
   
+  // directory include filters
+  std::string filter;
+  c.hasDirectoryIncludeFilters = ra::cli::ParseArgument("dirincludefilter", filter, argc, argv);
+  if ( c.hasDirectoryIncludeFilters )
+  {
+    strSplit(filter, DIRECTORY_FILTER_SEPARATOR, c.directoryIncludeFilters);
+  }
+
+  // directory exclude filters
+  c.hasDirectoryExcludeFilters = ra::cli::ParseArgument("direxcludefilter", filter, argc, argv);
+  if ( c.hasDirectoryExcludeFilters )
+  {
+    strSplit(filter, DIRECTORY_FILTER_SEPARATOR, c.directoryExcludeFilters);
+  }
+
   //force registerfile if managerfile is specified
   if (c.hasManagerFile)
   {
@@ -599,8 +638,28 @@ APP_ERROR_CODES processInputDirectory(const Context& c, bin2cpp::IGenerator * ge
   for(size_t i=0; i<files.size(); i++)
   {
     const std::string & file = files[i];
-    if (ra::filesystem::FileExists(file.c_str()))
-      tmp.push_back(file);
+
+    // entry is not a file
+    if ( !ra::filesystem::FileExists(file.c_str()) )
+      continue;
+
+    // should we exclude the file?
+    if ( c.hasDirectoryExcludeFilters )
+    {
+      bool matches_any = bin2cpp::wildcard_match_any(file, c.directoryExcludeFilters);
+      if ( matches_any )
+        continue; // force exclude this file.
+    }
+
+    // should we include the file?
+    if ( c.hasDirectoryIncludeFilters )
+    {
+      bool matches_any = bin2cpp::wildcard_match_any(file, c.directoryIncludeFilters);
+      if ( !matches_any )
+        continue; // force not include this file.
+    }
+
+    tmp.push_back(file);
   }
   files = tmp;
 

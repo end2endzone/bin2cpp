@@ -1,0 +1,41 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #F8F5E1; /* Soft earthy tone */
+    color: #2E4B30; /* Deep forest green */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    color: #4D6B3C; /* Muted green for headers */
+}
+
+a {
+    color: #A15F34; /* Warm brown for links */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #C47C45; /* Lightened brown on hover */
+}
+
+.button {
+    background-color: #8BC34A; /* Nature-inspired green */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.button:hover {
+    background-color: #689F38; /* Slightly deeper green */
+}

@@ -49,6 +49,8 @@ namespace bin2cpp
       this->hasOutputDir                    =  other.hasOutputDir                       ;
       this->hasReportedFilePath             =  other.hasReportedFilePath                ;
       this->hasManagerFile                  =  other.hasManagerFile                     ;
+      this->hasDirectoryIncludeFilters      =  other.hasDirectoryIncludeFilters         ;
+      this->hasDirectoryExcludeFilters      =  other.hasDirectoryExcludeFilters         ;
       this->keepDirectoryStructure          =  other.keepDirectoryStructure             ;
       this->overrideExistingFiles           =  other.overrideExistingFiles              ;
       this->registerFiles                   =  other.registerFiles                      ;
@@ -65,6 +67,8 @@ namespace bin2cpp
       this->managerHeaderFilename           =  other.managerHeaderFilename              ;
       this->cppEncoder                      =  other.cppEncoder                         ;
       this->generatorName                   =  other.generatorName                      ;
+      this->directoryIncludeFilters         =  other.directoryIncludeFilters            ;
+      this->directoryExcludeFilters         =  other.directoryExcludeFilters            ;
     }
     return *this;
   }
@@ -80,6 +84,8 @@ namespace bin2cpp
     overrideExistingFiles = false;
     registerFiles = false;
     plainOutput = false;
+    hasDirectoryIncludeFilters = false;
+    hasDirectoryExcludeFilters = false;
 
     inputFilePath.clear();
     inputDirPath.clear();
@@ -93,7 +99,10 @@ namespace bin2cpp
     managerHeaderFilename.clear();
     cppEncoder = CppEncoderEnum::CPP_ENCODER_HEX;
     generatorName.clear();
+    directoryIncludeFilters.clear();
+    directoryExcludeFilters.clear();
   }
+
 
   //-------------------------------
   //protected methods

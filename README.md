@@ -18,7 +18,6 @@ Build:
 | Service/Platform    | Build                                                                                                                                                                                   | Tests                                                                                                                                                                                                                                                  |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | AppVeyor            | [![Build status](https://img.shields.io/appveyor/ci/end2endzone/bin2cpp/master.svg?logo=AppVeyor&logoColor=white)](https://ci.appveyor.com/project/end2endzone/bin2cpp)                 | [![Tests status](https://img.shields.io/appveyor/tests/end2endzone/bin2cpp/master.svg?logo=AppVeyor&logoColor=white)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master/tests)                                                         |
-| Travis CI           | [![Build Status](https://img.shields.io/travis/end2endzone/bin2cpp/master.svg?logo=Travis-CI&style=flat&logoColor=white)](https://travis-ci.org/end2endzone/bin2cpp)                    |                                                                                                                                                                                                                                                        |
 | Windows Server 2019 | [![Build on Windows](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml/badge.svg)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml) | [![Tests on Windows](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/end2endzone/58cf6c72c08e706335337d5ef9ca48e8/raw/bin2cpp.master.Windows.json)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml) |
 | Ubuntu 20.04        | [![Build on Linux](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml/badge.svg)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml)       | [![Tests on Linux](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/end2endzone/58cf6c72c08e706335337d5ef9ca48e8/raw/bin2cpp.master.Linux.json)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml)       |
 | macOS 10.15         | [![Build on macOS](https://github.com/end2endzone/bin2cpp/actions/workflows/build_macos.yml/badge.svg)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_macos.yml)       | [![Tests on macOS](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/end2endzone/58cf6c72c08e706335337d5ef9ca48e8/raw/bin2cpp.master.macOS.json)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_macos.yml)       |
@@ -86,7 +85,6 @@ The following section shows how to use bin2cpp with code examples:
 
 
 ## Command Line Usage
-
 ```
 bin2cpp --file=<path> --output=<path> [--headerfile=<name>] [--identifier=<name>]
         [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>]
@@ -95,6 +93,7 @@ bin2cpp --file=<path> --output=<path> [--headerfile=<name>] [--identifier=<name>
 bin2cpp --dir=<path> --output=<path> [--keepdirs]
         [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>]
         [--baseclass=<name>] [--managerfile=<name>] [--registerfile] 
+        [--dirincludefilter=<value>] [--direxcludefilter=<value>]
         [--override] [--noheader] [--quiet]
 bin2cpp --help
 bin2cpp --version
@@ -117,12 +116,33 @@ bin2cpp --version
 | --reportedfilepath=&lt;path&gt; | The relative reported path of the File. Path returned when calling method getFilePath() of the File class. Automatically calculated when --dir mode is used.<br>ie: images/DCIM/IMG_0001.jpg                                                                                        |
 | --managerfile=&lt;path&gt;      | File name or relative path of the generated C++ header file for the FileManager class.<br>ie: FileManager.h.                                                                                                                                                                        |
 | --registerfile                  | Register the generated file to the FileManager class. This flags is automatically set when parameter 'managerfile' is specified.                                                                                                                                                    |
+| --dirincludefilter=&lt;value&gt;| Set a positive filter on the input directory to only select files matching the filter. Wildcard characters are accepted. Separate each filter with the character ':'. Valid only when --dir is used. See wildcard characters definition below.                                      |
+| --direxcludefilter=&lt;value&gt;| Set a negative filter on the input directory to skip files matching the filter. Wildcard characters are accepted. Separate each filter with the character ':'. Valid only when --dir is used. See wildcard characters definition below. The exclude filter has precedence over the include filter. |
 | --keepdirs                      | Keep the directory structure. Forces the output files to have the same directory structure as the input files. Valid only when --dir is used.                                                                                                                                       |
 | --plainoutput                   | Print the encoded string in plain format to stdout. Useful for scripts and integration with third party application.                                                                                                                                                                |
 | --override                      | Tells bin2cpp to overwrite the destination files.                                                                                                                                                                                                                                   |
 | --noheader                      | Do not print program header to standard output.                                                                                                                                                                                                                                     |
 | --quiet                         | Do not log any message to standard output.                                                                                                                                                                                                                                          |
 
+&nbsp;
+
+Wildcard characters:
+|   Wildcard  | Description                                                  |
+|:-----------:|--------------------------------------------------------------|
+|     `?`     | Matches any single character.                                |
+|     `*`     | Matches zero or more characters.                             |
+|     `#`     | Matches exactly one numeric digit (0-9).                     |
+|  [charlist] | Matches any single character inside the brackets.            |
+|    [a-z]    | Matches any single lowercase letter between 'a' and 'z'.     |
+|    [A-Z]    | Matches any single uppercase letter between 'A' and 'A'.     |
+|    [0-9]    | Matches any single digit between '0' and '9'.                |
+| [a-zA-Z0-9] | Matches any single letter (uppercase or lowercase) or digit. |
+
+For example:
+* `ker*##.???` matches files that starts with `ker`, and ends with 2 digits, a dot and then 3 characters.
+* `--dir-include-filter="*.jpg:*.png"` includes all files whose file extension is `jpg` or `png`.
+* `--dir-exclude-filter="*.bak"` excludes all backup files.
+* `--dir-include-filter="*.log" --dir-exclude-filter="debug.log"` includes all log files but not the one specificaly named `debug.log`.
 
 
 ## Example 1 - single file
