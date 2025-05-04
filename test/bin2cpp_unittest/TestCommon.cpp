@@ -253,3 +253,53 @@ TEST_F(TestCommon, testPathSplitJoin)
       "file_ext=\"" << file_ext << "\"\n";
   }
 }
+
+TEST_F(TestCommon, testStringSplitJoin)
+{
+  struct TEST_HELPER
+  {
+    char separator;
+    std::string value;
+    std::vector<std::string> expected_values;
+  };
+  static const char SEPARATOR = ':';
+
+  // arrange
+  static const TEST_HELPER test_values[] = {
+    {SEPARATOR, "",                   {""}},              // empty string
+    {SEPARATOR, "abc",                {"abc"}},           // no separator
+    {SEPARATOR, "a:b:c",              {"a", "b", "c"}},   // multiple
+    {SEPARATOR, ":b:c",               {"", "b", "c"}},    // start with separator
+    {SEPARATOR, "a:b:",               {"a", "b", ""}},    // end with separator
+    {SEPARATOR, "a::",                {"a", "", ""}},     // 2 consecutive separators
+    {SEPARATOR, "::",                 {"", "", ""}},      // only consecutive separators
+  };
+  static const size_t num_test_values = sizeof(test_values) / sizeof(test_values[0]);
+
+  // act (strSplit)
+  for ( size_t i = 0; i < num_test_values; i++ )
+  {
+    const TEST_HELPER& t = test_values[i];
+
+    std::vector<std::string> actual_values;
+    bin2cpp::strSplit(t.value, t.separator, actual_values);
+
+    // assert
+    ASSERT_EQ(actual_values, t.expected_values) << "Test fail for strSplit() with test_values[" << i << "]. Splitting value `" << t.value << "` with separator '" << t.separator << "' should result in " << t.expected_values.size() << " elements.";
+  }
+
+  // act (strJoin)
+  for ( size_t i = 0; i < num_test_values; i++ )
+  {
+    const TEST_HELPER& t = test_values[i];
+
+    std::vector<std::string> tmp_values;
+    bin2cpp::strSplit(t.value, t.separator, tmp_values);
+
+    std::string expected_value = t.value;
+    std::string actual_value = bin2cpp::strJoin(tmp_values, t.separator);
+
+    // assert
+    ASSERT_EQ(actual_value, expected_value) << "Test fail for strJoin() with test_values[" << i << "]. Joining values with separator '" << t.separator << "' should result in `" << expected_value << "` but we got `" << actual_value << "`.";
+  }
+}

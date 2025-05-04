@@ -29,6 +29,7 @@
 #include <string>
 #include <stdio.h>
 #include <set>
+#include <vector>
 
 namespace bin2cpp
 {
@@ -123,6 +124,22 @@ namespace bin2cpp
   ///<param name="file_extension">The file extension of the path to join.</param>
   ///<return>Returns the path matching all given components.<return>
   std::string pathJoin(const std::string & directory, const std::string & file_name, const std::string & file_extension);
+
+  ///<summary>
+  ///Split a string into a list of values based on a specified separator character.
+  ///</summary>
+  ///<param name="value">The input string that contains values to split.</param>
+  ///<param name="separator">The character that separate the values in the string.</param>
+  ///<param name="values">The output individual values in the input string.</param>
+  void strSplit(const std::string & value, char separator, std::vector<std::string> & values);
+
+  ///<summary>
+  ///"Combine a list of values into a single string, using a specified separator character.
+  ///</summary>
+  ///<param name="values">The list of values to join to a single string.</param>
+  ///<param name="separator">The character that separate the values in the string.</param>
+  ///<return>Returns the combined string.<return>
+  std::string strJoin(const std::vector<std::string>& values, char separator);
 
 }; //bin2cpp
 

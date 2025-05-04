@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <sstream>
 
 #include "rapidassist/strings.h"
 #include "rapidassist/filesystem.h"
@@ -320,6 +321,47 @@ namespace bin2cpp
     }
 
     return tmp;
+  }
+
+  void strSplit(const std::string& value, char separator, std::vector<std::string>& values)
+  {
+    values.clear();
+    size_t start = 0;
+    size_t end = std::string::npos;
+    size_t length = 0;
+
+    // find first separator
+    end = value.find(separator, start);
+    while ( end != std::string::npos )
+    {
+      length = end - start;
+      std::string item = value.substr(start, length);
+      values.push_back(item);
+
+      // find next separator
+      start = end + 1;
+      end = value.find(separator, start);
+    }
+
+    // Capture last token
+    values.push_back(value.substr(start));
+  }
+
+  std::string strJoin(const std::vector<std::string>& values, char separator)
+  {
+    std::string output;
+
+    for ( size_t i = 0; i < values.size(); i++ )
+    {
+      const std::string& element = values[i];
+      output += element;
+      
+      bool is_last = (i == (values.size() - 1));
+      if ( !is_last )
+        output.append(1, separator);
+    }
+
+    return output;
   }
 
 }; //bin2cpp
