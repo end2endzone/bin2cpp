@@ -194,7 +194,7 @@ void printUsage()
     "                                 Separate each filter with the character '" DIRECTORY_FILTER_SEPARATOR_STR "'. Valid only when --dir is used. See wildcard characters definition below.\n"
     "  --direxcludefilter=<value>     Set a negative filter on the input directory to skip files matching the filter. Wildcard characters are accepted.\n"
     "                                 Separate each filter with the character '" DIRECTORY_FILTER_SEPARATOR_STR "'. Valid only when --dir is used. See wildcard characters definition below.\n"
-    "                                 The exclude filter has precedence over the inclusion filter.\n"
+    "                                 The exclude filter has precedence over the include filter.\n"
     "  --keepdirs                     Keep the directory structure. Forces the output files to have the same\n"
     "                                 directory structure as the input files. Valid only when --dir is used.\n"
     "  --plainoutput                  Print the encoded string in plain format to stdout. Useful for scripts and integration with third party application.\n"
