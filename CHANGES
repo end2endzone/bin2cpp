@@ -4,6 +4,7 @@ Changes for 3.1.0:
 * Fixed issue #63: Context class redesign. Move arguments handling into a Context class.
 * Fixed issue #64: Remove build artifacts of samples from installation packages.
 * Fixed issue #72: Move the code FileManager class generation code into its own IGenerator implementation.
+* Fixed issue #74: Invalid generated output file name: index.cpptml.cpp.
 
 
 Changes for 3.0.1:

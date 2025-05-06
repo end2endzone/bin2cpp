@@ -564,9 +564,8 @@ APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * genera
     return APP_ERROR_INPUTFILENOTFOUND;
 
   //prepare output files path
-  std::string cppFilename = c.headerFilename;
-  ra::strings::Replace(cppFilename, ".hpp", ".cpp");
-  ra::strings::Replace(cppFilename, ".h", ".cpp");  
+  std::string headerExtention = ra::filesystem::GetFileExtention(c.headerFilename);
+  std::string cppFilename = c.headerFilename.substr(0, c.headerFilename.size() - headerExtention.size()) + "cpp"; // strip out header file's extension and add 'cpp'.
 
   //create a copy of the context.
   //we may have already generated files from a previous call to processInputFile().
