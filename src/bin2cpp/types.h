@@ -22,25 +22,20 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef ENUMS_H
-#define ENUMS_H
+#ifndef TYPES_H
+#define TYPES_H
 
 #include <string>
-#include "Context.h"
+#include <set>
  
 namespace bin2cpp
 {
 
   ///<summary>
-  ///Defines the different type of cpp encoding.
-  ///See setCppEncoder() and getCppEncoder() functions.
+  ///A set of names stored as a Distionnary
   ///</summary>
-  enum CppEncoderEnum
-  {
-      CPP_ENCODER_OCT,
-      CPP_ENCODER_HEX,
-  };
-  
+  typedef std::set<std::string> Dictionary;
+
 }; //bin2cpp
 
-#endif //ENUMS_H
+#endif //TYPES_H

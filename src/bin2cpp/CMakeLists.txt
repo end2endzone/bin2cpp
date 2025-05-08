@@ -28,6 +28,7 @@ add_executable(bin2cpp
   SegmentGenerator.h
   StringGenerator.cpp
   StringGenerator.h
+  types.h
   wildcard.cpp
   wildcard.h
   Win32ResourceGenerator.cpp

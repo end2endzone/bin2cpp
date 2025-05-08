@@ -31,9 +31,10 @@
 #include <set>
 #include <vector>
 
+#include "types.h"
+
 namespace bin2cpp
 {
-  typedef std::set<std::string> Dictionary;
 
   ///<summary>
   ///Returns the application version number.
