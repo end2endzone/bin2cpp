@@ -138,7 +138,7 @@ struct ARGUMENTS
 };
 
 //pre-declarations
-bool generateFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator);
+bool generateOutputFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processInputDirectory(const Context & c, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processManagerFiles(const Context & c);
@@ -600,11 +600,11 @@ APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * genera
   }
 
   //process files
-  bool headerResult = generateFile(c, outputHeaderPath, generator);
+  bool headerResult = generateOutputFile(c, outputHeaderPath, generator);
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateFile(c, outputCppPath, generator);
+  bool cppResult =    generateOutputFile(c, outputCppPath, generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
@@ -745,7 +745,7 @@ FILE_UPDATE_MODE getFileUpdateMode(const std::string & input_file_path, const st
   return UPDATING;
 }
 
-bool generateFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator)
+bool generateOutputFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator)
 {
   FILE_UPDATE_MODE mode = getFileUpdateMode(c.inputFilePath, output_file_path, c.overrideExistingFiles);
 
@@ -799,11 +799,11 @@ APP_ERROR_CODES processManagerFiles(const Context & c)
   generator.setContext(c);
 
   //process files
-  bool headerResult = generateFile(c, outputHeaderPath, &generator);
+  bool headerResult = generateOutputFile(c, outputHeaderPath, &generator);
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateFile(c, outputCppPath, &generator);
+  bool cppResult =    generateOutputFile(c, outputCppPath, &generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
