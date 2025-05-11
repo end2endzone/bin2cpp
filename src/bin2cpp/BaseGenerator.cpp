@@ -61,13 +61,32 @@ namespace bin2cpp
 
   std::string BaseGenerator::getGetterFunctionName()
   {
+
+    std::string getter;
+    switch ( mContext.code )
+    {
+    default:
+    case CODE_GENERATION_CPP:
+      {
         //Uppercase function identifier
         std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mContext.functionIdentifier);
 
-    std::string getter;
         getter.append("get");
         getter.append(functionIdentifier);
         getter.append("File");
+      }
+      break;
+    case CODE_GENERATION_C:
+      {
+        //Uppercase function identifier
+        std::string functionIdentifier = ra::strings::Lowercase(mContext.functionIdentifier);
+
+        getter.append("bin2c_get_file_");
+        getter.append(functionIdentifier);
+    }
+      break;
+    };
+
     return getter;
   }
 
@@ -75,7 +94,17 @@ namespace bin2cpp
   {
     //Build header file path
     std::string headerPath = cpp_file_path;
+    switch ( mContext.code )
+    {
+    default:
+    case CODE_GENERATION_CPP:
       ra::strings::Replace(headerPath, ".cpp", ".h");
+      break;
+    case CODE_GENERATION_C:
+      ra::strings::Replace(headerPath, ".c", ".h");
+      break;
+    };
+
     return headerPath;
   }
 
@@ -83,7 +112,17 @@ namespace bin2cpp
   {
     //Build header file path
     std::string cppPath = header_file_path;
+    switch ( mContext.code )
+    {
+    default:
+    case CODE_GENERATION_CPP:
       ra::strings::Replace(cppPath, ".cpp", ".h");
+      break;
+    case CODE_GENERATION_C:
+      ra::strings::Replace(cppPath, ".c", ".h");
+      break;
+    };
+
     return cppPath;
   }
 
@@ -225,6 +264,50 @@ namespace bin2cpp
     return output;
   }
 
+  std::string BaseGenerator::getFileClassFileName()
+  {
+    std::string output;
+
+    std::string inputFileName = ra::filesystem::GetFilename(mContext.inputFilePath.c_str());
+
+    //return default implementation
+    output += inputFileName;
+    return output;
+  }
+
+  std::string BaseGenerator::getFileClassFilePath()
+  {
+    std::string output;
+
+    //convert mReportedFilePath string to c++
+    std::string path = mContext.reportedFilePath;
+#ifdef _WIN32
+    //escape backslash characters for c++
+    static const std::string BACKSLASH = "\\";
+    static const std::string BACKSLASH_ESCAPED = "\\\\";
+    ra::strings::Replace(path, BACKSLASH, BACKSLASH_ESCAPED);
+#endif
+
+    //is there a reported path specified ?
+    const char * reported_path = mContext.reportedFilePath.c_str();
+    if (reported_path != NULL && reported_path[0] != '\0')
+    {
+      output += path;
+      return output;
+    }
+    else
+    {
+      //if reported path is not specified ?
+      //report the same as getFileName()
+      output = getFileClassFileName();
+      return output;
+    }
+
+    //return default implementation
+    output += path;
+    return output;
+  }
+
   bool BaseGenerator::createCppHeaderFile(const char * header_file_path)
   {
     FILE * header = fopen(header_file_path, "w");
@@ -322,8 +405,47 @@ namespace bin2cpp
 
   bool BaseGenerator::createCHeaderFile(const char* file_path)
   {
-    // not supported yet
-    return false;
+    FILE* header = fopen(file_path, "w");
+    if ( !header )
+      return false;
+
+    //define macro guard matching the filename
+    std::string macroGuard = getCppIncludeGuardMacroName(file_path);
+
+    std::string classMacroGuardPrefix = getClassMacroGuardPrefix();
+    std::string fileHeader = getHeaderTemplate();
+
+    fprintf(header, "%s", fileHeader.c_str());
+    fprintf(header, "#ifndef %s\n", macroGuard.c_str());
+    fprintf(header, "#define %s\n", macroGuard.c_str());
+    fprintf(header, "\n");
+    fprintf(header, "#include <stddef.h>\n");
+    fprintf(header, "#include <stdbool.h>\n");
+    fprintf(header, "\n");
+    fprintf(header, "#ifndef %s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
+    fprintf(header, "#define %s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
+    fprintf(header, "typedef struct %s %s;\n", mContext.baseClass.c_str(), mContext.baseClass.c_str());
+    fprintf(header, "typedef bool(*bin2c_load_func)();\n");
+    fprintf(header, "typedef void(*bin2c_free_func)();\n");
+    fprintf(header, "typedef bool(*bin2c_save_func)(const char*);\n");
+    fprintf(header, "typedef struct %s\n", mContext.baseClass.c_str());
+    fprintf(header, "{\n");
+    fprintf(header, "  size_t size;\n");
+    fprintf(header, "  const char* file_name;\n");
+    fprintf(header, "  const char* file_path;\n");
+    fprintf(header, "  unsigned char* buffer;\n");
+    fprintf(header, "  bin2c_load_func load;\n");
+    fprintf(header, "  bin2c_free_func unload;\n");
+    fprintf(header, "  bin2c_save_func save;\n");
+    fprintf(header, "} %s;\n", mContext.baseClass.c_str());
+    fprintf(header, "#endif //%s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
+    fprintf(header, "%s* %s();\n", mContext.baseClass.c_str(), getGetterFunctionName().c_str());
+    fprintf(header, "\n");
+    fprintf(header, "#endif //%s\n", macroGuard.c_str());
+
+    fclose(header);
+
+    return true;
   }
 
   bool BaseGenerator::createCSourceFile(const char* file_path)

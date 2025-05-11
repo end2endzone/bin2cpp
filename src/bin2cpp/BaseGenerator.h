@@ -62,6 +62,8 @@ namespace bin2cpp
     virtual std::string getClassMacroGuardPrefix();
     virtual std::string getImplOfGetFileName();
     virtual std::string getImplOfGetFilePath();
+    virtual std::string getFileClassFileName();
+    virtual std::string getFileClassFilePath();
 
     //attributes
     Context mContext;
