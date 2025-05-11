@@ -59,7 +59,8 @@ enum APP_ERROR_CODES
   APP_ERROR_TOOMANYARGUMENTS,
   APP_ERROR_INPUTDIRNOTFOUND,
   AAP_ERROR_NOTSUPPORTED,
-  APP_ERROR_OPERATIONHASFAILED
+  APP_ERROR_OPERATIONHASFAILED,
+  APP_ERROR_INVALIDVALUE,
 };
 
 enum FILE_UPDATE_MODE
@@ -75,6 +76,7 @@ static const size_t DEFAULT_CHUNK_SIZE = 200;
 static const char * DEFAULT_NAMESPACE = "bin2cpp";
 static const char * DEFAULT_BASECLASSNAME = "File";
 static const CppEncoderEnum DEFAULT_ENCODING = CPP_ENCODER_OCT;
+static const CodeGenerationEnum DEFAULT_CODE_GENERATION = CODE_GENERATION_CPP;
 static Dictionary identifiers_dictionary;   // unique values for identifiers
 static Dictionary output_files_dictionary;  // unique values for output file names
 #define DIRECTORY_FILTER_SEPARATOR_STR ":"
@@ -107,6 +109,9 @@ const char * getErrorCodeDescription(const APP_ERROR_CODES & error_code)
     break;
   case APP_ERROR_OPERATIONHASFAILED:
     return "Operation has failed";
+    break;
+  case APP_ERROR_INVALIDVALUE:
+    return "Invalid value";
     break;
   default:
     return "Unknown error";
@@ -198,6 +203,7 @@ void printUsage()
     "  --keepdirs                     Keep the directory structure. Forces the output files to have the same\n"
     "                                 directory structure as the input files. Valid only when --dir is used.\n"
     "  --plainoutput                  Print the encoded string in plain format to stdout. Useful for scripts and integration with third party application.\n"
+    "  --code                         Define the programming language output for code generation. Supported values are 'c', 'cpp', 'c++'.\n"
     "  --override                     Tells bin2cpp to overwrite the destination files.\n"
     "  --noheader                     Do not print program header to standard output.\n"
     "  --quiet                        Do not log any message to standard output.\n"
@@ -338,6 +344,25 @@ int main(int argc, char* argv[])
 
   //optional arguments
 
+  std::string codeStr;
+  if ( ra::cli::ParseArgument("code", codeStr, argc, argv) )
+  {
+    CodeGenerationEnum codeTmp = parseCode(codeStr);
+    if ( codeTmp == CodeGenerationEnum::CODE_GENERATION_UNKNOW )
+    {
+      APP_ERROR_CODES error = APP_ERROR_INVALIDVALUE;
+      ra::logging::Log(ra::logging::LOG_ERROR, "%s (code)", getErrorCodeDescription(error));
+      printUsage();
+      return error;
+    }
+
+    c.code = codeTmp;
+  }
+  else
+  {
+    c.code = DEFAULT_CODE_GENERATION;
+  }
+
   if (c.hasInputFile)
   {
     //identifier
@@ -417,7 +442,7 @@ int main(int argc, char* argv[])
       c.cppEncoder = CPP_ENCODER_HEX;
     else
     {
-      APP_ERROR_CODES error = APP_ERROR_MISSINGARGUMENTS;
+      APP_ERROR_CODES error = APP_ERROR_INVALIDVALUE;
       ra::logging::Log(ra::logging::LOG_ERROR, "%s (encoding)", getErrorCodeDescription(error));
       printUsage();
       return error;

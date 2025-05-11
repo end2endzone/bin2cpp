@@ -48,12 +48,15 @@ extern const std::string & gGeneratedFilesDir;
 
 enum APP_ERROR_CODES
 {
-  APP_ERROR_SUCCESS,
+  APP_ERROR_SUCCESS = 0,
   APP_ERROR_MISSINGARGUMENTS,
   APP_ERROR_INPUTFILENOTFOUND,
   APP_ERROR_UNABLETOCREATEOUTPUTFILES,
   APP_ERROR_TOOMANYARGUMENTS,
-  APP_ERROR_INPUTDIRNOTFOUND
+  APP_ERROR_INPUTDIRNOTFOUND,
+  AAP_ERROR_NOTSUPPORTED,
+  APP_ERROR_OPERATIONHASFAILED,
+  APP_ERROR_INVALIDVALUE,
 };
 
 namespace TestCLIUtils
@@ -1224,7 +1227,7 @@ TEST_F(TestCLI, testAutomaticIdentifierHeaderfile)
   ASSERT_TRUE(deleteFile(cppFilePath.c_str()));
 }
  
-TEST_F(TestCLI, testErrorMissingArgumentEncoding)
+TEST_F(TestCLI, testErrorInvalidArgumentEncoding)
 {
   static const std::string expectedFilePath = getExpectedFilePath();
   static const std::string outputFilePath   = getActualFilePath();
@@ -1258,7 +1261,7 @@ TEST_F(TestCLI, testErrorMissingArgumentEncoding)
 #if defined(__linux__) || defined(__APPLE__)
   returnCode = WEXITSTATUS(returnCode);
 #endif
-  ASSERT_EQ(APP_ERROR_MISSINGARGUMENTS, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
+  ASSERT_EQ(APP_ERROR_INVALIDVALUE, returnCode) << "The command line '" << cmdline.c_str() << "' returned " << returnCode;
  
   //load output file
   ra::strings::StringVector lines;
@@ -1266,7 +1269,7 @@ TEST_F(TestCLI, testErrorMissingArgumentEncoding)
   ASSERT_TRUE(loaded);
  
   //assert standard output log
-  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Missing arguments (encoding)");
+  ASSERT_TEXT_IN_FILE(true, outputFilePath.c_str(), "Error: Invalid value (encoding)");
  
   //cleanup
   ASSERT_TRUE(deleteFile(outputFilePath.c_str()));

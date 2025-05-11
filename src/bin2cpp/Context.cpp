@@ -69,6 +69,7 @@ namespace bin2cpp
       this->generatorName                   =  other.generatorName                      ;
       this->directoryIncludeFilters         =  other.directoryIncludeFilters            ;
       this->directoryExcludeFilters         =  other.directoryExcludeFilters            ;
+      this->code                            =  other.code                               ;
     }
     return *this;
   }
@@ -101,6 +102,7 @@ namespace bin2cpp
     generatorName.clear();
     directoryIncludeFilters.clear();
     directoryExcludeFilters.clear();
+    code = CodeGenerationEnum::CODE_GENERATION_CPP;
   }
 
 
