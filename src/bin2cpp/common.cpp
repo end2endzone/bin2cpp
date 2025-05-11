@@ -94,6 +94,22 @@ namespace bin2cpp
     return false;
   }
 
+  bool isCHeaderFile(const std::string & path)
+  {
+    std::string extension = ra::strings::Uppercase(ra::filesystem::GetFileExtention(path));
+    if (extension == "H")
+      return true;
+    return false;
+  }
+
+  bool isCSourceFile(const std::string & path)
+  {
+    std::string extension = ra::strings::Uppercase(ra::filesystem::GetFileExtention(path));
+    if (extension == "C")
+      return true;
+    return false;
+  }
+
   std::string getCppIncludeGuardMacroName(const std::string & path)
   {
     static const std::string EMPTY_STRING;

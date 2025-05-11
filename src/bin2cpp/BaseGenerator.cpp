@@ -61,13 +61,13 @@ namespace bin2cpp
 
   std::string BaseGenerator::getGetterFunctionName()
   {
-    //Uppercase function identifier
-    std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mContext.functionIdentifier);
+        //Uppercase function identifier
+        std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mContext.functionIdentifier);
 
     std::string getter;
-    getter.append("get");
-    getter.append(functionIdentifier);
-    getter.append("File");
+        getter.append("get");
+        getter.append(functionIdentifier);
+        getter.append("File");
     return getter;
   }
 
@@ -75,7 +75,7 @@ namespace bin2cpp
   {
     //Build header file path
     std::string headerPath = cpp_file_path;
-    ra::strings::Replace(headerPath, ".cpp", ".h");
+      ra::strings::Replace(headerPath, ".cpp", ".h");
     return headerPath;
   }
 
@@ -83,7 +83,7 @@ namespace bin2cpp
   {
     //Build header file path
     std::string cppPath = header_file_path;
-    ra::strings::Replace(cppPath, ".cpp", ".h");
+      ra::strings::Replace(cppPath, ".cpp", ".h");
     return cppPath;
   }
 
@@ -318,6 +318,18 @@ namespace bin2cpp
     fclose(input);
 
     return true;
+  }
+
+  bool BaseGenerator::createCHeaderFile(const char* file_path)
+  {
+    // not supported yet
+    return false;
+  }
+
+  bool BaseGenerator::createCSourceFile(const char* file_path)
+  {
+    // not supported yet
+    return false;
   }
 
 }; //bin2cpp

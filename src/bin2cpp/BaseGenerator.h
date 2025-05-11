@@ -46,6 +46,8 @@ namespace bin2cpp
     //same header file for all generators
     virtual bool createCppHeaderFile(const char * header_file_path);
     virtual bool printFileContent();
+    virtual bool createCHeaderFile(const char* file_path);
+    virtual bool createCSourceFile(const char* file_path);
 
   protected:
 

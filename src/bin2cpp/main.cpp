@@ -73,8 +73,10 @@ enum FILE_UPDATE_MODE
 
 //default values
 static const size_t DEFAULT_CHUNK_SIZE = 200;
-static const char * DEFAULT_NAMESPACE = "bin2cpp";
-static const char * DEFAULT_BASECLASSNAME = "File";
+static const char * DEFAULT_NAMESPACE_CPP = "bin2cpp";
+static const char * DEFAULT_NAMESPACE_C = "bin2c";
+static const char * DEFAULT_BASECLASS_NAME_CPP = "File";
+static const char * DEFAULT_BASECLASS_NAME_C = "Bin2cFile";
 static const CppEncoderEnum DEFAULT_ENCODING = CPP_ENCODER_OCT;
 static const CodeGenerationEnum DEFAULT_CODE_GENERATION = CODE_GENERATION_CPP;
 static Dictionary identifiers_dictionary;   // unique values for identifiers
@@ -391,12 +393,31 @@ int main(int argc, char* argv[])
 
   if (!ra::cli::ParseArgument("namespace", c.codeNamespace, argc, argv))
   {
-    c.codeNamespace = DEFAULT_NAMESPACE;
+    switch ( c.code )
+    {
+    default:
+    case CODE_GENERATION_CPP:
+      c.codeNamespace = DEFAULT_NAMESPACE_CPP;
+      break;
+    case CODE_GENERATION_C:
+      c.codeNamespace = DEFAULT_NAMESPACE_C;
+      break;
+    };
+
   }
 
   if (!ra::cli::ParseArgument("baseclass", c.baseClass, argc, argv))
   {
-    c.baseClass = DEFAULT_BASECLASSNAME;
+    switch ( c.code )
+    {
+      default:
+      case CODE_GENERATION_CPP:
+        c.baseClass = DEFAULT_BASECLASS_NAME_CPP;
+        break;
+      case CODE_GENERATION_C:
+        c.baseClass = DEFAULT_BASECLASS_NAME_C;
+        break;
+    };
   }
 
   c.registerFiles = ra::cli::ParseArgument("registerfile", dummy, argc, argv);
@@ -567,8 +588,9 @@ APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * genera
     return APP_ERROR_INPUTFILENOTFOUND;
 
   //prepare output files path
-  std::string headerExtention = ra::filesystem::GetFileExtention(c.headerFilename);
-  std::string cppFilename = c.headerFilename.substr(0, c.headerFilename.size() - headerExtention.size()) + "cpp"; // strip out header file's extension and add 'cpp'.
+  const std::string   headerExtention = ra::filesystem::GetFileExtention(c.headerFilename);
+  const std::string & sourceExtension = getDefaultCodeSourceFileExtension(c.code);
+  std::string sourceFilename = c.headerFilename.substr(0, c.headerFilename.size() - headerExtention.size()) + sourceExtension; // strip out header file's extension and add 'cpp'.
 
   //create a copy of the context.
   //we may have already generated files from a previous call to processInputFile().
@@ -577,11 +599,11 @@ APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * genera
 
   //build unique output relative file paths
   cCopy.headerFilename = bin2cpp::getUniqueFilePath(cCopy.headerFilename, output_files_dictionary);
-  cppFilename = bin2cpp::getUniqueFilePath(cppFilename, output_files_dictionary);
+  sourceFilename = bin2cpp::getUniqueFilePath(sourceFilename, output_files_dictionary);
 
   //build full absolute paths
   std::string outputHeaderPath = cCopy.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cCopy.headerFilename;
-  std::string outputCppPath = cCopy.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
+  std::string outputSourcePath = cCopy.outputDirPath + ra::filesystem::GetPathSeparatorStr() + sourceFilename;
 
   //configure the generator
   generator->setContext(cCopy);
@@ -607,7 +629,7 @@ APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * genera
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateOutputFile(c, outputCppPath, generator);
+  bool cppResult =    generateOutputFile(c, outputSourcePath, generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
@@ -760,15 +782,25 @@ bool generateOutputFile(const Context & c, const std::string & output_file_path,
 
   //generate file
   bool result = false;
-  if (isCppHeaderFile(output_file_path))
+  if (c.code == CODE_GENERATION_CPP && isCppHeaderFile(output_file_path))
   {
-    //generate header
+    //generate C++ header
     result = generator->createCppHeaderFile(output_file_path.c_str());
   }
-  else
+  else if ( c.code == CODE_GENERATION_CPP)
   {
-    //generate cpp
+    //generate C++ source
     result = generator->createCppSourceFile(output_file_path.c_str());
+  }
+  else if ( c.code == CODE_GENERATION_C && isCHeaderFile(output_file_path) )
+  {
+    //generate C header
+    result = generator->createCHeaderFile(output_file_path.c_str());
+  }
+  else if ( c.code == CODE_GENERATION_C )
+  {
+    //generate C source
+    result = generator->createCSourceFile(output_file_path.c_str());
   }
   if (!result)
   {

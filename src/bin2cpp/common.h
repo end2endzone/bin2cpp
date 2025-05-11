@@ -65,6 +65,20 @@ namespace bin2cpp
   bool isCppSourceFile(const std::string & path);
 
   ///<summary>
+  ///Determine if a given path is a C header file.
+  ///</summary>
+  ///<param name="path">An valid file path.</param>
+  ///<return>Returns true if path is a C header file. Returns false otherwise.<return>
+  bool isCHeaderFile(const std::string & path);
+
+  ///<summary>
+  ///Determine if a given path is a C source file.
+  ///</summary>
+  ///<param name="path">An valid file path.</param>
+  ///<return>Returns true if path is a C source file. Returns false otherwise.<return>
+  bool isCSourceFile(const std::string & path);
+
+  ///<summary>
   ///Determine the appropriate macro name for the include guard of the given c++ header file.
   ///See also https://en.wikipedia.org/wiki/Include_guard
   ///</summary>
