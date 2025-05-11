@@ -31,6 +31,8 @@
 #include "Win32ResourceGenerator.h"
 #include "ManagerGenerator.h"
 #include "Context.h"
+#include "INameProvider.h"
+#include "LegacyNameProvider.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -140,11 +142,9 @@ struct ARGUMENTS
 //pre-declarations
 bool generateOutputFile(const Context & c, const std::string & output_file_path, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * generator);
-APP_ERROR_CODES processInputDirectory(const Context & c, bin2cpp::IGenerator * generator);
+APP_ERROR_CODES processInputDirectory(const Context & c, bin2cpp::INameProvider* nameProvider, bin2cpp::IGenerator * generator);
 APP_ERROR_CODES processManagerFiles(const Context & c);
 APP_ERROR_CODES processPlainOutput(const Context & c, bin2cpp::IGenerator * generator);
-std::string getDefaultFunctionIdentifier(const Context & c, Dictionary & identifiers_dictionary);
-std::string getDefaultHeaderFile(const Context & c);
 
 void printHeader()
 {
@@ -230,7 +230,7 @@ int main(int argc, char* argv[])
   args.version = false;
 
   Context c;
-
+  INameProvider& nameProvider = LegacyNameProvider();
   std::string dummy;
 
   //help
@@ -344,14 +344,14 @@ int main(int argc, char* argv[])
     if (!ra::cli::ParseArgument("identifier", c.functionIdentifier, argc, argv))
     {
       //identifier is not manually specified.
-      c.functionIdentifier = getDefaultFunctionIdentifier(c, identifiers_dictionary);
+      c.functionIdentifier = nameProvider.getDefaultFunctionIdentifier(c.inputFilePath, identifiers_dictionary);
     }
 
     //headerfile
     if (!ra::cli::ParseArgument("headerfile", c.headerFilename, argc, argv))
     {
       //use the file name without extension as 'headerfile'.
-      c.headerFilename = getDefaultHeaderFile(c);
+      c.headerFilename = nameProvider.getDefaultHeaderFile(c.inputFilePath);
     }
   }
 
@@ -499,7 +499,7 @@ int main(int argc, char* argv[])
   }
   else if (c.hasInputDir)
   {
-    APP_ERROR_CODES error = processInputDirectory(c, generator);
+    APP_ERROR_CODES error = processInputDirectory(c, &nameProvider, generator);
     if (error != APP_ERROR_SUCCESS)
     {
       ra::logging::Log(ra::logging::LOG_ERROR, "%s.", getErrorCodeDescription(error));
@@ -519,28 +519,6 @@ int main(int argc, char* argv[])
   }
 
   return APP_ERROR_SUCCESS;
-}
-
-std::string getDefaultFunctionIdentifier(const Context & c, Dictionary & identifiers_dictionary)
-{
-  std::string output;
-
-  //use the file name without extension as 'identifier'.
-  output = getUniqueFunctionIdentifierFromPath(c.inputFilePath.c_str(), identifiers_dictionary);
-  output = ra::strings::CapitalizeFirstCharacter(output);
-
-  return output;
-}
-
-std::string getDefaultHeaderFile(const Context & c)
-{
-  std::string output;
-
-  //use the file name without extension as 'headerfile'.
-  output = ra::filesystem::GetFilenameWithoutExtension(c.inputFilePath.c_str());
-  output += ".h";
-
-  return output;
 }
 
 APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * generator)
@@ -612,7 +590,7 @@ APP_ERROR_CODES processInputFile(const Context & c, bin2cpp::IGenerator * genera
   return APP_ERROR_SUCCESS;
 }
 
-APP_ERROR_CODES processInputDirectory(const Context& c, bin2cpp::IGenerator * generator)
+APP_ERROR_CODES processInputDirectory(const Context& c, bin2cpp::INameProvider * nameProvider, bin2cpp::IGenerator * generator)
 {
   //check if input dir exists
   if (!ra::filesystem::DirectoryExists(c.inputDirPath.c_str()))
@@ -680,10 +658,10 @@ APP_ERROR_CODES processInputDirectory(const Context& c, bin2cpp::IGenerator * ge
     cCopy.inputFilePath = file;
 
     //use the file name without extension as 'headerfile'.
-    cCopy.headerFilename = getDefaultHeaderFile(cCopy);
+    cCopy.headerFilename = nameProvider->getDefaultHeaderFile(cCopy.inputFilePath);
 
     //use the file name without extension as 'identifier'.
-    cCopy.functionIdentifier = getDefaultFunctionIdentifier(cCopy, identifiers_dictionary);
+    cCopy.functionIdentifier = nameProvider->getDefaultFunctionIdentifier(cCopy.inputFilePath, identifiers_dictionary);
 
     //build a relative file path
     std::string relative_file_path = file;
