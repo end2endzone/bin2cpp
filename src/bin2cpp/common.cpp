@@ -364,4 +364,32 @@ namespace bin2cpp
     return output;
   }
 
+  CodeGenerationEnum parseCode(const std::string& value)
+  {
+    std::string value_upper = ra::strings::Uppercase(value);
+    if ( value_upper == "C" )
+      return CodeGenerationEnum::CODE_GENERATION_C;
+    if ( value_upper == "CPP" || value_upper == "C++" )
+      return CodeGenerationEnum::CODE_GENERATION_CPP;
+    return CodeGenerationEnum::CODE_GENERATION_UNKNOW;
+  }
+
+  const std::string& getDefaultCodeSourceFileExtension(CodeGenerationEnum code)
+  {
+    static const std::string EMPTY = "";
+    static const std::string CPP = "cpp";
+    static const std::string C = "c";
+    switch ( code )
+    {
+    case CODE_GENERATION_UNKNOW:
+      return EMPTY;
+    case CODE_GENERATION_CPP:
+      return CPP;
+    case CODE_GENERATION_C:
+      return C;
+    default:
+      return EMPTY;
+    };
+  }
+
 }; //bin2cpp

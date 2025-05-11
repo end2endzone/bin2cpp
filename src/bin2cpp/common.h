@@ -32,6 +32,7 @@
 #include <vector>
 
 #include "types.h"
+#include "enums.h"
 
 namespace bin2cpp
 {
@@ -141,6 +142,20 @@ namespace bin2cpp
   ///<param name="separator">The character that separate the values in the string.</param>
   ///<return>Returns the combined string.<return>
   std::string strJoin(const std::vector<std::string>& values, char separator);
+
+  ///<summary>
+  ///Parse a CodeGenerationEnum from a string.
+  ///</summary>
+  ///<param name="value">The string value representing of the code language.</param>
+  ///<return>Returns a valid CodeGenerationEnum value. Returns CODE_GENERATION_UNKNOW on parsing error.<return>
+  CodeGenerationEnum parseCode(const std::string& value);
+
+  ///<summary>
+  ///Get the default source file extension for the given CodeGenerationEnum.
+  ///</summary>
+  ///<param name="code">The code generation language.</param>
+  ///<return>Returns a valid file extension valu that matches the given code. Returns an empty string otherwise.<return>
+  const std::string & getDefaultCodeSourceFileExtension(CodeGenerationEnum code);
 
 }; //bin2cpp
 
