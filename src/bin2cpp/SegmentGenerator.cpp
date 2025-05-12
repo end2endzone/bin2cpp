@@ -140,7 +140,7 @@ namespace bin2cpp
     delete[] buffer;
     buffer = NULL;
 
-    //write cpp file footer
+    //write cpp source file footer
     fprintf(cpp, "    }\n");
     fprintf(cpp, "%s", getSaveMethodTemplate().c_str());
     fprintf(cpp, "  private:\n");
@@ -253,6 +253,7 @@ namespace bin2cpp
     delete[] buffer;
     buffer = NULL;
 
+    //write c source file footer
     fprintf(fout, "\n");
     fprintf(fout, "  %s_file.buffer = local_buffer;\n", functionIdentifier.c_str());
     fprintf(fout, "  return true;\n");

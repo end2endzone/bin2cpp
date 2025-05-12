@@ -131,7 +131,7 @@ namespace bin2cpp
     delete[] buffer;
     buffer = NULL;
 
-    //write cpp file footer
+    //write cpp source file footer
     fprintf(cpp, "      return (const char *)buffer;\n");
     fprintf(cpp, "    }\n");
     fprintf(cpp, "%s", getSaveMethodTemplate().c_str());
@@ -188,6 +188,159 @@ namespace bin2cpp
     buffer = NULL;
 
     fclose(input);
+
+    return true;
+  }
+
+  bool ArrayGenerator::createCSourceFile(const char* file_path)
+  {
+    //check if input file exists
+    FILE* input = fopen(mContext.inputFilePath.c_str(), "rb");
+    if ( !input )
+      return false;
+
+    //Uppercase function identifier
+    std::string functionIdentifier = ra::strings::Lowercase(mContext.functionIdentifier);
+
+    //Build header and cpp file path
+    std::string headerPath = getHeaderFilePath(file_path);
+    std::string sourcePath = file_path;
+
+    //create c source file
+    FILE* fout = fopen(sourcePath.c_str(), "w");
+    if ( !fout )
+    {
+      fclose(input);
+      return false;
+    }
+
+    //determine file properties
+    uint32_t fileSize = ra::filesystem::GetFileSize(input);
+    std::string filename = ra::filesystem::GetFilename(mContext.inputFilePath.c_str());
+    //long lastSegmentSize = fileSize%chunk_size;
+    //size_t numSegments = fileSize/chunk_size + (lastSegmentSize == 0 ? 0 : 1);
+
+    //Build class name
+    std::string className = getClassName();
+
+    //Build function 
+    std::string getterFunctionName = getGetterFunctionName();
+
+    //Build FileManager class template
+    std::string manager = mContext.managerHeaderFilename;
+
+    //write c file heading
+    fprintf(fout, "%s", getHeaderTemplate().c_str());
+    fprintf(fout, "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n");
+    fprintf(fout, "#define _CRT_SECURE_NO_WARNINGS\n");
+    fprintf(fout, "#endif\n");
+    fprintf(fout, "#include \"%s\"\n", mContext.headerFilename.c_str());
+    fprintf(fout, "#include <stdlib.h> // for malloc\n");
+    fprintf(fout, "#include <string.h> // for memset\n");
+    fprintf(fout, "#include <stdio.h>  // for fopen\n");
+
+    fprintf(fout, "static %s %s_file = { 0 };\n", mContext.baseClass.c_str(), functionIdentifier.c_str());
+    fprintf(fout, "static bool %s_initialized = false;\n", functionIdentifier.c_str());
+    fprintf(fout, "\n");
+
+    fprintf(fout, "bool %s_load()\n", functionIdentifier.c_str());
+    fprintf(fout, "{\n");
+    fprintf(fout, "  if ( %s_file.buffer )\n", functionIdentifier.c_str());
+    fprintf(fout, "    return true;\n");
+    fprintf(fout, "  static const unsigned char static_buffer[] = {\n");
+
+    //create buffer for each chunks from input buffer
+    int numLinePrinted = 0;
+    unsigned char* buffer = new unsigned char[getContext().chunkSize];
+    while ( !feof(input) )
+    {
+      //read a chunk of the file
+      size_t readSize = fread(buffer, 1, getContext().chunkSize, input);
+
+      bool isLastChunk = !(readSize == getContext().chunkSize);
+
+      if ( readSize > 0 )
+      {
+        if ( numLinePrinted > 0 )
+        {
+          //end previous line
+          fprintf(fout, ",\n");
+        }
+
+        //output
+        fprintf(fout, "    %s", ra::code::cpp::ToCppCharactersArray(buffer, readSize).c_str());
+        numLinePrinted++;
+      }
+
+      //end the array. all the file content is printed
+      if ( isLastChunk )
+      {
+        fprintf(fout, "\n");
+        fprintf(fout, "  };\n");
+      }
+    }
+    delete[] buffer;
+    buffer = NULL;
+
+    //write c source file footer
+    fprintf(fout, "\n");
+    fprintf(fout, "  %s_file.buffer = static_buffer;\n", functionIdentifier.c_str());
+    fprintf(fout, "  return true;\n");
+    fprintf(fout, "}\n");
+
+    fprintf(fout, "\n");
+
+    fprintf(fout, "void %s_free()\n", functionIdentifier.c_str());
+    fprintf(fout, "{\n");
+    fprintf(fout, "  %s_file.buffer = NULL;\n", functionIdentifier.c_str());
+    fprintf(fout, "}\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "bool %s_save(const char* path)\n", functionIdentifier.c_str());
+    fprintf(fout, "{\n");
+    fprintf(fout, "  if ( !%s_file.buffer )\n", functionIdentifier.c_str());
+    fprintf(fout, "    return false;\n");
+    fprintf(fout, "  FILE* f = fopen(path, \"wb\");\n");
+    fprintf(fout, "  if ( !f )\n");
+    fprintf(fout, "    return false;\n");
+    fprintf(fout, "  size_t write_size = fwrite(%s_file.buffer, 1, %s_file.size, f);\n", functionIdentifier.c_str(), functionIdentifier.c_str());
+    fprintf(fout, "  fclose(f);\n");
+    fprintf(fout, "  if ( write_size != %s_file.size )\n", functionIdentifier.c_str());
+    fprintf(fout, "    return false;\n");
+    fprintf(fout, "  return true;\n");
+    fprintf(fout, "}\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "inline void %s_init()\n", functionIdentifier.c_str());
+    fprintf(fout, "{\n");
+    fprintf(fout, "  // remember we already initialized\n");
+    fprintf(fout, "  if ( %s_initialized )\n", functionIdentifier.c_str());
+    fprintf(fout, "    return;\n");
+    fprintf(fout, "  %s_initialized = true;\n", functionIdentifier.c_str());
+    fprintf(fout, "\n");
+    fprintf(fout, "  // initialize\n");
+    fprintf(fout, "  %s* file = &%s_file;\n", mContext.baseClass.c_str(), functionIdentifier.c_str());
+    fprintf(fout, "  file->size = %uULL;\n", fileSize);
+    fprintf(fout, "  file->file_name = \"%s\";\n", getFileClassFileName().c_str());
+    fprintf(fout, "  file->file_path = \"%s\";\n", getFileClassFilePath().c_str());
+    fprintf(fout, "  file->buffer = NULL;\n");
+    fprintf(fout, "  file->load = %s_load;\n", functionIdentifier.c_str());
+    fprintf(fout, "  file->unload = %s_free;\n", functionIdentifier.c_str());
+    fprintf(fout, "  file->save = %s_save;\n", functionIdentifier.c_str());
+    fprintf(fout, "}\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "%s* %s(void)\n", mContext.baseClass.c_str(), getGetterFunctionName().c_str());
+    fprintf(fout, "{\n");
+    fprintf(fout, "  %s_init();\n", functionIdentifier.c_str());
+    fprintf(fout, "  return &%s_file;\n", functionIdentifier.c_str());
+    fprintf(fout, "}\n");
+
+    if ( mContext.registerFiles )
+    {
+      std::string fileManagerTemplate = getFileManagerRegistrationTemplate();
+      fprintf(fout, "%s", fileManagerTemplate.c_str());
+    }
+
+    fclose(input);
+    fclose(fout);
 
     return true;
   }

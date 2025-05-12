@@ -40,11 +40,13 @@ namespace bin2cpp
     virtual ~Win32ResourceGenerator();
     virtual const char * getName() const;
     virtual bool createCppSourceFile(const char * cpp_file_path);
+    virtual bool createCSourceFile(const char* file_path);
     virtual bool printFileContent();
   protected:
     virtual std::string getResourceFilePath(const char * cpp_file_path);
     virtual bool createResourceFile(const char * cpp_file_path);
     virtual std::string getRandomIdentifier(const char * cpp_file_path);
+    virtual std::string getLocalInfoStructName();
   };
 
 }; //bin2cpp

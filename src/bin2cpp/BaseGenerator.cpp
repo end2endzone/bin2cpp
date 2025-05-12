@@ -433,7 +433,7 @@ namespace bin2cpp
     fprintf(header, "  size_t size;\n");
     fprintf(header, "  const char* file_name;\n");
     fprintf(header, "  const char* file_path;\n");
-    fprintf(header, "  unsigned char* buffer;\n");
+    fprintf(header, "  const unsigned char* buffer;\n");
     fprintf(header, "  bin2c_load_func load;\n");
     fprintf(header, "  bin2c_free_func unload;\n");
     fprintf(header, "  bin2c_save_func save;\n");
