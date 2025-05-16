@@ -239,6 +239,223 @@ namespace bin2cpp
     return true;
   }
 
+  bool ManagerGenerator::createCHeaderFile(const char* file_path)
+  {
+    FILE* fout = fopen(file_path, "w");
+    if ( !fout )
+      return false;
+
+    //define macro guard a macro matching the filename
+    std::string macroGuard;
+    macroGuard += getCppIncludeGuardMacroName(mContext.codeNamespace.c_str()); //prefix the custom namespace for the file manager
+    if ( !macroGuard.empty() )
+      macroGuard += "_";
+    macroGuard += getCppIncludeGuardMacroName(file_path);
+
+    std::string classMacroGuardPrefix = getClassMacroGuardPrefix();
+    std::string fileHeader = getHeaderTemplate(false);
+
+    fprintf(fout, "%s", fileHeader.c_str());
+    fprintf(fout, "#ifndef %s\n", macroGuard.c_str());
+    fprintf(fout, "#define %s\n", macroGuard.c_str());
+    fprintf(fout, "\n");
+    fprintf(fout, "#include <stddef.h>\n");
+    fprintf(fout, "#include <stdbool.h>\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "#ifndef %s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
+    fprintf(fout, "#define %s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
+    fprintf(fout, "typedef struct %s %s;\n", mContext.baseClass.c_str(), mContext.baseClass.c_str());
+    fprintf(fout, "typedef bool(*bin2c_load_func)();\n");
+    fprintf(fout, "typedef void(*bin2c_free_func)();\n");
+    fprintf(fout, "typedef bool(*bin2c_save_func)(const char*);\n");
+    fprintf(fout, "typedef struct %s\n", mContext.baseClass.c_str());
+    fprintf(fout, "{\n");
+    fprintf(fout, "  size_t size;\n");
+    fprintf(fout, "  const char* file_name;\n");
+    fprintf(fout, "  const char* file_path;\n");
+    fprintf(fout, "  const unsigned char* buffer;\n");
+    fprintf(fout, "  bin2c_load_func load;\n");
+    fprintf(fout, "  bin2c_free_func unload;\n");
+    fprintf(fout, "  bin2c_save_func save;\n");
+    fprintf(fout, "} %s;\n", mContext.baseClass.c_str());
+    fprintf(fout, "typedef %s* %sPtr;\n", mContext.baseClass.c_str(), mContext.baseClass.c_str());
+    fprintf(fout, "#endif //%s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
+    fprintf(fout, "\n");
+    fprintf(fout, "size_t bin2c_filemanager_get_file_count();\n");
+    fprintf(fout, "bool bin2c_filemanager_register_file(%s* file);\n", mContext.baseClass.c_str());
+    fprintf(fout, "const %s* bin2c_filemanager_get_file(size_t index);\n", mContext.baseClass.c_str());
+    fprintf(fout, "bool bin2c_filemanager_save_files(const char* directory);\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "#endif //%s\n", macroGuard.c_str());
+
+    fclose(fout);
+
+    return true;
+  }
+
+  bool ManagerGenerator::createCSourceFile(const char* file_path)
+  {
+    FILE* fout = fopen(file_path, "w");
+    if ( !fout )
+      return false;
+
+    //Build header and cpp file path
+    std::string headerPath = getHeaderFilePath(file_path);
+    std::string sourcePath = file_path;
+
+    std::string fileHeader = getHeaderTemplate(false);
+
+    fprintf(fout, "%s", fileHeader.c_str());
+    fprintf(fout, "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n");
+    fprintf(fout, "#define _CRT_SECURE_NO_WARNINGS\n");
+    fprintf(fout, "#endif\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "#include \"%s\"\n", mContext.managerHeaderFilename.c_str());
+    fprintf(fout, "#include <stdlib.h> // for malloc\n");
+    fprintf(fout, "#include <stdio.h>  // for snprintf()\n");
+    fprintf(fout, "#include <string.h> // strlen\n");
+    fprintf(fout, "#include <sys/stat.h> // stat\n");
+    fprintf(fout, "#include <errno.h>    // errno, EEXIST\n");
+    fprintf(fout, "#if defined(_WIN32)\n");
+    fprintf(fout, "#include <direct.h>   // _mkdir\n");
+    fprintf(fout, "#endif\n");
+    fprintf(fout, "#if defined(_WIN32)\n");
+    fprintf(fout, "#define portable_stat _stat\n");
+    fprintf(fout, "#define portable_mkdir(path) _mkdir(path)\n");
+    fprintf(fout, "#define PATH_SEPARATOR_CHAR '\\\\'\n");
+    fprintf(fout, "#define PATH_SEPARATOR_STR \"\\\\\"\n");
+    fprintf(fout, "#else\n");
+    fprintf(fout, "#define portable_stat stat\n");
+    fprintf(fout, "#define portable_mkdir(path) mkdir(path, 0755)\n");
+    fprintf(fout, "#define PATH_SEPARATOR_CHAR '/'\n");
+    fprintf(fout, "#define PATH_SEPARATOR_STR \"/\"\n");
+    fprintf(fout, "#endif\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "#define BIN2C_MAX_PATH 32767\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "static %s** registered_files = NULL;\n", mContext.baseClass.c_str());
+    fprintf(fout, "static size_t registered_files_count = 0;\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "size_t bin2c_filemanager_get_file_count()\n");
+    fprintf(fout, "{\n");
+    fprintf(fout, "  return registered_files_count;\n");
+    fprintf(fout, "}\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "bool bin2c_filemanager_register_file(%s* file)\n", mContext.baseClass.c_str());
+    fprintf(fout, "{\n");
+    fprintf(fout, "  // allocate ram\n");
+    fprintf(fout, "  size_t new_ram_size = sizeof(%s**) * (registered_files_count + 1);\n", mContext.baseClass.c_str());
+    fprintf(fout, "  %s** tmp = NULL;\n", mContext.baseClass.c_str());
+    fprintf(fout, "  if ( registered_files == NULL )\n");
+    fprintf(fout, "    tmp = (%s**)malloc(new_ram_size);\n", mContext.baseClass.c_str());
+    fprintf(fout, "  else\n");
+    fprintf(fout, "    tmp = (%s**)realloc(registered_files, new_ram_size);\n", mContext.baseClass.c_str());
+    fprintf(fout, "  if ( tmp == NULL )\n");
+    fprintf(fout, "    return false;\n");
+    fprintf(fout, "  \n");
+    fprintf(fout, "  registered_files = tmp;\n");
+    fprintf(fout, "  registered_files_count++;\n");
+    fprintf(fout, "  \n");
+    fprintf(fout, "  // insert\n");
+    fprintf(fout, "  registered_files[registered_files_count - 1] = file;\n");
+    fprintf(fout, "  \n");
+    fprintf(fout, "  return true;\n");
+    fprintf(fout, "}\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "const %s* bin2c_filemanager_get_file(size_t index)\n", mContext.baseClass.c_str());
+    fprintf(fout, "{\n");
+    fprintf(fout, "  if ( index >= registered_files_count )\n");
+    fprintf(fout, "    return NULL;\n");
+    fprintf(fout, "  return registered_files[index];\n");
+    fprintf(fout, "}\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "static inline bool bin2c_filemanager_is_root_directory(const char* path)\n");
+    fprintf(fout, "{\n");
+    fprintf(fout, "  if ( path == NULL && path[0] == '\0' )\n");
+    fprintf(fout, "    return false;\n");
+    fprintf(fout, "#if defined(_WIN32)\n");
+    fprintf(fout, "  bool is_drive_letter = ((path[0] >= 'a' && path[0] <= 'z') || (path[0] >= 'A' && path[0] <= 'Z'));\n");
+    fprintf(fout, "  if ( (is_drive_letter && path[1] == ':' && path[2] == '\0') || // test for C:\n");
+    fprintf(fout, "      (is_drive_letter && path[1] == ':' && path[2] == PATH_SEPARATOR_CHAR && path[3] == '\0') ) // test for C:\\ \n");
+    fprintf(fout, "    return true;\n");
+    fprintf(fout, "#else\n");
+    fprintf(fout, "  if ( path[0] == PATH_SEPARATOR_CHAR )\n");
+    fprintf(fout, "    return true;\n");
+    fprintf(fout, "#endif\n");
+    fprintf(fout, "  return false;\n");
+    fprintf(fout, "}\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "bool bin2c_filemanager_create_parent_directories(const char* file_path)\n");
+    fprintf(fout, "{\n");
+    fprintf(fout, "  if ( file_path == NULL )\n");
+    fprintf(fout, "    return false;\n");
+    fprintf(fout, "  char* accumulator = (char*)malloc(BIN2C_MAX_PATH);\n");
+    fprintf(fout, "  if ( accumulator == NULL )\n");
+    fprintf(fout, "    return false;\n");
+    fprintf(fout, "  accumulator[0] = '\0';\n");
+    fprintf(fout, "  size_t length = strlen(file_path);\n");
+    fprintf(fout, "  for ( size_t i = 0; i < length; i++ )\n");
+    fprintf(fout, "  {\n");
+    fprintf(fout, "    if ( file_path[i] == PATH_SEPARATOR_CHAR && !(accumulator[0] == '\0') && !bin2c_filemanager_is_root_directory(accumulator) )\n");
+    fprintf(fout, "    {\n");
+    fprintf(fout, "      int ret = portable_mkdir(accumulator);\n");
+    fprintf(fout, "      if ( ret != 0 && errno != EEXIST )\n");
+    fprintf(fout, "      {\n");
+    fprintf(fout, "        free(accumulator);\n");
+    fprintf(fout, "        return false;\n");
+    fprintf(fout, "      }\n");
+    fprintf(fout, "    }\n");
+    fprintf(fout, "    \n");
+    fprintf(fout, "    // append\n");
+    fprintf(fout, "    char tmp[] = { file_path[i], '\0' };\n");
+    fprintf(fout, "    strcat(accumulator, tmp);\n");
+    fprintf(fout, "  }\n");
+    fprintf(fout, "  free(accumulator);\n");
+    fprintf(fout, "  return true;\n");
+    fprintf(fout, "}\n");
+    fprintf(fout, "\n");
+    fprintf(fout, "bool bin2c_filemanager_save_files(const char * directory)\n");
+    fprintf(fout, "{\n");
+    fprintf(fout, "  if (directory == NULL)\n");
+    fprintf(fout, "    return false;\n");
+    fprintf(fout, "  char* path = (char*)malloc(BIN2C_MAX_PATH);\n");
+    fprintf(fout, "  if ( path == NULL )\n");
+    fprintf(fout, "    return false;\n");
+    fprintf(fout, "  path[0] = '\0';\n");
+    fprintf(fout, "  for(size_t i=0; i< registered_files_count; i++)\n");
+    fprintf(fout, "  {\n");
+    fprintf(fout, "    const Bin2cFile* f = bin2c_filemanager_get_file(i);\n");
+    fprintf(fout, "    if ( !f )\n");
+    fprintf(fout, "    {\n");
+    fprintf(fout, "      free(path);\n");
+    fprintf(fout, "      return false;\n");
+    fprintf(fout, "    }\n");
+    fprintf(fout, "    \n");
+    fprintf(fout, "    char path[32767] = { 0 };\n");
+    fprintf(fout, "    snprintf(path, sizeof(path), \"%%s%%c%%s\", directory, PATH_SEPARATOR_CHAR, f->file_path);\n");
+    fprintf(fout, "    \n");
+    fprintf(fout, "    if (!bin2c_filemanager_create_parent_directories(path))\n");
+    fprintf(fout, "    {\n");
+    fprintf(fout, "      free(path);\n");
+    fprintf(fout, "      return false;\n");
+    fprintf(fout, "    }\n");
+    fprintf(fout, "    bool saved = f->save(path);\n");
+    fprintf(fout, "    if (!saved)\n");
+    fprintf(fout, "    {\n");
+    fprintf(fout, "      free(path);\n");
+    fprintf(fout, "      return false;\n");
+    fprintf(fout, "    }\n");
+    fprintf(fout, "  }\n");
+    fprintf(fout, "  free(path);\n");
+    fprintf(fout, "  return true;\n");
+    fprintf(fout, "}\n");
+    fprintf(fout, "\n");
+
+    fclose(fout);
+
+    return true;
+  }
+
   bool ManagerGenerator::printFileContent()
   {
     return false;

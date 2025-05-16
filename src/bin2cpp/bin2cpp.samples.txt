@@ -4,6 +4,29 @@
 --file=..\..\test\bin2cpp_unittest\generated_files\testHtml100000\testHtml100000.bin --output=..\..\test\bin2cpp_unittest\generated_files\testHtml100000 --headerfile=_testHtml100000_C.h --override --code=c --generator=string
 --file=..\..\test\bin2cpp_unittest\generated_files\testHtml100000\testHtml100000.bin --output=..\..\test\bin2cpp_unittest\generated_files\testHtml100000 --headerfile=_testHtml100000_C.h --override --code=c --generator=win32
 
+--file=..\..\test\bin2cpp_unittest\generated_files\testRandom1\testRandom1.bin" --output=..\..\test\bin2cpp_unittest\generated_files\testRandom1 --headerfile=_testRandom1_C.h --registerfile
+
+--file=..\..\test\bin2cpp_unittest\generated_files\testFileManager_C\testFileManager.1.bin --output=..\..\test\bin2cpp_unittest\generated_files\testFileManager_C --headerfile=_testFileManager.1.h --identifier=testFileManager1_c --managerfile=filemanager.h --override --code=c
+--file=..\..\test\bin2cpp_unittest\generated_files\testFileManager_C\testFileManager.2.bin --output=..\..\test\bin2cpp_unittest\generated_files\testFileManager_C --headerfile=_testFileManager.2.h --identifier=testFileManager2_c --registerfile --override --code=c
+
+--dir=..\..\..\samples\demo_website\www --output=..\..\temp --code=c
+--dir=..\..\..\samples\demo_website\www --output=..\..\temp --code=c --managerfile=www-file-manager.h
+
+
+
+# CPP code examples:
+--dir=..\..\..\samples\demo_website\www --output=..\..\temp --managerfile=PagesFileManager.h --namespace=myblog --keepdirs
+--dir=..\..\..\samples\demo_website\www --output=..\..\temp --dirincludefilter="*\static\*.css:*.jpg"
+--dir=..\..\..\samples\demo_website\www --output=..\..\temp --dirincludefilter="*\static\*.css:*.jpg" --direxcludefilter="*\light-mode.css"
+--dir=..\..\..\samples\demo_website\www --output=..\..\temp --direxcludefilter="*.html"
+
+--file=..\..\test\bin2cpp_unittest\generated_files\testText1000\testText1000.bin --output=..\..\temp --override
+--noheader --dir=..\..\test\bin2cpp_unittest\generated_files\testIssue56a\input_files --output=..\..\test\bin2cpp_unittest\generated_files\testIssue56a\compiled_sources --chunksize=200 --managerfile=FileManager56a.h --registerfile --namespace=issue56a --override
+--plainoutput --chunksize=9999 --file=..\..\test\bin2cpp_unittest\generated_files\testSequential1000\testSequential1000.bin
+
+
+
+# old code examples:
 --file=.\generated_files\testText1000\testText1000.bin --output=.\generated_files\testText1000 --headerfile=_testText1000.h --identifier=testText1000  --chunksize=450 --override
 --file=.\generated_files\testSequential1000\testSequential1000.bin --output=.\generated_files\testSequential1000 --headerfile=_testSequential1000.h --identifier=testSequential1000  --chunksize=180 --override
 --file=..\..\test\bin2cpp_unittest\generated_files\testIssue28\testIssue28.bin --output=..\..\test\bin2cpp_unittest\generated_files\testIssue28 --headerfile=_testIssue28.h --identifier=testIssue28 --managerfile=FileManager.h --override
@@ -20,25 +43,8 @@
 --dir=..\..\test\bin2cpp_unittest\generated_files\testIssue56b\input_files\www --output=..\..\test\bin2cpp_unittest\generated_files\testIssue56b\generated_sources --namespace=issue56b --override
 --dir=..\..\test\bin2cpp_unittest\generated_files\testKeepDirectories\input_files\www --output=..\..\test\bin2cpp_unittest\generated_files\testKeepDirectories\generated_sources --override --keepdirs
 
---dir=..\..\..\samples\demo_website\www --output=..\..\temp --managerfile=PagesFileManager.h --namespace=myblog --keepdirs
---dir=..\..\..\samples\demo_website\www --output=..\..\temp --dirincludefilter="*\static\*.css:*.jpg"
---dir=..\..\..\samples\demo_website\www --output=..\..\temp --dirincludefilter="*\static\*.css:*.jpg" --direxcludefilter="*\light-mode.css"
---dir=..\..\..\samples\demo_website\www --output=..\..\temp --direxcludefilter="*.html"
-
-Bug:
---dir=..\..\..\samples\demo_website\www --output=..\..\temp --dirincludefilter="*.old"
---file=..\..\..\samples\demo_website\www\index.html.old --output=..\..\temp
-
-
 --file=D:\Temp\bin2cpp\issue51\input_files\IMG_0001.jpg --output=D:\Temp\bin2cpp\issue51\generated_sources --headerfile="IMG_0001.h" --identifier=testIssue51 --namespace=testIssue51 --managerfile=FileManager51.h --override --reportedfilepath=foo\bar\IMG_0001.h
 --dir=D:\Temp\bin2cpp\testIssue56b\input_files\www --output=D:\Temp\bin2cpp\testIssue56b\generated_sources --namespace=testIssue51 --managerfile=FileManager51.h --override
 
 --file=..\..\test\bin2cpp_unittest\generated_files\testSequential1000\testSequential1000.bin --plainoutput --chunksize=50
 --managerfile=MyManager.h --output=generated_files --override
-
---file=..\..\test\bin2cpp_unittest\generated_files\testText1000\testText1000.bin --output=. --override
-
---noheader --dir=..\..\test\bin2cpp_unittest\generated_files\testIssue56a\input_files --output=..\..\test\bin2cpp_unittest\generated_files\testIssue56a\compiled_sources --chunksize=200 --managerfile=FileManager56a.h --registerfile --namespace=issue56a --override
-
-
---plainoutput --chunksize=9999 --file=..\..\test\bin2cpp_unittest\generated_files\testSequential1000\testSequential1000.bin

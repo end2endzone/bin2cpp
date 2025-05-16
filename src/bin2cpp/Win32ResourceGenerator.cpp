@@ -264,6 +264,12 @@ namespace bin2cpp
     fprintf(fout, "static %s %s_info = { 0 };\n", getLocalInfoStructName().c_str(), functionIdentifier.c_str());
     fprintf(fout, "\n");
 
+    if ( mContext.registerFiles )
+    {
+      fprintf(fout, "extern bool bin2c_filemanager_register_file(%s * file);\n", mContext.baseClass.c_str());
+      fprintf(fout, "\n");
+    }
+
     fprintf(fout, "bool %s_load()\n", functionIdentifier.c_str());
     fprintf(fout, "{\n");
     fprintf(fout, "  if ( %s_file.buffer )\n", functionIdentifier.c_str());
@@ -351,6 +357,14 @@ namespace bin2cpp
     fprintf(fout, "  file->load = %s_load;\n", functionIdentifier.c_str());
     fprintf(fout, "  file->unload = %s_free;\n", functionIdentifier.c_str());
     fprintf(fout, "  file->save = %s_save;\n", functionIdentifier.c_str());
+
+    if ( mContext.registerFiles )
+    {
+      fprintf(fout, "  \n");
+      fprintf(fout, "  // register\n");
+      fprintf(fout, "  bin2c_filemanager_register_file(file);\n");
+    }
+
     fprintf(fout, "}\n");
     fprintf(fout, "\n");
 

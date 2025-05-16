@@ -438,6 +438,7 @@ namespace bin2cpp
     fprintf(header, "  bin2c_free_func unload;\n");
     fprintf(header, "  bin2c_save_func save;\n");
     fprintf(header, "} %s;\n", mContext.baseClass.c_str());
+    fprintf(header, "typedef %s* %sPtr;\n", mContext.baseClass.c_str(), mContext.baseClass.c_str());
     fprintf(header, "#endif //%s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
     fprintf(header, "%s* %s();\n", mContext.baseClass.c_str(), getGetterFunctionName().c_str());
     fprintf(header, "\n");
