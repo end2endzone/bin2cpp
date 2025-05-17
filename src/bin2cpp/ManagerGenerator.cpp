@@ -382,12 +382,12 @@ namespace bin2cpp
     fprintf(fout, "\n");
     fprintf(fout, "static inline bool bin2c_filemanager_is_root_directory(const char* path)\n");
     fprintf(fout, "{\n");
-    fprintf(fout, "  if ( path == NULL && path[0] == '\0' )\n");
+    fprintf(fout, "  if ( path == NULL && path[0] == '\\0' )\n");
     fprintf(fout, "    return false;\n");
     fprintf(fout, "#if defined(_WIN32)\n");
     fprintf(fout, "  bool is_drive_letter = ((path[0] >= 'a' && path[0] <= 'z') || (path[0] >= 'A' && path[0] <= 'Z'));\n");
-    fprintf(fout, "  if ( (is_drive_letter && path[1] == ':' && path[2] == '\0') || // test for C:\n");
-    fprintf(fout, "      (is_drive_letter && path[1] == ':' && path[2] == PATH_SEPARATOR_CHAR && path[3] == '\0') ) // test for C:\\ \n");
+    fprintf(fout, "  if ( (is_drive_letter && path[1] == ':' && path[2] == '\\0') || // test for C:\n");
+    fprintf(fout, "      (is_drive_letter && path[1] == ':' && path[2] == PATH_SEPARATOR_CHAR && path[3] == '\\0') ) // test for C:\\ \n");
     fprintf(fout, "    return true;\n");
     fprintf(fout, "#else\n");
     fprintf(fout, "  if ( path[0] == PATH_SEPARATOR_CHAR )\n");
@@ -403,11 +403,11 @@ namespace bin2cpp
     fprintf(fout, "  char* accumulator = (char*)malloc(BIN2C_MAX_PATH);\n");
     fprintf(fout, "  if ( accumulator == NULL )\n");
     fprintf(fout, "    return false;\n");
-    fprintf(fout, "  accumulator[0] = '\0';\n");
+    fprintf(fout, "  accumulator[0] = '\\0';\n");
     fprintf(fout, "  size_t length = strlen(file_path);\n");
     fprintf(fout, "  for ( size_t i = 0; i < length; i++ )\n");
     fprintf(fout, "  {\n");
-    fprintf(fout, "    if ( file_path[i] == PATH_SEPARATOR_CHAR && !(accumulator[0] == '\0') && !bin2c_filemanager_is_root_directory(accumulator) )\n");
+    fprintf(fout, "    if ( file_path[i] == PATH_SEPARATOR_CHAR && !(accumulator[0] == '\\0') && !bin2c_filemanager_is_root_directory(accumulator) )\n");
     fprintf(fout, "    {\n");
     fprintf(fout, "      int ret = portable_mkdir(accumulator);\n");
     fprintf(fout, "      if ( ret != 0 && errno != EEXIST )\n");
@@ -418,7 +418,7 @@ namespace bin2cpp
     fprintf(fout, "    }\n");
     fprintf(fout, "    \n");
     fprintf(fout, "    // append\n");
-    fprintf(fout, "    char tmp[] = { file_path[i], '\0' };\n");
+    fprintf(fout, "    char tmp[] = { file_path[i], '\\0' };\n");
     fprintf(fout, "    strcat(accumulator, tmp);\n");
     fprintf(fout, "  }\n");
     fprintf(fout, "  free(accumulator);\n");
@@ -432,7 +432,7 @@ namespace bin2cpp
     fprintf(fout, "  char* path = (char*)malloc(BIN2C_MAX_PATH);\n");
     fprintf(fout, "  if ( path == NULL )\n");
     fprintf(fout, "    return false;\n");
-    fprintf(fout, "  path[0] = '\0';\n");
+    fprintf(fout, "  path[0] = '\\0';\n");
     fprintf(fout, "  for(size_t i=0; i< registered_files_count; i++)\n");
     fprintf(fout, "  {\n");
     fprintf(fout, "    const Bin2cFile* f = bin2c_filemanager_get_file(i);\n");
