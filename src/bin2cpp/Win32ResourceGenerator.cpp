@@ -180,7 +180,7 @@ namespace bin2cpp
     fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", getContext().baseClass.c_str(), getterFunctionName.c_str(), className.c_str());
     if (mContext.registerFiles)
     {
-      std::string fileManagerTemplate = getFileManagerRegistrationTemplate();
+      std::string fileManagerTemplate = getCppFileManagerRegistrationImplementationTemplate();
       fprintf(cpp, "%s", fileManagerTemplate.c_str());
     }
     fprintf(cpp, "}; //%s\n", getContext().codeNamespace.c_str());
@@ -264,11 +264,8 @@ namespace bin2cpp
     fprintf(fout, "static %s %s_info = { 0 };\n", getLocalInfoStructName().c_str(), functionIdentifier.c_str());
     fprintf(fout, "\n");
 
-    if ( mContext.registerFiles )
-    {
-      fprintf(fout, "extern bool bin2c_filemanager_register_file(%s * file);\n", mContext.baseClass.c_str());
-      fprintf(fout, "\n");
-    }
+    // File registration predeclaration code
+    fprintf(fout, "%s", getCFileManagerRegistrationPredeclarationTemplate().c_str());
 
     fprintf(fout, "bool %s_load()\n", functionIdentifier.c_str());
     fprintf(fout, "{\n");
@@ -374,11 +371,8 @@ namespace bin2cpp
     fprintf(fout, "  return &%s_file;\n", functionIdentifier.c_str());
     fprintf(fout, "}\n");
 
-    if ( mContext.registerFiles )
-    {
-      std::string fileManagerTemplate = getFileManagerRegistrationTemplate();
-      fprintf(fout, "%s", fileManagerTemplate.c_str());
-    }
+    // File registration implementation code
+    fprintf(fout, "%s", getCFileManagerRegistrationImplementationTemplate().c_str());
 
     fclose(input);
     fclose(fout);

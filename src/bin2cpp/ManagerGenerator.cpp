@@ -343,6 +343,17 @@ namespace bin2cpp
     fprintf(fout, "\n");
     fprintf(fout, "bool bin2c_filemanager_register_file(%s* file)\n", mContext.baseClass.c_str());
     fprintf(fout, "{\n");
+    fprintf(fout, "  // check if already registered\n");
+    fprintf(fout, "  if ( registered_files_count && registered_files )\n");
+    fprintf(fout, "  {\n");
+    fprintf(fout, "    for ( size_t i = 0; i < registered_files_count; i++ )\n");
+    fprintf(fout, "    {\n");
+    fprintf(fout, "      const %s* existing_file = registered_files[i];\n", mContext.baseClass.c_str());
+    fprintf(fout, "      if ( existing_file == file )\n");
+    fprintf(fout, "        return true; // nothing to do\n");
+    fprintf(fout, "    }\n");
+    fprintf(fout, "  }\n");
+    fprintf(fout, "  \n");
     fprintf(fout, "  // allocate ram\n");
     fprintf(fout, "  size_t new_ram_size = sizeof(%s**) * (registered_files_count + 1);\n", mContext.baseClass.c_str());
     fprintf(fout, "  %s** tmp = NULL;\n", mContext.baseClass.c_str());

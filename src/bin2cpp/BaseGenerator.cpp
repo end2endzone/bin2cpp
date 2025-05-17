@@ -166,7 +166,7 @@ namespace bin2cpp
     return output;
   }
 
-  std::string BaseGenerator::getFileManagerRegistrationTemplate()
+  std::string BaseGenerator::getCppFileManagerRegistrationImplementationTemplate()
   {
     if (!mContext.registerFiles)
       return std::string();
@@ -178,6 +178,41 @@ namespace bin2cpp
     output << "  typedef const " << mContext.baseClass << " & (*t_func)();\n";
     output << "  extern bool RegisterFile(t_func iFunctionPointer);\n";
     output << "  static bool k" << className << "Registered = " << mContext.codeNamespace << "::RegisterFile(&" << getGetterFunctionName() << ");\n";
+    return output;
+  }
+
+  std::string BaseGenerator::getCFileManagerRegistrationPredeclarationTemplate()
+  {
+    if ( !mContext.registerFiles )
+      return std::string();
+
+    std::string output;
+    output << "extern bool bin2c_filemanager_register_file(" << mContext.baseClass << " * file); \n";
+    output << "\n";
+    return output;
+  }
+
+  std::string BaseGenerator::getCFileManagerRegistrationImplementationTemplate()
+  {
+    if ( !mContext.registerFiles )
+      return std::string();
+
+    //Lowercase function identifier
+    std::string functionIdentifier = ra::strings::Lowercase(mContext.functionIdentifier);
+
+    std::string output;
+    output << "#if (defined(__GNUC__) && (__GNUC__ >= 4)) || defined(__clang__)  // GCC 4.0+ required, Clang supports it by default\n";
+    output << "__attribute__((constructor))\n";
+    output << "#endif\n";
+    output << "void bin2c_register_file_static_init_" << functionIdentifier << "(void)\n";
+    output << "{\n";
+    output << "  " << mContext.baseClass << "* this_file = bin2c_get_file_" << functionIdentifier << "();\n";
+    output << "  bin2c_filemanager_register_file(this_file);\n";
+    output << "}\n";
+    output << "#if _MSC_VER >= 1920  // Visual Studio 2019 or later\n";
+    output << "#pragma section(\".CRT$XCU\", read)\n";
+    output << "__declspec(allocate(\".CRT$XCU\")) void (*init_ptr_" << functionIdentifier << ")(void) = bin2c_register_file_static_init_" << functionIdentifier << ";\n";
+    output << "#endif\n";
     return output;
   }
 
