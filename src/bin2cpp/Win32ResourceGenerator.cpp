@@ -359,7 +359,7 @@ namespace bin2cpp
     {
       fprintf(fout, "  \n");
       fprintf(fout, "  // register\n");
-      fprintf(fout, "  bin2c_filemanager_register_file(file);\n");
+      fprintf(fout, "  %s_filemanager_register_file(file);\n", mContext.codeNamespace.c_str());
     }
 
     fprintf(fout, "}\n");

@@ -81,7 +81,8 @@ namespace bin2cpp
         //Uppercase function identifier
         std::string functionIdentifier = ra::strings::Lowercase(mContext.functionIdentifier);
 
-        getter.append("bin2c_get_file_");
+        getter.append(mContext.codeNamespace);
+        getter.append("_get_file_");
         getter.append(functionIdentifier);
     }
       break;
@@ -187,7 +188,7 @@ namespace bin2cpp
       return std::string();
 
     std::string output;
-    output << "extern bool bin2c_filemanager_register_file(" << mContext.baseClass << " * file); \n";
+    output << "extern bool " << mContext.codeNamespace << "_filemanager_register_file(" << mContext.baseClass << " * file); \n";
     output << "\n";
     return output;
   }
@@ -204,14 +205,14 @@ namespace bin2cpp
     output << "#if (defined(__GNUC__) && (__GNUC__ >= 4)) || defined(__clang__)  // GCC 4.0+ required, Clang supports it by default\n";
     output << "__attribute__((constructor))\n";
     output << "#endif\n";
-    output << "void bin2c_register_file_static_init_" << functionIdentifier << "(void)\n";
+    output << "void " << mContext.codeNamespace << "_register_file_static_init_" << functionIdentifier << "(void)\n";
     output << "{\n";
-    output << "  " << mContext.baseClass << "* this_file = bin2c_get_file_" << functionIdentifier << "();\n";
-    output << "  bin2c_filemanager_register_file(this_file);\n";
+    output << "  " << mContext.baseClass << "* this_file = " << mContext.codeNamespace << "_get_file_" << functionIdentifier << "();\n";
+    output << "  " << mContext.codeNamespace << "_filemanager_register_file(this_file);\n";
     output << "}\n";
     output << "#if _MSC_VER >= 1920  // Visual Studio 2019 or later\n";
     output << "#pragma section(\".CRT$XCU\", read)\n";
-    output << "__declspec(allocate(\".CRT$XCU\")) void (*init_ptr_" << functionIdentifier << ")(void) = bin2c_register_file_static_init_" << functionIdentifier << ";\n";
+    output << "__declspec(allocate(\".CRT$XCU\")) void (*init_ptr_" << functionIdentifier << ")(void) = " << mContext.codeNamespace << "_register_file_static_init_" << functionIdentifier << ";\n";
     output << "#endif\n";
     return output;
   }
@@ -460,18 +461,18 @@ namespace bin2cpp
     fprintf(header, "#ifndef %s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
     fprintf(header, "#define %s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
     fprintf(header, "typedef struct %s %s;\n", mContext.baseClass.c_str(), mContext.baseClass.c_str());
-    fprintf(header, "typedef bool(*bin2c_load_func)();\n");
-    fprintf(header, "typedef void(*bin2c_free_func)();\n");
-    fprintf(header, "typedef bool(*bin2c_save_func)(const char*);\n");
+    fprintf(header, "typedef bool(*%s_load_func)();\n", mContext.codeNamespace.c_str());
+    fprintf(header, "typedef void(*%s_free_func)();\n", mContext.codeNamespace.c_str());
+    fprintf(header, "typedef bool(*%s_save_func)(const char*);\n", mContext.codeNamespace.c_str());
     fprintf(header, "typedef struct %s\n", mContext.baseClass.c_str());
     fprintf(header, "{\n");
     fprintf(header, "  size_t size;\n");
     fprintf(header, "  const char* file_name;\n");
     fprintf(header, "  const char* file_path;\n");
     fprintf(header, "  const unsigned char* buffer;\n");
-    fprintf(header, "  bin2c_load_func load;\n");
-    fprintf(header, "  bin2c_free_func unload;\n");
-    fprintf(header, "  bin2c_save_func save;\n");
+    fprintf(header, "  %s_load_func load;\n", mContext.codeNamespace.c_str());
+    fprintf(header, "  %s_free_func unload;\n", mContext.codeNamespace.c_str());
+    fprintf(header, "  %s_save_func save;\n", mContext.codeNamespace.c_str());
     fprintf(header, "} %s;\n", mContext.baseClass.c_str());
     fprintf(header, "typedef %s* %sPtr;\n", mContext.baseClass.c_str(), mContext.baseClass.c_str());
     fprintf(header, "#endif //%s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
