@@ -19,7 +19,9 @@ Test directories:
 
 Test for namespace:
 --file=..\..\test\bin2cpp_unittest\generated_files\testNamespace_C\testNamespace_C.bin --output=..\..\test\bin2cpp_unittest\generated_files\testNamespace_C --headerfile=testNamespace_C.h --identifier=testNamespace_C --managerfile=filemanager.h --override --code=c --namespace=foobar
- 
+
+Test for baseclass:
+--file=..\..\test\bin2cpp_unittest\generated_files\testBaseClass_C\testBaseClass_C.bin --output=..\..\test\bin2cpp_unittest\generated_files\testBaseClass_C --headerfile=testBaseClass_C.h --identifier=testBaseClass_C --managerfile=filemanager.h --override --code=c --baseclass=Resource
 
 
 # CPP code examples:

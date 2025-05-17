@@ -435,7 +435,7 @@ namespace bin2cpp
     fprintf(fout, "  path[0] = '\\0';\n");
     fprintf(fout, "  for(size_t i=0; i< registered_files_count; i++)\n");
     fprintf(fout, "  {\n");
-    fprintf(fout, "    const Bin2cFile* f = bin2c_filemanager_get_file(i);\n");
+    fprintf(fout, "    const %s* f = bin2c_filemanager_get_file(i);\n", mContext.baseClass.c_str());
     fprintf(fout, "    if ( !f )\n");
     fprintf(fout, "    {\n");
     fprintf(fout, "      free(path);\n");
