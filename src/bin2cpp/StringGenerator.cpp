@@ -311,6 +311,9 @@ namespace bin2cpp
     fprintf(fout, "  file->load = %s_load;\n", functionIdentifier.c_str());
     fprintf(fout, "  file->unload = %s_free;\n", functionIdentifier.c_str());
     fprintf(fout, "  file->save = %s_save;\n", functionIdentifier.c_str());
+    fprintf(fout, "\n");
+    fprintf(fout, "  // load file by default on init as in c++ implementation");
+    fprintf(fout, "  file->load();\n");
 
     if ( mContext.registerFiles )
     {
