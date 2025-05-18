@@ -239,7 +239,8 @@ int main(int argc, char* argv[])
   args.version = false;
 
   Context c;
-  INameProvider& nameProvider = LegacyNameProvider();
+  LegacyNameProvider legacyNameProvider;
+  INameProvider& nameProvider = legacyNameProvider;
   std::string dummy;
 
   //help
