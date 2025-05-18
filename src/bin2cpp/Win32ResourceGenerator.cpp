@@ -138,7 +138,7 @@ namespace bin2cpp
     fprintf(cpp, "        if ( EnumProcessModules( hProcess, &hModule, sizeof(hModule), &cbNeeded) )\n");
     fprintf(cpp, "        {\n");
     fprintf(cpp, "          //Retrieve the resource\n");
-    fprintf(cpp, "          hResourceInfoBlock = FindResource(hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(mContext.inputFilePath.c_str()).c_str());
+    fprintf(cpp, "          hResourceInfoBlock = FindResourceA(hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(mContext.inputFilePath.c_str()).c_str());
     fprintf(cpp, "          if (hResourceInfoBlock)\n");
     fprintf(cpp, "          {\n");
     fprintf(cpp, "            hResHandle = LoadResource(hModule, hResourceInfoBlock);\n");
@@ -283,7 +283,7 @@ namespace bin2cpp
     fprintf(fout, "    if ( EnumProcessModules( info->hProcess, &info->hModule, sizeof(info->hModule), &cbNeeded) )\n");
     fprintf(fout, "    {\n");
     fprintf(fout, "      //Retrieve the resource\n");
-    fprintf(fout, "      info->hResourceInfoBlock = FindResource(info->hModule, L\"%s\", L\"CUSTOM\");\n", getRandomIdentifier(mContext.inputFilePath.c_str()).c_str());
+    fprintf(fout, "      info->hResourceInfoBlock = FindResourceA(info->hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(mContext.inputFilePath.c_str()).c_str());
     fprintf(fout, "      if (info->hResourceInfoBlock)\n");
     fprintf(fout, "      {\n");
     fprintf(fout, "        info->hResHandle = LoadResource(info->hModule, info->hResourceInfoBlock);\n");
