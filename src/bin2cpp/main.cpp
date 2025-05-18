@@ -223,11 +223,10 @@ void printUsage()
     "    [a-zA-Z0-9]    Matches any single letter (uppercase or lowercase) or digit.\n"
     "\n"
     "    For example:\n"
-    "       'ker*##.???' would match files that starts with 'ker', and ends with 2 digits, a dot and then 3 characters."
+    "       'ker*##.\?\?\?' would match files that starts with 'ker', and ends with 2 digits, a dot and then 3 characters.\n"
     "       --dir-include-filter=\"*.jpg:*.png\" would include all files whose file extension is 'jpg' or 'png'.\n"
     "       --dir-exclude-filter=\"*.bak\" would exclude all backup files.\n"
-    "       --dir-include-filter=\"*.log\" --dir-exclude-filter=\"debug.log\" would include all log files but not the one named 'debug.log'."
-    "\n";
+    "       --dir-include-filter=\"*.log\" --dir-exclude-filter=\"debug.log\" would include all log files but not the one named 'debug.log'.\n";
   printf("%s", usage);
 }
 
