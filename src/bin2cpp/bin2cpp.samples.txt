@@ -10,8 +10,8 @@ Test for:
   * Segment C generator
   * filemanager
   * registerfile
---file=..\..\test\bin2cpp_unittest\generated_files\testFileManager_C\testFileManager.1.bin --output=..\..\test\bin2cpp_unittest\generated_files\testFileManager_C --headerfile=_testFileManager.1.h --identifier=testFileManager1_c --managerfile=filemanager.h --override --code=c
---file=..\..\test\bin2cpp_unittest\generated_files\testFileManager_C\testFileManager.2.bin --output=..\..\test\bin2cpp_unittest\generated_files\testFileManager_C --headerfile=_testFileManager.2.h --identifier=testFileManager2_c --registerfile --override --code=c
+--file=..\..\test\bin2cpp_unittest\generated_files\testFileManager_C\testFileManager_C.1.bin --output=..\..\test\bin2cpp_unittest\generated_files\testFileManager_C --headerfile=_testFileManager_C.1.h --identifier=testFileManager1_c --managerfile=filemanager.h --override --code=c
+--file=..\..\test\bin2cpp_unittest\generated_files\testFileManager_C\testFileManager_C.2.bin --output=..\..\test\bin2cpp_unittest\generated_files\testFileManager_C --headerfile=_testFileManager_C.2.h --identifier=testFileManager2_c --registerfile --override --code=c
 
 Test directories:
 --dir=..\..\..\samples\demo_website\www --output=..\..\temp --code=c

@@ -823,12 +823,14 @@ APP_ERROR_CODES processManagerFiles(const Context & c)
   info << "...";
   ra::logging::Log(ra::logging::LOG_INFO, info.c_str());
 
+  const std::string& sourceFileExtension = "." + getDefaultCodeSourceFileExtension(c.code);
+
   //prepare output files path
   std::string cppFilename = c.managerHeaderFilename;
-  ra::strings::Replace(cppFilename, ".hpp", ".cpp");
-  ra::strings::Replace(cppFilename, ".h", ".cpp");
+  ra::strings::Replace(cppFilename, ".hpp", sourceFileExtension);
+  ra::strings::Replace(cppFilename, ".h", sourceFileExtension);
   std::string outputHeaderPath = c.outputDirPath + ra::filesystem::GetPathSeparatorStr() + c.managerHeaderFilename;
-  std::string outputCppPath = c.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
+  std::string outputSourcePath = c.outputDirPath + ra::filesystem::GetPathSeparatorStr() + cppFilename;
 
   ManagerGenerator generator;
 
@@ -840,7 +842,7 @@ APP_ERROR_CODES processManagerFiles(const Context & c)
   if (!headerResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
   
-  bool cppResult =    generateOutputFile(c, outputCppPath, &generator);
+  bool cppResult =    generateOutputFile(c, outputSourcePath, &generator);
   if (!cppResult)
     return APP_ERROR_UNABLETOCREATEOUTPUTFILES;
 
