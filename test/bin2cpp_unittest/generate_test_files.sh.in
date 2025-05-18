@@ -105,11 +105,23 @@ mkdir -p ${OUTDIR}
 @TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=array --override
 
+export TEST_NAME=testGeneratorArray10000_C
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=array --override --code=c
+
 export TEST_NAME=testGeneratorString10000
 export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p ${OUTDIR}
 @TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=string --override
+
+export TEST_NAME=testGeneratorString10000_C
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=string --override --code=c
 
 export TEST_NAME=testGeneratorSegment10000
 export OUTDIR=./generated_files/$TEST_NAME
@@ -117,23 +129,47 @@ mkdir -p ${OUTDIR}
 @TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=segment --override
 
+export TEST_NAME=testGeneratorSegment10000_C
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=segment --override --code=c
+
 export TEST_NAME=testGeneratorWin32
 export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p ${OUTDIR}
 @TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=win32 --override
 
+export TEST_NAME=testGeneratorWin32_C
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=win32 --override --code=c
+
 export TEST_NAME=testNamespace
 export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p ${OUTDIR}
 @TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
-@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=segment --override --namespace=foobar
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=segment --override --baseclass=Bin2cFile2 --namespace=foobar
+
+export TEST_NAME=testNamespace_C
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=segment --override --baseclass=Bin2cFile2 --namespace=foobar --code=c
 
 export TEST_NAME=testBaseClass
 export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p ${OUTDIR}
 @TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=segment --override --baseclass=Resource
+
+export TEST_NAME=testBaseClass_C
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=segment --override --baseclass=Resource --namespace=tbc --code=c
 
 export TEST_NAME=testEncodingOct
 export OUTDIR=./generated_files/$TEST_NAME
@@ -173,6 +209,14 @@ mkdir -p ${OUTDIR}
 @TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.2.bin --size=1000 --fill=random --seed=2
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.1.bin --output=$OUTDIR --headerfile=_$TEST_NAME.1.h --identifier=testFileManager1 --managerfile=FileManager.h --override
 @BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.2.bin --output=$OUTDIR --headerfile=_$TEST_NAME.2.h --identifier=testFileManager2 --registerfile --override
+
+export TEST_NAME=testFileManager_C
+export OUTDIR=./generated_files/$TEST_NAME
+mkdir -p ${OUTDIR}
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.1.bin --size=1000 --fill=random --seed=1
+@TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.2.bin --size=1000 --fill=random --seed=2
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.1.bin --output=$OUTDIR --headerfile=_$TEST_NAME.1.h --identifier=testFileManager1 --managerfile=filemanager.h --override --code=c
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.2.bin --output=$OUTDIR --headerfile=_$TEST_NAME.2.h --identifier=testFileManager2 --registerfile --override --code=c
 
 export TEST_NAME=testDir01
 export OUTDIR=./generated_files/$TEST_NAME

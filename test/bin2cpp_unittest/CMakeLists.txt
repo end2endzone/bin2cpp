@@ -7,15 +7,21 @@ include_directories(${GENERATED_TEST_FILES_DIR})    # for TestExtraction.cpp
 # These are required because each generated cpp file is including its header file
 # without using the parent directory.
 include_directories(${GENERATED_TEST_FILES_DIR}/testBaseClass)
+include_directories(${GENERATED_TEST_FILES_DIR}/testBaseClass_C)
 include_directories(${GENERATED_TEST_FILES_DIR}/testDir01/sources)
 include_directories(${GENERATED_TEST_FILES_DIR}/testEncodingHex)
 include_directories(${GENERATED_TEST_FILES_DIR}/testEncodingOct)
 include_directories(${GENERATED_TEST_FILES_DIR}/testFileManager)
+include_directories(${GENERATED_TEST_FILES_DIR}/testFileManager_C)
 include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorArray10000)
+include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorArray10000_C)
 include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorSegment10000)
+include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorSegment10000_C)
 include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorString10000)
+include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorString10000_C)
 if (WIN32)
   include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorWin32)
+  include_directories(${GENERATED_TEST_FILES_DIR}/testGeneratorWin32_C)
 endif()
 include_directories(${GENERATED_TEST_FILES_DIR}/testHtml100000)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue12)
@@ -28,6 +34,7 @@ include_directories(${GENERATED_TEST_FILES_DIR}/testIssue56b/generated_sources)
 include_directories(${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources)
 include_directories(${GENERATED_TEST_FILES_DIR}/testKeepDirectories)
 include_directories(${GENERATED_TEST_FILES_DIR}/testNamespace)
+include_directories(${GENERATED_TEST_FILES_DIR}/testNamespace_C)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom1)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom2)
 include_directories(${GENERATED_TEST_FILES_DIR}/testRandom3)
@@ -48,6 +55,8 @@ include_directories(${GENERATED_TEST_FILES_DIR}/testText100000)
 set(GENERATED_TEST_FILES 
   ${GENERATED_TEST_FILES_DIR}/testBaseClass/_testBaseClass.h
   ${GENERATED_TEST_FILES_DIR}/testBaseClass/_testBaseClass.cpp
+  ${GENERATED_TEST_FILES_DIR}/testBaseClass_C/_testBaseClass_C.h
+  ${GENERATED_TEST_FILES_DIR}/testBaseClass_C/_testBaseClass_C.c
   ${GENERATED_TEST_FILES_DIR}/testEncodingHex/_testEncodingHex.h
   ${GENERATED_TEST_FILES_DIR}/testEncodingHex/_testEncodingHex.cpp
   ${GENERATED_TEST_FILES_DIR}/testEncodingOct/_testEncodingOct.h
@@ -58,6 +67,12 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testGeneratorSegment10000/_testGeneratorSegment10000.cpp
   ${GENERATED_TEST_FILES_DIR}/testGeneratorString10000/_testGeneratorString10000.h
   ${GENERATED_TEST_FILES_DIR}/testGeneratorString10000/_testGeneratorString10000.cpp
+  ${GENERATED_TEST_FILES_DIR}/testGeneratorArray10000_C/_testGeneratorArray10000_C.h
+  ${GENERATED_TEST_FILES_DIR}/testGeneratorArray10000_C/_testGeneratorArray10000_C.c
+  ${GENERATED_TEST_FILES_DIR}/testGeneratorSegment10000_C/_testGeneratorSegment10000_C.h
+  ${GENERATED_TEST_FILES_DIR}/testGeneratorSegment10000_C/_testGeneratorSegment10000_C.c
+  ${GENERATED_TEST_FILES_DIR}/testGeneratorString10000_C/_testGeneratorString10000_C.h
+  ${GENERATED_TEST_FILES_DIR}/testGeneratorString10000_C/_testGeneratorString10000_C.c
   ${GENERATED_TEST_FILES_DIR}/testHtml100000/_testHtml100000.h
   ${GENERATED_TEST_FILES_DIR}/testHtml100000/_testHtml100000.cpp
   ${GENERATED_TEST_FILES_DIR}/testIssue12/_testIssue12.h
@@ -110,6 +125,8 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testIssue56c/generated_sources/index_5.h
   ${GENERATED_TEST_FILES_DIR}/testNamespace/_testNamespace.h
   ${GENERATED_TEST_FILES_DIR}/testNamespace/_testNamespace.cpp
+  ${GENERATED_TEST_FILES_DIR}/testNamespace_C/_testNamespace_C.h
+  ${GENERATED_TEST_FILES_DIR}/testNamespace_C/_testNamespace_C.c
   ${GENERATED_TEST_FILES_DIR}/testRandom1/_testRandom1.h
   ${GENERATED_TEST_FILES_DIR}/testRandom1/_testRandom1.cpp
   ${GENERATED_TEST_FILES_DIR}/testRandom2/_testRandom2.h
@@ -142,6 +159,12 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testFileManager/_testFileManager.2.cpp
   ${GENERATED_TEST_FILES_DIR}/testFileManager/FileManager.h
   ${GENERATED_TEST_FILES_DIR}/testFileManager/FileManager.cpp
+  ${GENERATED_TEST_FILES_DIR}/testFileManager_C/_testFileManager_C.1.h
+  ${GENERATED_TEST_FILES_DIR}/testFileManager_C/_testFileManager_C.1.c
+  ${GENERATED_TEST_FILES_DIR}/testFileManager_C/_testFileManager_C.2.h
+  ${GENERATED_TEST_FILES_DIR}/testFileManager_C/_testFileManager_C.2.c
+  ${GENERATED_TEST_FILES_DIR}/testFileManager_C/FileManager.h
+  ${GENERATED_TEST_FILES_DIR}/testFileManager_C/FileManager.c
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0001.h
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0002.h
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0003.h
@@ -177,6 +200,9 @@ if (WIN32)
       ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32/_testGeneratorWin32.h
       ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32/_testGeneratorWin32.cpp
       ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32/_testGeneratorWin32.rc
+      ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32_C/_testGeneratorWin32_C.h
+      ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32_C/_testGeneratorWin32_C.c
+      ${GENERATED_TEST_FILES_DIR}/testGeneratorWin32_C/_testGeneratorWin32_C.rc
   )
 endif()
 

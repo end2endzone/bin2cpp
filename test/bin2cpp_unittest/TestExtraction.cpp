@@ -69,6 +69,18 @@
 #undef BIN2CPP_EMBEDDEDFILE_CLASS
 #include "testBaseClass/_testBaseClass.h"
 
+extern "C"
+{
+  #include "testGeneratorArray10000_C/_testGeneratorArray10000_C.h"
+  #include "testGeneratorSegment10000_C/_testGeneratorSegment10000_C.h"
+  #include "testGeneratorString10000_C/_testGeneratorString10000_C.h"
+  #ifdef _WIN32
+    #include "testGeneratorWin32_C/_testGeneratorWin32_C.h"
+  #endif
+  #include "testNamespace_C/_testNamespace_C.h"
+  #include "testBaseClass_C/_testBaseClass_C.h"
+}
+
 extern const std::string & gGeneratedFilesDir;
 
 namespace TestExtractionUtils
@@ -330,6 +342,21 @@ TEST_F(TestExtraction, testGeneratorArray10000)
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
+TEST_F(TestExtraction, testGeneratorArray10000_C)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  Bin2cFile* file = bin2c_get_file_testgeneratorarray10000_c();
+  bool extractSuccess = file->save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert binary content is the same
+  std::string reason;
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
 TEST_F(TestExtraction, testGeneratorSegment10000)
 {
   static const std::string expectedFilePath = getExpectedFilePath();
@@ -337,6 +364,21 @@ TEST_F(TestExtraction, testGeneratorSegment10000)
 
   const bin2cpp::File & file = bin2cpp::getTestGeneratorSegment10000File();
   bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert binary content is the same
+  std::string reason;
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testGeneratorSegment10000_C)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const Bin2cFile* file = bin2c_get_file_testgeneratorsegment10000_c();
+  bool extractSuccess = file->save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
   //assert binary content is the same
@@ -360,6 +402,21 @@ TEST_F(TestExtraction, testGeneratorString10000)
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
+TEST_F(TestExtraction, testGeneratorString10000_C)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const Bin2cFile* file = bin2c_get_file_testgeneratorstring10000_c();
+  bool extractSuccess = file->save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert binary content is the same
+  std::string reason;
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
 #ifdef _WIN32
 TEST_F(TestExtraction, testGeneratorWin32)
 {
@@ -368,6 +425,21 @@ TEST_F(TestExtraction, testGeneratorWin32)
 
   const bin2cpp::File & file = bin2cpp::getTestGeneratorWin32File();
   bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert binary content is the same
+  std::string reason;
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testGeneratorWin32_C)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const Bin2cFile* file = bin2c_get_file_testgeneratorwin32_c();
+  bool extractSuccess = file->save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
   //assert binary content is the same
@@ -422,6 +494,21 @@ TEST_F(TestExtraction, testNamespace)
   ASSERT_TRUE(equal) << reason.c_str();
 }
 
+TEST_F(TestExtraction, testNamespace_C)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const Bin2cFile2* file = foobar_get_file_testnamespace_c();
+  bool extractSuccess = file->save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert binary content is the same
+  std::string reason;
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
 TEST_F(TestExtraction, testBaseClass)
 {
   static const std::string expectedFilePath = getExpectedFilePath();
@@ -429,6 +516,21 @@ TEST_F(TestExtraction, testBaseClass)
 
   const bin2cpp::Resource & file = bin2cpp::getTestBaseClassFile();
   bool extractSuccess = file.save(outputFilePath.c_str());
+  ASSERT_TRUE(extractSuccess);
+
+  //assert binary content is the same
+  std::string reason;
+  bool equal = ra::testing::IsFileEquals(expectedFilePath.c_str(), outputFilePath.c_str(), reason);
+  ASSERT_TRUE(equal) << reason.c_str();
+}
+
+TEST_F(TestExtraction, testBaseClass_C)
+{
+  static const std::string expectedFilePath = getExpectedFilePath();
+  static const std::string outputFilePath   = getActualFilePath();
+
+  const Resource* file = tbc_get_file_testbaseclass_c();
+  bool extractSuccess = file->save(outputFilePath.c_str());
   ASSERT_TRUE(extractSuccess);
 
   //assert binary content is the same

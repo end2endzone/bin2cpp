@@ -121,11 +121,25 @@ mkdir %OUTDIR% 1>NUL 2>NUL
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=array --override
 if %errorlevel% neq 0 exit /b %errorlevel%
 
+set TEST_NAME=testGeneratorArray10000_C
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
+@BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=array --override --code=c
+if %errorlevel% neq 0 exit /b %errorlevel%
+
 set TEST_NAME=testGeneratorString10000
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=string --override
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+set TEST_NAME=testGeneratorString10000_C
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
+@BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME% --chunksize=450 --generator=string --override --code=c
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testGeneratorSegment10000
@@ -135,11 +149,25 @@ mkdir %OUTDIR% 1>NUL 2>NUL
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override
 if %errorlevel% neq 0 exit /b %errorlevel%
 
+set TEST_NAME=testGeneratorSegment10000_C
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
+@BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override --code=c
+if %errorlevel% neq 0 exit /b %errorlevel%
+
 set TEST_NAME=testGeneratorWin32
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=win32 --override
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+set TEST_NAME=testGeneratorWin32_C
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
+@BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=win32 --override --code=c
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testNamespace
@@ -149,11 +177,25 @@ mkdir %OUTDIR% 1>NUL 2>NUL
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override --namespace=foobar
 if %errorlevel% neq 0 exit /b %errorlevel%
 
+set TEST_NAME=testNamespace_C
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
+@BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override --baseclass=Bin2cFile2 --namespace=foobar --code=c
+if %errorlevel% neq 0 exit /b %errorlevel%
+
 set TEST_NAME=testBaseClass
 set OUTDIR=.\generated_files\%TEST_NAME%
 mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override --baseclass=Resource
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+set TEST_NAME=testBaseClass_C
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.bin --size=10000 --fill=sequential
+@BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.h --identifier=%TEST_NAME%  --chunksize=450 --generator=segment --override --baseclass=Resource --namespace=tbc --code=c
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testEncodingOct
@@ -199,6 +241,15 @@ mkdir %OUTDIR% 1>NUL 2>NUL
 @TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.2.bin --size=1000 --fill=random --seed=2
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.1.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.1.h --identifier=%TEST_NAME%1 --managerfile=FileManager.h --override
 @BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.2.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.2.h --identifier=%TEST_NAME%2 --registerfile --override
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+set TEST_NAME=testFileManager_C
+set OUTDIR=.\generated_files\%TEST_NAME%
+mkdir %OUTDIR% 1>NUL 2>NUL
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.1.bin --size=1000 --fill=random --seed=1
+@TESTFILEGENERATOR_TARGET_FILE@ --file=%OUTDIR%\%TEST_NAME%.2.bin --size=1000 --fill=random --seed=2
+@BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.1.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.1.h --identifier=%TEST_NAME%1 --managerfile=filemanager.h --override --code=c
+@BIN2CPP_TARGET_FILE@ --noheader --file=%OUTDIR%\%TEST_NAME%.2.bin --output=%OUTDIR% --headerfile=_%TEST_NAME%.2.h --identifier=%TEST_NAME%2 --registerfile --override --code=c
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 set TEST_NAME=testDir01
