@@ -338,7 +338,7 @@ namespace bin2cpp
     fprintf(fout, "}\n");
     fprintf(fout, "\n");
 
-    fprintf(fout, "inline void %s_init()\n", functionIdentifier.c_str());
+    fprintf(fout, "static inline void %s_init()\n", functionIdentifier.c_str());
     fprintf(fout, "{\n");
     fprintf(fout, "  // remember we already initialized\n");
     fprintf(fout, "  if ( %s_initialized )\n", functionIdentifier.c_str());
