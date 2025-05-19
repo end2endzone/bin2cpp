@@ -208,9 +208,26 @@ endif()
 
 set(TEMPLATE_SCRIPT_FILE ${BIN2CPP_UNITTEST_SOURCE_DIR}/generate_test_files.${SCRIPT_FILE_EXTENSION}.in)
 
-#  https://stackoverflow.com/questions/18427877/add-custom-build-step-in-cmake
+# Define a dummy file to act as a stamp for file generation completion
+set(GENERATION_STAMP ${GENERATED_TEST_FILES_DIR}/generated_files.stamp)
+
+# The script generates multiple files from a single command, but if I try to list all of them as OUTPUT of the add_custom_command it won't work.
+# CMake assumes each output is independently produced, so it starts compiling as soon as any one is generated, not necessarily all.
+#
+# CMake tracks outputs individually, so even if I have `OUTPUT ${GENERATED_TEST_FILES}`, it sees each output as possibly ready at different times.
+# When one appears on disk (even partially), it may trigger compilation of bin2cpp_unittest, before the script finishes generating all files.
+#
+# To work around this behavior, is using a stamp file which is created after the generation script has run which indicates to CMake we are ready to compile bin2cpp_unittest.
+# Required steps:
+#   Only the stamp file is listed as OUTPUT. This prevents CMake from checking each generated file independently.
+#   The actual source files are listed as BYPRODUCTS, so CMake knows they will appear but doesn't rely on their timestamps individually.
+#   add_dependencies() ensures the executable only starts compiling after the stamp file is created, i.e., after the script finishes.
+#
+# To force CMake to regenerate the files, delete the stamp file.
+# 
 if (WIN32)
-  add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
+  add_custom_command( OUTPUT ${GENERATION_STAMP}
+                      BYPRODUCTS ${GENERATED_TEST_FILES}
                       # Execute prebuild copy
                       COMMAND ${CMAKE_COMMAND}
                         -DBIN2CPP_TARGET_FILE=$<TARGET_FILE:bin2cpp>
@@ -223,10 +240,17 @@ if (WIN32)
                       # Execute generator script
                       COMMAND echo Calling 'generate_test_files.bat' script...
                       COMMAND cd /d ${CMAKE_CURRENT_BINARY_DIR} && call generate_test_files.bat
+
+                      # Tell CMake that we generated the last file of the series
+                      COMMAND ${CMAKE_COMMAND} -E touch ${GENERATION_STAMP}
+
+                      COMMENT "Generating test files"
+                      VERBATIM
   )
 else()
   # Linux build
-  add_custom_command( OUTPUT ${GENERATED_TEST_FILES}
+  add_custom_command( OUTPUT ${GENERATION_STAMP}
+                      BYPRODUCTS ${GENERATED_TEST_FILES}
                       # Execute prebuild copy
                       COMMAND ${CMAKE_COMMAND}
                         -DBIN2CPP_TARGET_FILE=$<TARGET_FILE:bin2cpp>
@@ -235,21 +259,23 @@ else()
                         -DBIN2CPP_UNITTEST_PROJECT_DIR=${CMAKE_CURRENT_BINARY_DIR}
                         -DBIN2CPP_UNITTEST_OUTPUT_DIR=${CMAKE_BINARY_DIR}/bin
                         -P ${CMAKE_CURRENT_SOURCE_DIR}/generate_test_files.cmake
-                      
+
                       # Execute generator script
                       COMMAND echo Calling 'generate_test_files.sh' script...
                       COMMAND cd ${CMAKE_CURRENT_BINARY_DIR} && ./generate_test_files.sh
+
+                      # Tell CMake that we generated the last file of the series
+                      COMMAND ${CMAKE_COMMAND} -E touch ${GENERATION_STAMP}
+
+                      COMMENT "Generating test files"
+                      VERBATIM
   )
 endif()
 
-# target build_test_files is always built
-add_custom_target(build_test_files ALL
-  COMMAND echo "Building unit test files..."
-  
-  # If the files exists, then commands related to these files won't be executed
-  # DONOT let other target depends on the same OUTPUT as current target,
-  #   or it may be bad when doing parallel make
-  DEPENDS ${GENERATED_TEST_FILES}
+# Create a custom target that depends on the generated files
+add_custom_target(generate_test_files
+    DEPENDS ${GENERATION_STAMP}
+    COMMENT "Ensuring file generation stamp exist"
 )
 
 # Show all generated files in a common folder
@@ -260,6 +286,9 @@ source_group("External Files" FILES
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.cpp
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.h
 )
+
+# Ensure source files are properly recognized as generated
+set_source_files_properties(${GENERATED_TEST_FILES} PROPERTIES GENERATED TRUE)
 
 add_executable(bin2cpp_unittest
   ${BIN2CPP_VERSION_HEADER}
@@ -288,7 +317,8 @@ add_executable(bin2cpp_unittest
 
 add_dependencies(bin2cpp_unittest bin2cpp)
 add_dependencies(bin2cpp_unittest testfilegenerator)
-add_dependencies(bin2cpp_unittest build_test_files)
+add_dependencies(bin2cpp_unittest generate_test_files)
+
 
 # Unit test projects requires to link with pthread if also linking with gtest
 if(NOT WIN32)
