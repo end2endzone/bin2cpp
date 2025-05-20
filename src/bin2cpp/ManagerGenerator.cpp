@@ -442,7 +442,6 @@ namespace bin2cpp
     fprintf(fout, "      return false;\n");
     fprintf(fout, "    }\n");
     fprintf(fout, "    \n");
-    fprintf(fout, "    char path[32767] = { 0 };\n");
     fprintf(fout, "    snprintf(path, sizeof(path), \"%%s%%c%%s\", directory, PATH_SEPARATOR_CHAR, f->file_path);\n");
     fprintf(fout, "    \n");
     fprintf(fout, "    if (!%s_filemanager_create_parent_directories(path))\n", mContext.codeNamespace.c_str());

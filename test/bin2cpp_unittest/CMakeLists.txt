@@ -163,8 +163,8 @@ set(GENERATED_TEST_FILES
   ${GENERATED_TEST_FILES_DIR}/testFileManager_C/_testFileManager_C.1.c
   ${GENERATED_TEST_FILES_DIR}/testFileManager_C/_testFileManager_C.2.h
   ${GENERATED_TEST_FILES_DIR}/testFileManager_C/_testFileManager_C.2.c
-  ${GENERATED_TEST_FILES_DIR}/testFileManager_C/FileManager.h
-  ${GENERATED_TEST_FILES_DIR}/testFileManager_C/FileManager.c
+  ${GENERATED_TEST_FILES_DIR}/testFileManager_C/filemanager.h
+  ${GENERATED_TEST_FILES_DIR}/testFileManager_C/filemanager.c
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0001.h
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0002.h
   ${GENERATED_TEST_FILES_DIR}/testDir01/sources/_img0003.h
