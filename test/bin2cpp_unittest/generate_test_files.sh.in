@@ -151,7 +151,7 @@ export TEST_NAME=testNamespace
 export OUTDIR=./generated_files/$TEST_NAME
 mkdir -p ${OUTDIR}
 @TESTFILEGENERATOR_TARGET_FILE@ --file=$OUTDIR/$TEST_NAME.bin --size=10000 --fill=sequential
-@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=segment --override --baseclass=Bin2cFile2 --namespace=foobar
+@BIN2CPP_TARGET_FILE@ --noheader --file=$OUTDIR/$TEST_NAME.bin --output=$OUTDIR --headerfile=_$TEST_NAME.h --identifier=$TEST_NAME  --chunksize=450 --generator=segment --override --namespace=foobar
 
 export TEST_NAME=testNamespace_C
 export OUTDIR=./generated_files/$TEST_NAME
