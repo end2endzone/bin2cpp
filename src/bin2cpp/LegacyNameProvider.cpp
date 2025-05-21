@@ -22,29 +22,43 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef ARRAYGENERATOR_H
-#define ARRAYGENERATOR_H
+#include "LegacyNameProvider.h"
 
-#include "BaseGenerator.h"
+#include "common.h"
+
+#include "rapidassist/strings.h"
+#include "rapidassist/filesystem.h"
 
 namespace bin2cpp
 {
-
-  ///<summary>
-  ///This generator stores data in a huge array.
-  ///The syntax is the following:     const char foo[] = { 97, 98, 99, 100, ..., 0 };
-  ///</summary>
-  class ArrayGenerator : public BaseGenerator
+  LegacyNameProvider::LegacyNameProvider()
   {
-  public:
-    ArrayGenerator();
-    virtual ~ArrayGenerator();
-    virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * cpp_file_path);
-    virtual bool createCSourceFile(const char * cpp_file_path);
-    virtual bool printFileContent();
-  };
+  }
+
+  LegacyNameProvider::~LegacyNameProvider()
+  {
+  }
+
+  std::string LegacyNameProvider::getDefaultFunctionIdentifier(const std::string& path, Dictionary& dict)
+  {
+    std::string output;
+
+    //use the file name without extension as 'identifier'.
+    output = getUniqueFunctionIdentifierFromPath(path.c_str(), dict);
+    output = ra::strings::CapitalizeFirstCharacter(output);
+
+    return output;
+  }
+
+  std::string LegacyNameProvider::getDefaultHeaderFile(const std::string& path)
+  {
+    std::string output;
+
+    //use the file name without extension as 'headerfile'.
+    output = ra::filesystem::GetFilenameWithoutExtension(path.c_str());
+    output += ".h";
+
+    return output;
+  }
 
 }; //bin2cpp
-
-#endif //ARRAYGENERATOR_H

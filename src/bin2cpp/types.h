@@ -22,29 +22,20 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef ARRAYGENERATOR_H
-#define ARRAYGENERATOR_H
+#ifndef TYPES_H
+#define TYPES_H
 
-#include "BaseGenerator.h"
-
+#include <string>
+#include <set>
+ 
 namespace bin2cpp
 {
 
   ///<summary>
-  ///This generator stores data in a huge array.
-  ///The syntax is the following:     const char foo[] = { 97, 98, 99, 100, ..., 0 };
+  ///A set of names stored as a Distionnary
   ///</summary>
-  class ArrayGenerator : public BaseGenerator
-  {
-  public:
-    ArrayGenerator();
-    virtual ~ArrayGenerator();
-    virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * cpp_file_path);
-    virtual bool createCSourceFile(const char * cpp_file_path);
-    virtual bool printFileContent();
-  };
+  typedef std::set<std::string> Dictionary;
 
 }; //bin2cpp
 
-#endif //ARRAYGENERATOR_H
+#endif //TYPES_H

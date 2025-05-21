@@ -24,23 +24,29 @@
 
 #ifndef ENUMS_H
 #define ENUMS_H
-
-#include <string>
-#include "Context.h"
  
 namespace bin2cpp
 {
 
   ///<summary>
-  ///Defines the different type of cpp encoding.
-  ///See setCppEncoder() and getCppEncoder() functions.
+  ///Defines the different types of cpp encoding.
   ///</summary>
   enum CppEncoderEnum
   {
       CPP_ENCODER_OCT,
       CPP_ENCODER_HEX,
   };
+
+  ///<summary>
+  ///Defines the different types of programming language code output.
+  ///</summary>
+  enum CodeGenerationEnum
+  {
+      CODE_GENERATION_UNKNOW,
+      CODE_GENERATION_CPP,
+      CODE_GENERATION_C,
+  };
   
 }; //bin2cpp
 
-#endif //IGENERATOR_H
+#endif //ENUMS_H

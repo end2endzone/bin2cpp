@@ -22,29 +22,27 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef ARRAYGENERATOR_H
-#define ARRAYGENERATOR_H
+#ifndef LEGACYNAMEPROVIDER_H
+#define LEGACYNAMEPROVIDER_H
 
-#include "BaseGenerator.h"
+#include "INameProvider.h"
 
 namespace bin2cpp
 {
-
   ///<summary>
-  ///This generator stores data in a huge array.
-  ///The syntax is the following:     const char foo[] = { 97, 98, 99, 100, ..., 0 };
+  ///This is the legacy name generator which generates names for version 3.0.1 and before.
   ///</summary>
-  class ArrayGenerator : public BaseGenerator
+  class LegacyNameProvider : public virtual INameProvider
   {
   public:
-    ArrayGenerator();
-    virtual ~ArrayGenerator();
-    virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * cpp_file_path);
-    virtual bool createCSourceFile(const char * cpp_file_path);
-    virtual bool printFileContent();
+    LegacyNameProvider();
+    virtual ~LegacyNameProvider();
+
+    //INameProvider methods
+    virtual std::string getDefaultFunctionIdentifier(const std::string& path, Dictionary& dict);
+    virtual std::string getDefaultHeaderFile(const std::string& path);
   };
 
 }; //bin2cpp
 
-#endif //ARRAYGENERATOR_H
+#endif //LEGACYNAMEPROVIDER_H

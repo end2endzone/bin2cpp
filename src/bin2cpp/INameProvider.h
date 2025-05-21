@@ -22,29 +22,32 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef ARRAYGENERATOR_H
-#define ARRAYGENERATOR_H
+#ifndef INAME_PROVIDER_H
+#define INAME_PROVIDER_H
 
-#include "BaseGenerator.h"
-
+#include "types.h"
+ 
 namespace bin2cpp
 {
 
-  ///<summary>
-  ///This generator stores data in a huge array.
-  ///The syntax is the following:     const char foo[] = { 97, 98, 99, 100, ..., 0 };
-  ///</summary>
-  class ArrayGenerator : public BaseGenerator
+  class INameProvider
   {
   public:
-    ArrayGenerator();
-    virtual ~ArrayGenerator();
-    virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * cpp_file_path);
-    virtual bool createCSourceFile(const char * cpp_file_path);
-    virtual bool printFileContent();
-  };
 
+    ///<summary>
+    ///Get the name of a function identifier based on a given file path.
+    ///</summary>
+    ///<param name="c">The new context.</param>
+    virtual std::string getDefaultFunctionIdentifier(const std::string & path, Dictionary & dict) = 0;
+
+    ///<summary>
+    ///Get the name of a function identifier based on a given file path.
+    ///</summary>
+    ///<param name="c">The new context.</param>
+    virtual std::string getDefaultHeaderFile(const std::string& path) = 0;
+
+  };
+  
 }; //bin2cpp
 
-#endif //ARRAYGENERATOR_H
+#endif //INAME_PROVIDER_H

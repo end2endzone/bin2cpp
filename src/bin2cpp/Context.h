@@ -72,6 +72,7 @@ namespace bin2cpp
     std::string generatorName;
     std::vector<std::string> directoryIncludeFilters;
     std::vector<std::string> directoryExcludeFilters;
+    CodeGenerationEnum code;
 
     void reset();
 

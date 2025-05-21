@@ -31,9 +31,11 @@
 #include <set>
 #include <vector>
 
+#include "types.h"
+#include "enums.h"
+
 namespace bin2cpp
 {
-  typedef std::set<std::string> Dictionary;
 
   ///<summary>
   ///Returns the application version number.
@@ -61,6 +63,20 @@ namespace bin2cpp
   ///<param name="path">An valid file path.</param>
   ///<return>Returns true if path is a c++ source file. Returns false otherwise.<return>
   bool isCppSourceFile(const std::string & path);
+
+  ///<summary>
+  ///Determine if a given path is a C header file.
+  ///</summary>
+  ///<param name="path">An valid file path.</param>
+  ///<return>Returns true if path is a C header file. Returns false otherwise.<return>
+  bool isCHeaderFile(const std::string & path);
+
+  ///<summary>
+  ///Determine if a given path is a C source file.
+  ///</summary>
+  ///<param name="path">An valid file path.</param>
+  ///<return>Returns true if path is a C source file. Returns false otherwise.<return>
+  bool isCSourceFile(const std::string & path);
 
   ///<summary>
   ///Determine the appropriate macro name for the include guard of the given c++ header file.
@@ -140,6 +156,20 @@ namespace bin2cpp
   ///<param name="separator">The character that separate the values in the string.</param>
   ///<return>Returns the combined string.<return>
   std::string strJoin(const std::vector<std::string>& values, char separator);
+
+  ///<summary>
+  ///Parse a CodeGenerationEnum from a string.
+  ///</summary>
+  ///<param name="value">The string value representing of the code language.</param>
+  ///<return>Returns a valid CodeGenerationEnum value. Returns CODE_GENERATION_UNKNOW on parsing error.<return>
+  CodeGenerationEnum parseCode(const std::string& value);
+
+  ///<summary>
+  ///Get the default source file extension for the given CodeGenerationEnum.
+  ///</summary>
+  ///<param name="code">The code generation language.</param>
+  ///<return>Returns a valid file extension valu that matches the given code. Returns an empty string otherwise.<return>
+  const std::string & getDefaultCodeSourceFileExtension(CodeGenerationEnum code);
 
 }; //bin2cpp
 

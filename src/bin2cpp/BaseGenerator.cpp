@@ -61,13 +61,33 @@ namespace bin2cpp
 
   std::string BaseGenerator::getGetterFunctionName()
   {
-    //Uppercase function identifier
-    std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mContext.functionIdentifier);
 
     std::string getter;
-    getter.append("get");
-    getter.append(functionIdentifier);
-    getter.append("File");
+    switch ( mContext.code )
+    {
+    default:
+    case CODE_GENERATION_CPP:
+      {
+        //Uppercase function identifier
+        std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(mContext.functionIdentifier);
+
+        getter.append("get");
+        getter.append(functionIdentifier);
+        getter.append("File");
+      }
+      break;
+    case CODE_GENERATION_C:
+      {
+        //Uppercase function identifier
+        std::string functionIdentifier = ra::strings::Lowercase(mContext.functionIdentifier);
+
+        getter.append(mContext.codeNamespace);
+        getter.append("_get_file_");
+        getter.append(functionIdentifier);
+    }
+      break;
+    };
+
     return getter;
   }
 
@@ -75,7 +95,17 @@ namespace bin2cpp
   {
     //Build header file path
     std::string headerPath = cpp_file_path;
-    ra::strings::Replace(headerPath, ".cpp", ".h");
+    switch ( mContext.code )
+    {
+    default:
+    case CODE_GENERATION_CPP:
+      ra::strings::Replace(headerPath, ".cpp", ".h");
+      break;
+    case CODE_GENERATION_C:
+      ra::strings::Replace(headerPath, ".c", ".h");
+      break;
+    };
+
     return headerPath;
   }
 
@@ -83,7 +113,17 @@ namespace bin2cpp
   {
     //Build header file path
     std::string cppPath = header_file_path;
-    ra::strings::Replace(cppPath, ".cpp", ".h");
+    switch ( mContext.code )
+    {
+    default:
+    case CODE_GENERATION_CPP:
+      ra::strings::Replace(cppPath, ".cpp", ".h");
+      break;
+    case CODE_GENERATION_C:
+      ra::strings::Replace(cppPath, ".c", ".h");
+      break;
+    };
+
     return cppPath;
   }
 
@@ -127,7 +167,7 @@ namespace bin2cpp
     return output;
   }
 
-  std::string BaseGenerator::getFileManagerRegistrationTemplate()
+  std::string BaseGenerator::getCppFileManagerRegistrationImplementationTemplate()
   {
     if (!mContext.registerFiles)
       return std::string();
@@ -139,6 +179,41 @@ namespace bin2cpp
     output << "  typedef const " << mContext.baseClass << " & (*t_func)();\n";
     output << "  extern bool RegisterFile(t_func iFunctionPointer);\n";
     output << "  static bool k" << className << "Registered = " << mContext.codeNamespace << "::RegisterFile(&" << getGetterFunctionName() << ");\n";
+    return output;
+  }
+
+  std::string BaseGenerator::getCFileManagerRegistrationPredeclarationTemplate()
+  {
+    if ( !mContext.registerFiles )
+      return std::string();
+
+    std::string output;
+    output << "extern bool " << mContext.codeNamespace << "_filemanager_register_file(" << mContext.baseClass << " * file); \n";
+    output << "\n";
+    return output;
+  }
+
+  std::string BaseGenerator::getCFileManagerRegistrationImplementationTemplate()
+  {
+    if ( !mContext.registerFiles )
+      return std::string();
+
+    //Lowercase function identifier
+    std::string functionIdentifier = ra::strings::Lowercase(mContext.functionIdentifier);
+
+    std::string output;
+    output << "#if (defined(__GNUC__) && (__GNUC__ >= 4)) || defined(__clang__)  // GCC 4.0+ required, Clang supports it by default\n";
+    output << "__attribute__((constructor))\n";
+    output << "#endif\n";
+    output << "void " << mContext.codeNamespace << "_register_file_static_init_" << functionIdentifier << "(void)\n";
+    output << "{\n";
+    output << "  " << mContext.baseClass << "* this_file = " << mContext.codeNamespace << "_get_file_" << functionIdentifier << "();\n";
+    output << "  " << mContext.codeNamespace << "_filemanager_register_file(this_file);\n";
+    output << "}\n";
+    output << "#if _MSC_VER >= 1920  // Visual Studio 2019 or later\n";
+    output << "#pragma section(\".CRT$XCU\", read)\n";
+    output << "__declspec(allocate(\".CRT$XCU\")) void (*init_ptr_" << functionIdentifier << ")(void) = " << mContext.codeNamespace << "_register_file_static_init_" << functionIdentifier << ";\n";
+    output << "#endif\n";
     return output;
   }
 
@@ -222,6 +297,50 @@ namespace bin2cpp
     output = "return \"";
     output += path;
     output += "\";";
+    return output;
+  }
+
+  std::string BaseGenerator::getFileClassFileName()
+  {
+    std::string output;
+
+    std::string inputFileName = ra::filesystem::GetFilename(mContext.inputFilePath.c_str());
+
+    //return default implementation
+    output += inputFileName;
+    return output;
+  }
+
+  std::string BaseGenerator::getFileClassFilePath()
+  {
+    std::string output;
+
+    //convert mReportedFilePath string to c++
+    std::string path = mContext.reportedFilePath;
+#ifdef _WIN32
+    //escape backslash characters for c++
+    static const std::string BACKSLASH = "\\";
+    static const std::string BACKSLASH_ESCAPED = "\\\\";
+    ra::strings::Replace(path, BACKSLASH, BACKSLASH_ESCAPED);
+#endif
+
+    //is there a reported path specified ?
+    const char * reported_path = mContext.reportedFilePath.c_str();
+    if (reported_path != NULL && reported_path[0] != '\0')
+    {
+      output += path;
+      return output;
+    }
+    else
+    {
+      //if reported path is not specified ?
+      //report the same as getFileName()
+      output = getFileClassFileName();
+      return output;
+    }
+
+    //return default implementation
+    output += path;
     return output;
   }
 
@@ -318,6 +437,58 @@ namespace bin2cpp
     fclose(input);
 
     return true;
+  }
+
+  bool BaseGenerator::createCHeaderFile(const char* file_path)
+  {
+    FILE* header = fopen(file_path, "w");
+    if ( !header )
+      return false;
+
+    //define macro guard matching the filename
+    std::string macroGuard = getCppIncludeGuardMacroName(file_path);
+
+    std::string classMacroGuardPrefix = getClassMacroGuardPrefix();
+    std::string fileHeader = getHeaderTemplate();
+
+    fprintf(header, "%s", fileHeader.c_str());
+    fprintf(header, "#ifndef %s\n", macroGuard.c_str());
+    fprintf(header, "#define %s\n", macroGuard.c_str());
+    fprintf(header, "\n");
+    fprintf(header, "#include <stddef.h>\n");
+    fprintf(header, "#include <stdbool.h>\n");
+    fprintf(header, "\n");
+    fprintf(header, "#ifndef %s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
+    fprintf(header, "#define %s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
+    fprintf(header, "typedef struct %s %s;\n", mContext.baseClass.c_str(), mContext.baseClass.c_str());
+    fprintf(header, "typedef bool(*%s_load_func)();\n", mContext.codeNamespace.c_str());
+    fprintf(header, "typedef void(*%s_free_func)();\n", mContext.codeNamespace.c_str());
+    fprintf(header, "typedef bool(*%s_save_func)(const char*);\n", mContext.codeNamespace.c_str());
+    fprintf(header, "typedef struct %s\n", mContext.baseClass.c_str());
+    fprintf(header, "{\n");
+    fprintf(header, "  size_t size;\n");
+    fprintf(header, "  const char* file_name;\n");
+    fprintf(header, "  const char* file_path;\n");
+    fprintf(header, "  const unsigned char* buffer;\n");
+    fprintf(header, "  %s_load_func load;\n", mContext.codeNamespace.c_str());
+    fprintf(header, "  %s_free_func unload;\n", mContext.codeNamespace.c_str());
+    fprintf(header, "  %s_save_func save;\n", mContext.codeNamespace.c_str());
+    fprintf(header, "} %s;\n", mContext.baseClass.c_str());
+    fprintf(header, "typedef %s* %sPtr;\n", mContext.baseClass.c_str(), mContext.baseClass.c_str());
+    fprintf(header, "#endif //%s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
+    fprintf(header, "%s* %s(void);\n", mContext.baseClass.c_str(), getGetterFunctionName().c_str());
+    fprintf(header, "\n");
+    fprintf(header, "#endif //%s\n", macroGuard.c_str());
+
+    fclose(header);
+
+    return true;
+  }
+
+  bool BaseGenerator::createCSourceFile(const char* file_path)
+  {
+    // not supported yet
+    return false;
   }
 
 }; //bin2cpp

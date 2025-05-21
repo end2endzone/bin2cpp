@@ -62,6 +62,20 @@ namespace bin2cpp
     virtual bool createCppSourceFile(const char * cpp_file_path) = 0;
 
     ///<summary>
+    ///Creates a header file for embedding a given file into C source code.
+    ///</summary>
+    ///<param name="file_path">The path of the header file (*.h) to generate.</param>
+    ///<returns>Returns true when the file was created. Returns false otherwise.</returns>
+    virtual bool createCHeaderFile(const char* file_path) = 0;
+
+    ///<summary>
+    ///Creates a C source file for embedding a given file into C source code.
+    ///</summary>
+    ///<param name="file_path">The path of the source file (*.c) to generate.</param>
+    ///<returns>Returns true when the file was created. Returns false otherwise.</returns>
+    virtual bool createCSourceFile(const char* file_path) = 0;
+
+    ///<summary>
     ///Print the encoded file content to stdout
     ///</summary>
     ///<returns>Returns true when the operation is succesful. Returns false otherwise.</returns>

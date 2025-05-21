@@ -94,6 +94,22 @@ namespace bin2cpp
     return false;
   }
 
+  bool isCHeaderFile(const std::string & path)
+  {
+    std::string extension = ra::strings::Uppercase(ra::filesystem::GetFileExtention(path));
+    if (extension == "H")
+      return true;
+    return false;
+  }
+
+  bool isCSourceFile(const std::string & path)
+  {
+    std::string extension = ra::strings::Uppercase(ra::filesystem::GetFileExtention(path));
+    if (extension == "C")
+      return true;
+    return false;
+  }
+
   std::string getCppIncludeGuardMacroName(const std::string & path)
   {
     static const std::string EMPTY_STRING;
@@ -362,6 +378,34 @@ namespace bin2cpp
     }
 
     return output;
+  }
+
+  CodeGenerationEnum parseCode(const std::string& value)
+  {
+    std::string value_upper = ra::strings::Uppercase(value);
+    if ( value_upper == "C" )
+      return CodeGenerationEnum::CODE_GENERATION_C;
+    if ( value_upper == "CPP" || value_upper == "C++" )
+      return CodeGenerationEnum::CODE_GENERATION_CPP;
+    return CodeGenerationEnum::CODE_GENERATION_UNKNOW;
+  }
+
+  const std::string& getDefaultCodeSourceFileExtension(CodeGenerationEnum code)
+  {
+    static const std::string EMPTY = "";
+    static const std::string CPP = "cpp";
+    static const std::string C = "c";
+    switch ( code )
+    {
+    case CODE_GENERATION_UNKNOW:
+      return EMPTY;
+    case CODE_GENERATION_CPP:
+      return CPP;
+    case CODE_GENERATION_C:
+      return C;
+    default:
+      return EMPTY;
+    };
   }
 
 }; //bin2cpp

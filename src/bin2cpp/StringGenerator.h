@@ -40,6 +40,7 @@ namespace bin2cpp
     virtual ~StringGenerator();
     virtual const char * getName() const;
     virtual bool createCppSourceFile(const char * cpp_file_path);
+    virtual bool createCSourceFile(const char* file_path);
   };
 
 }; //bin2cpp

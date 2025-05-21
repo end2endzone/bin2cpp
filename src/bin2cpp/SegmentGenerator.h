@@ -41,6 +41,7 @@ namespace bin2cpp
     virtual ~SegmentGenerator();
     virtual const char * getName() const;
     virtual bool createCppSourceFile(const char * cpp_file_path);
+    virtual bool createCSourceFile(const char* file_path);
   };
 
 }; //bin2cpp

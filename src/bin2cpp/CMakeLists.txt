@@ -21,6 +21,9 @@ add_executable(bin2cpp
   crc32.h
   enums.h
   IGenerator.h
+  INameProvider.h
+  LegacyNameProvider.cpp
+  LegacyNameProvider.h
   main.cpp
   ManagerGenerator.cpp
   ManagerGenerator.h
@@ -28,6 +31,7 @@ add_executable(bin2cpp
   SegmentGenerator.h
   StringGenerator.cpp
   StringGenerator.h
+  types.h
   wildcard.cpp
   wildcard.h
   Win32ResourceGenerator.cpp
