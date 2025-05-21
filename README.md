@@ -88,12 +88,12 @@ The following section shows how to use bin2cpp with code examples:
 ```
 bin2cpp --file=<path> --output=<path> [--headerfile=<name>] [--identifier=<name>]
         [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>]
-        [--baseclass=<name>] [--managerfile=<name>] [--registerfile] 
-        [--reportedfilepath=<value>] [--override] [--noheader] [--quiet]
+        [--baseclass=<name>] [--managerfile=<name>] [--registerfile] [--code] 
+        [--reportedfilepath=<value>] [--plainoutput] [--override] [--noheader] [--quiet]
 bin2cpp --dir=<path> --output=<path> [--keepdirs]
         [--generator=<name>] [--encoding=<name>] [--chunksize=<value>] [--namespace=<value>]
-        [--baseclass=<name>] [--managerfile=<name>] [--registerfile] 
-        [--dirincludefilter=<value>] [--direxcludefilter=<value>]
+        [--baseclass=<name>] [--managerfile=<name>] [--registerfile] [--code]  
+        [--dirincludefilter=<value>] [--direxcludefilter=<value>] 
         [--override] [--noheader] [--quiet]
 bin2cpp --help
 bin2cpp --version
@@ -111,8 +111,8 @@ bin2cpp --version
 | --generator=&lt;name&gt;        | Name of the generator to use. Possible values are 'segment', 'string', 'array' and 'win32'.<br>[default: segment]                                                                                                                                                                   |
 | --encoding=&lt;name&gt;         | Name of the binary to string literal encoding to use. Possible values are 'oct' and 'hex'.<br>[default: oct]                                                                                                                                                                        |
 | --chunksize=&lt;value&gt;       | Size in bytes of each string segments (bytes per LoC).<br>[default: 200]                                                                                                                                                                                                            |
-| --baseclass=&lt;name&gt;        | The name of the interface for embedded files.<br>[default: File]                                                                                                                                                                                                                    |
-| --namespace=&lt;name&gt;        | The namespace of the generated source code.<br>[default: bin2cpp]                                                                                                                                                                                                                   |
+| --baseclass=&lt;name&gt;        | The name of the interface for embedded files. [default: File]<br>For C generated code, this parameter is for naming the File structure. [default: Bin2cFile]                                                                                                                                                                                                                    |
+| --namespace=&lt;name&gt;        | The namespace of the generated source code. [default: bin2cpp]<br>For C generated code, this parameter is for setting the prefix of all function names. [default: bin2c]                                                                                                                                                                                                                   |
 | --reportedfilepath=&lt;path&gt; | The relative reported path of the File. Path returned when calling method getFilePath() of the File class. Automatically calculated when --dir mode is used.<br>ie: images/DCIM/IMG_0001.jpg                                                                                        |
 | --managerfile=&lt;path&gt;      | File name or relative path of the generated C++ header file for the FileManager class.<br>ie: FileManager.h.                                                                                                                                                                        |
 | --registerfile                  | Register the generated file to the FileManager class. This flags is automatically set when parameter 'managerfile' is specified.                                                                                                                                                    |
@@ -120,6 +120,7 @@ bin2cpp --version
 | --direxcludefilter=&lt;value&gt;| Set a negative filter on the input directory to skip files matching the filter. Wildcard characters are accepted. Separate each filter with the character ':'. Valid only when --dir is used. See wildcard characters definition below. The exclude filter has precedence over the include filter. |
 | --keepdirs                      | Keep the directory structure. Forces the output files to have the same directory structure as the input files. Valid only when --dir is used.                                                                                                                                       |
 | --plainoutput                   | Print the encoded string in plain format to stdout. Useful for scripts and integration with third party application.                                                                                                                                                                |
+| --code                          | Define the programming language output for code generation. Supported values are `c`, `cpp` or `c++`.                                                                                                                                                                               |
 | --override                      | Tells bin2cpp to overwrite the destination files.                                                                                                                                                                                                                                   |
 | --noheader                      | Do not print program header to standard output.                                                                                                                                                                                                                                     |
 | --quiet                         | Do not log any message to standard output.                                                                                                                                                                                                                                          |

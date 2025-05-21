@@ -1,6 +1,8 @@
 Changes for 3.1.0:
 
+* New feature: Support for generating C code.
 * Fixed issue #29: Create arguments to filter files found with '--dir' argument.
+* Fixed issue #53: Generate only C code.
 * Fixed issue #63: Context class redesign. Move arguments handling into a Context class.
 * Fixed issue #64: Remove build artifacts of samples from installation packages.
 * Fixed issue #72: Move the code FileManager class generation code into its own IGenerator implementation.
