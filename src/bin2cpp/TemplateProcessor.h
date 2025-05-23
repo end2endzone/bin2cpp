@@ -49,6 +49,7 @@ namespace bin2cpp
     void setTemplateVariableLookup(ITemplateVariableLookup* lookup);
     ITemplateVariableLookup* getTemplateVariableLookup() const;
 
+    virtual void TemplateProcessor::writeStream(std::ostream& stream);
     virtual void writeString(std::string& output);
     virtual bool writeFile(const std::string& file_path);
 

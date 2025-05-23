@@ -63,6 +63,12 @@ namespace bin2cpp
     return mVariableLookup;
   }
 
+  void TemplateProcessor::writeStream(std::ostream& stream)
+  {
+    std::set<std::string> recursion_history;
+    processTemplate(stream, *mTemplateText, recursion_history);
+  }
+
   void TemplateProcessor::writeString(std::string& output)
   {
     std::ostringstream output_stream;
@@ -120,12 +126,14 @@ namespace bin2cpp
         }
         else
         {
-          output_stream.put(value[pos++]);
+          output_stream.put(value[pos]);
+          pos++;
         }
       }
       else
       {
-        output_stream.put(value[pos++]);
+        output_stream.put(value[pos]);
+        pos++;
       }
     }
   }
