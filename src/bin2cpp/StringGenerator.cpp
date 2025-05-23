@@ -214,7 +214,7 @@ namespace bin2cpp
     fprintf(fout, "\n");
 
     // File registration predeclaration code
-    fprintf(fout, "%s", getCFileManagerRegistrationPredeclarationTemplate().c_str());
+    fprintf(fout, "%s", getCFileManagerRegistrationPredeclarationImplementation().c_str());
 
     fprintf(fout, "bool %s_load()\n", functionIdentifier.c_str());
     fprintf(fout, "{\n");
@@ -331,7 +331,7 @@ namespace bin2cpp
     fprintf(fout, "}\n");
 
     // File registration implementation code
-    fprintf(fout, "%s", getCFileManagerRegistrationImplementationTemplate().c_str());
+    fprintf(fout, "%s", getCFileManagerStaticFileRegistrationImplementation().c_str());
 
     fclose(input);
     fclose(fout);

@@ -76,17 +76,17 @@ namespace bin2cpp
     if ( name == "bin2cpp_get_file_obj_file_path" ) return getFileClassFilePath();
     if ( name == "bin2cpp_cpp_get_save_method_impl" ) return getSaveMethodTemplate();
     if ( name == "bin2cpp_cpp_get_file_manager_registration_impl" && mContext.registerFiles ) return getCppFileManagerRegistrationImplementationTemplate();
-    if ( name == "bin2cpp_c_file_manager_registration_predeclaration" && mContext.registerFiles ) return getCFileManagerRegistrationPredeclarationTemplate();
-    if ( name == "bin2cpp_c_file_manager_registration_implementation" && mContext.registerFiles ) return getCFileManagerRegistrationImplementationTemplate();
-    
-    //if ( name == "bin2cpp_c_registration_post_init_impl" && mContext.registerFiles )
-    //{
-    //  std::string output;
-    //  output += "  \n";
-    //  output += "  // register when loaded if static initialisation does not work\n";
-    //  output += "  ${bin2cpp_classname}_filemanager_register_file(file);\n";
-    //  return output;
-    //}
+    if ( name == "bin2cpp_c_file_manager_registration_predeclaration" && mContext.registerFiles ) return getCFileManagerRegistrationPredeclarationImplementation();
+    if ( name == "bin2cpp_c_file_manager_registration_implementation" && mContext.registerFiles ) return getCFileManagerStaticFileRegistrationImplementation();
+        
+    if ( name == "bin2cpp_c_file_manager_registration_post_init_impl" && mContext.registerFiles )
+    {
+      std::string output;
+      output += "  \n";
+      output += "  // register when loaded if static initialisation does not work\n";
+      output += "  ${bin2cpp_namespace}_filemanager_register_file(file);\n";
+      return output;
+    }
 
     if ( name == "bin2cpp_input_file_size" )
     {
@@ -228,7 +228,7 @@ namespace bin2cpp
     return output;
   }
 
-  std::string BaseGenerator::getCFileManagerRegistrationPredeclarationTemplate()
+  std::string BaseGenerator::getCFileManagerRegistrationPredeclarationImplementation()
   {
     if ( !mContext.registerFiles )
       return std::string();
@@ -239,7 +239,7 @@ namespace bin2cpp
     return output;
   }
 
-  std::string BaseGenerator::getCFileManagerRegistrationImplementationTemplate()
+  std::string BaseGenerator::getCFileManagerStaticFileRegistrationImplementation()
   {
     if ( !mContext.registerFiles )
       return std::string();
@@ -248,17 +248,18 @@ namespace bin2cpp
     std::string functionIdentifier = ra::strings::Lowercase(mContext.functionIdentifier);
 
     std::string output;
+    output << "\n";
     output << "#if (defined(__GNUC__) && (__GNUC__ >= 4)) || defined(__clang__)  // GCC 4.0+ required, Clang supports it by default\n";
     output << "__attribute__((constructor))\n";
     output << "#endif\n";
-    output << "void " << mContext.codeNamespace << "_register_file_static_init_" << functionIdentifier << "(void)\n";
+    output << "void " << mContext.codeNamespace << "_" << functionIdentifier << "_register_file_static_init(void)\n";
     output << "{\n";
     output << "  " << mContext.baseClass << "* this_file = " << mContext.codeNamespace << "_get_file_" << functionIdentifier << "();\n";
     output << "  " << mContext.codeNamespace << "_filemanager_register_file(this_file);\n";
     output << "}\n";
     output << "#if _MSC_VER >= 1920  // Visual Studio 2019 or later\n";
     output << "#pragma section(\".CRT$XCU\", read)\n";
-    output << "__declspec(allocate(\".CRT$XCU\")) void (*init_ptr_" << functionIdentifier << ")(void) = " << mContext.codeNamespace << "_register_file_static_init_" << functionIdentifier << ";\n";
+    output << "__declspec(allocate(\".CRT$XCU\")) void (*init_ptr_" << mContext.codeNamespace << "_" << functionIdentifier << ")(void) = " << mContext.codeNamespace << "_" << functionIdentifier << "_register_file_static_init" << ";\n";
     output << "#endif\n";
     return output;
   }
