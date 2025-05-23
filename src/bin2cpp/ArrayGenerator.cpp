@@ -209,33 +209,6 @@ namespace bin2cpp
       output += ",";
     output += "\n";
     return output;
-
-    //if ( !mContext.plainOutput )
-    //{
-    //  // C/C++ code generation
-    //  static const size_t INDENTATION_SIZE = 8;
-    //  std::string output;
-    //  output += std::string(INDENTATION_SIZE, ' ');
-    //  output += ra::code::cpp::ToCppCharactersArray(buffer, buffer_size);
-    //  if ( !is_last_chunk )
-    //    output += ",";
-    //  output += "\n";
-    //  return output;
-    //}
-
-    //if ( mContext.plainOutput )
-    //{
-    //  // C/C++ declaration
-    //  std::string output;
-    //  if ( index  > 0 )
-    //    output += "\"";
-    //  output += ra::code::cpp::ToCppCharactersArray(buffer, buffer_size);
-    //  if ( !is_last_chunk )
-    //    output += "\"\n";
-    //  return output;
-    //}
-
-    return "";
   }
 
 }; //bin2cpp
