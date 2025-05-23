@@ -40,6 +40,7 @@ namespace bin2cpp
   {
   public:
     TemplateProcessor();
+    TemplateProcessor(const std::string* value);
     virtual ~TemplateProcessor();
     virtual void reset();
 
@@ -49,7 +50,7 @@ namespace bin2cpp
     void setTemplateVariableLookup(ITemplateVariableLookup* lookup);
     ITemplateVariableLookup* getTemplateVariableLookup() const;
 
-    virtual void TemplateProcessor::writeStream(std::ostream& stream);
+    virtual void writeStream(std::ostream& output_stream);
     virtual void writeString(std::string& output);
     virtual bool writeFile(const std::string& file_path);
 
