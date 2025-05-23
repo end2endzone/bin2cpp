@@ -1,4 +1,6 @@
+##########################################################################################
 # C code examples:
+##########################################################################################
 
 Test all generators
 --file=..\..\test\bin2cpp_unittest\generated_files\testHtml100000\testHtml100000.bin --output=..\..\test\bin2cpp_unittest\generated_files\testHtml100000 --headerfile=_testHtml100000_C.h --override --code=c --generator=array
@@ -24,7 +26,25 @@ Test for baseclass:
 --file=..\..\test\bin2cpp_unittest\generated_files\testBaseClass_C\testBaseClass_C.bin --output=..\..\test\bin2cpp_unittest\generated_files\testBaseClass_C --headerfile=testBaseClass_C.h --identifier=testBaseClass_C --managerfile=filemanager.h --override --code=c --baseclass=Resource
 
 
+##########################################################################################
 # CPP code examples:
+##########################################################################################
+
+Test all generators
+--file=..\..\test\bin2cpp_unittest\generated_files\testGeneratorArray10000\testGeneratorArray10000.bin      --output=..\..\test\bin2cpp_unittest\generated_files\testGeneratorArray10000    --headerfile=_testGeneratorArray10000.h    --identifier=testGeneratorArray10000   --chunksize=450 --override --generator=array
+--file=..\..\test\bin2cpp_unittest\generated_files\testGeneratorSegment10000\testGeneratorSegment10000.bin  --output=..\..\test\bin2cpp_unittest\generated_files\testGeneratorSegment10000  --headerfile=_testGeneratorSegment10000.h  --identifier=testGeneratorSegment10000 --chunksize=450 --override --generator=segment
+--file=..\..\test\bin2cpp_unittest\generated_files\testGeneratorString10000\testGeneratorString10000.bin    --output=..\..\test\bin2cpp_unittest\generated_files\testGeneratorString10000   --headerfile=_testGeneratorString10000.h   --identifier=testGeneratorString10000  --chunksize=450 --override --generator=string
+--file=..\..\test\bin2cpp_unittest\generated_files\testGeneratorWin32\testGeneratorWin32.bin                --output=..\..\test\bin2cpp_unittest\generated_files\testGeneratorWin32         --headerfile=_testGeneratorWin32.h         --identifier=testGeneratorWin32        --chunksize=450 --override --generator=win32
+
+Test plain output:
+--plainoutput --chunksize=75 --file=..\..\test\bin2cpp_unittest\generated_files\testSequential1000\testSequential1000.bin --generator=array
+--plainoutput --chunksize=75 --file=..\..\test\bin2cpp_unittest\generated_files\testSequential1000\testSequential1000.bin --generator=segment
+--plainoutput --chunksize=75 --file=..\..\test\bin2cpp_unittest\generated_files\testSequential1000\testSequential1000.bin --generator=string
+
+
+
+
+
 --dir=..\..\..\samples\demo_website\www --output=..\..\temp --managerfile=PagesFileManager.h --namespace=myblog --keepdirs
 --dir=..\..\..\samples\demo_website\www --output=..\..\temp --dirincludefilter="*\static\*.css:*.jpg"
 --dir=..\..\..\samples\demo_website\www --output=..\..\temp --dirincludefilter="*\static\*.css:*.jpg" --direxcludefilter="*\light-mode.css"
