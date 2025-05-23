@@ -23,6 +23,7 @@
  *********************************************************************************/
 
 #include "BaseGenerator.h"
+#include "TemplateProcessor.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -53,6 +54,50 @@ namespace bin2cpp
   const Context& BaseGenerator::getContext() const
   {
     return mContext;
+  }
+
+  std::string BaseGenerator::lookupTemplateVariable(const std::string& name)
+  {
+    if ( name == "bin2cpp_output_file_macro_guard" ) return getCppIncludeGuardMacroName(mContext.headerFilename);
+    if ( name == "bin2cpp_embedded_file_class_macro_guard" ) return getClassMacroGuardPrefix();
+    if ( name == "bin2cpp_output_file_header" ) return getHeaderTemplate();
+    if ( name == "bin2cpp_baseclass" ) return mContext.baseClass;
+    if ( name == "bin2cpp_classname" ) return getClassName();
+    if ( name == "bin2cpp_function_identifier" ) return mContext.functionIdentifier;
+    if ( name == "bin2cpp_function_identifier_lowercase" ) return ra::strings::Lowercase(mContext.functionIdentifier);
+    if ( name == "bin2cpp_classname" ) return getClassName();
+    if ( name == "bin2cpp_namespace" ) return mContext.codeNamespace;
+    if ( name == "bin2cpp_cpp_getter_function_name" ) return getGetterFunctionName();
+    if ( name == "bin2cpp_insert_input_file_as_code" ) return getInputFileDataAsCode();
+    if ( name == "bin2cpp_cpp_header_include_path" ) return getCppHeaderIncludePath();
+    if ( name == "bin2cpp_cpp_get_file_name_impl" ) return getImplOfGetFileName();
+    if ( name == "bin2cpp_cpp_get_file_path_impl" ) return getImplOfGetFilePath();
+    if ( name == "bin2cpp_get_file_obj_file_name" ) return getFileClassFileName();
+    if ( name == "bin2cpp_get_file_obj_file_path" ) return getFileClassFilePath();
+    if ( name == "bin2cpp_cpp_get_save_method_impl" ) return getSaveMethodTemplate();
+    if ( name == "bin2cpp_cpp_get_file_manager_registration_impl" && mContext.registerFiles ) return getCppFileManagerRegistrationImplementationTemplate();
+    if ( name == "bin2cpp_c_file_manager_registration_predeclaration" && mContext.registerFiles ) return getCFileManagerRegistrationPredeclarationTemplate();
+    if ( name == "bin2cpp_c_file_manager_registration_implementation" && mContext.registerFiles ) return getCFileManagerRegistrationImplementationTemplate();
+    
+    //if ( name == "bin2cpp_c_registration_post_init_impl" && mContext.registerFiles )
+    //{
+    //  std::string output;
+    //  output += "  \n";
+    //  output += "  // register when loaded if static initialisation does not work\n";
+    //  output += "  ${bin2cpp_classname}_filemanager_register_file(file);\n";
+    //  return output;
+    //}
+
+    if ( name == "bin2cpp_input_file_size" )
+    {
+      //determine file properties
+      uint32_t file_size = ra::filesystem::GetFileSize(mContext.inputFilePath.c_str());
+      std::string file_size_str = ra::strings::ToString(file_size);
+      return file_size_str;
+    }
+
+    // Unknown name
+    return "";
   }
 
   //-------------------------------
@@ -179,6 +224,7 @@ namespace bin2cpp
     output << "  typedef const " << mContext.baseClass << " & (*t_func)();\n";
     output << "  extern bool RegisterFile(t_func iFunctionPointer);\n";
     output << "  static bool k" << className << "Registered = " << mContext.codeNamespace << "::RegisterFile(&" << getGetterFunctionName() << ");\n";
+    output << "  \n";
     return output;
   }
 
@@ -344,47 +390,95 @@ namespace bin2cpp
     return output;
   }
 
+  std::string BaseGenerator::getCppHeaderIncludePath()
+  {
+    return mContext.headerFilename;
+  }
+
+  std::string BaseGenerator::getInputFileDataAsCode()
+  {
+    std::string output;
+
+    //check if input file exists
+    FILE* fin = fopen(mContext.inputFilePath.c_str(), "rb");
+    if ( !fin )
+      return "";
+
+    uint64_t fileSize = ra::filesystem::GetFileSize64(mContext.inputFilePath.c_str());
+    size_t chunkCount = fileSize / mContext.chunkSize;
+    if ( fileSize % mContext.chunkSize > 0 )
+      chunkCount++;
+
+    //create buffer for each chunks from input buffer
+    int numLinePrinted = 0;
+    size_t chunkIndex = 0;
+    unsigned char* buffer = new unsigned char[mContext.chunkSize];
+    while ( !feof(fin) )
+    {
+      //read a chunk of the file
+      size_t readSize = fread(buffer, 1, mContext.chunkSize, fin);
+
+      bool isLastChunk = (chunkIndex == (chunkCount - 1));
+
+      if ( readSize > 0 )
+      {
+        //output
+        std::string encoded_chunk = getInputFileChunkAsCode(buffer, readSize, chunkIndex, chunkCount, isLastChunk);
+        output += encoded_chunk;
+
+        numLinePrinted++;
+        chunkIndex++;
+      }
+
+    }
+    delete[] buffer;
+    buffer = NULL;
+
+    fclose(fin);
+
+    return output;
+  }
+
+  std::string BaseGenerator::getInputFileChunkAsCode(const unsigned char* buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk)
+  {
+    return "";
+  }
+
   bool BaseGenerator::createCppHeaderFile(const char * header_file_path)
   {
-    FILE * header = fopen(header_file_path, "w");
-    if (!header)
-      return false;
+    const std::string text = ""
+      "${bin2cpp_output_file_header}"
+      "#ifndef ${bin2cpp_output_file_macro_guard}\n"
+      "#define ${bin2cpp_output_file_macro_guard}\n"
+      "\n"
+      "#include <stddef.h>\n"
+      "\n"
+      "namespace ${bin2cpp_namespace}\n"
+      "{\n"
+      "  #ifndef ${bin2cpp_embedded_file_class_macro_guard}_EMBEDDEDFILE_CLASS\n"
+      "  #define ${bin2cpp_embedded_file_class_macro_guard}_EMBEDDEDFILE_CLASS\n"
+      "  class ${bin2cpp_baseclass}\n"
+      "  {\n"
+      "  public:\n"
+      "    virtual size_t getSize() const = 0;\n"
+      "    /* DEPRECATED */ virtual inline const char * getFilename() const { return getFileName(); }\n"
+      "    virtual const char * getFileName() const = 0;\n"
+      "    virtual const char * getFilePath() const = 0;\n"
+      "    virtual const char * getBuffer() const = 0;\n"
+      "    virtual bool save(const char * filename) const = 0;\n"
+      "  };\n"
+      "  #endif //${bin2cpp_embedded_file_class_macro_guard}_EMBEDDEDFILE_CLASS\n"
+      "  const ${bin2cpp_baseclass} & ${bin2cpp_cpp_getter_function_name}();\n"
+      "}; //${bin2cpp_namespace}\n"
+      "\n"
+      "#endif //${bin2cpp_output_file_macro_guard}\n"
+    ;
 
-    //define macro guard matching the filename
-    std::string macroGuard = getCppIncludeGuardMacroName(header_file_path);
+    TemplateProcessor processor(&text);
+    processor.setTemplateVariableLookup(this);
+    bool write_success = processor.writeFile(header_file_path);
 
-    std::string classMacroGuardPrefix = getClassMacroGuardPrefix();
-    std::string fileHeader = getHeaderTemplate();
-
-    fprintf(header, "%s", fileHeader.c_str());
-    fprintf(header, "#ifndef %s\n", macroGuard.c_str());
-    fprintf(header, "#define %s\n", macroGuard.c_str());
-    fprintf(header, "\n");
-    fprintf(header, "#include <stddef.h>\n");
-    fprintf(header, "\n");
-    fprintf(header, "namespace %s\n", mContext.codeNamespace.c_str());
-    fprintf(header, "{\n");
-    fprintf(header, "  #ifndef %s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
-    fprintf(header, "  #define %s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
-    fprintf(header, "  class %s\n", mContext.baseClass.c_str());
-    fprintf(header, "  {\n");
-    fprintf(header, "  public:\n");
-    fprintf(header, "    virtual size_t getSize() const = 0;\n");
-    fprintf(header, "    /* DEPRECATED */ virtual inline const char * getFilename() const { return getFileName(); }\n");
-    fprintf(header, "    virtual const char * getFileName() const = 0;\n");
-    fprintf(header, "    virtual const char * getFilePath() const = 0;\n");
-    fprintf(header, "    virtual const char * getBuffer() const = 0;\n");
-    fprintf(header, "    virtual bool save(const char * filename) const = 0;\n");
-    fprintf(header, "  };\n");
-    fprintf(header, "  #endif //%s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
-    fprintf(header, "  const %s & %s();\n", mContext.baseClass.c_str(), getGetterFunctionName().c_str());
-    fprintf(header, "}; //%s\n", mContext.codeNamespace.c_str());
-    fprintf(header, "\n");
-    fprintf(header, "#endif //%s\n", macroGuard.c_str());
-
-    fclose(header);
-
-    return true;
+    return write_success;
   }
 
   bool BaseGenerator::printFileContent()
@@ -441,48 +535,42 @@ namespace bin2cpp
 
   bool BaseGenerator::createCHeaderFile(const char* file_path)
   {
-    FILE* header = fopen(file_path, "w");
-    if ( !header )
-      return false;
+    const std::string text = ""
+      "${bin2cpp_output_file_header}"
+      "#ifndef ${bin2cpp_output_file_macro_guard}\n"
+      "#define ${bin2cpp_output_file_macro_guard}\n"
+      "\n"
+      "#include <stddef.h>\n"
+      "#include <stdbool.h>\n"
+      "\n"
+      "#ifndef ${bin2cpp_embedded_file_class_macro_guard}_EMBEDDEDFILE_STRUCT\n"
+      "#define ${bin2cpp_embedded_file_class_macro_guard}_EMBEDDEDFILE_STRUCT\n"
+      "typedef struct ${bin2cpp_baseclass} ${bin2cpp_baseclass};\n"
+      "typedef bool(*${bin2cpp_namespace}_load_func)();\n"
+      "typedef void(*${bin2cpp_namespace}_free_func)();\n"
+      "typedef bool(*${bin2cpp_namespace}_save_func)(const char*);\n"
+      "typedef struct ${bin2cpp_baseclass}\n"
+      "{\n"
+      "  size_t size;\n"
+      "  const char* file_name;\n"
+      "  const char* file_path;\n"
+      "  const unsigned char* buffer;\n"
+      "  ${bin2cpp_namespace}_load_func load;\n"
+      "  ${bin2cpp_namespace}_free_func unload;\n"
+      "  ${bin2cpp_namespace}_save_func save;\n"
+      "} ${bin2cpp_baseclass};\n"
+      "typedef ${bin2cpp_baseclass}* ${bin2cpp_baseclass}Ptr;\n"
+      "#endif //${bin2cpp_embedded_file_class_macro_guard}_EMBEDDEDFILE_STRUCT\n"
+      "${bin2cpp_baseclass}* ${bin2cpp_cpp_getter_function_name}(void);\n"
+      "\n"
+      "#endif //${bin2cpp_output_file_macro_guard}\n"
+    ;
 
-    //define macro guard matching the filename
-    std::string macroGuard = getCppIncludeGuardMacroName(file_path);
+    TemplateProcessor processor(&text);
+    processor.setTemplateVariableLookup(this);
+    bool write_success = processor.writeFile(file_path);
 
-    std::string classMacroGuardPrefix = getClassMacroGuardPrefix();
-    std::string fileHeader = getHeaderTemplate();
-
-    fprintf(header, "%s", fileHeader.c_str());
-    fprintf(header, "#ifndef %s\n", macroGuard.c_str());
-    fprintf(header, "#define %s\n", macroGuard.c_str());
-    fprintf(header, "\n");
-    fprintf(header, "#include <stddef.h>\n");
-    fprintf(header, "#include <stdbool.h>\n");
-    fprintf(header, "\n");
-    fprintf(header, "#ifndef %s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
-    fprintf(header, "#define %s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
-    fprintf(header, "typedef struct %s %s;\n", mContext.baseClass.c_str(), mContext.baseClass.c_str());
-    fprintf(header, "typedef bool(*%s_load_func)();\n", mContext.codeNamespace.c_str());
-    fprintf(header, "typedef void(*%s_free_func)();\n", mContext.codeNamespace.c_str());
-    fprintf(header, "typedef bool(*%s_save_func)(const char*);\n", mContext.codeNamespace.c_str());
-    fprintf(header, "typedef struct %s\n", mContext.baseClass.c_str());
-    fprintf(header, "{\n");
-    fprintf(header, "  size_t size;\n");
-    fprintf(header, "  const char* file_name;\n");
-    fprintf(header, "  const char* file_path;\n");
-    fprintf(header, "  const unsigned char* buffer;\n");
-    fprintf(header, "  %s_load_func load;\n", mContext.codeNamespace.c_str());
-    fprintf(header, "  %s_free_func unload;\n", mContext.codeNamespace.c_str());
-    fprintf(header, "  %s_save_func save;\n", mContext.codeNamespace.c_str());
-    fprintf(header, "} %s;\n", mContext.baseClass.c_str());
-    fprintf(header, "typedef %s* %sPtr;\n", mContext.baseClass.c_str(), mContext.baseClass.c_str());
-    fprintf(header, "#endif //%s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
-    fprintf(header, "%s* %s(void);\n", mContext.baseClass.c_str(), getGetterFunctionName().c_str());
-    fprintf(header, "\n");
-    fprintf(header, "#endif //%s\n", macroGuard.c_str());
-
-    fclose(header);
-
-    return true;
+    return write_success;
   }
 
   bool BaseGenerator::createCSourceFile(const char* file_path)
