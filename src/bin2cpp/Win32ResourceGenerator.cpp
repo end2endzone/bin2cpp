@@ -23,6 +23,7 @@
  *********************************************************************************/
 
 #include "Win32ResourceGenerator.h"
+#include "TemplateProcessor.h"
 #include "common.h"
 #include "crc32.h"
 
@@ -51,144 +52,114 @@ namespace bin2cpp
     return "win32";
   }
 
-  bool Win32ResourceGenerator::createCppSourceFile(const char * cpp_file_path)
+  bool Win32ResourceGenerator::createCppSourceFile(const char * file_path)
   {
-    bool resourceFileSuccess = createResourceFile(cpp_file_path);
+    bool resourceFileSuccess = createResourceFile(file_path);
     if (!resourceFileSuccess)
       return false;
 
     //check if input file exists
-    FILE * input = fopen(mContext.inputFilePath.c_str(), "rb");
-    if (!input)
+    if ( !ra::filesystem::FileExists(mContext.inputFilePath.c_str()) )
       return false;
 
-    //Uppercase function identifier
-    std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(getContext().functionIdentifier);
+    const std::string text = ""
+      "${bin2cpp_output_file_header}"
+      "#include \"${bin2cpp_cpp_header_include_path}\"\n"
+      "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n"
+      "#define _CRT_SECURE_NO_WARNINGS\n"
+      "#endif\n"
+      "\n"
+      "#include <stdint.h>\n"
+      "#include <iostream>\n"
+      "#include <fstream>  //for ofstream\n"
+      "\n"
+      "#ifndef WIN32_LEAN_AND_MEAN\n"
+      "#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers\n"
+      "#endif\n"
+      "#include <windows.h>\n"
+      "\n"
+      "#include <psapi.h> //for EnumProcessModules()\n"
+      "#pragma comment( lib, \"psapi.lib\" )\n"
+      "\n"
+      "namespace ${bin2cpp_namespace}\n"
+      "{\n"
+      "  class ${bin2cpp_classname} : public virtual ${bin2cpp_namespace}::${bin2cpp_baseclass}\n"
+      "  {\n"
+      "  public:\n"
+      "    ${bin2cpp_classname}() :\n"
+      "      hProcess(NULL),\n"
+      "      hModule(NULL),\n"
+      "      hResourceInfoBlock(NULL),\n"
+      "      hResHandle(NULL),\n"
+      "      mBufferSize(0),\n"
+      "      mBuffer(NULL)\n"
+      "    {\n"
+      "      loadResource();\n"
+      "    }\n"
+      "    virtual ~${bin2cpp_classname}() { unloadResource(); }\n"
+      "    virtual size_t getSize() const { return mBufferSize; }\n"
+      "    virtual const char * getFileName() const { ${bin2cpp_cpp_get_file_name_impl} }\n"
+      "    virtual const char * getFilePath() const { ${bin2cpp_cpp_get_file_path_impl} }\n"
+      "    virtual const char * getBuffer() const { return mBuffer; }\n"
+      "    void loadResource()\n"
+      "    {\n"
+      "      //Get a handle to this process\n"
+      "      hProcess = OpenProcess(  PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, GetCurrentProcessId() );\n"
+      "      if (hProcess)\n"
+      "      {\n"
+      "        //Find the main HMODULE of the process\n"
+      "        DWORD cbNeeded;\n"
+      "        if ( EnumProcessModules( hProcess, &hModule, sizeof(hModule), &cbNeeded) )\n"
+      "        {\n"
+      "          //Retrieve the resource\n"
+      "          hResourceInfoBlock = FindResourceA(hModule, \"${bin2cpp_win32_resource_random_identifier}\", \"CUSTOM\");\n"
+      "          if (hResourceInfoBlock)\n"
+      "          {\n"
+      "            hResHandle = LoadResource(hModule, hResourceInfoBlock);\n"
+      "            if (hResHandle)\n"
+      "            {\n"
+      "              mBuffer = (const char *)LockResource(hResHandle);\n"
+      "              mBufferSize = SizeofResource(hModule, hResourceInfoBlock);\n"
+      "            }\n"
+      "          }\n"
+      "        }\n"
+      "      }\n"
+      "    }\n"
+      "    virtual void unloadResource()\n"
+      "    {\n"
+      "      if (hResHandle)\n"
+      "      {\n"
+      "        FreeResource(hResHandle);\n"
+      "        hResHandle = NULL;\n"
+      "        mBuffer = NULL;\n"
+      "        mBufferSize = 0;\n"
+      "      }\n"
+      "      hResourceInfoBlock = NULL;\n"
+      "      hModule = NULL;\n"
+      "      if (hProcess)\n"
+      "      {\n"
+      "        CloseHandle(hProcess);\n"
+      "        hProcess = NULL;\n"
+      "      }\n"
+      "    }\n"
+      "${bin2cpp_cpp_get_save_method_impl}"
+      "  private:\n"
+      "    HANDLE hProcess;\n"
+      "    HMODULE hModule;\n"
+      "    HRSRC hResourceInfoBlock;\n"
+      "    HGLOBAL hResHandle;\n"
+      "    DWORD mBufferSize;\n"
+      "    const char * mBuffer;\n"
+      "  };\n"
+      "  const ${bin2cpp_baseclass} & ${bin2cpp_cpp_getter_function_name}() { static ${bin2cpp_classname} _instance; return _instance; }\n"
+      "${bin2cpp_cpp_get_file_manager_registration_impl}"
+      "}; //${bin2cpp_namespace}\n";
 
-    //Build header and cpp file path
-    std::string headerPath = getHeaderFilePath(cpp_file_path);
-    std::string cppPath = cpp_file_path;
+    TemplateProcessor processor(&text);
+    processor.setTemplateVariableLookup(this);
+    bool write_success = processor.writeFile(file_path);
 
-    //create cpp file
-    FILE * cpp = fopen(cppPath.c_str(), "w");
-    if (!cpp)
-    {
-      fclose(input);
-      return false;
-    }
-
-    //determine file properties
-    //uint32_t fileSize = ra::filesystem::GetFileSize(input);
-    std::string filename = ra::filesystem::GetFilename(mContext.inputFilePath.c_str());
-
-    //Build class name
-    std::string className = getClassName();
-
-    //Build function 
-    std::string getterFunctionName = getGetterFunctionName();
-
-    //write cpp file heading
-    fprintf(cpp, "%s", getHeaderTemplate().c_str());
-    fprintf(cpp, "#include \"%s\"\n", mContext.headerFilename.c_str() );
-    fprintf(cpp, "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n");
-    fprintf(cpp, "#define _CRT_SECURE_NO_WARNINGS\n");
-    fprintf(cpp, "#endif\n");
-    fprintf(cpp, "\n");
-    fprintf(cpp, "#include <stdint.h>\n");
-    fprintf(cpp, "#include <iostream>\n");
-    fprintf(cpp, "#include <fstream>  //for ofstream\n");
-    fprintf(cpp, "\n");
-    fprintf(cpp, "#ifndef WIN32_LEAN_AND_MEAN\n");
-    fprintf(cpp, "#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers\n");
-    fprintf(cpp, "#endif\n");
-    fprintf(cpp, "#include <windows.h>\n");
-    fprintf(cpp, "\n");
-    fprintf(cpp, "#include <psapi.h> //for EnumProcessModules()\n");
-    fprintf(cpp, "#pragma comment( lib, \"psapi.lib\" )\n");
-    fprintf(cpp, "\n");
-
-    fprintf(cpp, "namespace %s\n", getContext().codeNamespace.c_str());
-    fprintf(cpp, "{\n");
-    fprintf(cpp, "  class %s : public virtual %s::%s\n", className.c_str(), getContext().codeNamespace.c_str(), getContext().baseClass.c_str());
-    fprintf(cpp, "  {\n");
-    fprintf(cpp, "  public:\n");
-    fprintf(cpp, "    %s() :\n", className.c_str());
-    fprintf(cpp, "      hProcess(NULL),\n");
-    fprintf(cpp, "      hModule(NULL),\n");
-    fprintf(cpp, "      hResourceInfoBlock(NULL),\n");
-    fprintf(cpp, "      hResHandle(NULL),\n");
-    fprintf(cpp, "      mBufferSize(0),\n");
-    fprintf(cpp, "      mBuffer(NULL)\n");
-    fprintf(cpp, "    {\n");
-    fprintf(cpp, "      loadResource();\n");
-    fprintf(cpp, "    }\n");
-    fprintf(cpp, "    virtual ~%s() { unloadResource(); }\n", className.c_str());
-    fprintf(cpp, "    virtual size_t getSize() const { return mBufferSize; }\n");
-    fprintf(cpp, "    virtual const char * getFileName() const { %s }\n", getImplOfGetFileName().c_str());
-    fprintf(cpp, "    virtual const char * getFilePath() const { %s }\n", getImplOfGetFilePath().c_str());
-    fprintf(cpp, "    virtual const char * getBuffer() const { return mBuffer; }\n");
-    fprintf(cpp, "    void loadResource()\n");
-    fprintf(cpp, "    {\n");
-    fprintf(cpp, "      //Get a handle to this process\n");
-    fprintf(cpp, "      hProcess = OpenProcess(  PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, GetCurrentProcessId() );\n");
-    fprintf(cpp, "      if (hProcess)\n");
-    fprintf(cpp, "      {\n");
-    fprintf(cpp, "        //Find the main HMODULE of the process\n");
-    fprintf(cpp, "        DWORD cbNeeded;\n");
-    fprintf(cpp, "        if ( EnumProcessModules( hProcess, &hModule, sizeof(hModule), &cbNeeded) )\n");
-    fprintf(cpp, "        {\n");
-    fprintf(cpp, "          //Retrieve the resource\n");
-    fprintf(cpp, "          hResourceInfoBlock = FindResourceA(hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(mContext.inputFilePath.c_str()).c_str());
-    fprintf(cpp, "          if (hResourceInfoBlock)\n");
-    fprintf(cpp, "          {\n");
-    fprintf(cpp, "            hResHandle = LoadResource(hModule, hResourceInfoBlock);\n");
-    fprintf(cpp, "            if (hResHandle)\n");
-    fprintf(cpp, "            {\n");
-    fprintf(cpp, "              mBuffer = (const char *)LockResource(hResHandle);\n");
-    fprintf(cpp, "              mBufferSize = SizeofResource(hModule, hResourceInfoBlock);\n");
-    fprintf(cpp, "            }\n");
-    fprintf(cpp, "          }\n");
-    fprintf(cpp, "        }\n");
-    fprintf(cpp, "      }\n");
-    fprintf(cpp, "    }\n");
-    fprintf(cpp, "    virtual void unloadResource()\n");
-    fprintf(cpp, "    {\n");
-    fprintf(cpp, "      if (hResHandle)\n");
-    fprintf(cpp, "      {\n");
-    fprintf(cpp, "        FreeResource(hResHandle);\n");
-    fprintf(cpp, "        hResHandle = NULL;\n");
-    fprintf(cpp, "        mBuffer = NULL;\n");
-    fprintf(cpp, "        mBufferSize = 0;\n");
-    fprintf(cpp, "      }\n");
-    fprintf(cpp, "      hResourceInfoBlock = NULL;\n");
-    fprintf(cpp, "      hModule = NULL;\n");
-    fprintf(cpp, "      if (hProcess)\n");
-    fprintf(cpp, "      {\n");
-    fprintf(cpp, "        CloseHandle(hProcess);\n");
-    fprintf(cpp, "        hProcess = NULL;\n");
-    fprintf(cpp, "      }\n");
-    fprintf(cpp, "    }\n");
-    fprintf(cpp, "%s", getSaveMethodTemplate().c_str());
-    fprintf(cpp, "  private:\n");
-    fprintf(cpp, "    HANDLE hProcess;\n");
-    fprintf(cpp, "    HMODULE hModule;\n");
-    fprintf(cpp, "    HRSRC hResourceInfoBlock;\n");
-    fprintf(cpp, "    HGLOBAL hResHandle;\n");
-    fprintf(cpp, "    DWORD mBufferSize;\n");
-    fprintf(cpp, "    const char * mBuffer;\n");
-    fprintf(cpp, "  };\n");
-    fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", getContext().baseClass.c_str(), getterFunctionName.c_str(), className.c_str());
-    if (mContext.registerFiles)
-    {
-      std::string fileManagerTemplate = getCppFileManagerRegistrationImplementationTemplate();
-      fprintf(cpp, "%s", fileManagerTemplate.c_str());
-    }
-    fprintf(cpp, "}; //%s\n", getContext().codeNamespace.c_str());
-
-    fclose(input);
-    fclose(cpp);
-
-    return true;
+    return write_success;
   }
 
   bool Win32ResourceGenerator::createCSourceFile(const char* file_path)
@@ -198,195 +169,148 @@ namespace bin2cpp
       return false;
 
     //check if input file exists
-    FILE* input = fopen(mContext.inputFilePath.c_str(), "rb");
-    if ( !input )
+    if ( !ra::filesystem::FileExists(mContext.inputFilePath.c_str()) )
       return false;
 
-    //Uppercase function identifier
-    std::string functionIdentifier = ra::strings::Lowercase(mContext.functionIdentifier);
+    const std::string text = ""
+      "${bin2cpp_output_file_header}"
+      "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n"
+      "#define _CRT_SECURE_NO_WARNINGS\n"
+      "#endif\n"
+      "\n"
+      "#include \"${bin2cpp_cpp_header_include_path}\"\n"
+      "#include <stdlib.h> // for malloc\n"
+      "#include <string.h> // for memset\n"
+      "#include <stdio.h>  // for fopen\n"
+      "\n"
+      "#ifndef WIN32_LEAN_AND_MEAN\n"
+      "#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers\n"
+      "#endif\n"
+      "#include <windows.h>\n"
+      "\n"
+      "#include <psapi.h> //for EnumProcessModules()\n"
+      "#pragma comment( lib, \"psapi.lib\" )\n"
+      "\n"
+      "static ${bin2cpp_baseclass} ${bin2cpp_function_identifier_lowercase}_file = { 0 };\n"
+      "static bool ${bin2cpp_function_identifier_lowercase}_initialized = false;\n"
+      "typedef struct ${bin2cpp_win32_local_info_struct_name}\n"
+      "{\n"
+      "  HANDLE hProcess;\n"
+      "  HMODULE hModule;\n"
+      "  HRSRC hResourceInfoBlock;\n"
+      "  HGLOBAL hResHandle;\n"
+      "  DWORD dwBufferSize;\n"
+      "} ${bin2cpp_win32_local_info_struct_name};\n"
+      "static ${bin2cpp_win32_local_info_struct_name} ${bin2cpp_function_identifier_lowercase}_info = { 0 };\n"
+      "\n"
+      "${bin2cpp_c_file_manager_registration_predeclaration}"
+      "bool ${bin2cpp_function_identifier_lowercase}_load()\n"
+      "{\n"
+      "  if ( ${bin2cpp_function_identifier_lowercase}_file.buffer )\n"
+      "    return true;\n"
+      "\n"
+      "  ${bin2cpp_win32_local_info_struct_name}* info = &${bin2cpp_function_identifier_lowercase}_info;\n"
+      "  //Get a handle to this process\n"
+      "  info->hProcess = OpenProcess( PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, GetCurrentProcessId() );\n"
+      "  if (info->hProcess)\n"
+      "  {\n"
+      "    //Find the main HMODULE of the process\n"
+      "    DWORD cbNeeded;\n"
+      "    if ( EnumProcessModules( info->hProcess, &info->hModule, sizeof(info->hModule), &cbNeeded) )\n"
+      "    {\n"
+      "      //Retrieve the resource\n"
+      "      info->hResourceInfoBlock = FindResourceA(info->hModule, \"${bin2cpp_win32_resource_random_identifier}\", \"CUSTOM\");\n"
+      "      if (info->hResourceInfoBlock)\n"
+      "      {\n"
+      "        info->hResHandle = LoadResource(info->hModule, info->hResourceInfoBlock);\n"
+      "        if (info->hResHandle)\n"
+      "        {\n"
+      "          ${bin2cpp_function_identifier_lowercase}_file.buffer = (const unsigned char *)LockResource(info->hResHandle);\n"
+      "          info->dwBufferSize = SizeofResource(info->hModule, info->hResourceInfoBlock);\n"
+      "          return true;\n"
+      "        }\n"
+      "      }\n"
+      "    }\n"
+      "  }\n"
+      "  \n"
+      "  return false;\n"
+      "}\n"
+      "\n"
+      "void ${bin2cpp_function_identifier_lowercase}_free()\n"
+      "{\n"
+      "  if ( ${bin2cpp_function_identifier_lowercase}_file.buffer == NULL)\n"
+      "    return;\n"
+      "  ${bin2cpp_win32_local_info_struct_name}* info = &${bin2cpp_function_identifier_lowercase}_info;\n"
+      "  if (info->hResHandle)\n"
+      "  {\n"
+      "    FreeResource(info->hResHandle);\n"
+      "    info->hResHandle = NULL;\n"
+      "    ${bin2cpp_function_identifier_lowercase}_file.buffer = NULL;\n"
+      "    info->dwBufferSize = 0;\n"
+      "  }\n"
+      "  info->hResourceInfoBlock = NULL;\n"
+      "  info->hModule = NULL;\n"
+      "  if (info->hProcess)\n"
+      "  {\n"
+      "    CloseHandle(info->hProcess);\n"
+      "    info->hProcess = NULL;\n"
+      "  }\n"
+      "}\n"
+      "\n"
+      "bool ${bin2cpp_function_identifier_lowercase}_save(const char* path)\n"
+      "{\n"
+      "  if ( !${bin2cpp_function_identifier_lowercase}_file.buffer )\n"
+      "    return false;\n"
+      "  FILE* f = fopen(path, \"wb\");\n"
+      "  if ( !f )\n"
+      "    return false;\n"
+      "  size_t write_size = fwrite(${bin2cpp_function_identifier_lowercase}_file.buffer, 1, ${bin2cpp_function_identifier_lowercase}_file.size, f);\n"
+      "  fclose(f);\n"
+      "  if ( write_size != ${bin2cpp_function_identifier_lowercase}_file.size )\n"
+      "    return false;\n"
+      "  return true;\n"
+      "}\n"
+      "\n"
+      "static inline void ${bin2cpp_function_identifier_lowercase}_init()\n"
+      "{\n"
+      "  // remember we already initialized\n"
+      "  if ( ${bin2cpp_function_identifier_lowercase}_initialized )\n"
+      "    return;\n"
+      "  ${bin2cpp_function_identifier_lowercase}_initialized = true;\n"
+      "\n"
+      "  // initialize\n"
+      "  ${bin2cpp_baseclass}* file = &${bin2cpp_function_identifier_lowercase}_file;\n"
+      "  file->size = ${bin2cpp_input_file_size}ULL;\n"
+      "  file->file_name = \"${bin2cpp_get_file_obj_file_name}\";\n"
+      "  file->file_path = \"${bin2cpp_get_file_obj_file_path}\";\n"
+      "  file->buffer = NULL;\n"
+      "  file->load = ${bin2cpp_function_identifier_lowercase}_load;\n"
+      "  file->unload = ${bin2cpp_function_identifier_lowercase}_free;\n"
+      "  file->save = ${bin2cpp_function_identifier_lowercase}_save;\n"
+      "\n"
+      "  // load file by default on init as in c++ implementation\n"
+      "  file->load();\n"
+      "${bin2cpp_c_file_manager_registration_post_init_impl}"
+      "}\n"
+      "\n"
+      "${bin2cpp_baseclass}* ${bin2cpp_cpp_getter_function_name}(void)\n"
+      "{\n"
+      "  ${bin2cpp_function_identifier_lowercase}_init();\n"
+      "  return &${bin2cpp_function_identifier_lowercase}_file;\n"
+      "}\n"
+      "${bin2cpp_c_file_manager_registration_implementation}";
 
-    //Build header and cpp file path
-    std::string headerPath = getHeaderFilePath(file_path);
-    std::string sourcePath = file_path;
+    TemplateProcessor processor(&text);
+    processor.setTemplateVariableLookup(this);
+    bool write_success = processor.writeFile(file_path);
 
-    //create c source file
-    FILE* fout = fopen(sourcePath.c_str(), "w");
-    if ( !fout )
-    {
-      fclose(input);
-      return false;
-    }
-
-    //determine file properties
-    uint32_t fileSize = ra::filesystem::GetFileSize(input);
-    std::string filename = ra::filesystem::GetFilename(mContext.inputFilePath.c_str());
-    //long lastSegmentSize = fileSize%chunk_size;
-    //size_t numSegments = fileSize/chunk_size + (lastSegmentSize == 0 ? 0 : 1);
-
-    //Build class name
-    std::string className = getClassName();
-
-    //Build function 
-    std::string getterFunctionName = getGetterFunctionName();
-
-    //Build FileManager class template
-    std::string manager = mContext.managerHeaderFilename;
-
-    //write c file heading
-    fprintf(fout, "%s", getHeaderTemplate().c_str());
-    fprintf(fout, "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n");
-    fprintf(fout, "#define _CRT_SECURE_NO_WARNINGS\n");
-    fprintf(fout, "#endif\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "#include \"%s\"\n", mContext.headerFilename.c_str());
-    fprintf(fout, "#include <stdlib.h> // for malloc\n");
-    fprintf(fout, "#include <string.h> // for memset\n");
-    fprintf(fout, "#include <stdio.h>  // for fopen\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "#ifndef WIN32_LEAN_AND_MEAN\n");
-    fprintf(fout, "#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers\n");
-    fprintf(fout, "#endif\n");
-    fprintf(fout, "#include <windows.h>\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "#include <psapi.h> //for EnumProcessModules()\n");
-    fprintf(fout, "#pragma comment( lib, \"psapi.lib\" )\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "static %s %s_file = { 0 };\n", mContext.baseClass.c_str(), functionIdentifier.c_str());
-    fprintf(fout, "static bool %s_initialized = false;\n", functionIdentifier.c_str());
-    fprintf(fout, "typedef struct %s\n", getLocalInfoStructName().c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  HANDLE hProcess;\n");
-    fprintf(fout, "  HMODULE hModule;\n");
-    fprintf(fout, "  HRSRC hResourceInfoBlock;\n");
-    fprintf(fout, "  HGLOBAL hResHandle;\n");
-    fprintf(fout, "  DWORD dwBufferSize;\n");
-    fprintf(fout, "} %s;\n", getLocalInfoStructName().c_str());
-    fprintf(fout, "static %s %s_info = { 0 };\n", getLocalInfoStructName().c_str(), functionIdentifier.c_str());
-    fprintf(fout, "\n");
-
-    // File registration predeclaration code
-    fprintf(fout, "%s", getCFileManagerRegistrationPredeclarationImplementation().c_str());
-
-    fprintf(fout, "bool %s_load()\n", functionIdentifier.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  if ( %s_file.buffer )\n", functionIdentifier.c_str());
-    fprintf(fout, "    return true;\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "  %s* info = &%s_info;\n", getLocalInfoStructName().c_str(), functionIdentifier.c_str());
-
-    fprintf(fout, "  //Get a handle to this process\n");
-    fprintf(fout, "  info->hProcess = OpenProcess( PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, GetCurrentProcessId() );\n");
-    fprintf(fout, "  if (info->hProcess)\n");
-    fprintf(fout, "  {\n");
-    fprintf(fout, "    //Find the main HMODULE of the process\n");
-    fprintf(fout, "    DWORD cbNeeded;\n");
-    fprintf(fout, "    if ( EnumProcessModules( info->hProcess, &info->hModule, sizeof(info->hModule), &cbNeeded) )\n");
-    fprintf(fout, "    {\n");
-    fprintf(fout, "      //Retrieve the resource\n");
-    fprintf(fout, "      info->hResourceInfoBlock = FindResourceA(info->hModule, \"%s\", \"CUSTOM\");\n", getRandomIdentifier(mContext.inputFilePath.c_str()).c_str());
-    fprintf(fout, "      if (info->hResourceInfoBlock)\n");
-    fprintf(fout, "      {\n");
-    fprintf(fout, "        info->hResHandle = LoadResource(info->hModule, info->hResourceInfoBlock);\n");
-    fprintf(fout, "        if (info->hResHandle)\n");
-    fprintf(fout, "        {\n");
-    fprintf(fout, "          %s_file.buffer = (const unsigned char *)LockResource(info->hResHandle);\n", functionIdentifier.c_str());
-    fprintf(fout, "          info->dwBufferSize = SizeofResource(info->hModule, info->hResourceInfoBlock);\n");
-    fprintf(fout, "          return true;\n");
-    fprintf(fout, "        }\n");
-    fprintf(fout, "      }\n");
-    fprintf(fout, "    }\n");
-    fprintf(fout, "  }\n");
-    fprintf(fout, "  \n");
-    fprintf(fout, "  return false;\n");
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-
-    fprintf(fout, "void %s_free()\n", functionIdentifier.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  if ( %s_file.buffer == NULL)\n", functionIdentifier.c_str());
-    fprintf(fout, "    return;\n");
-    fprintf(fout, "  %s* info = &%s_info;\n", getLocalInfoStructName().c_str(), functionIdentifier.c_str());
-    fprintf(fout, "  if (info->hResHandle)\n");
-    fprintf(fout, "  {\n");
-    fprintf(fout, "    FreeResource(info->hResHandle);\n");
-    fprintf(fout, "    info->hResHandle = NULL;\n");
-    fprintf(fout, "    %s_file.buffer = NULL;\n", functionIdentifier.c_str());
-    fprintf(fout, "    info->dwBufferSize = 0;\n");
-    fprintf(fout, "  }\n");
-    fprintf(fout, "  info->hResourceInfoBlock = NULL;\n");
-    fprintf(fout, "  info->hModule = NULL;\n");
-    fprintf(fout, "  if (info->hProcess)\n");
-    fprintf(fout, "  {\n");
-    fprintf(fout, "    CloseHandle(info->hProcess);\n");
-    fprintf(fout, "    info->hProcess = NULL;\n");
-    fprintf(fout, "  }\n");
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-
-    fprintf(fout, "bool %s_save(const char* path)\n", functionIdentifier.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  if ( !%s_file.buffer )\n", functionIdentifier.c_str());
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "  FILE* f = fopen(path, \"wb\");\n");
-    fprintf(fout, "  if ( !f )\n");
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "  size_t write_size = fwrite(%s_file.buffer, 1, %s_file.size, f);\n", functionIdentifier.c_str(), functionIdentifier.c_str());
-    fprintf(fout, "  fclose(f);\n");
-    fprintf(fout, "  if ( write_size != %s_file.size )\n", functionIdentifier.c_str());
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "  return true;\n");
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-
-    fprintf(fout, "static inline void %s_init()\n", functionIdentifier.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  // remember we already initialized\n");
-    fprintf(fout, "  if ( %s_initialized )\n", functionIdentifier.c_str());
-    fprintf(fout, "    return;\n");
-    fprintf(fout, "  %s_initialized = true;\n", functionIdentifier.c_str());
-    fprintf(fout, "\n");
-    fprintf(fout, "  // initialize\n");
-    fprintf(fout, "  %s* file = &%s_file;\n", mContext.baseClass.c_str(), functionIdentifier.c_str());
-    fprintf(fout, "  file->size = %uULL;\n", fileSize);
-    fprintf(fout, "  file->file_name = \"%s\";\n", getFileClassFileName().c_str());
-    fprintf(fout, "  file->file_path = \"%s\";\n", getFileClassFilePath().c_str());
-    fprintf(fout, "  file->buffer = NULL;\n");
-    fprintf(fout, "  file->load = %s_load;\n", functionIdentifier.c_str());
-    fprintf(fout, "  file->unload = %s_free;\n", functionIdentifier.c_str());
-    fprintf(fout, "  file->save = %s_save;\n", functionIdentifier.c_str());
-    fprintf(fout, "\n");
-    fprintf(fout, "  // load file by default on init as in c++ implementation");
-    fprintf(fout, "  file->load();\n");
-
-    if ( mContext.registerFiles )
-    {
-      fprintf(fout, "  \n");
-      fprintf(fout, "  // register\n");
-      fprintf(fout, "  %s_filemanager_register_file(file);\n", mContext.codeNamespace.c_str());
-    }
-
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-
-    fprintf(fout, "%s* %s(void)\n", mContext.baseClass.c_str(), getGetterFunctionName().c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  %s_init();\n", functionIdentifier.c_str());
-    fprintf(fout, "  return &%s_file;\n", functionIdentifier.c_str());
-    fprintf(fout, "}\n");
-
-    // File registration implementation code
-    fprintf(fout, "%s", getCFileManagerStaticFileRegistrationImplementation().c_str());
-
-    fclose(input);
-    fclose(fout);
-
-    return true;
+    return write_success;
   }
 
-  std::string Win32ResourceGenerator::getResourceFilePath(const char * cpp_file_path)
+  std::string Win32ResourceGenerator::getResourceFilePath(const char * file_path)
   {
     //Build header file path
-    std::string resourcePath = cpp_file_path;
+    std::string resourcePath = file_path;
     switch ( mContext.code )
     {
     default:
@@ -400,10 +324,10 @@ namespace bin2cpp
     return resourcePath;
   }
 
-  bool Win32ResourceGenerator::createResourceFile(const char * cpp_file_path)
+  bool Win32ResourceGenerator::createResourceFile(const char * file_path)
   {
     //Build resource file path
-    std::string resourceFilePath = getResourceFilePath(cpp_file_path);
+    std::string resourceFilePath = getResourceFilePath(file_path);
 
     //create resource file
     FILE * res = fopen(resourceFilePath.c_str(), "w");
@@ -424,14 +348,14 @@ namespace bin2cpp
     return true;
   }
 
-  std::string Win32ResourceGenerator::getRandomIdentifier(const char * cpp_file_path)
+  std::string Win32ResourceGenerator::getRandomIdentifier(const char * file_path)
   {
-    std::string include_guard = getCppIncludeGuardMacroName(cpp_file_path);
+    std::string include_guard = getCppIncludeGuardMacroName(file_path);
 
     //append a CRC32 checksum of the file path to allow storing multiple files with the same name in resources
     uint32_t checksum = 0;
     crc32Init(&checksum);
-    crc32Update(&checksum, (unsigned char *)cpp_file_path, (uint32_t)strlen(cpp_file_path));
+    crc32Update(&checksum, (unsigned char *)file_path, (uint32_t)strlen(file_path));
     crc32Finish(&checksum);
 
     std::string checksumString;
@@ -450,6 +374,15 @@ namespace bin2cpp
   bool Win32ResourceGenerator::printFileContent()
   {
     return false; // not supported
+  }
+
+  std::string Win32ResourceGenerator::lookupTemplateVariable(const std::string& name)
+  {
+    if ( name == "bin2cpp_win32_resource_random_identifier" ) return getRandomIdentifier(mContext.inputFilePath.c_str());
+    if ( name == "bin2cpp_win32_local_info_struct_name" ) return getLocalInfoStructName();
+
+    // Unknown name
+    return this->BaseGenerator::lookupTemplateVariable(name);
   }
 
   std::string Win32ResourceGenerator::getLocalInfoStructName()
