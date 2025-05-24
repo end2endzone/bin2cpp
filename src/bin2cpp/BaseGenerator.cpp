@@ -59,14 +59,22 @@ namespace bin2cpp
   std::string BaseGenerator::lookupTemplateVariable(const std::string& name)
   {
     if ( name == "bin2cpp_output_file_macro_guard" ) return getCppIncludeGuardMacroName(mContext.headerFilename);
-    if ( name == "bin2cpp_embedded_file_class_macro_guard" ) return getClassMacroGuardPrefix();
+    if ( name == "bin2cpp_embedded_file_class_macro_guard_prefix" ) return getClassMacroGuardPrefix();
     if ( name == "bin2cpp_output_file_header" ) return getHeaderTemplate();
+    if ( name == "bin2cpp_filemanager_file_header" ) return getHeaderTemplate(false);
+    if ( name == "bin2cpp_file_manager_header_file_name" ) return mContext.managerHeaderFilename;
+    if ( name == "bin2cpp_file_manager_macro_guard_prefix" ) return getFileManagerMacroGuardPrefix();
     if ( name == "bin2cpp_baseclass" ) return mContext.baseClass;
     if ( name == "bin2cpp_classname" ) return getClassName();
+    if ( name == "bin2cpp_namespace" ) return mContext.codeNamespace;
+    if ( name == "bin2cpp_baseclass_uppercase" ) return ra::strings::Uppercase(mContext.baseClass);
+    if ( name == "bin2cpp_classname_uppercase" ) return ra::strings::Uppercase(getClassName());
+    if ( name == "bin2cpp_namespace_uppercase" ) return ra::strings::Lowercase(mContext.codeNamespace);
+    if ( name == "bin2cpp_baseclass_lowercase" ) return ra::strings::Lowercase(mContext.baseClass);
+    if ( name == "bin2cpp_classname_lowercase" ) return ra::strings::Lowercase(getClassName());
+    if ( name == "bin2cpp_namespace_lowercase" ) return ra::strings::Lowercase(mContext.codeNamespace);
     if ( name == "bin2cpp_function_identifier" ) return mContext.functionIdentifier;
     if ( name == "bin2cpp_function_identifier_lowercase" ) return ra::strings::Lowercase(mContext.functionIdentifier);
-    if ( name == "bin2cpp_classname" ) return getClassName();
-    if ( name == "bin2cpp_namespace" ) return mContext.codeNamespace;
     if ( name == "bin2cpp_cpp_getter_function_name" ) return getGetterFunctionName();
     if ( name == "bin2cpp_insert_input_file_as_code" ) return getInputFileDataAsCode();
     if ( name == "bin2cpp_cpp_header_include_path" ) return getCppHeaderIncludePath();
@@ -283,6 +291,17 @@ namespace bin2cpp
     return macroGuardPrefix;
   }
 
+  std::string BaseGenerator::getFileManagerMacroGuardPrefix()
+  {
+    //define macro guard a macro matching the filename
+    std::string output;
+    output += getCppIncludeGuardMacroName(mContext.codeNamespace.c_str()); //prefix the custom namespace for the file manager
+    if ( !output.empty() )
+      output += "_";
+    output += getCppIncludeGuardMacroName(mContext.managerHeaderFilename);
+    return output;
+  }
+
   std::string BaseGenerator::getImplOfGetFileName()
   {
     std::string output;
@@ -456,8 +475,8 @@ namespace bin2cpp
       "\n"
       "namespace ${bin2cpp_namespace}\n"
       "{\n"
-      "  #ifndef ${bin2cpp_embedded_file_class_macro_guard}_EMBEDDEDFILE_CLASS\n"
-      "  #define ${bin2cpp_embedded_file_class_macro_guard}_EMBEDDEDFILE_CLASS\n"
+      "  #ifndef ${bin2cpp_embedded_file_class_macro_guard_prefix}_EMBEDDEDFILE_CLASS\n"
+      "  #define ${bin2cpp_embedded_file_class_macro_guard_prefix}_EMBEDDEDFILE_CLASS\n"
       "  class ${bin2cpp_baseclass}\n"
       "  {\n"
       "  public:\n"
@@ -468,7 +487,7 @@ namespace bin2cpp
       "    virtual const char * getBuffer() const = 0;\n"
       "    virtual bool save(const char * filename) const = 0;\n"
       "  };\n"
-      "  #endif //${bin2cpp_embedded_file_class_macro_guard}_EMBEDDEDFILE_CLASS\n"
+      "  #endif //${bin2cpp_embedded_file_class_macro_guard_prefix}_EMBEDDEDFILE_CLASS\n"
       "  const ${bin2cpp_baseclass} & ${bin2cpp_cpp_getter_function_name}();\n"
       "}; //${bin2cpp_namespace}\n"
       "\n"
@@ -544,8 +563,8 @@ namespace bin2cpp
       "#include <stddef.h>\n"
       "#include <stdbool.h>\n"
       "\n"
-      "#ifndef ${bin2cpp_embedded_file_class_macro_guard}_EMBEDDEDFILE_STRUCT\n"
-      "#define ${bin2cpp_embedded_file_class_macro_guard}_EMBEDDEDFILE_STRUCT\n"
+      "#ifndef ${bin2cpp_embedded_file_class_macro_guard_prefix}_EMBEDDEDFILE_STRUCT\n"
+      "#define ${bin2cpp_embedded_file_class_macro_guard_prefix}_EMBEDDEDFILE_STRUCT\n"
       "typedef struct ${bin2cpp_baseclass} ${bin2cpp_baseclass};\n"
       "typedef bool(*${bin2cpp_namespace}_load_func)();\n"
       "typedef void(*${bin2cpp_namespace}_free_func)();\n"
@@ -561,7 +580,7 @@ namespace bin2cpp
       "  ${bin2cpp_namespace}_save_func save;\n"
       "} ${bin2cpp_baseclass};\n"
       "typedef ${bin2cpp_baseclass}* ${bin2cpp_baseclass}Ptr;\n"
-      "#endif //${bin2cpp_embedded_file_class_macro_guard}_EMBEDDEDFILE_STRUCT\n"
+      "#endif //${bin2cpp_embedded_file_class_macro_guard_prefix}_EMBEDDEDFILE_STRUCT\n"
       "${bin2cpp_baseclass}* ${bin2cpp_cpp_getter_function_name}(void);\n"
       "\n"
       "#endif //${bin2cpp_output_file_macro_guard}\n"

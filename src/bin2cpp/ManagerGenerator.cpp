@@ -23,6 +23,7 @@
  *********************************************************************************/
 
 #include "ManagerGenerator.h"
+#include "TemplateProcessor.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -45,425 +46,393 @@ namespace bin2cpp
     return "manager";
   }
 
-  bool ManagerGenerator::createCppHeaderFile(const char* header_file_path)
+  bool ManagerGenerator::createCppHeaderFile(const char* file_path)
   {
-    FILE* header = fopen(header_file_path, "w");
-    if ( !header )
-      return false;
+    const std::string text = ""
+      "${bin2cpp_filemanager_file_header}"
+      "#ifndef ${bin2cpp_file_manager_macro_guard_prefix}\n"
+      "#define ${bin2cpp_file_manager_macro_guard_prefix}\n"
+      "\n"
+      "#include <stddef.h>\n"
+      "#include <vector>\n"
+      "\n"
+      "namespace ${bin2cpp_namespace}\n"
+      "{\n"
+      "  #ifndef ${bin2cpp_embedded_file_class_macro_guard_prefix}_EMBEDDEDFILE_CLASS\n"
+      "  #define ${bin2cpp_embedded_file_class_macro_guard_prefix}_EMBEDDEDFILE_CLASS\n"
+      "  class ${bin2cpp_baseclass}\n"
+      "  {\n"
+      "  public:\n"
+      "    virtual size_t getSize() const = 0;\n"
+      "    /* DEPRECATED */ virtual inline const char * getFilename() const { return getFileName(); }\n"
+      "    virtual const char * getFileName() const = 0;\n"
+      "    virtual const char * getFilePath() const = 0;\n"
+      "    virtual const char * getBuffer() const = 0;\n"
+      "    virtual bool save(const char * filename) const = 0;\n"
+      "  };\n"
+      "  #endif //${bin2cpp_embedded_file_class_macro_guard_prefix}_EMBEDDEDFILE_CLASS\n"
+      "\n"
+      "  #ifndef ${bin2cpp_embedded_file_class_macro_guard_prefix}_FILEMANAGER_CLASS\n"
+      "  #define ${bin2cpp_embedded_file_class_macro_guard_prefix}_FILEMANAGER_CLASS\n"
+      "  class FileManager\n"
+      "  {\n"
+      "  private:\n"
+      "    FileManager();\n"
+      "    ~FileManager();\n"
+      "  public:\n"
+      "    typedef const ${bin2cpp_baseclass} & (*t_func)();\n"
+      "    static FileManager & getInstance();\n"
+      "    void registerFile(t_func func);\n"
+      "    size_t getFileCount() const;\n"
+      "    const ${bin2cpp_baseclass} * getFile(const size_t & index) const;\n"
+      "    bool saveFiles(const char * directory) const;\n"
+      "    bool createParentDirectories(const char * file_path) const;\n"
+      "    bool createDirectories(const char * path) const;\n"
+      "  private:\n"
+      "    std::vector<t_func> functions_;\n"
+      "  };\n"
+      "  #endif //${bin2cpp_embedded_file_class_macro_guard_prefix}_FILEMANAGER_CLASS\n"
+      "}; //${bin2cpp_namespace}\n"
+      "\n"
+      "#endif //${bin2cpp_file_manager_macro_guard_prefix}\n"
+    ;
 
-    //define macro guard a macro matching the filename
-    std::string macroGuard;
-    macroGuard += getCppIncludeGuardMacroName(mContext.codeNamespace.c_str()); //prefix the custom namespace for the file manager
-    if ( !macroGuard.empty() )
-      macroGuard += "_";
-    macroGuard += getCppIncludeGuardMacroName(header_file_path);
+    TemplateProcessor processor(&text);
+    processor.setTemplateVariableLookup(this);
+    bool write_success = processor.writeFile(file_path);
 
-    std::string classMacroGuardPrefix = getClassMacroGuardPrefix();
-    std::string fileHeader = getHeaderTemplate(false);
-
-    fprintf(header, "%s", fileHeader.c_str());
-    fprintf(header, "#ifndef %s\n", macroGuard.c_str());
-    fprintf(header, "#define %s\n", macroGuard.c_str());
-    fprintf(header, "\n");
-    fprintf(header, "#include <stddef.h>\n");
-    fprintf(header, "#include <vector>\n");
-    fprintf(header, "\n");
-    fprintf(header, "namespace %s\n", mContext.codeNamespace.c_str());
-    fprintf(header, "{\n");
-    fprintf(header, "  #ifndef %s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
-    fprintf(header, "  #define %s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
-    fprintf(header, "  class %s\n", mContext.baseClass.c_str());
-    fprintf(header, "  {\n");
-    fprintf(header, "  public:\n");
-    fprintf(header, "    virtual size_t getSize() const = 0;\n");
-    fprintf(header, "    /* DEPRECATED */ virtual inline const char * getFilename() const { return getFileName(); }\n");
-    fprintf(header, "    virtual const char * getFileName() const = 0;\n");
-    fprintf(header, "    virtual const char * getFilePath() const = 0;\n");
-    fprintf(header, "    virtual const char * getBuffer() const = 0;\n");
-    fprintf(header, "    virtual bool save(const char * filename) const = 0;\n");
-    fprintf(header, "  };\n");
-    fprintf(header, "  #endif //%s_EMBEDDEDFILE_CLASS\n", classMacroGuardPrefix.c_str());
-    fprintf(header, "\n");
-    fprintf(header, "  #ifndef %s_FILEMANAGER_CLASS\n", classMacroGuardPrefix.c_str());
-    fprintf(header, "  #define %s_FILEMANAGER_CLASS\n", classMacroGuardPrefix.c_str());
-    fprintf(header, "  class FileManager\n");
-    fprintf(header, "  {\n");
-    fprintf(header, "  private:\n");
-    fprintf(header, "    FileManager();\n");
-    fprintf(header, "    ~FileManager();\n");
-    fprintf(header, "  public:\n");
-    fprintf(header, "    typedef const %s & (*t_func)();\n", mContext.baseClass.c_str());
-    fprintf(header, "    static FileManager & getInstance();\n");
-    fprintf(header, "    void registerFile(t_func func);\n");
-    fprintf(header, "    size_t getFileCount() const;\n");
-    fprintf(header, "    const %s * getFile(const size_t & index) const;\n", mContext.baseClass.c_str());
-    fprintf(header, "    bool saveFiles(const char * directory) const;\n");
-    fprintf(header, "    bool createParentDirectories(const char * file_path) const;\n");
-    fprintf(header, "    bool createDirectories(const char * path) const;\n");
-    fprintf(header, "  private:\n");
-    fprintf(header, "    std::vector<t_func> functions_;\n");
-    fprintf(header, "  };\n");
-    fprintf(header, "  #endif //%s_FILEMANAGER_CLASS\n", classMacroGuardPrefix.c_str());
-    fprintf(header, "}; //%s\n", mContext.codeNamespace.c_str());
-    fprintf(header, "\n");
-    fprintf(header, "#endif //%s\n", macroGuard.c_str());
-
-    fclose(header);
-
-    return true;
+    return write_success;
   }
 
-  bool ManagerGenerator::createCppSourceFile(const char* cpp_file_path)
+  bool ManagerGenerator::createCppSourceFile(const char* file_path)
   {
-    FILE* cpp = fopen(cpp_file_path, "w");
-    if ( !cpp )
-      return false;
+    const std::string text = ""
+      "${bin2cpp_filemanager_file_header}"
+      "#include \"${bin2cpp_file_manager_header_file_name}\"\n"
+      "#include <string>\n"
+      "#include <string.h> // strlen\n"
+      "#include <sys/stat.h> // stat\n"
+      "#include <errno.h>    // errno, EEXIST\n"
+      "#if defined(_WIN32)\n"
+      "#include <direct.h>   // _mkdir\n"
+      "#endif\n"
+      "\n"
+      "#if defined(_WIN32)\n"
+      "#define portable_stat _stat\n"
+      "#define portable_mkdir(path) _mkdir(path)\n"
+      "#define PATH_SEPARATOR_CHAR '\\\\'\n"
+      "#define PATH_SEPARATOR_STR \"\\\\\"\n"
+      "#else\n"
+      "#define portable_stat stat\n"
+      "#define portable_mkdir(path) mkdir(path, 0755)\n"
+      "#define PATH_SEPARATOR_CHAR '/'\n"
+      "#define PATH_SEPARATOR_STR \"/\"\n"
+      "#endif\n"
+      "\n"
+      "namespace ${bin2cpp_namespace}\n"
+      "{\n"
+      "  bool RegisterFile(FileManager::t_func functionPointer)\n"
+      "  {\n"
+      "    if (functionPointer == NULL)\n"
+      "      return false;\n"
+      "    FileManager::getInstance().registerFile(functionPointer);\n"
+      "    return true;\n"
+      "  }\n"
+      "  FileManager::FileManager() {}\n"
+      "  FileManager::~FileManager() {}\n"
+      "  FileManager & FileManager::getInstance() { static FileManager _mgr; return _mgr; }\n"
+      "  void FileManager::registerFile(t_func func) { functions_.push_back(func); }\n"
+      "  size_t FileManager::getFileCount() const { return functions_.size(); }\n"
+      "  const File * FileManager::getFile(const size_t & index) const\n"
+      "  {\n"
+      "    if (index >= functions_.size())\n"
+      "      return NULL;\n"
+      "    t_func ressource_getter_function = functions_[index];\n"
+      "    const ${bin2cpp_namespace}::File & resource = ressource_getter_function();\n"
+      "    return &resource;\n"
+      "  }\n"
+      "  bool FileManager::saveFiles(const char * directory) const\n"
+      "  {\n"
+      "    if (directory == NULL)\n"
+      "      return false;\n"
+      "    size_t count = getFileCount();\n"
+      "    for(size_t i=0; i<count; i++)\n"
+      "    {\n"
+      "      const File * f = getFile(i);\n"
+      "      if (!f)\n"
+      "        return false;\n"
+      "      std::string path;\n"
+      "      path.append(directory);\n"
+      "      path.append(1,PATH_SEPARATOR_CHAR);\n"
+      "      path.append(f->getFilePath());\n"
+      "      if (!createParentDirectories(path.c_str()))\n"
+      "        return false;\n"
+      "      bool saved = f->save(path.c_str());\n"
+      "      if (!saved)\n"
+      "        return false;\n"
+      "    }\n"
+      "    return true;\n"
+      "  }\n"
+      "  static inline bool isRootDirectory(const char * path)\n"
+      "  {\n"
+      "    if (path == NULL && path[0] == '\\0')\n"
+      "      return false;\n"
+      "  #if defined(_WIN32)\n"
+      "    bool isDriveLetter = ((path[0] >= 'a' && path[0] <= 'z') || (path[0] >= 'A' && path[0] <= 'Z'));\n"
+      "    if ((isDriveLetter && path[1] == ':' && path[2] == '\\0') || // test for C:\n"
+      "        (isDriveLetter && path[1] == ':' && path[2] == PATH_SEPARATOR_CHAR && path[3] == '\\0')) // test for C:\\ \n"
+      "      return true;\n"
+      "  #else\n"
+      "    if (path[0] == PATH_SEPARATOR_CHAR)\n"
+      "      return true;\n"
+      "  #endif\n"
+      "    return false;\n"
+      "  }\n"
+      "  bool FileManager::createParentDirectories(const char * file_path) const\n"
+      "  {\n"
+      "    if (file_path == NULL)\n"
+      "      return false;\n"
+      "    std::string accumulator;\n"
+      "    size_t length = strlen(file_path);\n"
+      "    for(size_t i=0; i<length; i++)\n"
+      "    {\n"
+      "      if (file_path[i] == PATH_SEPARATOR_CHAR && !accumulator.empty() && !isRootDirectory(accumulator.c_str()))\n"
+      "      {\n"
+      "        int ret = portable_mkdir(accumulator.c_str());\n"
+      "        if (ret != 0 && errno != EEXIST)\n"
+      "          return false;\n"
+      "      }\n"
+      "      accumulator += file_path[i];\n"
+      "    }\n"
+      "    return true;\n"
+      "  }\n"
+      "  bool FileManager::createDirectories(const char * path) const\n"
+      "  {\n"
+      "    if (path == NULL)\n"
+      "      return false;\n"
+      "    std::string path_copy = path;\n"
+      "    path_copy.append(1,PATH_SEPARATOR_CHAR);\n"
+      "    return createParentDirectories(path_copy.c_str());\n"
+      "  }\n"
+      "}; //${bin2cpp_namespace}\n"
+    ;
 
-    //Build header and cpp file path
-    std::string headerPath = getHeaderFilePath(cpp_file_path);
-    std::string cppPath = cpp_file_path;
+    TemplateProcessor processor(&text);
+    processor.setTemplateVariableLookup(this);
+    bool write_success = processor.writeFile(file_path);
 
-    std::string fileHeader = getHeaderTemplate(false);
-
-    fprintf(cpp, "%s", fileHeader.c_str());
-    fprintf(cpp, "#include \"%s\"\n", mContext.managerHeaderFilename.c_str());
-    fprintf(cpp, "#include <string>\n");
-    fprintf(cpp, "#include <string.h> // strlen\n");
-    fprintf(cpp, "#include <sys/stat.h> // stat\n");
-    fprintf(cpp, "#include <errno.h>    // errno, EEXIST\n");
-    fprintf(cpp, "#if defined(_WIN32)\n");
-    fprintf(cpp, "#include <direct.h>   // _mkdir\n");
-    fprintf(cpp, "#endif\n");
-    fprintf(cpp, "\n");
-    fprintf(cpp, "#if defined(_WIN32)\n");
-    fprintf(cpp, "#define portable_stat _stat\n");
-    fprintf(cpp, "#define portable_mkdir(path) _mkdir(path)\n");
-    fprintf(cpp, "#define PATH_SEPARATOR_CHAR '\\\\'\n");
-    fprintf(cpp, "#define PATH_SEPARATOR_STR \"\\\\\"\n");
-    fprintf(cpp, "#else\n");
-    fprintf(cpp, "#define portable_stat stat\n");
-    fprintf(cpp, "#define portable_mkdir(path) mkdir(path, 0755)\n");
-    fprintf(cpp, "#define PATH_SEPARATOR_CHAR '/'\n");
-    fprintf(cpp, "#define PATH_SEPARATOR_STR \"/\"\n");
-    fprintf(cpp, "#endif\n");
-    fprintf(cpp, "\n");
-    fprintf(cpp, "namespace %s\n", mContext.codeNamespace.c_str());
-    fprintf(cpp, "{\n");
-    fprintf(cpp, "  bool RegisterFile(FileManager::t_func functionPointer)\n");
-    fprintf(cpp, "  {\n");
-    fprintf(cpp, "    if (functionPointer == NULL)\n");
-    fprintf(cpp, "      return false;\n");
-    fprintf(cpp, "    FileManager::getInstance().registerFile(functionPointer);\n");
-    fprintf(cpp, "    return true;\n");
-    fprintf(cpp, "  }\n");
-    fprintf(cpp, "  FileManager::FileManager() {}\n");
-    fprintf(cpp, "  FileManager::~FileManager() {}\n");
-    fprintf(cpp, "  FileManager & FileManager::getInstance() { static FileManager _mgr; return _mgr; }\n");
-    fprintf(cpp, "  void FileManager::registerFile(t_func func) { functions_.push_back(func); }\n");
-    fprintf(cpp, "  size_t FileManager::getFileCount() const { return functions_.size(); }\n");
-    fprintf(cpp, "  const File * FileManager::getFile(const size_t & index) const\n");
-    fprintf(cpp, "  {\n");
-    fprintf(cpp, "    if (index >= functions_.size())\n");
-    fprintf(cpp, "      return NULL;\n");
-    fprintf(cpp, "    t_func ressource_getter_function = functions_[index];\n");
-    fprintf(cpp, "    const %s::File & resource = ressource_getter_function();\n", mContext.codeNamespace.c_str());
-    fprintf(cpp, "    return &resource;\n");
-    fprintf(cpp, "  }\n");
-    fprintf(cpp, "  bool FileManager::saveFiles(const char * directory) const\n");
-    fprintf(cpp, "  {\n");
-    fprintf(cpp, "    if (directory == NULL)\n");
-    fprintf(cpp, "      return false;\n");
-    fprintf(cpp, "    size_t count = getFileCount();\n");
-    fprintf(cpp, "    for(size_t i=0; i<count; i++)\n");
-    fprintf(cpp, "    {\n");
-    fprintf(cpp, "      const File * f = getFile(i);\n");
-    fprintf(cpp, "      if (!f)\n");
-    fprintf(cpp, "        return false;\n");
-    fprintf(cpp, "      std::string path;\n");
-    fprintf(cpp, "      path.append(directory);\n");
-    fprintf(cpp, "      path.append(1,PATH_SEPARATOR_CHAR);\n");
-    fprintf(cpp, "      path.append(f->getFilePath());\n");
-    fprintf(cpp, "      if (!createParentDirectories(path.c_str()))\n");
-    fprintf(cpp, "        return false;\n");
-    fprintf(cpp, "      bool saved = f->save(path.c_str());\n");
-    fprintf(cpp, "      if (!saved)\n");
-    fprintf(cpp, "        return false;\n");
-    fprintf(cpp, "    }\n");
-    fprintf(cpp, "    return true;\n");
-    fprintf(cpp, "  }\n");
-    fprintf(cpp, "  static inline bool isRootDirectory(const char * path)\n");
-    fprintf(cpp, "  {\n");
-    fprintf(cpp, "    if (path == NULL && path[0] == '\\0')\n");
-    fprintf(cpp, "      return false;\n");
-    fprintf(cpp, "  #if defined(_WIN32)\n");
-    fprintf(cpp, "    bool isDriveLetter = ((path[0] >= 'a' && path[0] <= 'z') || (path[0] >= 'A' && path[0] <= 'Z'));\n");
-    fprintf(cpp, "    if ((isDriveLetter && path[1] == ':' && path[2] == '\\0') || // test for C:\n");
-    fprintf(cpp, "        (isDriveLetter && path[1] == ':' && path[2] == PATH_SEPARATOR_CHAR && path[3] == '\\0')) // test for C:\\ \n");
-    fprintf(cpp, "      return true;\n");
-    fprintf(cpp, "  #else\n");
-    fprintf(cpp, "    if (path[0] == PATH_SEPARATOR_CHAR)\n");
-    fprintf(cpp, "      return true;\n");
-    fprintf(cpp, "  #endif\n");
-    fprintf(cpp, "    return false;\n");
-    fprintf(cpp, "  }\n");
-    fprintf(cpp, "  bool FileManager::createParentDirectories(const char * file_path) const\n");
-    fprintf(cpp, "  {\n");
-    fprintf(cpp, "    if (file_path == NULL)\n");
-    fprintf(cpp, "      return false;\n");
-    fprintf(cpp, "    std::string accumulator;\n");
-    fprintf(cpp, "    size_t length = strlen(file_path);\n");
-    fprintf(cpp, "    for(size_t i=0; i<length; i++)\n");
-    fprintf(cpp, "    {\n");
-    fprintf(cpp, "      if (file_path[i] == PATH_SEPARATOR_CHAR && !accumulator.empty() && !isRootDirectory(accumulator.c_str()))\n");
-    fprintf(cpp, "      {\n");
-    fprintf(cpp, "        int ret = portable_mkdir(accumulator.c_str());\n");
-    fprintf(cpp, "        if (ret != 0 && errno != EEXIST)\n");
-    fprintf(cpp, "          return false;\n");
-    fprintf(cpp, "      }\n");
-    fprintf(cpp, "      accumulator += file_path[i];\n");
-    fprintf(cpp, "    }\n");
-    fprintf(cpp, "    return true;\n");
-    fprintf(cpp, "  }\n");
-    fprintf(cpp, "  bool FileManager::createDirectories(const char * path) const\n");
-    fprintf(cpp, "  {\n");
-    fprintf(cpp, "    if (path == NULL)\n");
-    fprintf(cpp, "      return false;\n");
-    fprintf(cpp, "    std::string path_copy = path;\n");
-    fprintf(cpp, "    path_copy.append(1,PATH_SEPARATOR_CHAR);\n");
-    fprintf(cpp, "    return createParentDirectories(path_copy.c_str());\n");
-    fprintf(cpp, "  }\n");
-    fprintf(cpp, "}; //%s\n", mContext.codeNamespace.c_str());
-
-    fclose(cpp);
-
-    return true;
+    return write_success;
   }
 
   bool ManagerGenerator::createCHeaderFile(const char* file_path)
   {
-    FILE* fout = fopen(file_path, "w");
-    if ( !fout )
-      return false;
+    const std::string text = ""
+      "${bin2cpp_filemanager_file_header}"
+      "#ifndef ${bin2cpp_file_manager_macro_guard_prefix}\n"
+      "#define ${bin2cpp_file_manager_macro_guard_prefix}\n"
+      "\n"
+      "#include <stddef.h>\n"
+      "#include <stdbool.h>\n"
+      "\n"
+      "#ifndef ${bin2cpp_embedded_file_class_macro_guard_prefix}_EMBEDDEDFILE_STRUCT\n"
+      "#define ${bin2cpp_embedded_file_class_macro_guard_prefix}_EMBEDDEDFILE_STRUCT\n"
+      "typedef struct ${bin2cpp_baseclass} ${bin2cpp_baseclass};\n"
+      "typedef bool(*${bin2cpp_namespace}_load_func)();\n"
+      "typedef void(*${bin2cpp_namespace}_free_func)();\n"
+      "typedef bool(*${bin2cpp_namespace}_save_func)(const char*);\n"
+      "typedef struct ${bin2cpp_baseclass}\n"
+      "{\n"
+      "  size_t size;\n"
+      "  const char* file_name;\n"
+      "  const char* file_path;\n"
+      "  const unsigned char* buffer;\n"
+      "  ${bin2cpp_namespace}_load_func load;\n"
+      "  ${bin2cpp_namespace}_free_func unload;\n"
+      "  ${bin2cpp_namespace}_save_func save;\n"
+      "} ${bin2cpp_baseclass};\n"
+      "typedef ${bin2cpp_baseclass}* ${bin2cpp_baseclass}Ptr;\n"
+      "#endif //${bin2cpp_embedded_file_class_macro_guard_prefix}_EMBEDDEDFILE_STRUCT\n"
+      "\n"
+      "size_t ${bin2cpp_namespace}_filemanager_get_file_count();\n"
+      "bool ${bin2cpp_namespace}_filemanager_register_file(${bin2cpp_baseclass}* file);\n"
+      "const ${bin2cpp_baseclass}* ${bin2cpp_namespace}_filemanager_get_file(size_t index);\n"
+      "bool ${bin2cpp_namespace}_filemanager_save_files(const char* directory);\n"
+      "\n"
+      "#endif //${bin2cpp_file_manager_macro_guard_prefix}\n"
+    ;
 
-    //define macro guard a macro matching the filename
-    std::string macroGuard;
-    macroGuard += getCppIncludeGuardMacroName(mContext.codeNamespace.c_str()); //prefix the custom namespace for the file manager
-    if ( !macroGuard.empty() )
-      macroGuard += "_";
-    macroGuard += getCppIncludeGuardMacroName(file_path);
+    TemplateProcessor processor(&text);
+    processor.setTemplateVariableLookup(this);
+    bool write_success = processor.writeFile(file_path);
 
-    std::string classMacroGuardPrefix = getClassMacroGuardPrefix();
-    std::string fileHeader = getHeaderTemplate(false);
-
-    fprintf(fout, "%s", fileHeader.c_str());
-    fprintf(fout, "#ifndef %s\n", macroGuard.c_str());
-    fprintf(fout, "#define %s\n", macroGuard.c_str());
-    fprintf(fout, "\n");
-    fprintf(fout, "#include <stddef.h>\n");
-    fprintf(fout, "#include <stdbool.h>\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "#ifndef %s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
-    fprintf(fout, "#define %s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
-    fprintf(fout, "typedef struct %s %s;\n", mContext.baseClass.c_str(), mContext.baseClass.c_str());
-    fprintf(fout, "typedef bool(*%s_load_func)();\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "typedef void(*%s_free_func)();\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "typedef bool(*%s_save_func)(const char*);\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "typedef struct %s\n", mContext.baseClass.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  size_t size;\n");
-    fprintf(fout, "  const char* file_name;\n");
-    fprintf(fout, "  const char* file_path;\n");
-    fprintf(fout, "  const unsigned char* buffer;\n");
-    fprintf(fout, "  %s_load_func load;\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "  %s_free_func unload;\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "  %s_save_func save;\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "} %s;\n", mContext.baseClass.c_str());
-    fprintf(fout, "typedef %s* %sPtr;\n", mContext.baseClass.c_str(), mContext.baseClass.c_str());
-    fprintf(fout, "#endif //%s_EMBEDDEDFILE_STRUCT\n", classMacroGuardPrefix.c_str());
-    fprintf(fout, "\n");
-    fprintf(fout, "size_t %s_filemanager_get_file_count();\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "bool %s_filemanager_register_file(%s* file);\n", mContext.codeNamespace.c_str(), mContext.baseClass.c_str());
-    fprintf(fout, "const %s* %s_filemanager_get_file(size_t index);\n", mContext.baseClass.c_str(), mContext.codeNamespace.c_str());
-    fprintf(fout, "bool %s_filemanager_save_files(const char* directory);\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "\n");
-    fprintf(fout, "#endif //%s\n", macroGuard.c_str());
-
-    fclose(fout);
-
-    return true;
+    return write_success;
   }
 
   bool ManagerGenerator::createCSourceFile(const char* file_path)
   {
-    FILE* fout = fopen(file_path, "w");
-    if ( !fout )
-      return false;
+    const std::string text = ""
+      "${bin2cpp_filemanager_file_header}"
+      "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n"
+      "#define _CRT_SECURE_NO_WARNINGS\n"
+      "#endif\n"
+      "\n"
+      "#include \"${bin2cpp_file_manager_header_file_name}\"\n"
+      "#include <stdlib.h> // for malloc\n"
+      "#include <stdio.h>  // for snprintf()\n"
+      "#include <string.h> // strlen\n"
+      "#include <sys/stat.h> // stat\n"
+      "#include <errno.h>    // errno, EEXIST\n"
+      "#if defined(_WIN32)\n"
+      "#include <direct.h>   // _mkdir\n"
+      "#endif\n"
+      "#if defined(_WIN32)\n"
+      "#define portable_stat _stat\n"
+      "#define portable_mkdir(path) _mkdir(path)\n"
+      "#define PATH_SEPARATOR_CHAR '\\\\'\n"
+      "#define PATH_SEPARATOR_STR \"\\\\\"\n"
+      "#else\n"
+      "#define portable_stat stat\n"
+      "#define portable_mkdir(path) mkdir(path, 0755)\n"
+      "#define PATH_SEPARATOR_CHAR '/'\n"
+      "#define PATH_SEPARATOR_STR \"/\"\n"
+      "#endif\n"
+      "\n"
+      "#define BIN2C_MAX_PATH 32767\n"
+      "\n"
+      "static ${bin2cpp_baseclass}** registered_files = NULL;\n"
+      "static size_t registered_files_count = 0;\n"
+      "\n"
+      "size_t ${bin2cpp_namespace}_filemanager_get_file_count()\n"
+      "{\n"
+      "  return registered_files_count;\n"
+      "}\n"
+      "\n"
+      "bool ${bin2cpp_namespace}_filemanager_register_file(${bin2cpp_baseclass}* file)\n"
+      "{\n"
+      "  // check if already registered\n"
+      "  if ( registered_files_count && registered_files )\n"
+      "  {\n"
+      "    for ( size_t i = 0; i < registered_files_count; i++ )\n"
+      "    {\n"
+      "      const ${bin2cpp_baseclass}* existing_file = registered_files[i];\n"
+      "      if ( existing_file == file )\n"
+      "        return true; // nothing to do\n"
+      "    }\n"
+      "  }\n"
+      "  \n"
+      "  // allocate ram\n"
+      "  size_t new_ram_size = sizeof(${bin2cpp_baseclass}**) * (registered_files_count + 1);\n"
+      "  ${bin2cpp_baseclass}** tmp = NULL;\n"
+      "  if ( registered_files == NULL )\n"
+      "    tmp = (${bin2cpp_baseclass}**)malloc(new_ram_size);\n"
+      "  else\n"
+      "    tmp = (${bin2cpp_baseclass}**)realloc(registered_files, new_ram_size);\n"
+      "  if ( tmp == NULL )\n"
+      "    return false;\n"
+      "  \n"
+      "  registered_files = tmp;\n"
+      "  registered_files_count++;\n"
+      "  \n"
+      "  // insert\n"
+      "  registered_files[registered_files_count - 1] = file;\n"
+      "  \n"
+      "  return true;\n"
+      "}\n"
+      "\n"
+      "const ${bin2cpp_baseclass}* ${bin2cpp_namespace}_filemanager_get_file(size_t index)\n"
+      "{\n"
+      "  if ( index >= registered_files_count )\n"
+      "    return NULL;\n"
+      "  return registered_files[index];\n"
+      "}\n"
+      "\n"
+      "static inline bool ${bin2cpp_namespace}_filemanager_is_root_directory(const char* path)\n"
+      "{\n"
+      "  if ( path == NULL && path[0] == '\\0' )\n"
+      "    return false;\n"
+      "#if defined(_WIN32)\n"
+      "  bool is_drive_letter = ((path[0] >= 'a' && path[0] <= 'z') || (path[0] >= 'A' && path[0] <= 'Z'));\n"
+      "  if ( (is_drive_letter && path[1] == ':' && path[2] == '\\0') || // test for C:\n"
+      "      (is_drive_letter && path[1] == ':' && path[2] == PATH_SEPARATOR_CHAR && path[3] == '\\0') ) // test for C:\\ \n"
+      "    return true;\n"
+      "#else\n"
+      "  if ( path[0] == PATH_SEPARATOR_CHAR )\n"
+      "    return true;\n"
+      "#endif\n"
+      "  return false;\n"
+      "}\n"
+      "\n"
+      "bool ${bin2cpp_namespace}_filemanager_create_parent_directories(const char* file_path)\n"
+      "{\n"
+      "  if ( file_path == NULL )\n"
+      "    return false;\n"
+      "  char* accumulator = (char*)malloc(BIN2C_MAX_PATH);\n"
+      "  if ( accumulator == NULL )\n"
+      "    return false;\n"
+      "  accumulator[0] = '\\0';\n"
+      "  size_t length = strlen(file_path);\n"
+      "  for ( size_t i = 0; i < length; i++ )\n"
+      "  {\n"
+      "    if ( file_path[i] == PATH_SEPARATOR_CHAR && !(accumulator[0] == '\\0') && !${bin2cpp_namespace}_filemanager_is_root_directory(accumulator) )\n"
+      "    {\n"
+      "      int ret = portable_mkdir(accumulator);\n"
+      "      if ( ret != 0 && errno != EEXIST )\n"
+      "      {\n"
+      "        free(accumulator);\n"
+      "        return false;\n"
+      "      }\n"
+      "    }\n"
+      "    \n"
+      "    // append\n"
+      "    char tmp[] = { file_path[i], '\\0' };\n"
+      "    strcat(accumulator, tmp);\n"
+      "  }\n"
+      "  free(accumulator);\n"
+      "  return true;\n"
+      "}\n"
+      "\n"
+      "bool ${bin2cpp_namespace}_filemanager_save_files(const char * directory)\n"
+      "{\n"
+      "  if (directory == NULL)\n"
+      "    return false;\n"
+      "  char* path = (char*)malloc(BIN2C_MAX_PATH);\n"
+      "  if ( path == NULL )\n"
+      "    return false;\n"
+      "  path[0] = '\\0';\n"
+      "  for(size_t i=0; i< registered_files_count; i++)\n"
+      "  {\n"
+      "    const ${bin2cpp_baseclass}* f = ${bin2cpp_namespace}_filemanager_get_file(i);\n"
+      "    if ( !f )\n"
+      "    {\n"
+      "      free(path);\n"
+      "      return false;\n"
+      "    }\n"
+      "    \n"
+      "    snprintf(path, sizeof(path), \"%s%c%s\", directory, PATH_SEPARATOR_CHAR, f->file_path);\n"
+      "    \n"
+      "    if (!${bin2cpp_namespace}_filemanager_create_parent_directories(path))\n"
+      "    {\n"
+      "      free(path);\n"
+      "      return false;\n"
+      "    }\n"
+      "    bool saved = f->save(path);\n"
+      "    if (!saved)\n"
+      "    {\n"
+      "      free(path);\n"
+      "      return false;\n"
+      "    }\n"
+      "  }\n"
+      "  free(path);\n"
+      "  return true;\n"
+      "}\n"
+      "\n"
+    ;
 
-    //Build header and cpp file path
-    std::string headerPath = getHeaderFilePath(file_path);
-    std::string sourcePath = file_path;
+    TemplateProcessor processor(&text);
+    processor.setTemplateVariableLookup(this);
+    bool write_success = processor.writeFile(file_path);
 
-    std::string fileHeader = getHeaderTemplate(false);
-
-    fprintf(fout, "%s", fileHeader.c_str());
-    fprintf(fout, "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n");
-    fprintf(fout, "#define _CRT_SECURE_NO_WARNINGS\n");
-    fprintf(fout, "#endif\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "#include \"%s\"\n", mContext.managerHeaderFilename.c_str());
-    fprintf(fout, "#include <stdlib.h> // for malloc\n");
-    fprintf(fout, "#include <stdio.h>  // for snprintf()\n");
-    fprintf(fout, "#include <string.h> // strlen\n");
-    fprintf(fout, "#include <sys/stat.h> // stat\n");
-    fprintf(fout, "#include <errno.h>    // errno, EEXIST\n");
-    fprintf(fout, "#if defined(_WIN32)\n");
-    fprintf(fout, "#include <direct.h>   // _mkdir\n");
-    fprintf(fout, "#endif\n");
-    fprintf(fout, "#if defined(_WIN32)\n");
-    fprintf(fout, "#define portable_stat _stat\n");
-    fprintf(fout, "#define portable_mkdir(path) _mkdir(path)\n");
-    fprintf(fout, "#define PATH_SEPARATOR_CHAR '\\\\'\n");
-    fprintf(fout, "#define PATH_SEPARATOR_STR \"\\\\\"\n");
-    fprintf(fout, "#else\n");
-    fprintf(fout, "#define portable_stat stat\n");
-    fprintf(fout, "#define portable_mkdir(path) mkdir(path, 0755)\n");
-    fprintf(fout, "#define PATH_SEPARATOR_CHAR '/'\n");
-    fprintf(fout, "#define PATH_SEPARATOR_STR \"/\"\n");
-    fprintf(fout, "#endif\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "#define BIN2C_MAX_PATH 32767\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "static %s** registered_files = NULL;\n", mContext.baseClass.c_str());
-    fprintf(fout, "static size_t registered_files_count = 0;\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "size_t %s_filemanager_get_file_count()\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  return registered_files_count;\n");
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "bool %s_filemanager_register_file(%s* file)\n", mContext.codeNamespace.c_str(), mContext.baseClass.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  // check if already registered\n");
-    fprintf(fout, "  if ( registered_files_count && registered_files )\n");
-    fprintf(fout, "  {\n");
-    fprintf(fout, "    for ( size_t i = 0; i < registered_files_count; i++ )\n");
-    fprintf(fout, "    {\n");
-    fprintf(fout, "      const %s* existing_file = registered_files[i];\n", mContext.baseClass.c_str());
-    fprintf(fout, "      if ( existing_file == file )\n");
-    fprintf(fout, "        return true; // nothing to do\n");
-    fprintf(fout, "    }\n");
-    fprintf(fout, "  }\n");
-    fprintf(fout, "  \n");
-    fprintf(fout, "  // allocate ram\n");
-    fprintf(fout, "  size_t new_ram_size = sizeof(%s**) * (registered_files_count + 1);\n", mContext.baseClass.c_str());
-    fprintf(fout, "  %s** tmp = NULL;\n", mContext.baseClass.c_str());
-    fprintf(fout, "  if ( registered_files == NULL )\n");
-    fprintf(fout, "    tmp = (%s**)malloc(new_ram_size);\n", mContext.baseClass.c_str());
-    fprintf(fout, "  else\n");
-    fprintf(fout, "    tmp = (%s**)realloc(registered_files, new_ram_size);\n", mContext.baseClass.c_str());
-    fprintf(fout, "  if ( tmp == NULL )\n");
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "  \n");
-    fprintf(fout, "  registered_files = tmp;\n");
-    fprintf(fout, "  registered_files_count++;\n");
-    fprintf(fout, "  \n");
-    fprintf(fout, "  // insert\n");
-    fprintf(fout, "  registered_files[registered_files_count - 1] = file;\n");
-    fprintf(fout, "  \n");
-    fprintf(fout, "  return true;\n");
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "const %s* %s_filemanager_get_file(size_t index)\n", mContext.baseClass.c_str(), mContext.codeNamespace.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  if ( index >= registered_files_count )\n");
-    fprintf(fout, "    return NULL;\n");
-    fprintf(fout, "  return registered_files[index];\n");
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "static inline bool %s_filemanager_is_root_directory(const char* path)\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  if ( path == NULL && path[0] == '\\0' )\n");
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "#if defined(_WIN32)\n");
-    fprintf(fout, "  bool is_drive_letter = ((path[0] >= 'a' && path[0] <= 'z') || (path[0] >= 'A' && path[0] <= 'Z'));\n");
-    fprintf(fout, "  if ( (is_drive_letter && path[1] == ':' && path[2] == '\\0') || // test for C:\n");
-    fprintf(fout, "      (is_drive_letter && path[1] == ':' && path[2] == PATH_SEPARATOR_CHAR && path[3] == '\\0') ) // test for C:\\ \n");
-    fprintf(fout, "    return true;\n");
-    fprintf(fout, "#else\n");
-    fprintf(fout, "  if ( path[0] == PATH_SEPARATOR_CHAR )\n");
-    fprintf(fout, "    return true;\n");
-    fprintf(fout, "#endif\n");
-    fprintf(fout, "  return false;\n");
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "bool %s_filemanager_create_parent_directories(const char* file_path)\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  if ( file_path == NULL )\n");
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "  char* accumulator = (char*)malloc(BIN2C_MAX_PATH);\n");
-    fprintf(fout, "  if ( accumulator == NULL )\n");
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "  accumulator[0] = '\\0';\n");
-    fprintf(fout, "  size_t length = strlen(file_path);\n");
-    fprintf(fout, "  for ( size_t i = 0; i < length; i++ )\n");
-    fprintf(fout, "  {\n");
-    fprintf(fout, "    if ( file_path[i] == PATH_SEPARATOR_CHAR && !(accumulator[0] == '\\0') && !%s_filemanager_is_root_directory(accumulator) )\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "    {\n");
-    fprintf(fout, "      int ret = portable_mkdir(accumulator);\n");
-    fprintf(fout, "      if ( ret != 0 && errno != EEXIST )\n");
-    fprintf(fout, "      {\n");
-    fprintf(fout, "        free(accumulator);\n");
-    fprintf(fout, "        return false;\n");
-    fprintf(fout, "      }\n");
-    fprintf(fout, "    }\n");
-    fprintf(fout, "    \n");
-    fprintf(fout, "    // append\n");
-    fprintf(fout, "    char tmp[] = { file_path[i], '\\0' };\n");
-    fprintf(fout, "    strcat(accumulator, tmp);\n");
-    fprintf(fout, "  }\n");
-    fprintf(fout, "  free(accumulator);\n");
-    fprintf(fout, "  return true;\n");
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "bool %s_filemanager_save_files(const char * directory)\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  if (directory == NULL)\n");
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "  char* path = (char*)malloc(BIN2C_MAX_PATH);\n");
-    fprintf(fout, "  if ( path == NULL )\n");
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "  path[0] = '\\0';\n");
-    fprintf(fout, "  for(size_t i=0; i< registered_files_count; i++)\n");
-    fprintf(fout, "  {\n");
-    fprintf(fout, "    const %s* f = %s_filemanager_get_file(i);\n", mContext.baseClass.c_str(), mContext.codeNamespace.c_str());
-    fprintf(fout, "    if ( !f )\n");
-    fprintf(fout, "    {\n");
-    fprintf(fout, "      free(path);\n");
-    fprintf(fout, "      return false;\n");
-    fprintf(fout, "    }\n");
-    fprintf(fout, "    \n");
-    fprintf(fout, "    snprintf(path, sizeof(path), \"%%s%%c%%s\", directory, PATH_SEPARATOR_CHAR, f->file_path);\n");
-    fprintf(fout, "    \n");
-    fprintf(fout, "    if (!%s_filemanager_create_parent_directories(path))\n", mContext.codeNamespace.c_str());
-    fprintf(fout, "    {\n");
-    fprintf(fout, "      free(path);\n");
-    fprintf(fout, "      return false;\n");
-    fprintf(fout, "    }\n");
-    fprintf(fout, "    bool saved = f->save(path);\n");
-    fprintf(fout, "    if (!saved)\n");
-    fprintf(fout, "    {\n");
-    fprintf(fout, "      free(path);\n");
-    fprintf(fout, "      return false;\n");
-    fprintf(fout, "    }\n");
-    fprintf(fout, "  }\n");
-    fprintf(fout, "  free(path);\n");
-    fprintf(fout, "  return true;\n");
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-
-    fclose(fout);
-
-    return true;
+    return write_success;
   }
 
   bool ManagerGenerator::printFileContent()

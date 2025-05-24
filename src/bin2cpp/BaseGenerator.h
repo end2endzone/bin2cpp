@@ -66,6 +66,7 @@ namespace bin2cpp
     virtual std::string getCFileManagerStaticFileRegistrationImplementation();
     virtual std::string getClassName();
     virtual std::string getClassMacroGuardPrefix();
+    virtual std::string getFileManagerMacroGuardPrefix();
     virtual std::string getImplOfGetFileName();
     virtual std::string getImplOfGetFilePath();
     virtual std::string getFileClassFileName();

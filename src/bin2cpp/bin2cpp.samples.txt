@@ -44,6 +44,12 @@ Test all generators
 --file=..\..\test\bin2cpp_unittest\generated_files\testGeneratorString10000\testGeneratorString10000.bin    --output=..\..\test\bin2cpp_unittest\generated_files\testGeneratorString10000   --headerfile=_testGeneratorString10000.h   --identifier=testGeneratorString10000  --chunksize=450 --override --generator=string
 --file=..\..\test\bin2cpp_unittest\generated_files\testGeneratorWin32\testGeneratorWin32.bin                --output=..\..\test\bin2cpp_unittest\generated_files\testGeneratorWin32         --headerfile=_testGeneratorWin32.h         --identifier=testGeneratorWin32        --chunksize=450 --override --generator=win32
 
+Test as much features as possible with all generators:
+--file=..\..\test\bin2cpp_unittest\generated_files\testHtml100000\testHtml100000.bin --output=..\..\temp --headerfile=cpp_tim_testHtml100000.h --identifier=LibFooFOO --chunksize=75 --baseclass=ben --namespace=ray --managerfile=cpp_tim_filemanager.h --registerfile --override --code=cpp --generator=array
+--file=..\..\test\bin2cpp_unittest\generated_files\testHtml100000\testHtml100000.bin --output=..\..\temp --headerfile=cpp_jim_testHtml100000.h --identifier=LibBarBAR --chunksize=75 --baseclass=tom --namespace=eva --managerfile=cpp_jim_filemanager.h --registerfile --override --code=cpp --generator=segment
+--file=..\..\test\bin2cpp_unittest\generated_files\testHtml100000\testHtml100000.bin --output=..\..\temp --headerfile=cpp_lou_testHtml100000.h --identifier=LibBazBAZ --chunksize=75 --baseclass=sam --namespace=joe --managerfile=cpp_lou_filemanager.h --registerfile --override --code=cpp --generator=string
+--file=..\..\test\bin2cpp_unittest\generated_files\testHtml100000\testHtml100000.bin --output=..\..\temp --headerfile=cpp_sue_testHtml100000.h --identifier=LibBobBOB --chunksize=75 --baseclass=leo --namespace=jon --managerfile=cpp_sue_filemanager.h --registerfile --override --code=cpp --generator=win32
+
 Test plain output:
 --plainoutput --chunksize=75 --file=..\..\test\bin2cpp_unittest\generated_files\testSequential1000\testSequential1000.bin --generator=array
 --plainoutput --chunksize=75 --file=..\..\test\bin2cpp_unittest\generated_files\testSequential1000\testSequential1000.bin --generator=segment
