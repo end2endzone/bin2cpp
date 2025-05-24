@@ -226,7 +226,6 @@ namespace bin2cpp
     }
     else if ( mContext.code == CodeGenerationEnum::CODE_GENERATION_C )
     {
-      //fprintf(fout, "  memcpy(next, \"%s\", %s); next += %s; \n", cppEncoder.c_str(), ra::strings::ToString(readSize).c_str(), ra::strings::ToString(readSize).c_str());
       output += "memcpy(next, \"";
       output += code;
       output += "\", ";
