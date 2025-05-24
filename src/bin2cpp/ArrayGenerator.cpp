@@ -71,7 +71,7 @@ namespace bin2cpp
       "    virtual const char * getFilePath() const { ${bin2cpp_cpp_get_file_path_impl} }\n"
       "    virtual const char * getBuffer() const\n"
       "    {\n"
-      "      static const unsigned char buffer[] = {\n${bin2cpp_insert_input_file_as_code}"
+      "      static const unsigned char buffer[] = {\n${bin2cpp_insert_input_file_as_code}" // INPUT FILE AS CODE HERE
       "      };\n"
       "      return (const char *)buffer;\n"
       "    }\n"
@@ -123,7 +123,7 @@ namespace bin2cpp
       "{\n"
       "  if ( ${bin2cpp_function_identifier_lowercase}_file.buffer )\n"
       "    return true;\n"
-      "  static const unsigned char static_buffer[] = {\n${bin2cpp_insert_input_file_as_code}"
+      "  static const unsigned char static_buffer[] = {\n${bin2cpp_insert_input_file_as_code}" // INPUT FILE AS CODE HERE
       "  };\n"
       "\n"
       "  ${bin2cpp_function_identifier_lowercase}_file.buffer = static_buffer;\n"
@@ -176,8 +176,7 @@ namespace bin2cpp
       "  ${bin2cpp_function_identifier_lowercase}_init();\n"
       "  return &${bin2cpp_function_identifier_lowercase}_file;\n"
       "}\n"
-      "${bin2cpp_c_file_manager_registration_implementation}"
-    ;
+      "${bin2cpp_c_file_manager_registration_implementation}";
 
     TemplateProcessor processor(&text);
     processor.setTemplateVariableLookup(this);
