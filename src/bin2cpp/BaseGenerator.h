@@ -60,15 +60,15 @@ namespace bin2cpp
     virtual std::string getCppFilePath(const char * header_file_path);
     virtual std::string getHeaderTemplate();
     virtual std::string getHeaderTemplate(bool include_source_file);
-    virtual std::string getSaveMethodTemplate();
+    virtual std::string getCppSaveMethodTemplate();
     virtual std::string getCppFileManagerRegistrationImplementationTemplate();
     virtual std::string getCFileManagerRegistrationPredeclarationImplementation();
     virtual std::string getCFileManagerStaticFileRegistrationImplementation();
     virtual std::string getClassName();
     virtual std::string getClassMacroGuardPrefix();
     virtual std::string getFileManagerMacroGuardPrefix();
-    virtual std::string getImplOfGetFileName();
-    virtual std::string getImplOfGetFilePath();
+    virtual std::string getFileClassGetFileNameImplementation();
+    virtual std::string getFileClassGetFilePathImplementation();
     virtual std::string getFileClassFileName();
     virtual std::string getFileClassFilePath();
     virtual std::string getCppHeaderIncludePath();
