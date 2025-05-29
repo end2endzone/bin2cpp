@@ -5,9 +5,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Github Releases](https://img.shields.io/github/release/end2endzone/bin2cpp.svg)](https://github.com/end2endzone/bin2cpp/releases)
 
-bin2cpp is a command line tool for embedding small files (like images, icons or raw data files) into a C++ executable.
+bin2cpp is a command line tool for embedding small files (like images, icons or raw data files) into a C or C++ executable.
 
-When executed, bin2cpp takes binary file as input and outputs c++ code (a function) that when called allows a c++ program to retrieve the content of the input binary file.
+When executed, bin2cpp takes binary file as input and outputs C or C++ code (a function) that when called allows a program to retrieve the content of the input binary file.
 
 
 
@@ -21,13 +21,6 @@ Build:
 | Windows Server 2019 | [![Build on Windows](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml/badge.svg)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml) | [![Tests on Windows](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/end2endzone/58cf6c72c08e706335337d5ef9ca48e8/raw/bin2cpp.master.Windows.json)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_windows.yml) |
 | Ubuntu 20.04        | [![Build on Linux](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml/badge.svg)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml)       | [![Tests on Linux](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/end2endzone/58cf6c72c08e706335337d5ef9ca48e8/raw/bin2cpp.master.Linux.json)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_linux.yml)       |
 | macOS 10.15         | [![Build on macOS](https://github.com/end2endzone/bin2cpp/actions/workflows/build_macos.yml/badge.svg)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_macos.yml)       | [![Tests on macOS](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/end2endzone/58cf6c72c08e706335337d5ef9ca48e8/raw/bin2cpp.master.macOS.json)](https://github.com/end2endzone/bin2cpp/actions/workflows/build_macos.yml)       |
-
-Statistics:
-
-| AppVeyor                                                                                                                                       | Travic CI                                                                                                              | GitHub                                                                                                                     |
-| ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| [![Statistics](https://buildstats.info/appveyor/chart/end2endzone/bin2cpp)](https://ci.appveyor.com/project/end2endzone/bin2cpp/branch/master) | [![Statistics](https://buildstats.info/travisci/chart/end2endzone/bin2cpp)](https://travis-ci.org/end2endzone/bin2cpp) | [![Statistics](https://buildstats.info/github/chart/end2endzone/bin2cpp)](https://github.com/end2endzone/bin2cpp/actions/) |
-
 
 
 
@@ -46,7 +39,7 @@ The generated functions that reads and extracts the embedded content does not re
 
 The main features of the project are:
 
-* Easily converts small files as C++ source code for embedding into a C++ executable.
+* Easily converts small files to C or C++ source code for embedding into an executable.
 * Access content with a unique function call for each embedded file.
 * Supports multiple embedded files at once.
 * Keep the directory structure when embedding directories.
@@ -54,16 +47,16 @@ The main features of the project are:
 * Makes it harder for resource hacker to modify or steal the embedded files.
 * No third party libraries required for retrieving the data of the embedded files.
 * Supports different types of code generator: string, segment, array, win32 resources.
-* File's originals `size`, `filename` and `directory` properties available from generated source code.
+* File's originals `size`, `filename` and `relative path` properties available from generated source code.
 * Control generated source code: choose your custom _File_ interface and namespace.
 * Print a file encoded content to stdout. Useful for scripts and integration with third party application.
-* Generated code is C++98 standard-compliant.
+* Generated code is C99 or C++98 standard-compliant.
 
 
 
 ## Use cases
 
-The following list show situations where bin2cpp is useful:
+The following list show use cases where bin2cpp is useful:
 
 * Embedding default configuration files if none are provided.
 * Embedding GLSL shaders into the executable.
