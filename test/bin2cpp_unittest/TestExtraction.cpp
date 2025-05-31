@@ -63,10 +63,10 @@
 #include "testReportedPathFile2/_testReportedPathFile2.h"
 #include "testReportedPathDir/generated_sources/FileManagerReportedPathDir.h"
 
-#undef BIN2CPP_EMBEDDEDFILE_CLASS
+#undef BIN2CPP_FILE_OBJECT_CLASS
 #include "testNamespace/_testNamespace.h"
 
-#undef BIN2CPP_EMBEDDEDFILE_CLASS
+#undef BIN2CPP_FILE_OBJECT_CLASS
 #include "testBaseClass/_testBaseClass.h"
 
 extern "C"
