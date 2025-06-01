@@ -68,8 +68,8 @@ namespace bin2cpp
       "    ${bin2cpp_classname}() {}\n"
       "    virtual ~${bin2cpp_classname}() {}\n"
       "    virtual size_t getSize() const { return ${bin2cpp_input_file_size}; }\n"
-      "    virtual const char * getFileName() const { ${bin2cpp_file_object_file_name_impl} }\n"
-      "    virtual const char * getFilePath() const { ${bin2cpp_file_object_file_path_impl} }\n"
+      "    virtual const char * getFileName() const { return \"${bin2cpp_file_object_file_name}\"; }\n"
+      "    virtual const char * getFilePath() const { return \"${bin2cpp_file_object_file_path}\"; }\n"
       "    virtual const char * getBuffer() const\n"
       "    {\n"
       "      static const unsigned char buffer[] = {\n${bin2cpp_insert_input_file_as_code}" // INPUT FILE AS CODE HERE

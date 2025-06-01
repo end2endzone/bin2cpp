@@ -1,3 +1,0 @@
-check implementation of the following to see if they could be simplified:
-* getFileClassGetFileNameImplementation
-* getFileClassGetFilePathImplementation

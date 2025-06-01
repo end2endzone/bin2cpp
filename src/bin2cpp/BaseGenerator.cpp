@@ -68,9 +68,7 @@ namespace bin2cpp
     if ( name == "bin2cpp_file_manager_file_header" ) { output = getHeaderTemplate(false); return true; }
     if ( name == "bin2cpp_file_manager_header_file_name" ) { output = mContext.managerHeaderFilename; return true; }
     if ( name == "bin2cpp_file_manager_macro_guard_prefix" ) { output = getFileManagerMacroGuardPrefix(); return true; }
-    if ( name == "bin2cpp_file_object_file_name_impl" ) { output = getFileObjectGetFileNameImplementation(); return true; }
     if ( name == "bin2cpp_file_object_file_name" ) { output = getFileObjectFileName(); return true; }
-    if ( name == "bin2cpp_file_object_file_path_impl" ) { output = getFileObjectGetFilePathImplementation(); return true; }
     if ( name == "bin2cpp_file_object_file_path" ) { output = getFileObjectFilePath(); return true; }
     if ( name == "bin2cpp_file_object_getter_function_name" ) { output = getFileObjectGetterFunctionName(); return true; }
     if ( name == "bin2cpp_file_object_macro_guard_prefix" ) { output = getClassMacroGuardPrefix(); return true; }
@@ -297,70 +295,6 @@ namespace bin2cpp
     if ( !output.empty() )
       output += "_";
     output += getIncludeGuardMacroName(mContext.managerHeaderFilename);
-    return output;
-  }
-
-  std::string BaseGenerator::getFileObjectGetFileNameImplementation()
-  {
-    std::string output;
-
-    std::string inputFileName = ra::filesystem::GetFilename(mContext.inputFilePath.c_str());
-
-    //could we report getFileName() as a substring of getFilePath() ?
-    const char * reported_path = mContext.reportedFilePath.c_str();
-    if (reported_path != NULL && reported_path[0] != '\0')
-    {
-      size_t offset = mContext.reportedFilePath.find(inputFileName);
-      if (offset != std::string::npos)
-      {
-        output = "return &getFilePath()[";
-        output += ra::strings::ToString(offset);
-        output += "];";
-        return output;
-      }
-    }
-
-    //return default implementation
-    output = "return \"";
-    output += inputFileName;
-    output += "\";";
-    return output;
-  }
-
-  std::string BaseGenerator::getFileObjectGetFilePathImplementation()
-  {
-    std::string output;
-
-    //convert mReportedFilePath string to c++
-    std::string path = mContext.reportedFilePath;
-#ifdef _WIN32
-    //escape backslash characters for c++
-    static const std::string BACKSLASH = "\\";
-    static const std::string BACKSLASH_ESCAPED = "\\\\";
-    ra::strings::Replace(path, BACKSLASH, BACKSLASH_ESCAPED);
-#endif
-
-    //is there a reported path specified ?
-    const char * reported_path = mContext.reportedFilePath.c_str();
-    if (reported_path != NULL && reported_path[0] != '\0')
-    {
-      output = "return \"";
-      output += path;
-      output += "\";";
-      return output;
-    }
-    else
-    {
-      //if reported path is not specified ?
-      //report the same as getFileName()
-      output = "return getFileName();";
-      return output;
-    }
-
-    //return default implementation
-    output = "return \"";
-    output += path;
-    output += "\";";
     return output;
   }
 
