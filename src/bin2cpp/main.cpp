@@ -45,31 +45,11 @@
 #include "rapidassist/process.h"
 #include "rapidassist/timing.h"
 
+#include "enums.h"
 #include "common.h"
 #include "wildcard.h"
 
 using namespace bin2cpp;
-
-enum APP_ERROR_CODES
-{
-  APP_ERROR_SUCCESS = 0,
-  APP_ERROR_MISSINGARGUMENTS,
-  APP_ERROR_INPUTFILENOTFOUND,
-  APP_ERROR_UNABLETOCREATEOUTPUTFILES,
-  APP_ERROR_TOOMANYARGUMENTS,
-  APP_ERROR_INPUTDIRNOTFOUND,
-  AAP_ERROR_NOTSUPPORTED,
-  APP_ERROR_OPERATIONHASFAILED,
-  APP_ERROR_INVALIDVALUE,
-};
-
-enum FILE_UPDATE_MODE
-{
-  WRITING,
-  UPDATING,
-  OVERWRITING,
-  SKIPPING,
-};
 
 //default values
 static const size_t DEFAULT_CHUNK_SIZE = 200;
@@ -83,59 +63,6 @@ static Dictionary identifiers_dictionary;   // unique values for identifiers
 static Dictionary output_files_dictionary;  // unique values for output file names
 #define DIRECTORY_FILTER_SEPARATOR_STR ":"
 static const char DIRECTORY_FILTER_SEPARATOR = DIRECTORY_FILTER_SEPARATOR_STR[0];
-
-const char * getErrorCodeDescription(const APP_ERROR_CODES & error_code)
-{
-  switch(error_code)
-  {
-  case APP_ERROR_SUCCESS:
-    return "Success";
-    break;
-  case APP_ERROR_MISSINGARGUMENTS:
-    return "Missing arguments";
-    break;
-  case APP_ERROR_INPUTFILENOTFOUND:
-    return "Unable to open input file";
-    break;
-  case APP_ERROR_UNABLETOCREATEOUTPUTFILES:
-    return "Unable to create output files";
-    break;
-  case APP_ERROR_TOOMANYARGUMENTS:
-    return "Too many arguments";
-    break;
-  case APP_ERROR_INPUTDIRNOTFOUND:
-    return "Input directory not found";
-    break;
-  case AAP_ERROR_NOTSUPPORTED:
-    return "Operation not supported";
-    break;
-  case APP_ERROR_OPERATIONHASFAILED:
-    return "Operation has failed";
-    break;
-  case APP_ERROR_INVALIDVALUE:
-    return "Invalid value";
-    break;
-  default:
-    return "Unknown error";
-  };
-}
-
-const char * getUpdateModeText(const FILE_UPDATE_MODE & mode)
-{
-  switch(mode)
-  {
-  case WRITING:
-    return "Writing";
-  case UPDATING:
-    return "Updating";
-  case OVERWRITING:
-    return "Overwriting";
-  case SKIPPING:
-    return "Skipping";
-  default:
-    return "Unknown";
-  };
-}
 
 struct ARGUMENTS
 {

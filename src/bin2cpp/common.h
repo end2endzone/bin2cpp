@@ -43,6 +43,20 @@ namespace bin2cpp
   const char * getVersionString();
 
   ///<summary>
+  ///Get the desription of the given application error code.
+  ///</summary>
+  ///<param name="error_code">The error code.</param>
+  ///<return>Returns a string description of the given error code. Returns 'Unknown error' for unknown codes.<return>
+  const char* getErrorCodeDescription(const APP_ERROR_CODES& error_code);
+
+  ///<summary>
+  ///Get the desription of the given file update mode.
+  ///</summary>
+  ///<param name="mode">The file update mode.</param>
+  ///<return>Returns a string description of the given file update mode. Returns 'Unknown' for unknown modes.<return>
+  const char* getUpdateModeText(const FILE_UPDATE_MODE& mode);
+
+  ///<summary>
   ///Returns the modified date from an embedded file's c++ header/source file.
   ///Note that the function returns the number of seconds elapsed since epoch since Jan 1st 1970.
   ///</summary>

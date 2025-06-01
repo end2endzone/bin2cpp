@@ -8,6 +8,7 @@ Changes for 3.1.0:
 * Fixed issue #72: Move the code FileManager class generation code into its own IGenerator implementation.
 * Fixed issue #74: Invalid generated output file name: index.cpptml.cpp.
 * Fixed issue #77: Refactor generating code to use full file templates with markers.
+* Fixed issue #78: Move duplicated enums from main.cpp to enums.h.
 
 
 Changes for 3.0.1:

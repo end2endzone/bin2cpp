@@ -41,6 +41,59 @@ namespace bin2cpp
     return BIN2CPP_VERSION;
   }
 
+  const char* getErrorCodeDescription(const APP_ERROR_CODES& error_code)
+  {
+    switch ( error_code )
+    {
+    case APP_ERROR_SUCCESS:
+      return "Success";
+      break;
+    case APP_ERROR_MISSINGARGUMENTS:
+      return "Missing arguments";
+      break;
+    case APP_ERROR_INPUTFILENOTFOUND:
+      return "Unable to open input file";
+      break;
+    case APP_ERROR_UNABLETOCREATEOUTPUTFILES:
+      return "Unable to create output files";
+      break;
+    case APP_ERROR_TOOMANYARGUMENTS:
+      return "Too many arguments";
+      break;
+    case APP_ERROR_INPUTDIRNOTFOUND:
+      return "Input directory not found";
+      break;
+    case AAP_ERROR_NOTSUPPORTED:
+      return "Operation not supported";
+      break;
+    case APP_ERROR_OPERATIONHASFAILED:
+      return "Operation has failed";
+      break;
+    case APP_ERROR_INVALIDVALUE:
+      return "Invalid value";
+      break;
+    default:
+      return "Unknown error";
+    };
+  }
+
+  const char* getUpdateModeText(const FILE_UPDATE_MODE& mode)
+  {
+    switch ( mode )
+    {
+    case WRITING:
+      return "Writing";
+    case UPDATING:
+      return "Updating";
+    case OVERWRITING:
+      return "Overwriting";
+    case SKIPPING:
+      return "Skipping";
+    default:
+      return "Unknown";
+    };
+  }
+
   uint64_t getOutputFileModifiedDate(const std::string & path)
   {
     uint64_t mod_time = 0;

@@ -29,6 +29,33 @@ namespace bin2cpp
 {
 
   ///<summary>
+  ///Error codes returned by the application
+  ///</summary>
+  enum APP_ERROR_CODES
+  {
+    APP_ERROR_SUCCESS = 0,
+    APP_ERROR_MISSINGARGUMENTS,
+    APP_ERROR_INPUTFILENOTFOUND,
+    APP_ERROR_UNABLETOCREATEOUTPUTFILES,
+    APP_ERROR_TOOMANYARGUMENTS,
+    APP_ERROR_INPUTDIRNOTFOUND,
+    AAP_ERROR_NOTSUPPORTED,
+    APP_ERROR_OPERATIONHASFAILED,
+    APP_ERROR_INVALIDVALUE,
+  };
+
+  ///<summary>
+  ///File update modes.
+  ///</summary>
+  enum FILE_UPDATE_MODE
+  {
+    WRITING,
+    UPDATING,
+    OVERWRITING,
+    SKIPPING,
+  };
+
+  ///<summary>
   ///Defines the different types of cpp encoding.
   ///</summary>
   enum CppEncoderEnum
