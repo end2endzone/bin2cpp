@@ -645,7 +645,7 @@ TEST_F(TestExtraction, testIssue50)
     std::string path = "generated_files/testIssue50/_testIssue50.h";
     ra::filesystem::NormalizePath(path);
     ASSERT_TRUE( ra::filesystem::FileExists(path.c_str()) ) << "File '" << path.c_str() << "' not found!";
-    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "BIN2CPP50_EMBEDDEDFILE_CLASS", line, index) );
+    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "BIN2CPP50_FILE_OBJECT_CLASS", line, index) );
   }
 
   //FileManager50.h
@@ -653,7 +653,7 @@ TEST_F(TestExtraction, testIssue50)
     std::string path = "generated_files/testIssue50/FileManager50.h";
     ra::filesystem::NormalizePath(path);
     ASSERT_TRUE( ra::filesystem::FileExists(path.c_str()) ) << "File '" << path.c_str() << "' not found!";
-    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "BIN2CPP50_EMBEDDEDFILE_CLASS", line, index) );
+    ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "BIN2CPP50_FILE_OBJECT_CLASS", line, index) );
     ASSERT_TRUE( ra::testing::FindInFile(path.c_str(), "BIN2CPP50_FILEMANAGER_CLASS",  line, index) );
   }
 }
