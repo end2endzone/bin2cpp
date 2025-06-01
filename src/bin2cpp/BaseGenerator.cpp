@@ -568,7 +568,7 @@ namespace bin2cpp
     ;
 
     TemplateProcessor processor(&text);
-    processor.setTemplateVariableLookup(this);
+    processor.setTemplateVariableHandler(this);
     bool write_success = processor.writeFile(header_file_path);
 
     return write_success;
@@ -660,7 +660,7 @@ namespace bin2cpp
     ;
 
     TemplateProcessor processor(&text);
-    processor.setTemplateVariableLookup(this);
+    processor.setTemplateVariableHandler(this);
     bool write_success = processor.writeFile(file_path);
 
     return write_success;

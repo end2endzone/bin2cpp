@@ -22,8 +22,8 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef ITEMPLATE_VARIABLE_LOOKUP_H
-#define ITEMPLATE_VARIABLE_LOOKUP_H
+#ifndef ITEMPLATE_VARIABLE_HANDLER_H
+#define ITEMPLATE_VARIABLE_HANDLER_H
 
 #include "enums.h"
 #include <string>
@@ -32,10 +32,10 @@
 namespace bin2cpp
 {
 
-  class ITemplateVariableLookup
+  class ITemplateVariableHandler
   {
   public:
-    virtual ~ITemplateVariableLookup()
+    virtual ~ITemplateVariableHandler()
     {}
 
     ///<summary>
@@ -63,4 +63,4 @@ namespace bin2cpp
   
 }; //bin2cpp
 
-#endif //ITEMPLATE_VARIABLE_LOOKUP_H
+#endif //ITEMPLATE_VARIABLE_HANDLER_H

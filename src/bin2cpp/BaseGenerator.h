@@ -45,7 +45,7 @@ namespace bin2cpp
     virtual void setContext(const Context& c);
     virtual const Context & getContext() const;
 
-    //ITemplateVariableLookup methods
+    //ITemplateVariableHandler methods
     virtual TemplateVariableFlags getTemplateVariableFlags(const std::string& name);
     virtual void writeTemplateVariable(const std::string& name, std::ostream& output);
     virtual void writeTemplateVariable(const std::string& name, std::string& output);

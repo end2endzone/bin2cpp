@@ -32,7 +32,7 @@
 #include "rapidassist/user.h"
 
  // Sample variable lookup implementation
-class SampleVariableLookup : public bin2cpp::ITemplateVariableLookup
+class SampleVariableLookup : public bin2cpp::ITemplateVariableHandler
 {
 public:
   bin2cpp::TemplateVariableFlags getTemplateVariableFlags(const std::string& name)
@@ -84,7 +84,7 @@ TEST_F(TestTemplateProcessor, testBaseSingleVariable)
 {
   bin2cpp::TemplateProcessor processor;
   SampleVariableLookup lookup;
-  processor.setTemplateVariableLookup(&lookup);
+  processor.setTemplateVariableHandler(&lookup);
 
   const std::string actual_input =    "I am ${age} years old.";
   const std::string expected_output = "I am 53 years old.";
@@ -98,7 +98,7 @@ TEST_F(TestTemplateProcessor, testUnknownVariable)
 {
   bin2cpp::TemplateProcessor processor;
   SampleVariableLookup lookup;
-  processor.setTemplateVariableLookup(&lookup);
+  processor.setTemplateVariableHandler(&lookup);
 
   const std::string actual_input =    "My ${father} tried to kill me.";
   const std::string expected_output = "My  tried to kill me.";
@@ -112,7 +112,7 @@ TEST_F(TestTemplateProcessor, testCaseSensitive)
 {
   bin2cpp::TemplateProcessor processor;
   SampleVariableLookup lookup;
-  processor.setTemplateVariableLookup(&lookup);
+  processor.setTemplateVariableHandler(&lookup);
 
   const std::string actual_input =    "The variable '${children}' should expand to a value but '${Children}' should be empty.";
   const std::string expected_output = "The variable '2' should expand to a value but '' should be empty.";
@@ -126,7 +126,7 @@ TEST_F(TestTemplateProcessor, testRecursive)
 {
   bin2cpp::TemplateProcessor processor;
   SampleVariableLookup lookup;
-  processor.setTemplateVariableLookup(&lookup);
+  processor.setTemplateVariableHandler(&lookup);
 
   const std::string actual_input =    "My name is ${full-name}. I work as a ${job} now.";
   const std::string expected_output = "My name is Luke Skywalker. I work as a Jedi Knight now.";
@@ -140,7 +140,7 @@ TEST_F(TestTemplateProcessor, testMultipleTwinMarkers)
 {
   bin2cpp::TemplateProcessor processor;
   SampleVariableLookup lookup;
-  processor.setTemplateVariableLookup(&lookup);
+  processor.setTemplateVariableHandler(&lookup);
 
   const std::string actual_input =    "My name is ${first-name} but everyone calls me Lucky-${first-name}.";
   const std::string expected_output = "My name is Luke but everyone calls me Lucky-Luke.";
@@ -154,7 +154,7 @@ TEST_F(TestTemplateProcessor, testCircularReference)
 {
   bin2cpp::TemplateProcessor processor;
   SampleVariableLookup lookup;
-  processor.setTemplateVariableLookup(&lookup);
+  processor.setTemplateVariableHandler(&lookup);
 
   const std::string actual_input =    "<foo>${foo}</foo>";
   const std::string expected_output = "<foo>foo is bar is baz is </foo>";

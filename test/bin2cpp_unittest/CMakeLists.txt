@@ -285,7 +285,7 @@ source_group("External Files" FILES
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.h
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.cpp
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.h
-  ${CMAKE_SOURCE_DIR}/src/bin2cpp/ITemplateVariableLookup.h
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/ITemplateVariableHandler.h
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/TemplateProcessor.cpp
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/TemplateProcessor.h
 )
@@ -300,7 +300,7 @@ add_executable(bin2cpp_unittest
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.h
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.cpp
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.h
-  ${CMAKE_SOURCE_DIR}/src/bin2cpp/ITemplateVariableLookup.h
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/ITemplateVariableHandler.h
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/TemplateProcessor.cpp
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/TemplateProcessor.h
   application.cpp

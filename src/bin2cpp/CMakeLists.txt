@@ -22,7 +22,7 @@ add_executable(bin2cpp
   enums.h
   IGenerator.h
   INameProvider.h
-  ITemplateVariableLookup.h
+  ITemplateVariableHandler.h
   LegacyNameProvider.cpp
   LegacyNameProvider.h
   main.cpp

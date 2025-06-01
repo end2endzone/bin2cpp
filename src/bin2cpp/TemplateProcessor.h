@@ -27,7 +27,7 @@
 
 #include <string>
 #include <set>
-#include "ITemplateVariableLookup.h"
+#include "ITemplateVariableHandler.h"
 
 namespace bin2cpp
 {
@@ -47,8 +47,8 @@ namespace bin2cpp
     void setTemplateText(const std::string* value);
     const std::string* getTemplateText() const;
 
-    void setTemplateVariableLookup(ITemplateVariableLookup* lookup);
-    ITemplateVariableLookup* getTemplateVariableLookup() const;
+    void setTemplateVariableHandler(ITemplateVariableHandler* handler);
+    ITemplateVariableHandler* getTemplateVariableHandler() const;
 
     virtual void writeStream(std::ostream& output_stream);
     virtual void writeString(std::string& output);
@@ -59,7 +59,7 @@ namespace bin2cpp
 
     //attributes
     const std::string* mTemplateText;
-    ITemplateVariableLookup* mVariableLookup;
+    ITemplateVariableHandler* mVariableHandler;
   };
 
 }; //bin2cpp

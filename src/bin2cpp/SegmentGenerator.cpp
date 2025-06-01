@@ -88,7 +88,7 @@ namespace bin2cpp
       "}; //${bin2cpp_namespace}\n";
 
     TemplateProcessor processor(&text);
-    processor.setTemplateVariableLookup(this);
+    processor.setTemplateVariableHandler(this);
     bool write_success = processor.writeFile(file_path);
 
     return write_success;
@@ -179,7 +179,7 @@ namespace bin2cpp
       "${bin2cpp_c_file_manager_registration_implementation}";
 
     TemplateProcessor processor(&text);
-    processor.setTemplateVariableLookup(this);
+    processor.setTemplateVariableHandler(this);
     bool write_success = processor.writeFile(file_path);
 
     return write_success;

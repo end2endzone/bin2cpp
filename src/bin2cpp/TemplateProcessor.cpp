@@ -46,7 +46,7 @@ namespace bin2cpp
   void TemplateProcessor::reset()
   {
     mTemplateText = NULL;
-    mVariableLookup = NULL;
+    mVariableHandler = NULL;
   }
 
   void TemplateProcessor::setTemplateText(const std::string* value)
@@ -59,14 +59,14 @@ namespace bin2cpp
     return mTemplateText;
   }
 
-  void TemplateProcessor::setTemplateVariableLookup(ITemplateVariableLookup* lookup)
+  void TemplateProcessor::setTemplateVariableHandler(ITemplateVariableHandler* handler)
   {
-    mVariableLookup = lookup;
+    mVariableHandler = handler;
   }
 
-  ITemplateVariableLookup* TemplateProcessor::getTemplateVariableLookup() const
+  ITemplateVariableHandler* TemplateProcessor::getTemplateVariableHandler() const
   {
-    return mVariableLookup;
+    return mVariableHandler;
   }
 
   void TemplateProcessor::writeStream(std::ostream& output_stream)
@@ -118,14 +118,14 @@ namespace bin2cpp
 
           // Get variable flags
           TemplateVariableFlags flags = TEMPLATE_VARIABLE_FLAG_NONE;
-          if ( mVariableLookup )
-            flags = mVariableLookup->getTemplateVariableFlags(variable_name);
+          if ( mVariableHandler )
+            flags = mVariableHandler->getTemplateVariableFlags(variable_name);
 
           // For string variables, do the variable expansion and recursion
           if ( (flags & TEMPLATE_VARIABLE_FLAG_STRINGNABLE) == TEMPLATE_VARIABLE_FLAG_STRINGNABLE )
           {
             std::string expanded_value;
-            mVariableLookup->writeTemplateVariable(variable_name, expanded_value);
+            mVariableHandler->writeTemplateVariable(variable_name, expanded_value);
 
             // Add variable to recursion history before expanding
             recursion_history.insert(variable_name);
@@ -139,7 +139,7 @@ namespace bin2cpp
           else if ( (flags & TEMPLATE_VARIABLE_FLAG_STREAMABLE) == TEMPLATE_VARIABLE_FLAG_STREAMABLE )
           {
             // For streamable-only variables, just stream the output to our output
-            mVariableLookup->writeTemplateVariable(variable_name, output_stream);
+            mVariableHandler->writeTemplateVariable(variable_name, output_stream);
           }
 
           pos = end_pos + 1;
