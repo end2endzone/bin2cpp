@@ -429,6 +429,11 @@ namespace bin2cpp
     if ( fileSize % mContext.chunkSize > 0 )
       chunkCount++;
 
+    // Try to optimize the output buffer string.
+    // Initialize the output buffer to be around twice the size of the input file.
+    // Most files will output as hexadecimal values which is roughly doubling the number of bytes of the output file.
+    output.reserve(2 * fileSize);
+
     //create buffer for each chunks from input buffer
     int numLinePrinted = 0;
     size_t chunkIndex = 0;
