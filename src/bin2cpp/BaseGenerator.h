@@ -73,8 +73,8 @@ namespace bin2cpp
     virtual std::string getFileClassFileName();
     virtual std::string getFileClassFilePath();
     virtual std::string getCppHeaderIncludePath();
-    virtual std::string getInputFileDataAsCode();
-    virtual std::string getInputFileChunkAsCode(const unsigned char * buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk);
+    virtual void writeInputFileDataAsCode(std::ostream& output);
+    virtual void writeInputFileChunkAsCode(const unsigned char * buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk, std::ostream& output);
 
     //attributes
     Context mContext;

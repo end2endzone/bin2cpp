@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string>
 #include <stdlib.h>
+#include <sstream>
 
 #include "rapidassist/code_cpp.h"
 #include "rapidassist/strings.h"
@@ -94,8 +95,11 @@ namespace bin2cpp
     if (!ra::filesystem::FileExists(mContext.inputFilePath.c_str()) )
       return false;
 
-    std::string output = getInputFileDataAsCode();
-    printf("\"%s\"", output.c_str());
+    std::ostringstream output_stream;
+    writeInputFileDataAsCode(output_stream);
+    std::string str = output_stream.str();
+
+    printf("\"%s\"", str.c_str());
 
     return true;
   }
@@ -185,7 +189,7 @@ namespace bin2cpp
     return write_success;
   }
 
-  std::string ArrayGenerator::getInputFileChunkAsCode(const unsigned char * buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk)
+  void ArrayGenerator::writeInputFileChunkAsCode(const unsigned char * buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk, std::ostream& output)
   {
     size_t indentation = 0;
 
@@ -196,18 +200,19 @@ namespace bin2cpp
     else if ( mContext.code == CodeGenerationEnum::CODE_GENERATION_C )
       indentation = 4;
 
-    std::string output;
+    std::string str;
     if ( indentation )
-      output += std::string(indentation, ' ');
+      str += std::string(indentation, ' ');
     if ( mContext.plainOutput )
-      output += "\"";
-    output += ra::code::cpp::ToCppCharactersArray(buffer, buffer_size);
+      str += "\"";
+    str += ra::code::cpp::ToCppCharactersArray(buffer, buffer_size);
     if ( mContext.plainOutput )
-      output += "\"";
+      str += "\"";
     if ( !is_last_chunk )
-      output += ",";
-    output += "\n";
-    return output;
+      str += ",";
+    str += "\n";
+
+    output << str;
   }
 
 }; //bin2cpp

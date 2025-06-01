@@ -113,7 +113,7 @@ namespace bin2cpp
   {
     if ( name == "bin2cpp_insert_input_file_as_code" )
     {
-      output << getInputFileDataAsCode();
+      writeInputFileDataAsCode(output);
       return true;
     }
 
@@ -427,24 +427,17 @@ namespace bin2cpp
     return mContext.headerFilename;
   }
 
-  std::string BaseGenerator::getInputFileDataAsCode()
+  void BaseGenerator::writeInputFileDataAsCode(std::ostream& output)
   {
-    std::string output;
-
     //check if input file exists
     FILE* fin = fopen(mContext.inputFilePath.c_str(), "rb");
     if ( !fin )
-      return "";
+      return;
 
     uint64_t fileSize = ra::filesystem::GetFileSize64(mContext.inputFilePath.c_str());
     size_t chunkCount = fileSize / mContext.chunkSize;
     if ( fileSize % mContext.chunkSize > 0 )
       chunkCount++;
-
-    // Try to optimize the output buffer string.
-    // Initialize the output buffer to be around twice the size of the input file.
-    // Most files will output as hexadecimal values which is roughly doubling the number of bytes of the output file.
-    output.reserve(2 * fileSize);
 
     //create buffer for each chunks from input buffer
     int numLinePrinted = 0;
@@ -459,9 +452,8 @@ namespace bin2cpp
 
       if ( readSize > 0 )
       {
-        //output
-        std::string encoded_chunk = getInputFileChunkAsCode(buffer, readSize, chunkIndex, chunkCount, isLastChunk);
-        output += encoded_chunk;
+        //append chunk as code in output stream
+        writeInputFileChunkAsCode(buffer, readSize, chunkIndex, chunkCount, isLastChunk, output);
 
         numLinePrinted++;
         chunkIndex++;
@@ -472,13 +464,10 @@ namespace bin2cpp
     buffer = NULL;
 
     fclose(fin);
-
-    return output;
   }
 
-  std::string BaseGenerator::getInputFileChunkAsCode(const unsigned char* buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk)
+  void BaseGenerator::writeInputFileChunkAsCode(const unsigned char* buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk, std::ostream& output)
   {
-    return "";
   }
 
   bool BaseGenerator::createCppHeaderFile(const char * header_file_path)

@@ -172,7 +172,7 @@ namespace bin2cpp
     return write_success;
   }
 
-  std::string StringGenerator::getInputFileChunkAsCode(const unsigned char* buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk)
+  void StringGenerator::writeInputFileChunkAsCode(const unsigned char* buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk, std::ostream& output)
   {
     size_t indentation = 0;
 
@@ -183,30 +183,30 @@ namespace bin2cpp
     else if ( mContext.code == CodeGenerationEnum::CODE_GENERATION_C )
       indentation = 4;
 
-    std::string output;
+    std::string str;
     if ( indentation )
-      output += std::string(indentation, ' ');
+      str += std::string(indentation, ' ');
 
-    output += "\"";
+    str += "\"";
 
     //convert to cpp string
     switch ( mContext.cppEncoder )
     {
     case CPP_ENCODER_HEX:
-      output += ra::code::cpp::ToHexString(buffer, buffer_size);
+      str += ra::code::cpp::ToHexString(buffer, buffer_size);
       break;
     case CPP_ENCODER_OCT:
     default:
-      output += ra::code::cpp::ToOctString(buffer, buffer_size, false);
+      str += ra::code::cpp::ToOctString(buffer, buffer_size, false);
       break;
     };
 
-    output += "\"";
+    str += "\"";
     if ( is_last_chunk )
-      output += ";";
-    output += "\n";
+      str += ";";
+    str += "\n";
 
-    return output;
+    output << str;
   }
 
 }; //bin2cpp

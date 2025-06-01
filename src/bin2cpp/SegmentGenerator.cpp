@@ -185,7 +185,7 @@ namespace bin2cpp
     return write_success;
   }
 
-  std::string SegmentGenerator::getInputFileChunkAsCode(const unsigned char* buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk)
+  void SegmentGenerator::writeInputFileChunkAsCode(const unsigned char* buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk, std::ostream& output)
   {
     size_t indentation = 0;
 
@@ -196,9 +196,9 @@ namespace bin2cpp
     else if ( mContext.code == CodeGenerationEnum::CODE_GENERATION_C )
       indentation = 2;
 
-    std::string output;
+    std::string str;
     if ( indentation )
-      output += std::string(indentation, ' ');
+      str += std::string(indentation, ' ');
 
     //convert to cpp string
     std::string code;
@@ -218,26 +218,26 @@ namespace bin2cpp
     }
     else if ( mContext.code == CodeGenerationEnum::CODE_GENERATION_CPP )
     {
-      output += "mBuffer.append(\"";
-      output += code;
-      output += "\", ";
-      output += ra::strings::ToString(buffer_size);
-      output += ");";
+      str += "mBuffer.append(\"";
+      str += code;
+      str += "\", ";
+      str += ra::strings::ToString(buffer_size);
+      str += ");";
     }
     else if ( mContext.code == CodeGenerationEnum::CODE_GENERATION_C )
     {
-      output += "memcpy(next, \"";
-      output += code;
-      output += "\", ";
-      output += ra::strings::ToString(buffer_size);
-      output += "); next += ";
-      output += ra::strings::ToString(buffer_size);
-      output += ";";
+      str += "memcpy(next, \"";
+      str += code;
+      str += "\", ";
+      str += ra::strings::ToString(buffer_size);
+      str += "); next += ";
+      str += ra::strings::ToString(buffer_size);
+      str += ";";
     }
 
-    output += "\n";
+    str += "\n";
 
-    return output;
+    output << str;
   }
 
 }; //bin2cpp
