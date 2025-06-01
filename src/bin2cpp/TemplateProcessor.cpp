@@ -116,17 +116,31 @@ namespace bin2cpp
             continue;
           }
 
-          // Do the variable expansion
-          std::string expanded_value = mVariableLookup ? mVariableLookup->lookupTemplateVariable(variable_name) : "";
+          // Get variable flags
+          TemplateVariableFlags flags = TEMPLATE_VARIABLE_FLAG_NONE;
+          if ( mVariableLookup )
+            flags = mVariableLookup->getTemplateVariableFlags(variable_name);
 
-          // Add variable to recursion history before expanding
-          recursion_history.insert(variable_name);
+          // For string variables, do the variable expansion and recursion
+          if ( (flags & TEMPLATE_VARIABLE_FLAG_STRINGNABLE) == TEMPLATE_VARIABLE_FLAG_STRINGNABLE )
+          {
+            std::string expanded_value;
+            mVariableLookup->writeTemplateVariable(variable_name, expanded_value);
 
-          // Recursively process expanded value with updated recursion tracking
-          processTemplate(output_stream, expanded_value, recursion_history);
+            // Add variable to recursion history before expanding
+            recursion_history.insert(variable_name);
 
-          // Remove variable from recursion history after recursion returns
-          recursion_history.erase(variable_name);
+            // Recursively process expanded value with updated recursion tracking
+            processTemplate(output_stream, expanded_value, recursion_history);
+
+            // Remove variable from recursion history after recursion returns
+            recursion_history.erase(variable_name);
+          }
+          else if ( (flags & TEMPLATE_VARIABLE_FLAG_STREAMABLE) == TEMPLATE_VARIABLE_FLAG_STREAMABLE )
+          {
+            // For streamable-only variables, just stream the output to our output
+            mVariableLookup->writeTemplateVariable(variable_name, output_stream);
+          }
 
           pos = end_pos + 1;
         }

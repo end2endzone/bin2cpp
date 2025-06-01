@@ -1,0 +1,15 @@
+Rename the following:
+
+getFileClassFileName to getFileObjectFileName
+getFileClassFilePath to getFileObjectFilePath
+getFileClassGetFileNameImplementation to getFileObjectGetFileNameImplementation
+getFileClassGetFileNameImplementation to getFileObjectGetFileNameImplementation
+bin2cpp_getter_function_name to bin2cpp_file_object_getter_function_name
+getGetterFunctionName to getFileObjectGetterFunctionName
+
+check implementation of the following to see if they could be simplified:
+* getFileClassGetFileNameImplementation
+* getFileClassGetFilePathImplementation
+
+
+Move TemplateProcessor code to its own static library ?

@@ -35,7 +35,24 @@
 class SampleVariableLookup : public bin2cpp::ITemplateVariableLookup
 {
 public:
-  std::string lookupTemplateVariable(const std::string& name) override
+  bin2cpp::TemplateVariableFlags getTemplateVariableFlags(const std::string& name)
+  {
+    if ( name == "first-name" ) return bin2cpp::TEMPLATE_VARIABLE_FLAG_STRINGNABLE;
+    if ( name == "last-name" ) return bin2cpp::TEMPLATE_VARIABLE_FLAG_STRINGNABLE;
+    if ( name == "full-name" ) return bin2cpp::TEMPLATE_VARIABLE_FLAG_STRINGNABLE;
+    if ( name == "age" ) return bin2cpp::TEMPLATE_VARIABLE_FLAG_STRINGNABLE;
+    if ( name == "job" ) return bin2cpp::TEMPLATE_VARIABLE_FLAG_STRINGNABLE;
+    if ( name == "children" ) return bin2cpp::TEMPLATE_VARIABLE_FLAG_STRINGNABLE;
+    if ( name == "foo" ) return bin2cpp::TEMPLATE_VARIABLE_FLAG_STRINGNABLE;
+    if ( name == "bar" ) return bin2cpp::TEMPLATE_VARIABLE_FLAG_STRINGNABLE;
+    if ( name == "baz" ) return bin2cpp::TEMPLATE_VARIABLE_FLAG_STRINGNABLE;
+    return bin2cpp::TEMPLATE_VARIABLE_FLAG_NONE;
+  }
+
+  void writeTemplateVariable(const std::string& name, std::ostream& output)
+  {}
+
+  inline std::string getTemplateVariableAsString(const std::string& name)
   {
     if ( name == "first-name" ) return "Luke";
     if ( name == "last-name" ) return "Skywalker";
@@ -47,6 +64,11 @@ public:
     if ( name == "bar" ) return "bar is ${baz}";
     if ( name == "baz" ) return "baz is ${foo}";
     return "";
+  }
+
+  void writeTemplateVariable(const std::string& name, std::string& output) override
+  {
+    output = getTemplateVariableAsString(name);
   }
 };
 
