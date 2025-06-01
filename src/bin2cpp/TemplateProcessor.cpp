@@ -116,17 +116,36 @@ namespace bin2cpp
             continue;
           }
 
-          // Do the variable expansion
-          std::string expanded_value = mVariableLookup ? mVariableLookup->lookupTemplateVariable(variable_name) : "";
+          // Do not crash if no lookup is provided.
+          // All template variables will be empty.
+          if ( !mVariableLookup )
+          {
+            pos = end_pos + 1;
+            continue;
+          }
 
-          // Add variable to recursion history before expanding
-          recursion_history.insert(variable_name);
+          // Check if template variable is a string and do the variable expansion
+          std::string expanded_value;
+          bool found_as_string = mVariableLookup->lookupStringTemplateVariable(variable_name, expanded_value);
 
-          // Recursively process expanded value with updated recursion tracking
-          processTemplate(output_stream, expanded_value, recursion_history);
+          // Proceed with the recursive handling
+          if ( found_as_string )
+          {
+            // Add variable to recursion history before expanding
+            recursion_history.insert(variable_name);
 
-          // Remove variable from recursion history after recursion returns
-          recursion_history.erase(variable_name);
+            // Recursively process expanded value with updated recursion tracking
+            processTemplate(output_stream, expanded_value, recursion_history);
+
+            // Remove variable from recursion history after recursion returns
+            recursion_history.erase(variable_name);
+          }
+          else
+          {
+            // Check if template variable is a stream
+            // Stream based template variables do not support recursive lookup and tracking
+            bool found_as_stream = mVariableLookup->lookupStreamTemplateVariable(variable_name, output_stream);
+          }
 
           pos = end_pos + 1;
         }

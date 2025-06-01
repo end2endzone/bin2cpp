@@ -26,7 +26,8 @@
 #define ITEMPLATE_VARIABLE_LOOKUP_H
 
 #include <string>
- 
+#include <ostream>
+
 namespace bin2cpp
 {
 
@@ -37,11 +38,23 @@ namespace bin2cpp
     {}
 
     ///<summary>
-    ///Look up the value for a given template variable name.
+    ///Lookup the string value for a given template variable name.
+    ///String template variables supports recursive lookup.
     ///</summary>
     ///<param name="name">The name of the template variable.</param>
-    ///<return>Returns the value of the template variable. Returns an empty string if unknown.<return>
-    virtual std::string lookupTemplateVariable(const std::string& name) = 0;
+    ///<param name="output">The output string for getting the value or the template variable.</param>
+    ///<return>Returns true when the template variable is handled by the instance. Returns false otherwise.<return>
+    virtual bool lookupStringTemplateVariable(const std::string& name, std::string& output) = 0;
+
+    ///<summary>
+    ///Lookup the string value for a given template variable name.
+    ///Stream template variables do not support template variables recursive lookup.
+    ///If a streams loopup outputs text such as `${foo}`, it will not be processed and will be output as literal string `${foo}`.
+    ///</summary>
+    ///<param name="name">The name of the template variable.</param>
+    ///<param name="output">The output string for getting the value or the template variable.</param>
+    ///<return>Returns true when the template variable is handled by the instance. Returns false otherwise.<return>
+    virtual bool lookupStreamTemplateVariable(const std::string& name, std::ostream& output) = 0;
 
   };
   

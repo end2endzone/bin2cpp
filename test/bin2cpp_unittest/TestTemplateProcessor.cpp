@@ -35,19 +35,25 @@
 class SampleVariableLookup : public bin2cpp::ITemplateVariableLookup
 {
 public:
-  std::string lookupTemplateVariable(const std::string& name) override
+  bool lookupStringTemplateVariable(const std::string& name, std::string& output) override
   {
-    if ( name == "first-name" ) return "Luke";
-    if ( name == "last-name" ) return "Skywalker";
-    if ( name == "full-name" ) return "${first-name} ${last-name}";
-    if ( name == "age" ) return "53";
-    if ( name == "job" ) return "Jedi Knight";
-    if ( name == "children" ) return "2";
-    if ( name == "foo" ) return "foo is ${bar}";
-    if ( name == "bar" ) return "bar is ${baz}";
-    if ( name == "baz" ) return "baz is ${foo}";
-    return "";
+    if ( name == "first-name" ) { output =  "Luke"; return true; }
+    if ( name == "last-name" ) { output =  "Skywalker"; return true; }
+    if ( name == "full-name" ) { output =  "${first-name} ${last-name}"; return true; }
+    if ( name == "age" ) { output =  "53"; return true; }
+    if ( name == "job" ) { output =  "Jedi Knight"; return true; }
+    if ( name == "children" ) { output =  "2"; return true; }
+    if ( name == "foo" ) { output =  "foo is ${bar}"; return true; }
+    if ( name == "bar" ) { output =  "bar is ${baz}"; return true; }
+    if ( name == "baz" ) { output =  "baz is ${foo}"; return true; }
+    return false;
   }
+
+  bool lookupStreamTemplateVariable(const std::string& name, std::ostream& output) override
+  {
+    return false;
+  }
+
 };
 
 void TestTemplateProcessor::SetUp()

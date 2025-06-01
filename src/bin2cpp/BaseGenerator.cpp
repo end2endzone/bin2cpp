@@ -56,44 +56,44 @@ namespace bin2cpp
     return mContext;
   }
 
-  std::string BaseGenerator::lookupTemplateVariable(const std::string& name)
+  bool BaseGenerator::lookupStringTemplateVariable(const std::string& name, std::string& output)
   {
-    if ( name == "bin2cpp_output_file_macro_guard" ) return getCppIncludeGuardMacroName(mContext.headerFilename);
-    if ( name == "bin2cpp_output_file_header" ) return getHeaderTemplate();
-    if ( name == "bin2cpp_file_object_macro_guard_prefix" ) return getClassMacroGuardPrefix();
-    if ( name == "bin2cpp_file_manager_file_header" ) return getHeaderTemplate(false);
-    if ( name == "bin2cpp_file_manager_header_file_name" ) return mContext.managerHeaderFilename;
-    if ( name == "bin2cpp_file_manager_macro_guard_prefix" ) return getFileManagerMacroGuardPrefix();
-    if ( name == "bin2cpp_baseclass" ) return mContext.baseClass;
-    if ( name == "bin2cpp_classname" ) return getClassName();
-    if ( name == "bin2cpp_namespace" ) return mContext.codeNamespace;
-    //if ( name == "bin2cpp_baseclass_uppercase" ) return ra::strings::Uppercase(mContext.baseClass);
-    //if ( name == "bin2cpp_classname_uppercase" ) return ra::strings::Uppercase(getClassName());
-    //if ( name == "bin2cpp_namespace_uppercase" ) return ra::strings::Lowercase(mContext.codeNamespace);
-    //if ( name == "bin2cpp_baseclass_lowercase" ) return ra::strings::Lowercase(mContext.baseClass);
-    //if ( name == "bin2cpp_classname_lowercase" ) return ra::strings::Lowercase(getClassName());
-    //if ( name == "bin2cpp_namespace_lowercase" ) return ra::strings::Lowercase(mContext.codeNamespace);
-    if ( name == "bin2cpp_function_identifier" ) return mContext.functionIdentifier;
-    if ( name == "bin2cpp_function_identifier_lowercase" ) return ra::strings::Lowercase(mContext.functionIdentifier);
-    if ( name == "bin2cpp_getter_function_name" ) return getGetterFunctionName();
-    if ( name == "bin2cpp_insert_input_file_as_code" ) return getInputFileDataAsCode();
-    if ( name == "bin2cpp_header_source_file_include_path" ) return getCppHeaderIncludePath();
-    if ( name == "bin2cpp_file_object_file_name_impl" ) return getFileClassGetFileNameImplementation();
-    if ( name == "bin2cpp_file_object_file_path_impl" ) return getFileClassGetFilePathImplementation();
-    if ( name == "bin2cpp_file_object_file_name" ) return getFileClassFileName();
-    if ( name == "bin2cpp_file_object_file_path" ) return getFileClassFilePath();
-    if ( name == "bin2cpp_cpp_get_save_method_impl" ) return getCppSaveMethodTemplate();
-    if ( name == "bin2cpp_cpp_get_file_manager_registration_impl" && mContext.registerFiles ) return getCppFileManagerRegistrationImplementationTemplate();
-    if ( name == "bin2cpp_c_file_manager_registration_predeclaration" && mContext.registerFiles ) return getCFileManagerRegistrationPredeclarationImplementation();
-    if ( name == "bin2cpp_c_file_manager_registration_implementation" && mContext.registerFiles ) return getCFileManagerStaticFileRegistrationImplementation();
+    if ( name == "bin2cpp_output_file_macro_guard" ) { output = getCppIncludeGuardMacroName(mContext.headerFilename); return true; }
+    if ( name == "bin2cpp_output_file_header" ) { output = getHeaderTemplate(); return true; }
+    if ( name == "bin2cpp_file_object_macro_guard_prefix" ) { output = getClassMacroGuardPrefix(); return true; }
+    if ( name == "bin2cpp_file_manager_file_header" ) { output = getHeaderTemplate(false); return true; }
+    if ( name == "bin2cpp_file_manager_header_file_name" ) { output = mContext.managerHeaderFilename; return true; }
+    if ( name == "bin2cpp_file_manager_macro_guard_prefix" ) { output = getFileManagerMacroGuardPrefix(); return true; }
+    if ( name == "bin2cpp_baseclass" ) { output = mContext.baseClass; return true; }
+    if ( name == "bin2cpp_classname" ) { output = getClassName(); return true; }
+    if ( name == "bin2cpp_namespace" ) { output = mContext.codeNamespace; return true; }
+    //if ( name == "bin2cpp_baseclass_uppercase" ) { output = ra::strings::Uppercase(mContext.baseClass); return true; }
+    //if ( name == "bin2cpp_classname_uppercase" ) { output = ra::strings::Uppercase(getClassName()); return true; }
+    //if ( name == "bin2cpp_namespace_uppercase" ) { output = ra::strings::Lowercase(mContext.codeNamespace); return true; }
+    //if ( name == "bin2cpp_baseclass_lowercase" ) { output = ra::strings::Lowercase(mContext.baseClass); return true; }
+    //if ( name == "bin2cpp_classname_lowercase" ) { output = ra::strings::Lowercase(getClassName()); return true; }
+    //if ( name == "bin2cpp_namespace_lowercase" ) { output = ra::strings::Lowercase(mContext.codeNamespace); return true; }
+    if ( name == "bin2cpp_function_identifier" ) { output = mContext.functionIdentifier; return true; }
+    if ( name == "bin2cpp_function_identifier_lowercase" ) { output = ra::strings::Lowercase(mContext.functionIdentifier); return true; }
+    if ( name == "bin2cpp_getter_function_name" ) { output = getGetterFunctionName(); return true; }
+    if ( name == "bin2cpp_header_source_file_include_path" ) { output = getCppHeaderIncludePath(); return true; }
+    if ( name == "bin2cpp_file_object_file_name_impl" ) { output = getFileClassGetFileNameImplementation(); return true; }
+    if ( name == "bin2cpp_file_object_file_path_impl" ) { output = getFileClassGetFilePathImplementation(); return true; }
+    if ( name == "bin2cpp_file_object_file_name" ) { output = getFileClassFileName(); return true; }
+    if ( name == "bin2cpp_file_object_file_path" ) { output = getFileClassFilePath(); return true; }
+    if ( name == "bin2cpp_cpp_get_save_method_impl" ) { output = getCppSaveMethodTemplate(); return true; }
+    if ( name == "bin2cpp_cpp_get_file_manager_registration_impl" && mContext.registerFiles ) { output = getCppFileManagerRegistrationImplementationTemplate(); return true; }
+    if ( name == "bin2cpp_c_file_manager_registration_predeclaration" && mContext.registerFiles ) { output = getCFileManagerRegistrationPredeclarationImplementation(); return true; }
+    if ( name == "bin2cpp_c_file_manager_registration_implementation" && mContext.registerFiles ) { output = getCFileManagerStaticFileRegistrationImplementation(); return true; }
         
     if ( name == "bin2cpp_c_file_manager_registration_post_init_impl" && mContext.registerFiles )
     {
-      std::string output;
-      output += "  \n";
-      output += "  // register when loaded if static initialisation does not work\n";
-      output += "  ${bin2cpp_namespace}_filemanager_register_file(file);\n";
-      return output;
+      std::string tmp;
+      tmp += "  \n";
+      tmp += "  // register when loaded if static initialisation does not work\n";
+      tmp += "  ${bin2cpp_namespace}_filemanager_register_file(file);\n";
+      output = tmp;
+      return true;
     }
 
     if ( name == "bin2cpp_input_file_size" )
@@ -101,11 +101,23 @@ namespace bin2cpp
       //determine file properties
       uint32_t file_size = ra::filesystem::GetFileSize(mContext.inputFilePath.c_str());
       std::string file_size_str = ra::strings::ToString(file_size);
-      return file_size_str;
+      output = file_size_str;
+      return true;
     }
 
     // Unknown name
-    return "";
+    return false;
+  }
+
+  bool BaseGenerator::lookupStreamTemplateVariable(const std::string& name, std::ostream& output)
+  {
+    if ( name == "bin2cpp_insert_input_file_as_code" )
+    {
+      output << getInputFileDataAsCode();
+      return true;
+    }
+
+    return false;
   }
 
   //-------------------------------
