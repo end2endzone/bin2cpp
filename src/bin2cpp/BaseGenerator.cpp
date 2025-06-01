@@ -56,7 +56,7 @@ namespace bin2cpp
     return mContext;
   }
 
-  bool BaseGenerator::lookupStringTemplateVariable(const std::string& name, std::string& output)
+  bool BaseGenerator::lookupStringVariable(const std::string& name, std::string& output)
   {
     if ( name == "bin2cpp_output_file_macro_guard" ) { output = getCppIncludeGuardMacroName(mContext.headerFilename); return true; }
     if ( name == "bin2cpp_output_file_header" ) { output = getHeaderTemplate(); return true; }
@@ -109,7 +109,7 @@ namespace bin2cpp
     return false;
   }
 
-  bool BaseGenerator::lookupStreamTemplateVariable(const std::string& name, std::ostream& output)
+  bool BaseGenerator::lookupStreamVariable(const std::string& name, std::ostream& output)
   {
     if ( name == "bin2cpp_insert_input_file_as_code" )
     {

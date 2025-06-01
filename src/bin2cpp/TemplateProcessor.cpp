@@ -126,7 +126,7 @@ namespace bin2cpp
 
           // Check if template variable is a string and do the variable expansion
           std::string expanded_value;
-          bool found_as_string = mVariableLookup->lookupStringTemplateVariable(variable_name, expanded_value);
+          bool found_as_string = mVariableLookup->lookupStringVariable(variable_name, expanded_value);
 
           // Proceed with the recursive handling
           if ( found_as_string )
@@ -144,7 +144,7 @@ namespace bin2cpp
           {
             // Check if template variable is a stream
             // Stream based template variables do not support recursive lookup and tracking
-            bool found_as_stream = mVariableLookup->lookupStreamTemplateVariable(variable_name, output_stream);
+            bool found_as_stream = mVariableLookup->lookupStreamVariable(variable_name, output_stream);
           }
 
           pos = end_pos + 1;

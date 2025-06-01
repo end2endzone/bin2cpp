@@ -45,8 +45,8 @@ namespace bin2cpp
     virtual const Context & getContext() const;
 
     //ITemplateVariableLookup methods
-    virtual bool lookupStringTemplateVariable(const std::string& name, std::string& output);
-    virtual bool lookupStreamTemplateVariable(const std::string& name, std::ostream& output);
+    virtual bool lookupStringVariable(const std::string& name, std::string& output);
+    virtual bool lookupStreamVariable(const std::string& name, std::ostream& output);
 
     //same header file for all generators
     virtual bool createCppHeaderFile(const char * header_file_path);

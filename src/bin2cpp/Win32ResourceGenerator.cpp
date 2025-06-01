@@ -376,13 +376,13 @@ namespace bin2cpp
     return false; // not supported
   }
 
-  bool Win32ResourceGenerator::lookupStringTemplateVariable(const std::string& name, std::string& output)
+  bool Win32ResourceGenerator::lookupStringVariable(const std::string& name, std::string& output)
   {
     if ( name == "bin2cpp_win32_resource_random_identifier" ) { output = getRandomIdentifier(mContext.inputFilePath.c_str()); return true; }
     if ( name == "bin2cpp_win32_local_info_struct_name" ) { output = getLocalInfoStructName(); return true; }
 
     // Unknown name
-    return this->BaseGenerator::lookupStringTemplateVariable(name, output);
+    return this->BaseGenerator::lookupStringVariable(name, output);
   }
 
   std::string Win32ResourceGenerator::getLocalInfoStructName()

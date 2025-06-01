@@ -44,7 +44,7 @@ namespace bin2cpp
     ///<param name="name">The name of the template variable.</param>
     ///<param name="output">The output string for getting the value or the template variable.</param>
     ///<return>Returns true when the template variable is handled by the instance. Returns false otherwise.<return>
-    virtual bool lookupStringTemplateVariable(const std::string& name, std::string& output) = 0;
+    virtual bool lookupStringVariable(const std::string& name, std::string& output) = 0;
 
     ///<summary>
     ///Lookup the string value for a given template variable name.
@@ -54,7 +54,7 @@ namespace bin2cpp
     ///<param name="name">The name of the template variable.</param>
     ///<param name="output">The output string for getting the value or the template variable.</param>
     ///<return>Returns true when the template variable is handled by the instance. Returns false otherwise.<return>
-    virtual bool lookupStreamTemplateVariable(const std::string& name, std::ostream& output) = 0;
+    virtual bool lookupStreamVariable(const std::string& name, std::ostream& output) = 0;
 
   };
   

@@ -44,7 +44,7 @@ namespace bin2cpp
     virtual bool printFileContent();
 
     //ITemplateVariableLookup methods
-    virtual bool lookupStringTemplateVariable(const std::string& name, std::string& output);
+    virtual bool lookupStringVariable(const std::string& name, std::string& output);
 
   protected:
     virtual std::string getResourceFilePath(const char * file_path);

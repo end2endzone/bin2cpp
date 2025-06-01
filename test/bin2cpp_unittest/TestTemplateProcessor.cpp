@@ -35,7 +35,7 @@
 class SampleVariableLookup : public bin2cpp::ITemplateVariableLookup
 {
 public:
-  bool lookupStringTemplateVariable(const std::string& name, std::string& output) override
+  bool lookupStringVariable(const std::string& name, std::string& output) override
   {
     if ( name == "first-name" ) { output =  "Luke"; return true; }
     if ( name == "last-name" ) { output =  "Skywalker"; return true; }
@@ -49,7 +49,7 @@ public:
     return false;
   }
 
-  bool lookupStreamTemplateVariable(const std::string& name, std::ostream& output) override
+  bool lookupStreamVariable(const std::string& name, std::ostream& output) override
   {
     return false;
   }
