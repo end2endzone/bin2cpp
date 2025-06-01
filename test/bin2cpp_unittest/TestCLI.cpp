@@ -30,6 +30,10 @@
 #include "rapidassist/strings.h"
 #include "rapidassist/timing.h"
 
+#include "enums.h"
+
+using namespace bin2cpp;
+
 extern const std::string & gGeneratedFilesDir;
 #ifdef _WIN32
   const std::string & gGeneratedFilesDir = "generated_files\\";
@@ -45,19 +49,6 @@ extern const std::string & gGeneratedFilesDir;
     ASSERT_FALSE(textFound) << "The token '" << text << "' was found in file '" << filepath << "' at line " << line << " column " << col << ".";\
   }\
 }
-
-enum APP_ERROR_CODES
-{
-  APP_ERROR_SUCCESS = 0,
-  APP_ERROR_MISSINGARGUMENTS,
-  APP_ERROR_INPUTFILENOTFOUND,
-  APP_ERROR_UNABLETOCREATEOUTPUTFILES,
-  APP_ERROR_TOOMANYARGUMENTS,
-  APP_ERROR_INPUTDIRNOTFOUND,
-  AAP_ERROR_NOTSUPPORTED,
-  APP_ERROR_OPERATIONHASFAILED,
-  APP_ERROR_INVALIDVALUE,
-};
 
 namespace TestCLIUtils
 {
