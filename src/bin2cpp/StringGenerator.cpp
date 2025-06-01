@@ -55,8 +55,8 @@ namespace bin2cpp
       return false;
 
     const std::string text = ""
-      "${bin2cpp_output_file_header}"
-      "#include \"${bin2cpp_header_source_file_include_path}\"\n"
+      "${bin2cpp_output_file_header_template}"
+      "#include \"${bin2cpp_header_file_include_path}\"\n"
       "#include <iostream>\n"
       "#include <fstream>  //for ofstream\n"
       "namespace ${bin2cpp_namespace}\n"
@@ -74,10 +74,10 @@ namespace bin2cpp
       "      const char * buffer = \n${bin2cpp_insert_input_file_as_code}" // INPUT FILE AS CODE HERE
       "      return buffer;\n"
       "    }\n"
-      "${bin2cpp_cpp_get_save_method_impl}"
+      "${bin2cpp_cpp_save_method_template}"
       "  };\n"
-      "  const ${bin2cpp_baseclass} & ${bin2cpp_getter_function_name}() { static ${bin2cpp_classname} _instance; return _instance; }\n"
-      "${bin2cpp_cpp_get_file_manager_registration_impl}"
+      "  const ${bin2cpp_baseclass} & ${bin2cpp_file_object_getter_function_name}() { static ${bin2cpp_classname} _instance; return _instance; }\n"
+      "${bin2cpp_file_manager_cpp_registration_implementation}"
       "}; //${bin2cpp_namespace}\n";
 
     TemplateProcessor processor(&text);
@@ -94,18 +94,18 @@ namespace bin2cpp
       return false;
 
     const std::string text = ""
-      "${bin2cpp_output_file_header}"
+      "${bin2cpp_output_file_header_template}"
       "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n"
       "#define _CRT_SECURE_NO_WARNINGS\n"
       "#endif\n"
-      "#include \"${bin2cpp_header_source_file_include_path}\"\n"
+      "#include \"${bin2cpp_header_file_include_path}\"\n"
       "#include <stdlib.h> // for malloc\n"
       "#include <string.h> // for memset\n"
       "#include <stdio.h>  // for fopen\n"
       "static ${bin2cpp_baseclass} ${bin2cpp_function_identifier_lowercase}_file = { 0 };\n"
       "static bool ${bin2cpp_function_identifier_lowercase}_initialized = false;\n"
       "\n"
-      "${bin2cpp_c_file_manager_registration_predeclaration}"
+      "${bin2cpp_file_manager_c_registration_predeclaration}"
       "bool ${bin2cpp_function_identifier_lowercase}_load()\n"
       "{\n"
       "  if ( ${bin2cpp_function_identifier_lowercase}_file.buffer )\n"
@@ -155,15 +155,15 @@ namespace bin2cpp
       "\n"
       "  // load file by default on init as in c++ implementation\n"
       "  file->load();\n"
-      "${bin2cpp_c_file_manager_registration_post_init_impl}"
+      "${bin2cpp_file_manager_c_registration_post_init_implementation}"
       "}\n"
       "\n"
-      "${bin2cpp_baseclass}* ${bin2cpp_getter_function_name}(void)\n"
+      "${bin2cpp_baseclass}* ${bin2cpp_file_object_getter_function_name}(void)\n"
       "{\n"
       "  ${bin2cpp_function_identifier_lowercase}_init();\n"
       "  return &${bin2cpp_function_identifier_lowercase}_file;\n"
       "}\n"
-      "${bin2cpp_c_file_manager_registration_implementation}";
+      "${bin2cpp_file_manager_c_registration_implementation}";
 
     TemplateProcessor processor(&text);
     processor.setTemplateVariableLookup(this);

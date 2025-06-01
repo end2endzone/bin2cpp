@@ -84,7 +84,7 @@ namespace bin2cpp
   ///</summary>
   ///<param name="path">An valid file path.</param>
   ///<return>Returns the macro name for the given c++ header file.<return>
-  std::string getCppIncludeGuardMacroName(const std::string & path);
+  std::string getIncludeGuardMacroName(const std::string & path);
 
   ///<summary>
   ///Filter a string to only contains the given allowed characters.

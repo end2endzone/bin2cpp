@@ -63,8 +63,8 @@ namespace bin2cpp
       return false;
 
     const std::string text = ""
-      "${bin2cpp_output_file_header}"
-      "#include \"${bin2cpp_header_source_file_include_path}\"\n"
+      "${bin2cpp_output_file_header_template}"
+      "#include \"${bin2cpp_header_file_include_path}\"\n"
       "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n"
       "#define _CRT_SECURE_NO_WARNINGS\n"
       "#endif\n"
@@ -142,7 +142,7 @@ namespace bin2cpp
       "        hProcess = NULL;\n"
       "      }\n"
       "    }\n"
-      "${bin2cpp_cpp_get_save_method_impl}"
+      "${bin2cpp_cpp_save_method_template}"
       "  private:\n"
       "    HANDLE hProcess;\n"
       "    HMODULE hModule;\n"
@@ -151,8 +151,8 @@ namespace bin2cpp
       "    DWORD mBufferSize;\n"
       "    const char * mBuffer;\n"
       "  };\n"
-      "  const ${bin2cpp_baseclass} & ${bin2cpp_getter_function_name}() { static ${bin2cpp_classname} _instance; return _instance; }\n"
-      "${bin2cpp_cpp_get_file_manager_registration_impl}"
+      "  const ${bin2cpp_baseclass} & ${bin2cpp_file_object_getter_function_name}() { static ${bin2cpp_classname} _instance; return _instance; }\n"
+      "${bin2cpp_file_manager_cpp_registration_implementation}"
       "}; //${bin2cpp_namespace}\n";
 
     TemplateProcessor processor(&text);
@@ -173,12 +173,12 @@ namespace bin2cpp
       return false;
 
     const std::string text = ""
-      "${bin2cpp_output_file_header}"
+      "${bin2cpp_output_file_header_template}"
       "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n"
       "#define _CRT_SECURE_NO_WARNINGS\n"
       "#endif\n"
       "\n"
-      "#include \"${bin2cpp_header_source_file_include_path}\"\n"
+      "#include \"${bin2cpp_header_file_include_path}\"\n"
       "#include <stdlib.h> // for malloc\n"
       "#include <string.h> // for memset\n"
       "#include <stdio.h>  // for fopen\n"
@@ -203,7 +203,7 @@ namespace bin2cpp
       "} ${bin2cpp_win32_local_info_struct_name};\n"
       "static ${bin2cpp_win32_local_info_struct_name} ${bin2cpp_function_identifier_lowercase}_info = { 0 };\n"
       "\n"
-      "${bin2cpp_c_file_manager_registration_predeclaration}"
+      "${bin2cpp_file_manager_c_registration_predeclaration}"
       "bool ${bin2cpp_function_identifier_lowercase}_load()\n"
       "{\n"
       "  if ( ${bin2cpp_function_identifier_lowercase}_file.buffer )\n"
@@ -290,15 +290,15 @@ namespace bin2cpp
       "\n"
       "  // load file by default on init as in c++ implementation\n"
       "  file->load();\n"
-      "${bin2cpp_c_file_manager_registration_post_init_impl}"
+      "${bin2cpp_file_manager_c_registration_post_init_implementation}"
       "}\n"
       "\n"
-      "${bin2cpp_baseclass}* ${bin2cpp_getter_function_name}(void)\n"
+      "${bin2cpp_baseclass}* ${bin2cpp_file_object_getter_function_name}(void)\n"
       "{\n"
       "  ${bin2cpp_function_identifier_lowercase}_init();\n"
       "  return &${bin2cpp_function_identifier_lowercase}_file;\n"
       "}\n"
-      "${bin2cpp_c_file_manager_registration_implementation}";
+      "${bin2cpp_file_manager_c_registration_implementation}";
 
     TemplateProcessor processor(&text);
     processor.setTemplateVariableLookup(this);
@@ -350,7 +350,7 @@ namespace bin2cpp
 
   std::string Win32ResourceGenerator::getRandomIdentifier(const char * file_path)
   {
-    std::string include_guard = getCppIncludeGuardMacroName(file_path);
+    std::string include_guard = getIncludeGuardMacroName(file_path);
 
     //append a CRC32 checksum of the file path to allow storing multiple files with the same name in resources
     uint32_t checksum = 0;

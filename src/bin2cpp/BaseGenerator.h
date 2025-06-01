@@ -56,7 +56,7 @@ namespace bin2cpp
 
   protected:
 
-    virtual std::string getGetterFunctionName();
+    virtual std::string getFileObjectGetterFunctionName();
     virtual std::string getHeaderFilePath(const char * cpp_file_path);
     virtual std::string getCppFilePath(const char * header_file_path);
     virtual std::string getHeaderTemplate();
@@ -65,14 +65,15 @@ namespace bin2cpp
     virtual std::string getCppFileManagerRegistrationImplementationTemplate();
     virtual std::string getCFileManagerRegistrationPredeclarationImplementation();
     virtual std::string getCFileManagerStaticFileRegistrationImplementation();
+    virtual std::string getCFileManagerRegistrationPostInitImplementation();
     virtual std::string getClassName();
     virtual std::string getClassMacroGuardPrefix();
     virtual std::string getFileManagerMacroGuardPrefix();
-    virtual std::string getFileClassGetFileNameImplementation();
-    virtual std::string getFileClassGetFilePathImplementation();
-    virtual std::string getFileClassFileName();
-    virtual std::string getFileClassFilePath();
-    virtual std::string getCppHeaderIncludePath();
+    virtual std::string getFileObjectGetFileNameImplementation();
+    virtual std::string getFileObjectGetFilePathImplementation();
+    virtual std::string getFileObjectFileName();
+    virtual std::string getFileObjectFilePath();
+    virtual std::string getHeaderFileIncludePath();
     virtual void writeInputFileDataAsCode(std::ostream& output);
     virtual void writeInputFileChunkAsCode(const unsigned char * buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk, std::ostream& output);
 
