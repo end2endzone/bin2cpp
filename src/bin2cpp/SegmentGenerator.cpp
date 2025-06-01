@@ -23,6 +23,7 @@
  *********************************************************************************/
 
 #include "SegmentGenerator.h"
+#include "TemplateProcessor.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -47,284 +48,196 @@ namespace bin2cpp
     return "segment";
   }
 
-  bool SegmentGenerator::createCppSourceFile(const char * cpp_file_path)
+  bool SegmentGenerator::createCppSourceFile(const char * file_path)
   {
     //check if input file exists
-    FILE * input = fopen(mContext.inputFilePath.c_str(), "rb");
-    if (!input)
+    if ( !ra::filesystem::FileExists(mContext.inputFilePath.c_str()) )
       return false;
 
-    //Uppercase function identifier
-    std::string functionIdentifier = ra::strings::CapitalizeFirstCharacter(getContext().functionIdentifier);
+    const std::string text = ""
+      "${bin2cpp_output_file_header_template}"
+      "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n"
+      "#define _CRT_SECURE_NO_WARNINGS\n"
+      "#endif\n"
+      "#include \"${bin2cpp_header_file_include_path}\"\n"
+      "#include <string> //for std::string\n"
+      "#include <iostream>\n"
+      "#include <fstream>  //for ofstream\n"
+      "namespace ${bin2cpp_namespace}\n"
+      "{\n"
+      "  class ${bin2cpp_classname} : public virtual ${bin2cpp_namespace}::${bin2cpp_baseclass}\n"
+      "  {\n"
+      "  public:\n"
+      "    ${bin2cpp_classname}() { build(); }\n"
+      "    virtual ~${bin2cpp_classname}() {}\n"
+      "    virtual size_t getSize() const { return ${bin2cpp_input_file_size}; }\n"
+      "    virtual const char * getFileName() const { return \"${bin2cpp_file_object_file_name}\"; }\n"
+      "    virtual const char * getFilePath() const { return \"${bin2cpp_file_object_file_path}\"; }\n"
+      "    virtual const char * getBuffer() const { return mBuffer.c_str(); }\n"
+      "    void build()\n"
+      "    {\n"
+      "      mBuffer.clear();\n"
+      "      mBuffer.reserve(getSize()); //allocate all required memory at once to prevent reallocations\n${bin2cpp_insert_input_file_as_code}" // INPUT FILE AS CODE HERE
+      "    }\n"
+      "${bin2cpp_cpp_save_method_template}"
+      "  private:\n"
+      "    std::string mBuffer;\n"
+      "  };\n"
+      "  const ${bin2cpp_baseclass} & ${bin2cpp_file_object_getter_function_name}() { static ${bin2cpp_classname} _instance; return _instance; }\n"
+      "${bin2cpp_file_manager_cpp_registration_implementation}"
+      "}; //${bin2cpp_namespace}\n";
 
-    //Build header and cpp file path
-    std::string headerPath = getHeaderFilePath(cpp_file_path);
-    std::string cppPath = cpp_file_path;
+    TemplateProcessor processor(&text);
+    processor.setTemplateVariableLookup(this);
+    bool write_success = processor.writeFile(file_path);
 
-    //create cpp source file
-    FILE * cpp = fopen(cppPath.c_str(), "w");
-    if (!cpp)
-    {
-      fclose(input);
-      return false;
-    }
-
-    //determine file properties
-    uint32_t fileSize = ra::filesystem::GetFileSize(input);
-    std::string filename = ra::filesystem::GetFilename(mContext.inputFilePath.c_str());
-    //long lastSegmentSize = fileSize%chunk_size;
-    //size_t numSegments = fileSize/chunk_size + (lastSegmentSize == 0 ? 0 : 1);
-
-    //Build class name
-    std::string className = getClassName();
-
-    //Build function 
-    std::string getterFunctionName = getGetterFunctionName();
-
-    //Build FileManager class template
-    std::string manager = mContext.managerHeaderFilename;
-
-    //write cpp file heading
-    fprintf(cpp, "%s", getHeaderTemplate().c_str());
-    fprintf(cpp, "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n");
-    fprintf(cpp, "#define _CRT_SECURE_NO_WARNINGS\n");
-    fprintf(cpp, "#endif\n");
-    fprintf(cpp, "#include \"%s\"\n", mContext.headerFilename.c_str() );
-    fprintf(cpp, "#include <string> //for std::string\n");
-    fprintf(cpp, "#include <iostream>\n");
-    fprintf(cpp, "#include <fstream>  //for ofstream\n");
-    fprintf(cpp, "namespace %s\n", getContext().codeNamespace.c_str());
-    fprintf(cpp, "{\n");
-    fprintf(cpp, "  class %s : public virtual %s::%s\n", className.c_str(), getContext().codeNamespace.c_str(), getContext().baseClass.c_str());
-    fprintf(cpp, "  {\n");
-    fprintf(cpp, "  public:\n");
-    fprintf(cpp, "    %s() { build(); }\n", className.c_str());
-    fprintf(cpp, "    virtual ~%s() {}\n", className.c_str());
-    fprintf(cpp, "    virtual size_t getSize() const { return %u; }\n", fileSize);
-    fprintf(cpp, "    virtual const char * getFileName() const { %s }\n", getImplOfGetFileName().c_str());
-    fprintf(cpp, "    virtual const char * getFilePath() const { %s }\n", getImplOfGetFilePath().c_str());
-    fprintf(cpp, "    virtual const char * getBuffer() const { return mBuffer.c_str(); }\n");
-    fprintf(cpp, "    void build()\n");
-    fprintf(cpp, "    {\n");
-    fprintf(cpp, "      mBuffer.clear();\n");
-    fprintf(cpp, "      mBuffer.reserve(getSize()); //allocate all required memory at once to prevent reallocations\n");
-
-    //create buffer for each chunks from input buffer
-    unsigned char * buffer = new unsigned char[getContext().chunkSize];
-    while(!feof(input))
-    {
-      //read a chunk of the file
-      size_t readSize = fread(buffer, 1, getContext().chunkSize, input);
-
-      //bool isLastChunk = !(readSize == chunk_size);
-
-      if (readSize == 0)
-        continue; //nothing to output if nothing was read
-
-      //convert to cpp string
-      std::string cppEncoder;
-      switch(getContext().cppEncoder)
-      {
-      case CPP_ENCODER_HEX:
-        cppEncoder = ra::code::cpp::ToHexString(buffer, readSize);
-        break;
-      case CPP_ENCODER_OCT:
-      default:
-        cppEncoder = ra::code::cpp::ToOctString(buffer, readSize, false);
-        break;
-      };
-
-      //output
-      fprintf(cpp, "      mBuffer.append(\"%s\", %s);\n", cppEncoder.c_str(), ra::strings::ToString(readSize).c_str());
-    }
-    delete[] buffer;
-    buffer = NULL;
-
-    //write cpp source file footer
-    fprintf(cpp, "    }\n");
-    fprintf(cpp, "%s", getSaveMethodTemplate().c_str());
-    fprintf(cpp, "  private:\n");
-    fprintf(cpp, "    std::string mBuffer;\n");
-    fprintf(cpp, "  };\n");
-    fprintf(cpp, "  const %s & %s() { static %s _instance; return _instance; }\n", getContext().baseClass.c_str(), getterFunctionName.c_str(), className.c_str());
-    if (mContext.registerFiles)
-    {
-      std::string fileManagerTemplate = getCppFileManagerRegistrationImplementationTemplate();
-      fprintf(cpp, "%s", fileManagerTemplate.c_str());
-    }
-    fprintf(cpp, "}; //%s\n", getContext().codeNamespace.c_str());
-
-    fclose(input);
-    fclose(cpp);
-
-    return true;
+    return write_success;
   }
 
   bool SegmentGenerator::createCSourceFile(const char* file_path)
   {
     //check if input file exists
-    FILE* input = fopen(mContext.inputFilePath.c_str(), "rb");
-    if ( !input )
+    if ( !ra::filesystem::FileExists(mContext.inputFilePath.c_str()) )
       return false;
 
-    //Lowercase function identifier
-    std::string functionIdentifier = ra::strings::Lowercase(mContext.functionIdentifier);
+    const std::string text = ""
+      "${bin2cpp_output_file_header_template}"
+      "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n"
+      "#define _CRT_SECURE_NO_WARNINGS\n"
+      "#endif\n"
+      "#include \"${bin2cpp_header_file_include_path}\"\n"
+      "#include <stdlib.h> // for malloc\n"
+      "#include <string.h> // for memset\n"
+      "#include <stdio.h>  // for fopen\n"
+      "static ${bin2cpp_baseclass} ${bin2cpp_function_identifier_lowercase}_file = { 0 };\n"
+      "static bool ${bin2cpp_function_identifier_lowercase}_initialized = false;\n"
+      "\n"
+      "${bin2cpp_file_manager_c_registration_predeclaration}"
+      "bool ${bin2cpp_function_identifier_lowercase}_load()\n"
+      "{\n"
+      "  if ( ${bin2cpp_function_identifier_lowercase}_file.buffer )\n"
+      "    return true;\n"
+      "\n"
+      "  unsigned char* local_buffer = (unsigned char*)malloc(${bin2cpp_function_identifier_lowercase}_file.size);\n"
+      "  if ( local_buffer == NULL )\n"
+      "    return false;\n"
+      "\n"
+      "  unsigned char* next = local_buffer;\n${bin2cpp_insert_input_file_as_code}" // INPUT FILE AS CODE HERE
+      "\n"
+      "  ${bin2cpp_function_identifier_lowercase}_file.buffer = local_buffer;\n"
+      "  return true;\n"
+      "}\n"
+      "\n"
+      "void ${bin2cpp_function_identifier_lowercase}_free()\n"
+      "{\n"
+      "  if ( ${bin2cpp_function_identifier_lowercase}_file.buffer )\n"
+      "    free((unsigned char*)${bin2cpp_function_identifier_lowercase}_file.buffer);\n"
+      "  ${bin2cpp_function_identifier_lowercase}_file.buffer = NULL;\n"
+      "}\n"
+      "\n"
+      "bool ${bin2cpp_function_identifier_lowercase}_save(const char* path)\n"
+      "{\n"
+      "  if ( !${bin2cpp_function_identifier_lowercase}_file.buffer )\n"
+      "    return false;\n"
+      "  FILE* f = fopen(path, \"wb\");\n"
+      "  if ( !f )\n"
+      "    return false;\n"
+      "  size_t write_size = fwrite(${bin2cpp_function_identifier_lowercase}_file.buffer, 1, ${bin2cpp_function_identifier_lowercase}_file.size, f);\n"
+      "  fclose(f);\n"
+      "  if ( write_size != ${bin2cpp_function_identifier_lowercase}_file.size )\n"
+      "    return false;\n"
+      "  return true;\n"
+      "}\n"
+      "\n"
+      "static inline void ${bin2cpp_function_identifier_lowercase}_init()\n"
+      "{\n"
+      "  // remember we already initialized\n"
+      "  if ( ${bin2cpp_function_identifier_lowercase}_initialized )\n"
+      "    return;\n"
+      "  ${bin2cpp_function_identifier_lowercase}_initialized = true;\n"
+      "\n"
+      "  // initialize\n"
+      "  ${bin2cpp_baseclass}* file = &${bin2cpp_function_identifier_lowercase}_file;\n"
+      "  file->size = ${bin2cpp_input_file_size}ULL;\n"
+      "  file->file_name = \"${bin2cpp_file_object_file_name}\";\n"
+      "  file->file_path = \"${bin2cpp_file_object_file_path}\";\n"
+      "  file->buffer = NULL;\n"
+      "  file->load = ${bin2cpp_function_identifier_lowercase}_load;\n"
+      "  file->unload = ${bin2cpp_function_identifier_lowercase}_free;\n"
+      "  file->save = ${bin2cpp_function_identifier_lowercase}_save;\n"
+      "\n"
+      "  // load file by default on init as in c++ implementation\n"
+      "  file->load();\n"
+      "${bin2cpp_file_manager_c_registration_post_init_implementation}"
+      "}\n"
+      "\n"
+      "${bin2cpp_baseclass}* ${bin2cpp_file_object_getter_function_name}(void)\n"
+      "{\n"
+      "  ${bin2cpp_function_identifier_lowercase}_init();\n"
+      "  return &${bin2cpp_function_identifier_lowercase}_file;\n"
+      "}\n"
+      "${bin2cpp_file_manager_c_registration_implementation}";
 
-    //Build header and cpp file path
-    std::string headerPath = getHeaderFilePath(file_path);
-    std::string sourcePath = file_path;
+    TemplateProcessor processor(&text);
+    processor.setTemplateVariableLookup(this);
+    bool write_success = processor.writeFile(file_path);
 
-    //create c source file
-    FILE* fout = fopen(sourcePath.c_str(), "w");
-    if ( !fout )
+    return write_success;
+  }
+
+  void SegmentGenerator::writeInputFileChunkAsCode(const unsigned char* buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk, std::ostream& output)
+  {
+    size_t indentation = 0;
+
+    if ( mContext.plainOutput )
+      indentation = 0;
+    else if ( mContext.code == CodeGenerationEnum::CODE_GENERATION_CPP )
+      indentation = 6;
+    else if ( mContext.code == CodeGenerationEnum::CODE_GENERATION_C )
+      indentation = 2;
+
+    std::string str;
+    if ( indentation )
+      str += std::string(indentation, ' ');
+
+    //convert to cpp string
+    std::string code;
+    switch ( mContext.cppEncoder )
     {
-      fclose(input);
-      return false;
+    case CPP_ENCODER_HEX:
+      code = ra::code::cpp::ToHexString(buffer, buffer_size);
+      break;
+    case CPP_ENCODER_OCT:
+    default:
+      code = ra::code::cpp::ToOctString(buffer, buffer_size, false);
+      break;
+    };
+
+    if ( mContext.plainOutput )
+    {
+    }
+    else if ( mContext.code == CodeGenerationEnum::CODE_GENERATION_CPP )
+    {
+      str += "mBuffer.append(\"";
+      str += code;
+      str += "\", ";
+      str += ra::strings::ToString(buffer_size);
+      str += ");";
+    }
+    else if ( mContext.code == CodeGenerationEnum::CODE_GENERATION_C )
+    {
+      str += "memcpy(next, \"";
+      str += code;
+      str += "\", ";
+      str += ra::strings::ToString(buffer_size);
+      str += "); next += ";
+      str += ra::strings::ToString(buffer_size);
+      str += ";";
     }
 
-    //determine file properties
-    uint32_t fileSize = ra::filesystem::GetFileSize(input);
-    std::string filename = ra::filesystem::GetFilename(mContext.inputFilePath.c_str());
-    //long lastSegmentSize = fileSize%chunk_size;
-    //size_t numSegments = fileSize/chunk_size + (lastSegmentSize == 0 ? 0 : 1);
+    str += "\n";
 
-    //Build class name
-    std::string className = getClassName();
-
-    //Build function 
-    std::string getterFunctionName = getGetterFunctionName();
-
-    //Build FileManager class template
-    std::string manager = mContext.managerHeaderFilename;
-
-    //write c file heading
-    fprintf(fout, "%s", getHeaderTemplate().c_str());
-    fprintf(fout, "#if defined(_WIN32) && !defined(_CRT_SECURE_NO_WARNINGS)\n");
-    fprintf(fout, "#define _CRT_SECURE_NO_WARNINGS\n");
-    fprintf(fout, "#endif\n");
-    fprintf(fout, "#include \"%s\"\n", mContext.headerFilename.c_str());
-    fprintf(fout, "#include <stdlib.h> // for malloc\n");
-    fprintf(fout, "#include <string.h> // for memset\n");
-    fprintf(fout, "#include <stdio.h>  // for fopen\n");
-
-    fprintf(fout, "static %s %s_file = { 0 };\n", mContext.baseClass.c_str(), functionIdentifier.c_str());
-    fprintf(fout, "static bool %s_initialized = false;\n", functionIdentifier.c_str());
-    fprintf(fout, "\n");
-
-    // File registration predeclaration code
-    fprintf(fout, "%s", getCFileManagerRegistrationPredeclarationTemplate().c_str());
-
-    fprintf(fout, "bool %s_load()\n", functionIdentifier.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  if ( %s_file.buffer )\n", functionIdentifier.c_str());
-    fprintf(fout, "    return true;\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "  unsigned char* local_buffer = (unsigned char*)malloc(%s_file.size);\n", functionIdentifier.c_str());
-    fprintf(fout, "  if ( local_buffer == NULL )\n");
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "  unsigned char* next = local_buffer;\n");
-
-    //create buffer for each chunks from input buffer
-    unsigned char* buffer = new unsigned char[getContext().chunkSize];
-    while ( !feof(input) )
-    {
-      //read a chunk of the file
-      size_t readSize = fread(buffer, 1, getContext().chunkSize, input);
-
-      //bool isLastChunk = !(readSize == chunk_size);
-
-      if ( readSize == 0 )
-        continue; //nothing to output if nothing was read
-
-      //convert to cpp string
-      std::string cppEncoder;
-      switch ( getContext().cppEncoder )
-      {
-      case CPP_ENCODER_HEX:
-        cppEncoder = ra::code::cpp::ToHexString(buffer, readSize);
-        break;
-      case CPP_ENCODER_OCT:
-      default:
-        cppEncoder = ra::code::cpp::ToOctString(buffer, readSize, false);
-        break;
-      };
-
-      //output
-      fprintf(fout, "  memcpy(next, \"%s\", %s); next += %s; \n", cppEncoder.c_str(), ra::strings::ToString(readSize).c_str(), ra::strings::ToString(readSize).c_str());
-    }
-    delete[] buffer;
-    buffer = NULL;
-
-    //write c source file footer
-    fprintf(fout, "\n");
-    fprintf(fout, "  %s_file.buffer = local_buffer;\n", functionIdentifier.c_str());
-    fprintf(fout, "  return true;\n");
-    fprintf(fout, "}\n");
-
-    fprintf(fout, "\n");
-
-    fprintf(fout, "void %s_free()\n", functionIdentifier.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  if ( %s_file.buffer )\n", functionIdentifier.c_str());
-    fprintf(fout, "    free((unsigned char*)%s_file.buffer);\n", functionIdentifier.c_str());
-    fprintf(fout, "  %s_file.buffer = NULL;\n", functionIdentifier.c_str());
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "bool %s_save(const char* path)\n", functionIdentifier.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  if ( !%s_file.buffer )\n", functionIdentifier.c_str());
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "  FILE* f = fopen(path, \"wb\");\n");
-    fprintf(fout, "  if ( !f )\n");
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "  size_t write_size = fwrite(%s_file.buffer, 1, %s_file.size, f);\n", functionIdentifier.c_str(), functionIdentifier.c_str());
-    fprintf(fout, "  fclose(f);\n");
-    fprintf(fout, "  if ( write_size != %s_file.size )\n", functionIdentifier.c_str());
-    fprintf(fout, "    return false;\n");
-    fprintf(fout, "  return true;\n");
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "static inline void %s_init()\n", functionIdentifier.c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  // remember we already initialized\n");
-    fprintf(fout, "  if ( %s_initialized )\n", functionIdentifier.c_str());
-    fprintf(fout, "    return;\n");
-    fprintf(fout, "  %s_initialized = true;\n", functionIdentifier.c_str());
-    fprintf(fout, "\n");
-    fprintf(fout, "  // initialize\n");
-    fprintf(fout, "  %s* file = &%s_file;\n", mContext.baseClass.c_str(), functionIdentifier.c_str());
-    fprintf(fout, "  file->size = %uULL;\n", fileSize);
-    fprintf(fout, "  file->file_name = \"%s\";\n", getFileClassFileName().c_str());
-    fprintf(fout, "  file->file_path = \"%s\";\n", getFileClassFilePath().c_str());
-    fprintf(fout, "  file->buffer = NULL;\n");
-    fprintf(fout, "  file->load = %s_load;\n", functionIdentifier.c_str());
-    fprintf(fout, "  file->unload = %s_free;\n", functionIdentifier.c_str());
-    fprintf(fout, "  file->save = %s_save;\n", functionIdentifier.c_str());
-    fprintf(fout, "\n");
-    fprintf(fout, "  // load file by default on init as in c++ implementation");
-    fprintf(fout, "  file->load();\n");
-    if ( mContext.registerFiles )
-    {
-      fprintf(fout, "  \n");
-      fprintf(fout, "  // register when loaded if static initialisation does not work\n");
-      fprintf(fout, "  %s_filemanager_register_file(file);\n", mContext.codeNamespace.c_str());
-    }
-    fprintf(fout, "}\n");
-    fprintf(fout, "\n");
-    fprintf(fout, "%s* %s(void)\n", mContext.baseClass.c_str(), getGetterFunctionName().c_str());
-    fprintf(fout, "{\n");
-    fprintf(fout, "  %s_init();\n", functionIdentifier.c_str());
-    fprintf(fout, "  return &%s_file;\n", functionIdentifier.c_str());
-    fprintf(fout, "}\n");
-
-    // File registration implementation code
-    fprintf(fout, "%s", getCFileManagerRegistrationImplementationTemplate().c_str());
-
-    fclose(input);
-    fclose(fout);
-
-    return true;
+    output << str;
   }
 
 }; //bin2cpp

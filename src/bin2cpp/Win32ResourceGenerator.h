@@ -39,13 +39,17 @@ namespace bin2cpp
     Win32ResourceGenerator();
     virtual ~Win32ResourceGenerator();
     virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * cpp_file_path);
+    virtual bool createCppSourceFile(const char * file_path);
     virtual bool createCSourceFile(const char* file_path);
     virtual bool printFileContent();
+
+    //ITemplateVariableLookup methods
+    virtual bool lookupStringVariable(const std::string& name, std::string& output);
+
   protected:
-    virtual std::string getResourceFilePath(const char * cpp_file_path);
-    virtual bool createResourceFile(const char * cpp_file_path);
-    virtual std::string getRandomIdentifier(const char * cpp_file_path);
+    virtual std::string getResourceFilePath(const char * file_path);
+    virtual bool createResourceFile(const char * file_path);
+    virtual std::string getRandomIdentifier(const char * file_path);
     virtual std::string getLocalInfoStructName();
   };
 

@@ -39,8 +39,8 @@ namespace bin2cpp
     ManagerGenerator();
     virtual ~ManagerGenerator();
     virtual const char * getName() const;
-    virtual bool createCppHeaderFile(const char* header_file_path);
-    virtual bool createCppSourceFile(const char * cpp_file_path);
+    virtual bool createCppHeaderFile(const char* file_path);
+    virtual bool createCppSourceFile(const char * file_path);
     virtual bool createCHeaderFile(const char* file_path);
     virtual bool createCSourceFile(const char* file_path);
     virtual bool printFileContent();

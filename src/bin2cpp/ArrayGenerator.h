@@ -40,9 +40,10 @@ namespace bin2cpp
     ArrayGenerator();
     virtual ~ArrayGenerator();
     virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * cpp_file_path);
-    virtual bool createCSourceFile(const char * cpp_file_path);
+    virtual bool createCppSourceFile(const char * file_path);
+    virtual bool createCSourceFile(const char * file_path);
     virtual bool printFileContent();
+    virtual void writeInputFileChunkAsCode(const unsigned char * buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk, std::ostream& output);
   };
 
 }; //bin2cpp

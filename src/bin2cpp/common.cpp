@@ -110,7 +110,7 @@ namespace bin2cpp
     return false;
   }
 
-  std::string getCppIncludeGuardMacroName(const std::string & path)
+  std::string getIncludeGuardMacroName(const std::string & path)
   {
     static const std::string EMPTY_STRING;
     if (path.empty())

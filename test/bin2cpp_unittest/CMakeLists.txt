@@ -285,6 +285,9 @@ source_group("External Files" FILES
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.h
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.cpp
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.h
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/ITemplateVariableLookup.h
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/TemplateProcessor.cpp
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/TemplateProcessor.h
 )
 
 # Ensure source files are properly recognized as generated
@@ -297,6 +300,9 @@ add_executable(bin2cpp_unittest
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/common.h
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.cpp
   ${CMAKE_SOURCE_DIR}/src/bin2cpp/wildcard.h
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/ITemplateVariableLookup.h
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/TemplateProcessor.cpp
+  ${CMAKE_SOURCE_DIR}/src/bin2cpp/TemplateProcessor.h
   application.cpp
   application.h
   CMakeLists.txt
@@ -310,6 +316,8 @@ add_executable(bin2cpp_unittest
   TestCommon.h
   TestExtraction.cpp
   TestExtraction.h
+  TestTemplateProcessor.cpp
+  TestTemplateProcessor.h
   TestWildcard.cpp
   TestWildcard.h
   ${GENERATED_TEST_FILES}

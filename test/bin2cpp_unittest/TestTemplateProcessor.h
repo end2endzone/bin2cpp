@@ -22,28 +22,16 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef STRINGGENERATOR_H
-#define STRINGGENERATOR_H
+#ifndef TESTTEMPLATEPROCESSOR_H
+#define TESTTEMPLATEPROCESSOR_H
 
-#include "BaseGenerator.h"
+#include <gtest/gtest.h>
 
-namespace bin2cpp
+class TestTemplateProcessor : public ::testing::Test
 {
+public:
+  virtual void SetUp();
+  virtual void TearDown();
+};
 
-  ///<summary>
-  ///This generator stores data in a single string of a maximum of 65535 bytes.
-  ///</summary>
-  class StringGenerator : public BaseGenerator
-  {
-  public:
-    StringGenerator();
-    virtual ~StringGenerator();
-    virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * file_path);
-    virtual bool createCSourceFile(const char* file_path);
-    virtual void writeInputFileChunkAsCode(const unsigned char* buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk, std::ostream& output);
-  };
-
-}; //bin2cpp
-
-#endif //STRINGGENERATOR_H
+#endif //TESTTEMPLATEPROCESSOR_H

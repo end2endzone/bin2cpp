@@ -22,6 +22,7 @@ add_executable(bin2cpp
   enums.h
   IGenerator.h
   INameProvider.h
+  ITemplateVariableLookup.h
   LegacyNameProvider.cpp
   LegacyNameProvider.h
   main.cpp
@@ -31,6 +32,8 @@ add_executable(bin2cpp
   SegmentGenerator.h
   StringGenerator.cpp
   StringGenerator.h
+  TemplateProcessor.cpp
+  TemplateProcessor.h
   types.h
   wildcard.cpp
   wildcard.h

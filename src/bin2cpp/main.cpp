@@ -558,6 +558,9 @@ int main(int argc, char* argv[])
   //should we also generate the FileManager class?
   if (c.hasManagerFile)
   {
+    //for the manager, header file name is the same as a normal output file header file name
+    c.headerFilename = c.managerHeaderFilename;
+
     APP_ERROR_CODES error = processManagerFiles(c);
     if (error != APP_ERROR_SUCCESS)
     {
@@ -836,6 +839,7 @@ APP_ERROR_CODES processManagerFiles(const Context & c)
 
   //configure the generator
   generator.setContext(c);
+
 
   //process files
   bool headerResult = generateOutputFile(c, outputHeaderPath, &generator);

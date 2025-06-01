@@ -26,6 +26,7 @@
 #define BASEGENERATOR_H
 
 #include "IGenerator.h"
+#include <map>
 
 namespace bin2cpp
 {
@@ -43,6 +44,10 @@ namespace bin2cpp
     virtual void setContext(const Context& c);
     virtual const Context & getContext() const;
 
+    //ITemplateVariableLookup methods
+    virtual bool lookupStringVariable(const std::string& name, std::string& output);
+    virtual bool lookupStreamVariable(const std::string& name, std::ostream& output);
+
     //same header file for all generators
     virtual bool createCppHeaderFile(const char * header_file_path);
     virtual bool printFileContent();
@@ -51,21 +56,24 @@ namespace bin2cpp
 
   protected:
 
-    virtual std::string getGetterFunctionName();
+    virtual std::string getFileObjectGetterFunctionName();
     virtual std::string getHeaderFilePath(const char * cpp_file_path);
     virtual std::string getCppFilePath(const char * header_file_path);
     virtual std::string getHeaderTemplate();
     virtual std::string getHeaderTemplate(bool include_source_file);
-    virtual std::string getSaveMethodTemplate();
+    virtual std::string getCppSaveMethodTemplate();
     virtual std::string getCppFileManagerRegistrationImplementationTemplate();
-    virtual std::string getCFileManagerRegistrationPredeclarationTemplate();
-    virtual std::string getCFileManagerRegistrationImplementationTemplate();
+    virtual std::string getCFileManagerRegistrationPredeclarationImplementation();
+    virtual std::string getCFileManagerStaticFileRegistrationImplementation();
+    virtual std::string getCFileManagerRegistrationPostInitImplementation();
     virtual std::string getClassName();
     virtual std::string getClassMacroGuardPrefix();
-    virtual std::string getImplOfGetFileName();
-    virtual std::string getImplOfGetFilePath();
-    virtual std::string getFileClassFileName();
-    virtual std::string getFileClassFilePath();
+    virtual std::string getFileManagerMacroGuardPrefix();
+    virtual std::string getFileObjectFileName();
+    virtual std::string getFileObjectFilePath();
+    virtual std::string getHeaderFileIncludePath();
+    virtual void writeInputFileDataAsCode(std::ostream& output);
+    virtual void writeInputFileChunkAsCode(const unsigned char * buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk, std::ostream& output);
 
     //attributes
     Context mContext;

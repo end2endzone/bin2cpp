@@ -22,28 +22,46 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef STRINGGENERATOR_H
-#define STRINGGENERATOR_H
+#ifndef TEMPLATEPROCESSOR_H
+#define TEMPLATEPROCESSOR_H
 
-#include "BaseGenerator.h"
+#include <string>
+#include <set>
+#include "ITemplateVariableLookup.h"
 
 namespace bin2cpp
 {
 
   ///<summary>
-  ///This generator stores data in a single string of a maximum of 65535 bytes.
+  ///A class for processing a template containing template markers variables
+  ///and replace those to their actual values.
   ///</summary>
-  class StringGenerator : public BaseGenerator
+  class TemplateProcessor
   {
   public:
-    StringGenerator();
-    virtual ~StringGenerator();
-    virtual const char * getName() const;
-    virtual bool createCppSourceFile(const char * file_path);
-    virtual bool createCSourceFile(const char* file_path);
-    virtual void writeInputFileChunkAsCode(const unsigned char* buffer, size_t buffer_size, size_t index, size_t count, bool is_last_chunk, std::ostream& output);
+    TemplateProcessor();
+    TemplateProcessor(const std::string* value);
+    virtual ~TemplateProcessor();
+    virtual void reset();
+
+    void setTemplateText(const std::string* value);
+    const std::string* getTemplateText() const;
+
+    void setTemplateVariableLookup(ITemplateVariableLookup* lookup);
+    ITemplateVariableLookup* getTemplateVariableLookup() const;
+
+    virtual void writeStream(std::ostream& output_stream);
+    virtual void writeString(std::string& output);
+    virtual bool writeFile(const std::string& file_path);
+
+  protected:
+    virtual void processTemplate(std::ostream& output_stream, const std::string& value, std::set<std::string>& recursion_history);
+
+    //attributes
+    const std::string* mTemplateText;
+    ITemplateVariableLookup* mVariableLookup;
   };
 
 }; //bin2cpp
 
-#endif //STRINGGENERATOR_H
+#endif //TEMPLATEPROCESSOR_H
