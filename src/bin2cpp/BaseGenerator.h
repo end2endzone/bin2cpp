@@ -26,7 +26,6 @@
 #define BASEGENERATOR_H
 
 #include "IGenerator.h"
-#include "types.h"
 #include <map>
 
 namespace bin2cpp
@@ -45,10 +44,8 @@ namespace bin2cpp
     virtual void setContext(const Context& c);
     virtual const Context & getContext() const;
 
-    //ITemplateVariableHandler methods
-    virtual TemplateVariableFlags getTemplateVariableFlags(const std::string& name);
-    virtual void writeTemplateVariable(const std::string& name, std::ostream& output);
-    virtual void writeTemplateVariable(const std::string& name, std::string& output);
+    //ITemplateVariableLookup methods
+    virtual std::string lookupTemplateVariable(const std::string& name);
 
     //same header file for all generators
     virtual bool createCppHeaderFile(const char * header_file_path);
@@ -57,8 +54,7 @@ namespace bin2cpp
     virtual bool createCSourceFile(const char* file_path);
 
   protected:
-    virtual void registerTemplateVariable(const char* name);
-    virtual bool isRegistedTemplateVariable(const std::string& name);
+
     virtual std::string getGetterFunctionName();
     virtual std::string getHeaderFilePath(const char * cpp_file_path);
     virtual std::string getCppFilePath(const char * header_file_path);
@@ -81,9 +77,6 @@ namespace bin2cpp
 
     //attributes
     Context mContext;
-    
-  private:
-    Dictionary mTemplateVariableNames;
   };
 
 }; //bin2cpp

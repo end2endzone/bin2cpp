@@ -46,13 +46,6 @@ namespace bin2cpp
       CODE_GENERATION_CPP,
       CODE_GENERATION_C,
   };
-
-  enum TemplateVariableFlags
-  {
-    TEMPLATE_VARIABLE_FLAG_NONE = 0,
-    TEMPLATE_VARIABLE_FLAG_STRINGNABLE = 1,
-    TEMPLATE_VARIABLE_FLAG_STREAMABLE = 2,
-  };
   
 }; //bin2cpp
 

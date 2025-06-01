@@ -27,12 +27,12 @@
 
 #include <string>
 #include "Context.h"
-#include "ITemplateVariableHandler.h"
+#include "ITemplateVariableLookup.h"
 
 namespace bin2cpp
 {
 
-  class IGenerator : public virtual ITemplateVariableHandler
+  class IGenerator : public virtual ITemplateVariableLookup
   {
   public:
 

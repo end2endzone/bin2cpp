@@ -41,8 +41,6 @@ namespace bin2cpp
 {
   Win32ResourceGenerator::Win32ResourceGenerator()
   {
-    registerTemplateVariable("bin2cpp_win32_resource_random_identifier");
-    registerTemplateVariable("bin2cpp_win32_local_info_struct_name");
   }
 
   Win32ResourceGenerator::~Win32ResourceGenerator()
@@ -158,7 +156,7 @@ namespace bin2cpp
       "}; //${bin2cpp_namespace}\n";
 
     TemplateProcessor processor(&text);
-    processor.setTemplateVariableHandler(this);
+    processor.setTemplateVariableLookup(this);
     bool write_success = processor.writeFile(file_path);
 
     return write_success;
@@ -303,7 +301,7 @@ namespace bin2cpp
       "${bin2cpp_c_file_manager_registration_implementation}";
 
     TemplateProcessor processor(&text);
-    processor.setTemplateVariableHandler(this);
+    processor.setTemplateVariableLookup(this);
     bool write_success = processor.writeFile(file_path);
 
     return write_success;
@@ -378,28 +376,13 @@ namespace bin2cpp
     return false; // not supported
   }
 
-  TemplateVariableFlags Win32ResourceGenerator::getTemplateVariableFlags(const std::string& name)
+  std::string Win32ResourceGenerator::lookupTemplateVariable(const std::string& name)
   {
-    if ( name == "bin2cpp_win32_resource_random_identifier" ) return TEMPLATE_VARIABLE_FLAG_STRINGNABLE;
-    if ( name == "bin2cpp_win32_local_info_struct_name" ) return TEMPLATE_VARIABLE_FLAG_STRINGNABLE;
-    return BaseGenerator::getTemplateVariableFlags(name);
-  }
-
-  void Win32ResourceGenerator::writeTemplateVariable(const std::string& name, std::string& output)
-  {
-    if ( name == "bin2cpp_win32_resource_random_identifier" )
-    {
-      output = getRandomIdentifier(mContext.inputFilePath.c_str());
-      return;
-    }
-    if ( name == "bin2cpp_win32_local_info_struct_name" )
-    {
-      output = getLocalInfoStructName();
-      return;
-    }
+    if ( name == "bin2cpp_win32_resource_random_identifier" ) return getRandomIdentifier(mContext.inputFilePath.c_str());
+    if ( name == "bin2cpp_win32_local_info_struct_name" ) return getLocalInfoStructName();
 
     // Unknown name
-    return this->BaseGenerator::writeTemplateVariable(name, output);
+    return this->BaseGenerator::lookupTemplateVariable(name);
   }
 
   std::string Win32ResourceGenerator::getLocalInfoStructName()

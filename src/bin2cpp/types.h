@@ -26,7 +26,6 @@
 #define TYPES_H
 
 #include <string>
-#include <vector>
 #include <set>
  
 namespace bin2cpp
@@ -36,11 +35,6 @@ namespace bin2cpp
   ///A set of names stored as a Distionnary
   ///</summary>
   typedef std::set<std::string> Dictionary;
-
-  ///<summary>
-  ///A vector of strings
-  ///</summary>
-  typedef std::vector<std::string> StringVector;
 
 }; //bin2cpp
 

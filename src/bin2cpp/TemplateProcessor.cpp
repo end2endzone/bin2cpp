@@ -46,7 +46,7 @@ namespace bin2cpp
   void TemplateProcessor::reset()
   {
     mTemplateText = NULL;
-    mVariableHandler = NULL;
+    mVariableLookup = NULL;
   }
 
   void TemplateProcessor::setTemplateText(const std::string* value)
@@ -59,14 +59,14 @@ namespace bin2cpp
     return mTemplateText;
   }
 
-  void TemplateProcessor::setTemplateVariableHandler(ITemplateVariableHandler* handler)
+  void TemplateProcessor::setTemplateVariableLookup(ITemplateVariableLookup* lookup)
   {
-    mVariableHandler = handler;
+    mVariableLookup = lookup;
   }
 
-  ITemplateVariableHandler* TemplateProcessor::getTemplateVariableHandler() const
+  ITemplateVariableLookup* TemplateProcessor::getTemplateVariableLookup() const
   {
-    return mVariableHandler;
+    return mVariableLookup;
   }
 
   void TemplateProcessor::writeStream(std::ostream& output_stream)
@@ -116,31 +116,17 @@ namespace bin2cpp
             continue;
           }
 
-          // Get variable flags
-          TemplateVariableFlags flags = TEMPLATE_VARIABLE_FLAG_NONE;
-          if ( mVariableHandler )
-            flags = mVariableHandler->getTemplateVariableFlags(variable_name);
+          // Do the variable expansion
+          std::string expanded_value = mVariableLookup ? mVariableLookup->lookupTemplateVariable(variable_name) : "";
 
-          // For string variables, do the variable expansion and recursion
-          if ( (flags & TEMPLATE_VARIABLE_FLAG_STRINGNABLE) == TEMPLATE_VARIABLE_FLAG_STRINGNABLE )
-          {
-            std::string expanded_value;
-            mVariableHandler->writeTemplateVariable(variable_name, expanded_value);
+          // Add variable to recursion history before expanding
+          recursion_history.insert(variable_name);
 
-            // Add variable to recursion history before expanding
-            recursion_history.insert(variable_name);
+          // Recursively process expanded value with updated recursion tracking
+          processTemplate(output_stream, expanded_value, recursion_history);
 
-            // Recursively process expanded value with updated recursion tracking
-            processTemplate(output_stream, expanded_value, recursion_history);
-
-            // Remove variable from recursion history after recursion returns
-            recursion_history.erase(variable_name);
-          }
-          else if ( (flags & TEMPLATE_VARIABLE_FLAG_STREAMABLE) == TEMPLATE_VARIABLE_FLAG_STREAMABLE )
-          {
-            // For streamable-only variables, just stream the output to our output
-            mVariableHandler->writeTemplateVariable(variable_name, output_stream);
-          }
+          // Remove variable from recursion history after recursion returns
+          recursion_history.erase(variable_name);
 
           pos = end_pos + 1;
         }

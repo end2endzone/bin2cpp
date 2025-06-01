@@ -43,9 +43,8 @@ namespace bin2cpp
     virtual bool createCSourceFile(const char* file_path);
     virtual bool printFileContent();
 
-    //ITemplateVariableHandler methods
-    virtual TemplateVariableFlags getTemplateVariableFlags(const std::string& name);
-    virtual void writeTemplateVariable(const std::string& name, std::string& output);
+    //ITemplateVariableLookup methods
+    virtual std::string lookupTemplateVariable(const std::string& name);
 
   protected:
     virtual std::string getResourceFilePath(const char * file_path);

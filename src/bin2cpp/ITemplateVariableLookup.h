@@ -22,45 +22,29 @@
  * SOFTWARE.
  *********************************************************************************/
 
-#ifndef ITEMPLATE_VARIABLE_HANDLER_H
-#define ITEMPLATE_VARIABLE_HANDLER_H
+#ifndef ITEMPLATE_VARIABLE_LOOKUP_H
+#define ITEMPLATE_VARIABLE_LOOKUP_H
 
-#include "enums.h"
 #include <string>
-#include <ostream>
-
+ 
 namespace bin2cpp
 {
 
-  class ITemplateVariableHandler
+  class ITemplateVariableLookup
   {
   public:
-    virtual ~ITemplateVariableHandler()
+    virtual ~ITemplateVariableLookup()
     {}
 
     ///<summary>
-    ///Get the associated flags for the given template variable name.
+    ///Look up the value for a given template variable name.
     ///</summary>
     ///<param name="name">The name of the template variable.</param>
-    ///<return>Returns the flags for template variable of the given name.<return>
-    virtual TemplateVariableFlags getTemplateVariableFlags(const std::string& name) = 0;
-
-    ///<summary>
-    ///Write the value of the given template variable name to the output stream.
-    ///</summary>
-    ///<param name="name">The name of the template variable.</param>
-    ///<param name="output">The variable where to output the template variable's value.</param>
-    virtual void writeTemplateVariable(const std::string& name, std::ostream& output) = 0;
-
-    ///<summary>
-    ///Write the value of the given template variable name to the output string.
-    ///</summary>
-    ///<param name="name">The name of the template variable.</param>
-    ///<param name="output">The variable where to output the template variable's value.</param>
-    virtual void writeTemplateVariable(const std::string& name, std::string& output) = 0;
+    ///<return>Returns the value of the template variable. Returns an empty string if unknown.<return>
+    virtual std::string lookupTemplateVariable(const std::string& name) = 0;
 
   };
   
 }; //bin2cpp
 
-#endif //ITEMPLATE_VARIABLE_HANDLER_H
+#endif //ITEMPLATE_VARIABLE_LOOKUP_H
